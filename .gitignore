@@ -8,8 +8,8 @@
 /build/
 /vendor/
 /bin/
-/propel/
 /intra/
 /src/Rotalia/*Bundle/Model/map/
 /src/Rotalia/*Bundle/Model/om/
 /composer.phar
+.idea/
