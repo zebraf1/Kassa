@@ -1,0 +1,7 @@
+parameters:
+#    rotalia_inventar.example.class: Rotalia\InventoryBundle\Example
+
+services:
+#    rotalia_inventar.example:
+#        class: %rotalia_inventar.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

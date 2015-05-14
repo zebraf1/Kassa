@@ -1,0 +1,80 @@
+{#
+ @var products Product[]
+ @var activeReport Report
+ @var reportForm ReportType
+#}
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/js/report.js') }}"></script>
+{% endblock %}
+
+{% block title%}Majanduseestseisja aruanne{% endblock %}
+
+{% block body %}
+    <h1>Majanduseestseisja aruanne</h1>
+
+    <div>
+        {% block flash %}{{ parent() }}{% endblock %}
+
+        <div>
+            <a href="{{ url('RotaliaReport_list') }}">Tagasi</a>
+        </div>
+
+
+        {{ form_start(reportForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        <table class="data sortable">
+            <tr>
+                <th colspan="2">Kuupäev:</th>
+                <th>Täna</th>
+            </tr>
+            <tr>
+                <td colspan="2">Aruande koostaja:</td>
+                <td>
+                    <strong>{{ app.user.member.fullName }} (Sina)</strong>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">{{ form_label(reportForm.cash) }}</td>
+                <td>
+                    {{ form_widget(reportForm.cash) }}
+                    <div id="calculator" class="ui-icon ui-icon-calculator"></div>
+                    {{ form_errors(reportForm.cash) }}
+                </td>
+            </tr>
+            <tr>
+                <th>Toode</th>
+                <th>Hind</th>
+                <th>Kogus</th>
+            </tr>
+            {% for product in products %}
+                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }} €/{{ product.amountType }}</td>
+                    <td>
+                        {{ form_widget(reportForm.reportRowsForm[product.id]) }}
+                        {{ form_errors(reportForm.reportRowsForm[product.id]) }}
+                    </td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="100" class="right">
+                    <input type="submit" class="button" value="Salvesta" />
+                </td>
+            </tr>
+        </table>
+
+        {{ form_end(reportForm) }}
+    </div>
+
+    {% include 'RotaliaInventoryBundle:Report:cashDialog.html.twig' %}
+{% endblock %}

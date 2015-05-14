@@ -1,0 +1,157 @@
+{#
+ @var products Product[]
+ @var reports Report[]
+ @var activeReport Report
+ @var reportRowArray array
+ @var reportForm ReportType
+#}
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/js/report.js') }}"></script>
+{% endblock %}
+
+{% block title%}Kassa aruanne{% endblock %}
+
+{% block body %}
+    <h1>Kassa aruanne</h1>
+
+    <div>
+        {% block flash %}{{ parent() }}{% endblock %}
+
+        <div>
+            <a href="{{ path('RotaliaReport_browse', {'page':1}) }}">Sirvi</a>
+            {% if is_granted('ROLE_ADMIN') %}
+            <br /><a href="{{ path('RotaliaReport_update') }}">Majanduseestseisja aruande lisamine</a>
+            {% endif %}
+        </div>
+
+
+        {{ form_start(reportForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        <table class="data sortable">
+            <tr>
+                <th colspan="2">Kuupäev:</th>
+                {% for report in reports %}
+                <th>{{ report.getCreatedAtLocalized('%e. %b %Y') }}</th>
+                {% endfor %}
+                <th>Täna</th>
+            </tr>
+            <tr>
+                <td colspan="2">Aruande koostaja:</td>
+                {% for report in reports %}
+                    <td>{{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}</td>
+                {% endfor %}
+
+                <td>
+                    {% if activeReport.isNew() %}
+                        <strong>{{ app.user.member.fullName }} (Sina)</strong>
+                    {% else %}
+                        {{ activeReport.memberName() }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">{{ form_label(reportForm.cash) }}</td>
+                {% for report in reports %}
+                    <td>{{ report.getCash() | number_format(2, '.', ',') }}€</td>
+                {% endfor %}
+
+                <td>
+                    {{ form_widget(reportForm.cash) }}
+                    <div id="calculator" class="ui-icon ui-icon-calculator"></div>
+                    {{ form_errors(reportForm.cash) }}
+                </td>
+            </tr>
+            <tr>
+                <th>Toode</th>
+                <th>Hind</th>
+                {% for report in reports %}
+                    <th>Kogus</th>
+                {% endfor %}
+
+                <th>Kogus</th>
+            </tr>
+            {% for product in products %}
+                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }} €/{{ product.amountType }}</td>
+                    {% for report in reports %}
+                    <td>{{ report.getReportRowAmountForProductId(product.id) }}</td>
+                    {% endfor %}
+
+                    <td>
+                        {{ form_widget(reportForm.reportRowsForm[product.id]) }}
+                        {{ form_errors(reportForm.reportRowsForm[product.id]) }}
+                    </td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="2" class="right">
+                    Eeldatav müügitulu:
+                </td>
+                {% for report in reports %}
+                    <td>
+                        {% if report.isUpdate %}
+                            -
+                        {% else %}
+                            {{ report.getExpectedProfit() | number_format(2, '.', ',') }}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+
+                {# Active report #}
+                <td>
+                    {% if not activeReport.isNew() %}
+                        {{ activeReport.getExpectedProfit() | number_format(2, '.', ',') }}
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="right">
+                    Tegelik müügitulu:
+                </td>
+                {% for report in reports %}
+                    {% if report.isUpdate %}
+                        <td>-</td>
+                    {% else %}
+                        {% set diff = report.getActualProfit - report.getExpectedProfit %}
+                        <td class="report-{% if diff < 0 %}error{% else %}ok{% endif %}">
+                            {{ report.getActualProfit() | number_format(2, '.', ',') }}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+
+                {# Active report #}
+                {% if not activeReport.isNew() %}
+                    {% set diff = activeReport.getActualProfit - activeReport.getExpectedProfit %}
+                    <td class="report-{% if diff < 0 %}error{% else %}ok{% endif %}">
+                        {{ activeReport.getActualProfit() | number_format(2, '.', ',') }}
+                        {% if diff != 0 %}({{ diff }}){% endif %}
+                    </td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td colspan="100" class="right">
+                    <input type="submit" class="button" value="Salvesta" />
+                </td>
+            </tr>
+        </table>
+
+        {{ form_end(reportForm) }}
+    </div>
+
+    {% include 'RotaliaInventoryBundle:Report:cashDialog.html.twig' %}
+{% endblock %}

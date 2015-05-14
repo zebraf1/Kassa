@@ -1,0 +1,62 @@
+<!-- ui-dialog -->
+<div id="cashDialog" title="Rahalugeja abimees">
+    <div>Sisesta rahatähtede kogused ja vajuta OK, et kanda tulemus raportisse.</div>
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Kogus</th>
+            <th>Summa</th>
+            <th>#</th>
+            <th>Kogus</th>
+            <th>Summa</th>
+        </tr>
+        {% set tabIndex = 1 %}
+        {% for i in [1, 2, 5, 10, 20, 50] %}
+            <tr>
+                <td>
+                    <label for="cash_{{ i * 100 }}">{{ i }}€</label>
+                </td>
+                <td><input tabindex="{{ tabIndex }}" id="cash_{{ i * 100 }}" class="calc_count_input_eur" type="number" value="" data-value="{{ i * 100 }}" /></td>
+                <td class="calc_sum_row_eur">0</td>
+
+                <td>
+                    <label for="cash_{{ i }}">{{ i }}¢</label>
+                </td>
+                <td><input tabindex="{{ tabIndex + 9 }}" id="cash_{{ i }}" class="calc_count_input_cent" type="number" value="" data-value="{{ i }}" /></td>
+                <td class="calc_sum_row_cent">0</td>
+
+                {% set tabIndex = tabIndex + 1 %}
+            </tr>
+        {% endfor %}
+        <tr>
+            {% set i = 100 %}
+            <td>
+                <label for="cash_{{ i * 100 }}">{{ i }}€</label>
+            </td>
+            <td><input tabindex="{{ tabIndex }}" id="cash_{{ i * 100 }}" class="calc_count_input_eur" type="number" value="" data-value="{{ i * 100 }}" /></td>
+            <td class="calc_sum_row_eur">0</td>
+            {% set tabIndex = tabIndex + 1 %}
+        </tr>
+        <tr>
+            {% set i = 200 %}
+            <td>
+                <label for="cash_{{ i * 100 }}">{{ i }}€</label>
+            </td>
+            <td><input tabindex="{{ tabIndex }}" id="cash_{{ i * 100 }}" class="calc_count_input_eur" type="number" value="" data-value="{{ i * 100 }}" /></td>
+            <td class="calc_sum_row_eur">0</td>
+            {% set tabIndex = tabIndex + 1 %}
+        </tr>
+        <tr>
+            {% set i = 500 %}
+            <td>
+                <label for="cash_{{ i * 100 }}">{{ i }}€</label>
+            </td>
+            <td><input tabindex="{{ tabIndex }}" id="cash_{{ i * 100 }}" class="calc_count_input_eur" type="number" value="" data-value="{{ i * 100 }}" /></td>
+            <td class="calc_sum_row_eur">0</td>
+
+            <td>&nbsp;</td>
+            <td class="bold">Kokku</td>
+            <td class="bold" id="cashDialogTotal">0</td>
+        </tr>
+    </table>
+</div>

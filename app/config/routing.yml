@@ -1,0 +1,25 @@
+#rotalia_user:
+#    resource: "@RotaliaUserBundle/Resources/config/routing.yml"
+#    prefix:   /
+
+_welcome:
+    pattern:  /
+    defaults: { _controller: RotaliaInventoryBundle:Report:list }
+
+rotalia_inventar:
+    resource: "@RotaliaInventoryBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+#logout:
+#    path:   /logout
+#login:
+#    path:     /login
+#    defaults: { _controller: RotaliaInventoryBundle:Security:login }
+#login_check:
+#    path: /login_check

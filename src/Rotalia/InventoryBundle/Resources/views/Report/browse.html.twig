@@ -1,0 +1,100 @@
+{#
+ @var products Product[]
+ @var reports Report[]
+ @var reportRowArray array
+#}
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{% block title%}Sirvi aruandeid{% endblock %}
+
+{% block body %}
+    <h1>Sirvi aruandeid</h1>
+    <a href="{{ url('RotaliaReport_list') }}">Tagasi</a>
+
+    <div>
+        {% block flash %}{{ parent() }}{% endblock %}
+
+        <div>
+            <div class="fleft">
+                {% if not reports.isLastPage() %}
+                    &laquo;<a href="{{ url('RotaliaReport_browse', {'page':reports.getNextPage()}) }}">Eelmised</a>
+                {% endif %}
+            </div>
+            <div class="fright">
+                {% if not reports.isFirstPage() %}
+                    <a href="{{ url('RotaliaReport_browse', {'page':reports.getPreviousPage()}) }}">Järgmised</a>&raquo;
+                {% endif %}
+            </div>
+        </div>
+
+        <table class="data sortable">
+            <tr>
+                <th colspan="2">Kuupäev:</th>
+                {% for report in reports %}
+                <th>{{ report.getCreatedAtLocalized('%e. %b %Y') }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td colspan="2">Aruande koostaja:</td>
+                {% for report in reports %}
+                    <td>{{ report.getMemberName() }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td colspan="2">Sularahajääk:</td>
+                {% for report in reports %}
+                    <td>
+                        {% if report.isUpdate() and report.getCash() > 0 %}+{% endif %}{{ report.getCash() | number_format(2, '.', ',') }}€
+                    </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th>Toode</th>
+                <th>Hind</th>
+                {% for report in reports %}
+                    <th>Kogus</th>
+                {% endfor %}
+            </tr>
+            {% for product in products %}
+                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }} €/{{ product.amountType }}</td>
+                    {% for report in reports %}
+                        <td>{{ report.getReportRowAmountForProductId(product.id) }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="2" class="right">
+                    Eeldatav müügitulu:
+                </td>
+                {% for report in reports %}
+                    <td>
+                        {% if report.isUpdate %}
+                            -
+                        {% else %}
+                            {{ report.getExpectedProfit() | number_format(2, '.', ',') }}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td colspan="2" class="right">
+                    Tegelik müügitulu:
+                </td>
+                {% for report in reports %}
+                    {% if report.isUpdate %}
+                        <td>-</td>
+                    {% else %}
+                        {% set diff = report.getActualProfit - report.getExpectedProfit %}
+                        <td class="report-{% if diff < 0 %}error{% else %}ok{% endif %}">
+                            {{ report.getActualProfit() | number_format(2, '.', ',') }}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
+{% endblock %}

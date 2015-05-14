@@ -1,0 +1,48 @@
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
+.center {
+    text-align: center;
+}
+
+.fleft {
+    float: left;
+}
+.fright {
+    float: right;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+td.report-error {
+    background-color: #fee !important;
+    color: #800;
+}
+td.report-ok {
+    background-color: #eaffee !important;
+    color: #080;
+}
+
+tr.even td {
+    background-color: #f8f8f8 !important;
+}
+
+#Report_cash {
+    width: 126px;
+}
+
+#calculator {
+    display: inline-block;
+}
+
+.inventoryUpdate {
+    font-weight: bold;
+    background: url(../images/inventory-update.png) no-repeat right;
+    background-size: contain;
+    padding-right: 30px !important;
+}

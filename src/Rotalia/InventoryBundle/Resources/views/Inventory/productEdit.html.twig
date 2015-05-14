@@ -1,0 +1,32 @@
+{#
+ @var form FormView
+#}
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{% form_theme form 'form_table_layout.html.twig' %}
+
+
+{% block body %}
+    {{ form_start(form) }}
+        <table>
+            {% for formRow in form %}
+                {% if formRow.vars.name != '_token' %}
+                <tr>
+                    <td>
+                        {{ form_label(formRow) }}
+                    </td>
+                    <td>
+                        {{ form_widget(formRow) }}
+                        {{ form_errors(formRow) }}
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            <tr>
+                <td colspan="100" class="right">
+                    <input type="submit" class="button" value="Salvesta" />
+                </td>
+            </tr>
+        </table>
+    {{ form_end(form) }}
+{% endblock %}

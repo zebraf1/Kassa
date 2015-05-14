@@ -1,0 +1,15 @@
+/web/bundles/
+/app/bootstrap.php.cache
+/app/cache/*
+/app/config/parameters.yml
+/app/logs/*
+!app/cache/.gitkeep
+!app/logs/.gitkeep
+/build/
+/vendor/
+/bin/
+/propel/
+/intra/
+/src/Rotalia/*Bundle/Model/map/
+/src/Rotalia/*Bundle/Model/om/
+/composer.phar

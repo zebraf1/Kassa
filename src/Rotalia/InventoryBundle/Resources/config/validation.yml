@@ -1,0 +1,4 @@
+RotaliaInventoryBundle\Model\Report:
+    properties:
+        cash:
+            - NotBlank: ~

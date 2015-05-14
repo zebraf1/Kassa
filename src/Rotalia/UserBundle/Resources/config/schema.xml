@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="default" namespace="Rotalia\UserBundle\Model" defaultIdMethod="native">
+    <table name="liikmed" phpName="Member" idMethod="native">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="koondised_id" phpName="KoondisedId" type="INTEGER" required="true" defaultValue="-1"/>
+        <column name="koondised_alg" phpName="KoondisedAlg" type="INTEGER" required="true" defaultValue="-1"/>
+        <column name="staatused_id" phpName="StaatusedId" type="INTEGER" required="true" defaultValue="-1"/>
+        <column name="eesnimi" phpName="Eesnimi" type="VARCHAR" size="50" required="false"/>
+        <column name="perenimi" phpName="Perenimi" type="VARCHAR" size="50" required="false"/>
+        <column name="teaduskond" phpName="Teaduskond" type="VARCHAR" size="50" required="false"/>
+        <column name="isa_eesnimi" phpName="IsaEesnimi" type="VARCHAR" size="50" required="false"/>
+        <column name="isa_perenimi" phpName="IsaPerenimi" type="VARCHAR" size="50" required="false"/>
+        <column name="mobiil" phpName="Mobiil" type="VARCHAR" size="50" required="false"/>
+        <column name="tootel" phpName="Tootel" type="VARCHAR" size="50" required="false"/>
+        <column name="fax" phpName="Fax" type="VARCHAR" size="50" required="false"/>
+        <column name="email" phpName="Email" type="VARCHAR" size="100" required="false"/>
+        <column name="msn" phpName="Msn" type="VARCHAR" size="100" required="false"/>
+        <column name="skype" phpName="Skype" type="VARCHAR" size="100" required="false"/>
+        <column name="syn_p" phpName="SynP" type="CHAR" size="2" required="false"/>
+        <column name="syn_k" phpName="SynK" type="CHAR" size="2" required="false"/>
+        <column name="syn_a" phpName="SynA" type="VARCHAR" size="4" required="false"/>
+        <column name="coet_p" phpName="CoetP" type="CHAR" size="2" required="false"/>
+        <column name="coet_k" phpName="CoetK" type="CHAR" size="2" required="false"/>
+        <column name="coet_a" phpName="CoetA" type="VARCHAR" size="4" required="false"/>
+        <column name="coet_s" phpName="CoetS" type="CHAR" size="2" required="false"/>
+        <column name="confr_p" phpName="ConfrP" type="CHAR" size="2" required="false"/>
+        <column name="confr_k" phpName="ConfrK" type="CHAR" size="2" required="false"/>
+        <column name="confr_a" phpName="ConfrA" type="VARCHAR" size="4" required="false"/>
+        <column name="confr_s" phpName="ConfrS" type="CHAR" size="2" required="false"/>
+        <column name="vil_p" phpName="VilP" type="CHAR" size="2" required="false"/>
+        <column name="vil_k" phpName="VilK" type="CHAR" size="2" required="false"/>
+        <column name="vil_a" phpName="VilA" type="VARCHAR" size="4" required="false"/>
+        <column name="vil_s" phpName="VilS" type="CHAR" size="2" required="false"/>
+        <column name="lahk_pohjused_id" phpName="LahkPohjusedId" type="INTEGER" required="true" defaultValue="0"/>
+        <column name="lahk_p" phpName="LahkP" type="CHAR" size="2" required="false"/>
+        <column name="lahk_k" phpName="LahkK" type="CHAR" size="2" required="false"/>
+        <column name="lahk_a" phpName="LahkA" type="VARCHAR" size="4" required="false"/>
+        <column name="lahk_s" phpName="LahkS" type="CHAR" size="2" required="false"/>
+        <column name="eemal" phpName="Eemal" type="INTEGER" size="1" required="true"/>
+        <column name="markus" phpName="Markus" type="VARCHAR" size="200" required="false"/>
+        <column name="teated" phpName="Teated" type="INTEGER" size="1" required="true" defaultValue="0"/>
+        <column name="muutmise_aeg" phpName="MuutmiseAeg" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+        <column name="muutja_id" phpName="MuutjaId" type="INTEGER" required="false"/>
+        <column name="kustutatud" phpName="Kustutatud" type="INTEGER" size="1" required="true" defaultValue="0"/>
+        <column name="aadress1" phpName="Aadress1" type="VARCHAR" size="100" required="false"/>
+        <column name="linn1" phpName="Linn1" type="VARCHAR" size="100" required="false"/>
+        <column name="osariik1" phpName="Osariik1" type="VARCHAR" size="30" required="false"/>
+        <column name="indeks1" phpName="Indeks1" type="VARCHAR" size="20" required="false"/>
+        <column name="riik1" phpName="Riik1" type="VARCHAR" size="100" required="false"/>
+        <column name="telefon1" phpName="Telefon1" type="VARCHAR" size="50" required="false"/>
+        <column name="aadress2" phpName="Aadress2" type="VARCHAR" size="100" required="false"/>
+        <column name="linn2" phpName="Linn2" type="VARCHAR" size="100" required="false"/>
+        <column name="osariik2" phpName="Osariik2" type="VARCHAR" size="30" required="false"/>
+        <column name="indeks2" phpName="Indeks2" type="VARCHAR" size="20" required="false"/>
+        <column name="riik2" phpName="Riik2" type="VARCHAR" size="100" required="false"/>
+        <column name="telefon2" phpName="Telefon2" type="VARCHAR" size="50" required="false"/>
+        <column name="tookoht" phpName="Tookoht" type="VARCHAR" size="100" required="false"/>
+        <column name="amet" phpName="Amet" type="VARCHAR" size="100" required="false"/>
+        <column name="leibcantus" phpName="Leibcantus" type="VARCHAR" size="200" required="false"/>
+        <column name="tegevusala" phpName="Tegevusala" type="VARCHAR" size="200" required="true"/>
+        <index name="koondised_id">
+            <index-column name="koondised_id"/>
+        </index>
+        <index name="eesnimi">
+            <index-column name="eesnimi"/>
+        </index>
+        <index name="perenimi">
+            <index-column name="perenimi"/>
+        </index>
+        <index name="staatused_id">
+            <index-column name="staatused_id"/>
+        </index>
+        <index name="coet_a">
+            <index-column name="coet_a"/>
+        </index>
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+    </table>
+
+    <table name="sessions" phpName="Session" idMethod="native">
+        <column name="session" phpName="Session" type="VARCHAR" size="40" primaryKey="true" required="true" defaultValue="0"/>
+        <column name="lastaccess" phpName="Lastaccess" type="BIGINT" required="false"/>
+        <column name="usr_id" phpName="UsrId" type="INTEGER" required="false"/>
+        <index name="usr_id">
+            <index-column name="usr_id"/>
+        </index>
+        <foreign-key foreignTable="users" name="usr_fk" skipSql="true">
+            <reference local="usr_id" foreign="id" />
+        </foreign-key>
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+    </table>
+
+    <table name="users" phpName="User" idMethod="native">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="username" phpName="Username" type="VARCHAR" size="20" required="true" defaultValue=""/>
+        <column name="password" phpName="Password" type="VARCHAR" size="20" required="true" defaultValue=""/>
+        <column name="liikmed_id" phpName="LiikmedId" type="INTEGER" required="true" defaultValue="0"/>
+        <column name="lastlogin" phpName="Lastlogin" type="TIMESTAMP" required="true"/>
+        <column name="jutukas_lastaccess" phpName="JutukasLastaccess" type="INTEGER" required="true" defaultValue="0"/>
+        <column name="jutukas_firstmess" phpName="JutukasFirstmess" type="INTEGER" required="false"/>
+        <index name="username">
+            <index-column name="username"/>
+        </index>
+        <index name="liikmed_id">
+            <index-column name="liikmed_id"/>
+        </index>
+        <foreign-key foreignTable="liikmed" name="liikmed_fk" skipSql="true">
+            <reference local="liikmed_id" foreign="id" />
+        </foreign-key>
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+    </table>
+</database>

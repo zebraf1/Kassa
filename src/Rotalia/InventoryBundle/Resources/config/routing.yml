@@ -1,0 +1,34 @@
+RotaliaReport_list:
+    pattern:  /
+    defaults: { _controller: RotaliaInventoryBundle:Report:List, update: 0 }
+
+RotaliaReport_update:
+    pattern:  /aruanne/majandus
+    defaults: { _controller: RotaliaInventoryBundle:Report:List, update: 1 }
+
+RotaliaReport_browse:
+    pattern:  /sirvi/{page}/
+    defaults: { _controller: RotaliaInventoryBundle:Report:Browse }
+
+RotaliaInventory_list:
+    pattern:  /tooted
+    defaults: { _controller: RotaliaInventoryBundle:Inventory:List }
+
+RotaliaInventory_edit:
+    pattern:  /tooted/muuda/{id}/
+    defaults: { _controller: RotaliaInventoryBundle:Inventory:edit, id: null }
+
+RotaliaInventory_add:
+    pattern:  /tooted/lisa/
+    defaults: { _controller: RotaliaInventoryBundle:Inventory:edit, id: null }
+
+
+RotaliaInventory_removeItem:
+    pattern:  /tooted/eemalda/{id}/
+    defaults: { _controller: RotaliaInventoryBundle:Inventory:BuyItem }
+
+RotaliaInventory_addItem:
+    pattern:  /tooted/lisa/{id}/
+    defaults: { _controller: RotaliaInventoryBundle:Inventory:AddItem }
+
+
