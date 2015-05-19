@@ -34,6 +34,7 @@
         <column name="report_id" type="INTEGER" required="false" />
         <column name="product_id" type="INTEGER" required="false" />
         <column name="amount" type="DECIMAL" size="10" scale="1" required="true" defaultValue="0" />
+        <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
         <foreign-key foreignTable="ollekassa_product" name="product_fk">
             <reference local="product_id" foreign="id" />
         </foreign-key>
