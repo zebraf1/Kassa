@@ -201,13 +201,10 @@ class Report extends BaseReport
         $totalValue = 0;
 
         foreach ($this->getReportRows() as $reportRow) {
-            //TODO: take price from report_row, needs refactor
-            if ($product = $reportRow->getProduct()) {
-                //Note: convert to integer cents to avoid PHP double sum issue
-                $price = intval($product->getPrice() * 100);
-                $amount = doubleval($reportRow->getAmount());
-                $totalValue += ($price * $amount);
-            }
+            //Note: convert to integer cents to avoid PHP double sum issue
+            $price = intval($reportRow->getCurrentPrice() * 100);
+            $amount = doubleval($reportRow->getAmount());
+            $totalValue += ($price * $amount);
         }
 
         return $totalValue / 100;
