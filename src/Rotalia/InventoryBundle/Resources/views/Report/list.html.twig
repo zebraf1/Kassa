@@ -132,10 +132,8 @@
 
                 {# Active report #}
                 {% if not activeReport.isNew() %}
-                    {% set diff = activeReport.getActualProfit - activeReport.getExpectedProfit %}
-                    <td class="report-{% if diff < 0 %}error{% else %}ok{% endif %}">
+                    <td class="report-{% if report.isNegativeProfit %}error{% else %}ok{% endif %}">
                         {{ activeReport.getActualProfit() | number_format(2, '.', ',') }}
-                        {% if diff != 0 %}({{ diff }}){% endif %}
                     </td>
                 {% else %}
                     <td>-</td>
