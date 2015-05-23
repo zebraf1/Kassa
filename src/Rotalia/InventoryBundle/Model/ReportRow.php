@@ -8,6 +8,22 @@ use Rotalia\InventoryBundle\Model\om\BaseReportRow;
 class ReportRow extends BaseReportRow
 {
     /**
+     * @return float
+     */
+    public function getCurrentPrice()
+    {
+        return doubleval($this->current_price);
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmount()
+    {
+        return doubleval($this->amount);
+    }
+
+    /**
      * @inheritdoc
      */
     public function preInsert(PropelPDO $con = null)

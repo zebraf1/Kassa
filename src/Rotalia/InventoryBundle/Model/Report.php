@@ -16,6 +16,14 @@ class Report extends BaseReport
     protected $totalValue = null;
 
     /**
+     * @return float
+     */
+    public function getCash()
+    {
+        return doubleval($this->cash);
+    }
+
+    /**
      * Get ReportRow object for form
      *
      * @return array
@@ -232,5 +240,20 @@ class Report extends BaseReport
         $this->calculateProfit();
 
         return $this->actualProfit;
+    }
+
+    /**
+     * Returns true when report profit is less than expected profit
+     *
+     * @return bool
+     */
+    public function isNegativeProfit()
+    {
+        //You cannot compare floating point numbers normally
+        if ($this->actualProfit - $this->expectedProfit < -0.0001) {
+            return true;
+        }
+
+        return false;
     }
 }

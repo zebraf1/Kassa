@@ -124,8 +124,7 @@
                     {% if report.isUpdate %}
                         <td>-</td>
                     {% else %}
-                        {% set diff = report.getActualProfit - report.getExpectedProfit %}
-                        <td class="report-{% if diff < 0 %}error{% else %}ok{% endif %}">
+                        <td class="report-{% if report.isNegativeProfit %}error{% else %}ok{% endif %}">
                             {{ report.getActualProfit() | number_format(2, '.', ',') }}
                         </td>
                     {% endif %}
