@@ -155,13 +155,13 @@ class Report extends BaseReport
         $previousVerification = ReportQuery::findPreviousVerificationReport($this);
         if ($previousVerification) {
             $updatesBetween = ReportQuery::findUpdateReportsBetween($previousVerification, $this);
-            $initialProductValue = intval($previousVerification->getTotalProductValue() * 100);
-            $initialCash = intval($previousVerification->getCash() * 100);
+            $initialProductValue = doubleval($previousVerification->getTotalProductValue() * 100);
+            $initialCash = doubleval($previousVerification->getCash() * 100);
 
             //Add update values to initial value
             foreach ($updatesBetween as $report) {
-                $initialProductValue += intval($report->getTotalProductValue() * 100);
-                $initialCash += intval($report->getCash() * 100);
+                $initialProductValue += doubleval($report->getTotalProductValue() * 100);
+                $initialCash += doubleval($report->getCash() * 100);
             }
 
         } else {
@@ -170,8 +170,8 @@ class Report extends BaseReport
         }
 
 
-        $currentProductValue = intval($this->getTotalProductValue() * 100);
-        $currentCash = intval($this->getCash() * 100);
+        $currentProductValue = doubleval($this->getTotalProductValue() * 100);
+        $currentCash = doubleval($this->getCash() * 100);
 
         //We expect that cash must increase the same amount as product value has decreased
         $this->expectedProfit = ($initialProductValue - $currentProductValue) / 100;
@@ -190,7 +190,7 @@ class Report extends BaseReport
         }
 
         //Note: convert to integer cents to avoid PHP double sum issue
-        $cashValue = intval($this->getCash() * 100);
+        $cashValue = doubleval($this->getCash() * 100);
 
         $productValue = $this->getTotalProductValue() * 100;
 
@@ -210,7 +210,7 @@ class Report extends BaseReport
 
         foreach ($this->getReportRows() as $reportRow) {
             //Note: convert to integer cents to avoid PHP double sum issue
-            $price = intval($reportRow->getCurrentPrice() * 100);
+            $price = doubleval($reportRow->getCurrentPrice() * 100);
             $amount = doubleval($reportRow->getAmount());
             $totalValue += ($price * $amount);
         }
