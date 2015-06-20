@@ -44,12 +44,11 @@ class ReportQuery extends BaseReportQuery
      */
     public static function findPreviousVerificationReport(Report $report)
     {
+        //Note: #5 - join with report row cannot be used here because it would select only 1 related report row
         return self::create()
             ->filterByType(Report::TYPE_VERIFICATION)
             ->filterByCreatedAt($report->getCreatedAt(), self::LESS_THAN)
             ->orderByCreatedAt(self::DESC)
-            ->joinReportRow('report_row')
-            ->with('report_row')
             ->findOne();
     }
 
