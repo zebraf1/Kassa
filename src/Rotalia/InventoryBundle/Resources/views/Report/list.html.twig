@@ -132,7 +132,7 @@
 
                 {# Active report #}
                 {% if not activeReport.isNew() %}
-                    <td class="report-{% if report.isNegativeProfit %}error{% else %}ok{% endif %}">
+                    <td class="report-{% if activeReport.isNegativeProfit %}error{% else %}ok{% endif %}">
                         {{ activeReport.getActualProfit() | number_format(2, '.', ',') }}
                     </td>
                 {% else %}
