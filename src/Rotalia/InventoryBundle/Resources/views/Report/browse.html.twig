@@ -1,7 +1,6 @@
 {#
  @var products Product[]
  @var reports Report[]
- @var reportRowArray array
 #}
 {% extends "RotaliaInventoryBundle::layout.html.twig" %}
 
@@ -55,15 +54,37 @@
                     <th>Kogus</th>
                 {% endfor %}
             </tr>
+
+            {% set rowNum = 0 %}
+
             {% for product in products %}
-                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.price }} €/{{ product.amountType }}</td>
-                    {% for report in reports %}
-                        <td>{{ report.getReportRowAmountForProductId(product.id) }}</td>
-                    {% endfor %}
-                </tr>
+                {% if product.isActive or product.isInReports(reports) %}
+                    {% set rowNum = rowNum + 1 %}
+                    <tr class="{{ cycle(['even', 'odd'], rowNum) }} {% if not product.isActive %}inactive{% endif %}">
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.price }} €/{{ product.amountType }}</td>
+                        {% for report in reports %}
+                            {% set reportRow = report.getReportRowForProduct(product) %}
+                            <td>{% if reportRow %}{{ reportRow.getAmountFormatted(product) | raw }}{% endif %}</td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
             {% endfor %}
+
+            <tr>
+                <td colspan="2" class="right">
+                    Toodete koguväärtus:
+                </td>
+                {% for report in reports %}
+                    <td>
+                        {% if report.isUpdate %}
+                            -
+                        {% else %}
+                            {{ report.getTotalProductValue() | number_format(2, '.', ',') }}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
 
             <tr>
                 <td colspan="2" class="right">

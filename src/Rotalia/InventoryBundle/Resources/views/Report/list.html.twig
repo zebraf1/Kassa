@@ -79,20 +79,55 @@
 
                 <th>Kogus</th>
             </tr>
-            {% for product in products %}
-                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.price }} €/{{ product.amountType }}</td>
-                    {% for report in reports %}
-                    <td>{{ report.getReportRowAmountForProductId(product.id) }}</td>
-                    {% endfor %}
 
-                    <td>
-                        {{ form_widget(reportForm.reportRowsForm[product.id]) }}
-                        {{ form_errors(reportForm.reportRowsForm[product.id]) }}
-                    </td>
-                </tr>
+            {% set rowNum = 0 %}
+
+            {% for product in products %}
+
+                {% if product.isActive or product.isInReports(reports) %}
+                    {% set rowNum = rowNum + 1 %}
+
+                    <tr class="{{ cycle(['even', 'odd'], rowNum) }} {% if not product.isActive %}inactive{% endif %}">
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.price }} €/{{ product.amountType }}</td>
+
+                        {% for report in reports %}
+                            {% set reportRow = report.getReportRowForProduct(product) %}
+                            <td>{% if reportRow %}{{ reportRow.getAmountFormatted(product) | raw }}{% endif %}</td>
+                        {% endfor %}
+
+                        <td>
+                            {% if product.isActive %}
+                                {{ form_widget(reportForm.reportRowsForm[product.id]) }}
+                                {{ form_errors(reportForm.reportRowsForm[product.id]) }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+
             {% endfor %}
+
+            <tr>
+                <td colspan="2" class="right">
+                    Toodete koguväärtus:
+                </td>
+                {% for report in reports %}
+                    <td>
+                        {% if report.isUpdate %}
+                            -
+                        {% else %}
+                            {{ report.getTotalProductValue() | number_format(2, '.', ',') }}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+
+                {# Active report #}
+                <td>
+                    {% if not activeReport.isNew() %}
+                        {{ activeReport.getTotalProductValue() | number_format(2, '.', ',') }}
+                    {% endif %}
+                </td>
+            </tr>
 
             <tr>
                 <td colspan="2" class="right">

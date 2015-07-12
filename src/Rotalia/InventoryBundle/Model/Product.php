@@ -2,7 +2,6 @@
 
 namespace Rotalia\InventoryBundle\Model;
 
-use PropelPDO;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseProduct;
 
@@ -49,5 +48,30 @@ class Product extends BaseProduct
                 return $this->getAmountTypeId();
                 break;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->getStatusId() == XClassifier::STATUS_ACTIVE;
+    }
+
+    /**
+     * Returns true if the Product is related to any of the given Reports
+     *
+     * @param Report[]|\PropelObjectCollection $reports
+     * @return bool
+     */
+    public function isInReports($reports)
+    {
+        foreach ($reports as $report) {
+            if ($report->getReportRowForProduct($this) !== null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

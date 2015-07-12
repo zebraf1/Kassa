@@ -29,7 +29,7 @@ class ReportController extends DefaultController
             throw new AccessDeniedException();
         }
 
-        $products = ProductQuery::getActiveProducts();
+        $products = ProductQuery::getActiveProductsFirst();
 
         if ($isUpdate) {
             $activeReport = new Report();
@@ -53,6 +53,7 @@ class ReportController extends DefaultController
 
         if ($reportForm->isValid()) {
             $activeReport->setMember($this->getUser()->getMember());
+            $activeReport->updateRowPrices();
             $activeReport->save();
             $this->setFlash('ok', 'Aruanne salvestatud.');
             return $this->redirect($this->generateUrl('RotaliaReport_list'));
@@ -99,7 +100,7 @@ class ReportController extends DefaultController
     {
         $page = $request->get('page', 1);
 
-        $products = ProductQuery::getActiveProducts();
+        $products = ProductQuery::getActiveProductsFirst();
 
         $reports = ReportQuery::create()
             ->orderByCreatedAt(\Criteria::DESC)
@@ -113,30 +114,9 @@ class ReportController extends DefaultController
             return $a->getCreatedAt() > $b->getCreatedAt();
         });
 
-        $reportRowArray = $this->buildReportRowArray($reports);
-
         return $this->render('RotaliaInventoryBundle:Report:browse.html.twig', [
             'products' => $products,
             'reports' => $reports,
-            'reportRowArray' => $reportRowArray,
         ]);
-    }
-
-    /**
-     * @param Report[] $reports
-     * @return array
-     */
-    private function buildReportRowArray($reports)
-    {
-        $reportRowArray = [];
-        foreach ($reports as $report) {
-            $reportId = $report->getId();
-            $reportRowArray[$reportId] = [];
-            foreach ($report->getReportRows() as $reportRow) {
-                $reportRowArray[$reportId][$reportRow->getProductId()] = $reportRow->getAmount();
-            }
-        }
-
-        return $reportRowArray;
     }
 }

@@ -94,10 +94,7 @@ CREATE TABLE `ollekassa_report`
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),
-    INDEX `FI_ber_fk` (`member_id`),
-    CONSTRAINT `member_fk`
-        FOREIGN KEY (`member_id`)
-        REFERENCES `liikmed` (`id`)
+    INDEX `FI_ber_fk` (`member_id`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
@@ -112,15 +109,18 @@ CREATE TABLE `ollekassa_report_row`
     `report_id` INTEGER,
     `product_id` INTEGER,
     `amount` DECIMAL(10,1) DEFAULT 0 NOT NULL,
+    `current_price` DECIMAL(10,2),
     PRIMARY KEY (`id`),
     INDEX `FI_duct_fk` (`product_id`),
     INDEX `FI_ort_fk` (`report_id`),
     CONSTRAINT `product_fk`
         FOREIGN KEY (`product_id`)
-        REFERENCES `ollekassa_product` (`id`),
+        REFERENCES `ollekassa_product` (`id`)
+        ON DELETE CASCADE,
     CONSTRAINT `report_fk`
         FOREIGN KEY (`report_id`)
         REFERENCES `ollekassa_report` (`id`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------

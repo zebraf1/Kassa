@@ -15,6 +15,8 @@ class Report extends BaseReport
     protected $actualProfit = null;
     protected $totalValue = null;
 
+    private $calculatedTotalProductValue = null;
+
     /**
      * @return float
      */
@@ -116,28 +118,28 @@ class Report extends BaseReport
     /**
      * Get report row amount for given product
      *
-     * @param $productId
-     * @return string
+     * @param Product $product
+     * @return ReportRow|null
      */
-    public function getReportRowAmountForProductId($productId)
+    public function getReportRowForProduct(Product $product)
     {
         foreach ($this->getReportRows() as $reportRow) {
-            if ($reportRow->getProductId() == $productId) {
-                $amount = $reportRow->getAmount();
-
-                if ($amount == 0) {
-                    return '';
-                }
-
-                if ($this->isUpdate() && $amount > 0) {
-                    return '+'.$amount;
-                }
-
-                return $amount;
+            if ($reportRow->getProductId() == $product->getId()) {
+                return $reportRow;
             }
         }
 
-        return '';
+        return null;
+    }
+
+    /**
+     * Ensure ReportRow current price matches the products current price.
+     */
+    public function updateRowPrices()
+    {
+        foreach ($this->getReportRows() as $reportRow) {
+            $reportRow->updateCurrentPrice();
+        }
     }
 
 
@@ -206,6 +208,9 @@ class Report extends BaseReport
      */
     public function getTotalProductValue()
     {
+        if ($this->calculatedTotalProductValue !== null) {
+            return $this->calculatedTotalProductValue;
+        }
         $totalValue = 0;
 
         foreach ($this->getReportRows() as $reportRow) {
@@ -215,7 +220,9 @@ class Report extends BaseReport
             $totalValue += ($price * $amount);
         }
 
-        return $totalValue / 100;
+        $this->calculatedTotalProductValue = $totalValue / 100;
+
+        return $this->calculatedTotalProductValue;
     }
 
     /**
