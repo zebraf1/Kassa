@@ -44,12 +44,12 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 ALTER TABLE `ollekassa_report_row` DROP FOREIGN KEY `report_fk`;
 
-ALTER TABLE `ollekassa_report_row` ADD CONSTRAINT `report_fk`
+ALTER TABLE `ollekassa_report_row` ADD CONSTRAINT `report_row_report_fk`
     FOREIGN KEY (`report_id`)
     REFERENCES `ollekassa_report` (`id`)
     ON DELETE CASCADE;
 
-ALTER TABLE `ollekassa_report_row` ADD CONSTRAINT `product_fk`
+ALTER TABLE `ollekassa_report_row` ADD CONSTRAINT `report_row_product_fk`
     FOREIGN KEY (`product_id`)
     REFERENCES `ollekassa_product` (`id`)
     ON DELETE CASCADE;
@@ -74,9 +74,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `ollekassa_report_row` DROP FOREIGN KEY `product_fk`;
+ALTER TABLE `ollekassa_report_row` DROP FOREIGN KEY `report_row_report_fk`;
 
-ALTER TABLE `ollekassa_report_row` DROP FOREIGN KEY `report_fk`;
+ALTER TABLE `ollekassa_report_row` DROP FOREIGN KEY `report_row_product_fk`;
 
 ALTER TABLE `ollekassa_report_row` ADD CONSTRAINT `report_fk`
     FOREIGN KEY (`report_id`)

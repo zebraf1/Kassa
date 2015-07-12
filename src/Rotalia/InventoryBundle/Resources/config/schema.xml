@@ -19,7 +19,7 @@
         <column name="member_id" type="INTEGER" />
         <column name="cash" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="type" type="VARCHAR" required="true" defaultValue="VERIFICATION" />
-        <foreign-key foreignTable="liikmed" name="member_fk" skipSql="true">
+        <foreign-key foreignTable="liikmed" name="report_member_fk" skipSql="true">
             <reference local="member_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
@@ -35,10 +35,10 @@
         <column name="product_id" type="INTEGER" required="false" />
         <column name="amount" type="DECIMAL" size="10" scale="1" required="true" defaultValue="0" />
         <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
-        <foreign-key foreignTable="ollekassa_product" name="product_fk" onDelete="CASCADE">
+        <foreign-key foreignTable="ollekassa_product" name="report_row_product_fk" onDelete="CASCADE">
             <reference local="product_id" foreign="id" />
         </foreign-key>
-        <foreign-key foreignTable="ollekassa_report" name="report_fk" onDelete="CASCADE">
+        <foreign-key foreignTable="ollekassa_report" name="report_row_report_fk" onDelete="CASCADE">
             <reference local="report_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">

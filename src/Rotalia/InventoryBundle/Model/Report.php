@@ -5,6 +5,7 @@ namespace Rotalia\InventoryBundle\Model;
 use DateTime;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseReport;
+use Rotalia\UserBundle\Model\Member;
 
 class Report extends BaseReport
 {
@@ -112,6 +113,15 @@ class Report extends BaseReport
         }
 
         return $this->getName();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMember(Member $v = null)
+    {
+        $this->setName($v->getFullName());
+        parent::setMember($v);
     }
 
 
