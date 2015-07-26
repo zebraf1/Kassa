@@ -3,6 +3,7 @@
     <table name="ollekassa_product" phpName="Product">
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
         <column name="name" type="VARCHAR" size="100" required="true" />
+        <column name="product_code" type="VARCHAR" size="100" required="false" />
         <column name="price" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="amount_type_id" type="VARCHAR" size="50" defaultValue="PIECE" />
         <column name="status_id" type="VARCHAR" size="50" defaultValue="ACTIVE" />

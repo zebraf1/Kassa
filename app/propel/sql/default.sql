@@ -71,6 +71,7 @@ CREATE TABLE `ollekassa_product`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
+    `product_code` VARCHAR(100),
     `price` DECIMAL(10,2) NOT NULL,
     `amount_type_id` VARCHAR(50) DEFAULT 'PIECE',
     `status_id` VARCHAR(50) DEFAULT 'ACTIVE',

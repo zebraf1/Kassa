@@ -39,6 +39,10 @@ class ProductType extends AbstractType
                 'multiple' => false,
                 'choices' => XClassifier::$STATUSES
             ))
+            ->add('product_code', 'text', array(
+                'label' => 'Tootekood',
+                'required' => false,
+            ))
         ;
     }
 
