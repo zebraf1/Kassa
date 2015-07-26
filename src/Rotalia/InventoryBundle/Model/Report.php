@@ -165,28 +165,53 @@ class Report extends BaseReport
         }
 
         $previousVerification = ReportQuery::findPreviousVerificationReport($this);
-        if ($previousVerification) {
-            $updatesBetween = ReportQuery::findUpdateReportsBetween($previousVerification, $this);
-            $initialProductValue = doubleval($previousVerification->getTotalProductValue() * 100);
-            $initialCash = doubleval($previousVerification->getCash() * 100);
-
-            //Add update values to initial value
-            foreach ($updatesBetween as $report) {
-                $initialProductValue += doubleval($report->getTotalProductValue() * 100);
-                $initialCash += doubleval($report->getCash() * 100);
-            }
-
-        } else {
-            $initialProductValue = 0;
-            $initialCash = 0;
+        if (empty($previousVerification)) {
+            $this->expectedProfit = 0;
+            $this->actualProfit = 0;
+            return;
         }
 
+        $productAmounts = [];
+        $updatesBetween = ReportQuery::findUpdateReportsBetween($previousVerification, $this);
+        $initialCash = doubleval($previousVerification->getCash() * 100);
 
-        $currentProductValue = doubleval($this->getTotalProductValue() * 100);
+        //Previous report amounts
+        foreach ($previousVerification->getReportRows() as $reportRow) {
+            $productAmounts[$reportRow->getProductId()]['start'] = $reportRow->getAmount();
+        }
+
+        //Add update values to initial value
+        foreach ($updatesBetween as $report) {
+            $initialCash += doubleval($report->getCash() * 100);
+
+            foreach ($report->getReportRows() as $reportRow) {
+                if (isset($productAmounts[$reportRow->getProductId()]['start'])) {
+                    $productAmounts[$reportRow->getProductId()]['start'] += $reportRow->getAmount();
+                } else {
+                    $productAmounts[$reportRow->getProductId()]['start'] = $reportRow->getAmount();
+                }
+            }
+        }
+
         $currentCash = doubleval($this->getCash() * 100);
 
+        //Current report amounts
+        foreach ($this->getReportRows() as $reportRow) {
+            $productAmounts[$reportRow->getProductId()]['end'] = $reportRow->getAmount();
+        }
+
+        //Calculate expected profit
+        $expectedProfit = 0;
+        foreach ($productAmounts as $productId => $productAmount) {
+            $product = ProductQuery::create()->findPk($productId);
+            $start = !empty($productAmount['start']) ? $productAmount['start'] : 0;
+            $end = !empty($productAmount['end']) ? $productAmount['end'] : 0;
+            $diff = ($start - $end) * $product->getPrice() * 100;
+            $expectedProfit += $diff;
+        }
+
         //We expect that cash must increase the same amount as product value has decreased
-        $this->expectedProfit = ($initialProductValue - $currentProductValue) / 100;
+        $this->expectedProfit = $expectedProfit / 100;
         $this->actualProfit = ($currentCash - $initialCash) / 100;
     }
 
