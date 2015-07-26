@@ -30,7 +30,7 @@ class ReportRow extends BaseReportRow
      * @param string $template
      * @return float|mixed|string
      */
-    public function getAmountFormatted(Product $product, $template = '{amount} <span class="oldPrice">({price})</span>') {
+    public function getAmountFormatted(Product $product, $template = '{amount} <span class="oldPrice">({price}€)</span>') {
         $amount = $this->getAmount();
 
         if ($amount == 0) {

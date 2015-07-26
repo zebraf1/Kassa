@@ -46,3 +46,7 @@ tr.even td {
     background-size: contain;
     padding-right: 30px !important;
 }
+
+.oldPrice {
+    color: #999999;
+}
