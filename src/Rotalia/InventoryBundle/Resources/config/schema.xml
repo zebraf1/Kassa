@@ -47,4 +47,23 @@
             <parameter name="Charset" value="utf8"/>
         </vendor>
     </table>
+
+    <table name="ollekassa_product_purchase" phpName="ProductPurchase">
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="product_id" type="INTEGER" required="true" />
+        <column name="member_id" type="INTEGER" required="true" />
+        <column name="amount" type="DECIMAL" size="10" scale="1" required="true" defaultValue="0" />
+        <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
+        <column name="created_at" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+        <foreign-key foreignTable="ollekassa_product" name="product_purchase_product_fk" onDelete="CASCADE">
+            <reference local="product_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="liikmed" name="product_purchase_member_fk" skipSql="true">
+            <reference local="member_id" foreign="id" />
+        </foreign-key>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+    </table>
 </database>

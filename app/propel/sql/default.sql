@@ -125,6 +125,29 @@ CREATE TABLE `ollekassa_report_row`
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
+-- ollekassa_product_purchase
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_product_purchase`;
+
+CREATE TABLE `ollekassa_product_purchase`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `product_id` INTEGER NOT NULL,
+    `member_id` INTEGER NOT NULL,
+    `amount` DECIMAL(10,1) DEFAULT 0 NOT NULL,
+    `current_price` DECIMAL(10,2),
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `FI_duct_purchase_product_fk` (`product_id`),
+    INDEX `FI_duct_purchase_member_fk` (`member_id`),
+    CONSTRAINT `product_purchase_product_fk`
+        FOREIGN KEY (`product_id`)
+        REFERENCES `ollekassa_product` (`id`)
+        ON DELETE CASCADE
+) ENGINE=InnoDB CHARACTER SET='utf8';
+
+-- ---------------------------------------------------------------------
 -- liikmed
 -- ---------------------------------------------------------------------
 
