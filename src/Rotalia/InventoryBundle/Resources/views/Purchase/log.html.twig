@@ -19,7 +19,7 @@
             </tr>
             {% for productPurchase in productPurchases %}
                 <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
-                    <td>{{ productPurchase.createdAt | customdate('%H:%M - %e. %b %Y') }}</td>
+                    <td>{{ productPurchase.createdAt | custom_date('%H:%M - %e. %b %Y') }}</td>
                     <td>{{ productPurchase.product.name }}</td>
                     <td>{{ productPurchase.member.fullName }}</td>
                     <td>{{ productPurchase.currentPrice }}</td>

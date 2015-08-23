@@ -8,7 +8,7 @@ class RotaliaTwigExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('customdate', array($this, 'customDateFilter')),
+            new \Twig_SimpleFilter('custom_date', array($this, 'customDateFilter')),
         );
     }
 
