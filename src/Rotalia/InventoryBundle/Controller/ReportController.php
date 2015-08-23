@@ -29,8 +29,6 @@ class ReportController extends DefaultController
             throw new AccessDeniedException();
         }
 
-        $products = ProductQuery::getActiveProductsFirst();
-
         if ($isUpdate) {
             $activeReport = new Report();
             $activeReport->setCreatedAt(new DateTime());
@@ -60,6 +58,7 @@ class ReportController extends DefaultController
         } elseif ($reportForm->isSubmitted()) {
             $this->setFlash('error', 'Aruande sisestamisel tekkis vigu!');
         }
+
         if (!$isUpdate) {
             /** @var Report[]|\PropelObjectCollection $reports */
             $reports = ReportQuery::create()
@@ -76,6 +75,8 @@ class ReportController extends DefaultController
                 return $a->getCreatedAt() > $b->getCreatedAt();
             });
 
+            $products = ProductQuery::getActiveProductsFirst();
+
             return $this->render('RotaliaInventoryBundle:Report:list.html.twig', [
                 'products' => $products,
                 'reports' => $reports,
@@ -83,6 +84,8 @@ class ReportController extends DefaultController
                 'reportForm' => $reportForm->createView(),
             ]);
         } else {
+            $products = ProductQuery::getActiveProducts();
+
             return $this->render('RotaliaInventoryBundle:Report:update.html.twig', [
                 'products' => $products,
                 'activeReport' => $activeReport,

@@ -60,8 +60,12 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }} €/{{ product.amountType }}</td>
                     <td>
-                        {{ form_widget(reportForm.reportRowsForm[product.id]) }}
-                        {{ form_errors(reportForm.reportRowsForm[product.id]) }}
+                        {% if reportForm.reportRowsForm[product.id] is defined %}
+                            {{ form_widget(reportForm.reportRowsForm[product.id]) }}
+                            {{ form_errors(reportForm.reportRowsForm[product.id]) }}
+                        {% else %}
+                            Toodet ei leitud
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
