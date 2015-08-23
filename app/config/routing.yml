@@ -6,7 +6,7 @@ _welcome:
     pattern:  /
     defaults: { _controller: RotaliaInventoryBundle:Report:list }
 
-rotalia_inventar:
+rotalia_inventory:
     resource: "@RotaliaInventoryBundle/Resources/config/routing.yml"
     prefix:   /
 

@@ -40,7 +40,7 @@
             <tr>
                 <th colspan="2">Kuupäev:</th>
                 {% for report in reports %}
-                <th>{{ report.getCreatedAtLocalized('%e. %b %Y') }}</th>
+                <th>{{ report.createdAt | custom_date }}</th>
                 {% endfor %}
                 <th>Täna</th>
             </tr>

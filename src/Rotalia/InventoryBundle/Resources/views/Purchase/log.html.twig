@@ -1,0 +1,32 @@
+{#
+ @var productPurchases ProductPurchase[]
+#}
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{% block body %}
+    <h1>Ostutehingute logi:</h1>
+    <div>
+        {% block flash %}{{ parent() }}{% endblock %}
+
+        <table class="data sortable">
+            <tr>
+                <th>Kuupäev</th>
+                <th>Toode</th>
+                <th>Kasutaja</th>
+                <th>Hind</th>
+                <th>Kogus</th>
+                <th>Summa</th>
+            </tr>
+            {% for productPurchase in productPurchases %}
+                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
+                    <td>{{ productPurchase.createdAt | customdate('%H:%M - %e. %b %Y') }}</td>
+                    <td>{{ productPurchase.product.name }}</td>
+                    <td>{{ productPurchase.member.fullName }}</td>
+                    <td>{{ productPurchase.currentPrice }}</td>
+                    <td>{{ productPurchase.amount }}</td>
+                    <td>{{ productPurchase.sum | number_format(2, '.', ',') }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

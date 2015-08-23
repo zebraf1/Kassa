@@ -83,17 +83,6 @@ class Report extends BaseReport
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getCreatedAtLocalized($format, $locale = 'et_EE')
-    {
-        /** @var DateTime $createdAt */
-        $createdAt = parent::getCreatedAt();
-        setlocale(LC_TIME, $locale);
-        return strftime($format, $createdAt->getTimestamp());
-    }
-
-    /**
      * Whether the report is an inventory update report
      *
      * @return bool

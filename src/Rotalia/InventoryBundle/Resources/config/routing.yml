@@ -31,4 +31,8 @@ RotaliaInventory_addItem:
     pattern:  /tooted/lisa/{id}/
     defaults: { _controller: RotaliaInventoryBundle:Inventory:AddItem }
 
+RotaliaInventory_purchaseLog:
+    pattern:  /tehingud/
+    defaults: { _controller: RotaliaInventoryBundle:Purchase:Log }
+
 

@@ -1,7 +1,9 @@
 parameters:
-#    rotalia_inventar.example.class: Rotalia\InventoryBundle\Example
+    rotalia_inventory.twig.extension.class: Rotalia\InventoryBundle\Twig\RotaliaTwigExtension
 
 services:
-#    rotalia_inventar.example:
-#        class: %rotalia_inventar.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    rotalia_inventory.twig.extension:
+        class: '%rotalia_inventory.twig.extension.class%'
+        public: false
+        tags:
+            - { name: twig.extension }
