@@ -15,14 +15,16 @@ class PurchaseController extends DefaultController
      */
     public function logAction(Request $request)
     {
+        $page = $request->get('page', 1);
+        $resultsPerPage = 10;
+
         $productPurchases = ProductPurchaseQuery::create()
             ->orderByCreatedAt(\Criteria::DESC)
-            ->limit(10)
-            ->find()
+            ->paginate($page, $resultsPerPage)
         ;
 
         return $this->render('RotaliaInventoryBundle:Purchase:log.html.twig', [
-            'productPurchases' => $productPurchases
+            'productPurchases' => $productPurchases,
         ]);
     }
 }

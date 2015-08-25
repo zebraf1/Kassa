@@ -1,0 +1,17 @@
+{#
+ @var pager PropelModelPager
+ @var url string
+#}
+<div class="pagination-links">
+    {% if pager.page > pager.firstPage %}
+    <span><a href="{{ url | replace({'__page__':pager.previousPage}) }}">&laquo; Eelmised</a></span>
+    {% endif %}
+
+    {% for i in pager.getLinks(5) %}
+    <span><a href="{{ url | replace({'__page__':i}) }}"{% if i == pager.page %} class="current"{% endif %}>{{ i }}</a></span>
+    {% endfor %}
+
+    {% if pager.page < pager.lastPage %}
+    <span><a href="{{ url | replace({'__page__':pager.nextPage}) }}">Järgmised &raquo;</a></span>
+    {% endif %}
+</div>

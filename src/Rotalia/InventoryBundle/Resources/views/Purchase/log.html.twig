@@ -1,5 +1,5 @@
 {#
- @var productPurchases ProductPurchase[]
+ @var productPurchases ProductPurchase[]|PropelModelPager
 #}
 {% extends "RotaliaInventoryBundle::layout.html.twig" %}
 
@@ -26,7 +26,16 @@
                     <td>{{ productPurchase.amount }}</td>
                     <td>{{ productPurchase.sum | number_format(2, '.', ',') }}</td>
                 </tr>
+            {% else %}
+                <tr>
+                    <td colspan="100">Tehinguid ei leitud</td>
+                </tr>
             {% endfor %}
+
+            {% include 'RotaliaInventoryBundle::pagination.html.twig' with {
+                pager: productPurchases,
+                url: url('RotaliaInventory_purchaseLog', {page:'__page__'})}
+            %}
         </table>
     </div>
 {% endblock %}
