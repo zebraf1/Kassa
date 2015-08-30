@@ -4,14 +4,14 @@
 #}
 <div class="pagination-links">
     {% if pager.page > pager.firstPage %}
-    <span><a href="{{ url | replace({'__page__':pager.previousPage}) }}">&laquo; Eelmised</a></span>
+    <a href="{{ url | replace({'__page__':pager.previousPage}) }}">&laquo; Eelmised</a>
     {% endif %}
 
     {% for i in pager.getLinks(5) %}
-    <span><a href="{{ url | replace({'__page__':i}) }}"{% if i == pager.page %} class="current"{% endif %}>{{ i }}</a></span>
+    <a href="{{ url | replace({'__page__':i}) }}"{% if i == pager.page %} class="current"{% endif %}>{{ i }}</a>
     {% endfor %}
 
     {% if pager.page < pager.lastPage %}
-    <span><a href="{{ url | replace({'__page__':pager.nextPage}) }}">Järgmised &raquo;</a></span>
+    <a href="{{ url | replace({'__page__':pager.nextPage}) }}">Järgmised &raquo;</a>
     {% endif %}
 </div>

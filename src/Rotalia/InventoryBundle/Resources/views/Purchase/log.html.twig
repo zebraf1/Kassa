@@ -1,12 +1,20 @@
 {#
  @var productPurchases ProductPurchase[]|PropelModelPager
+ @var filterForm ProductPurchaseFilterForm | FormView
 #}
 {% extends "RotaliaInventoryBundle::layout.html.twig" %}
+{% form_theme filterForm 'RotaliaInventoryBundle:Form:datePicker.html.twig'
+    'RotaliaInventoryBundle:Form:filter.html.twig'
+%}
 
 {% block body %}
-    <h1>Ostutehingute logi:</h1>
+    <h1>Ostutehingute logi</h1>
     <div>
         {% block flash %}{{ parent() }}{% endblock %}
+
+        <div class="archieve">
+            {{ form(filterForm) }}
+        </div>
 
         <table class="data sortable">
             <tr>

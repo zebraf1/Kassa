@@ -1,5 +1,6 @@
 parameters:
     rotalia_inventory.twig.extension.class: Rotalia\InventoryBundle\Twig\RotaliaTwigExtension
+    form.type.datePicker.class: Rotalia\InventoryBundle\Form\DatePickerType
 
 services:
     rotalia_inventory.twig.extension:
@@ -7,3 +8,7 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+    form.type.datePicker:
+        class: '%form.type.datePicker.class%'
+        tags:
+          - { name: form.type, alias: datePicker }
