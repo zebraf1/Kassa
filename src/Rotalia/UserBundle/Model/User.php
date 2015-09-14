@@ -11,8 +11,9 @@ class User extends BaseUser implements UserInterface
     {
         $roles = ['ROLE_USER'];
 
-        //Jaak, Kiivet, Gerd, Reimo, Imre
-        $admins = [1886, 1968, 2122, 2081, 2073];
+        //TODO: fetch roles from database
+        //Jaak, Kiivet, Gerd, Reimo, Imre, Tõnu
+        $admins = [1886, 1968, 2122, 2081, 2073, 2114];
 
         if (in_array($this->getLiikmedId(), $admins)) {
             $roles[] = 'ROLE_ADMIN';
