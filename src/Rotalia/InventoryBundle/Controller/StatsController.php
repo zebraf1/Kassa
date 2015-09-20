@@ -43,6 +43,10 @@ class StatsController extends DefaultController
         ;
 
         $tempTable = [];
+        /** @var DateTime $firstDay */
+        $firstDay = null;
+        /** @var DateTime $lastDay */
+        $lastDay = null;
 
         foreach ($reports as $report) {
             foreach ($report->getReportRows() as $reportRow) {
@@ -50,6 +54,10 @@ class StatsController extends DefaultController
 
                 if ($report->isUpdate() && !isset($tempTable[$productId])) {
                     continue; //Skip all updates before the initial value is set for a product
+                }
+
+                if ($firstDay === null) {
+                    $firstDay = $report->getCreatedAt();
                 }
 
                 if (!isset($tempTable[$productId])) {
@@ -63,11 +71,17 @@ class StatsController extends DefaultController
 
                 if ($report->isUpdate()) {
                     $tempTable[$productId]['addedAmount'] += $reportRow->getAmount();
+                    //When last report is update, set final amount as last report + added amount
+                    $tempTable[$productId]['finalAmount'] += $reportRow->getAmount();
                 } else {
                     $tempTable[$productId]['finalAmount'] = $reportRow->getAmount();
                 }
             }
+
+            $lastDay = $report->getCreatedAt();
         }
+
+        $daysBetween = $firstDay !== null ? $lastDay->diff($firstDay)->d: 30;
 
         $resultTable = [];
 
@@ -75,7 +89,7 @@ class StatsController extends DefaultController
 
         foreach ($tempTable as $productId => $amounts) {
             $consumed = $amounts['initAmount'] + $amounts['addedAmount'] - $amounts['finalAmount'];
-            $avgConsumption = $consumed > 0 ? round($consumed / 30, 1) : 0;
+            $avgConsumption = $consumed > 0 ? round($consumed / $daysBetween, 1) : 0;
             if ($amounts['finalAmount'] > 0 && $avgConsumption > 0) {
                 $supplyForDays = round($amounts['finalAmount'] / $avgConsumption);
                 $availableUntil = strftime('%e. %B %Y', strtotime('+'.$supplyForDays.' day'));
@@ -97,7 +111,7 @@ class StatsController extends DefaultController
                 }
             }
 
-            $monthlySupply = round($avgConsumption * 30);
+            $monthlySupply = round($avgConsumption * $daysBetween);
 
             $resultTable[] = [
                 'productName' => $amounts['productName'],
