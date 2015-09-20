@@ -35,4 +35,16 @@ RotaliaInventory_purchaseLog:
     pattern:  /tehingud/
     defaults: { _controller: RotaliaInventoryBundle:Purchase:Log }
 
+RotaliaInventory_purchaseLogFilter:
+    pattern:  /tehingud/filter/
+    defaults: { _controller: RotaliaInventoryBundle:Purchase:LogFilter }
+
+#Search
+RotaliaInventory_searchMember:
+    pattern:  /otsi/kasutajat/
+    defaults: { _controller: RotaliaInventoryBundle:Search:Member }
+
+RotaliaInventory_searchProduct:
+    pattern:  /otsi/toodet/
+    defaults: { _controller: RotaliaInventoryBundle:Search:Product }
 

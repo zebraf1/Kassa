@@ -10,4 +10,14 @@ class Member extends BaseMember
     {
         return $this->getEesnimi() . ' ' . $this->getPerenimi();
     }
+
+    /**
+     * Auto-complete representation of this object
+     *
+     * @return string
+     */
+    public function getAjaxName()
+    {
+        return $this->getFullName();
+    }
 }

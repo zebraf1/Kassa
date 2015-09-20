@@ -1,6 +1,7 @@
 parameters:
     rotalia_inventory.twig.extension.class: Rotalia\InventoryBundle\Twig\RotaliaTwigExtension
     form.type.datePicker.class: Rotalia\InventoryBundle\Form\DatePickerType
+    form.type.ajaxSearch.class: Rotalia\InventoryBundle\Form\AjaxSearchType
 
 services:
     rotalia_inventory.twig.extension:
@@ -12,3 +13,9 @@ services:
         class: '%form.type.datePicker.class%'
         tags:
           - { name: form.type, alias: datePicker }
+    form.type.ajaxSearch:
+        class: '%form.type.ajaxSearch.class%'
+        tags:
+          - { name: form.type, alias: ajaxSearch }
+        arguments:
+          - @router

@@ -23,40 +23,28 @@ class PurchaseController extends DefaultController
             ->orderByCreatedAt(\Criteria::DESC)
         ;
 
-        if ($this) {
+        $filterForm = $this->createForm(new ProductPurchaseFilterForm());
 
+        //Get form data from session when available
+        $formData = $request->getSession()->get('purchaseLogFilter');
+        if ($formData !== null) {
+            $filterForm->setData($formData);
         }
 
-        $filterForm = $this->createForm(new ProductPurchaseFilterForm());
-        $filterForm->handleRequest($request);
+        //Apply filters
+        if (!empty($formData['date'])) {
+            /** @var \DateTime $date */
+            $date = $formData['date'];
+            $purchaseQuery->filterByCreatedAt($date->format('Y-m-d 00:00:00'), \Criteria::GREATER_EQUAL);
+            $purchaseQuery->filterByCreatedAt($date->format('Y-m-d 23:59:59'), \Criteria::LESS_EQUAL);
+        }
 
-        if ($filterForm->isSubmitted()) {
-            if ($filterForm->isValid()) {
-                $formData = $filterForm->getData();
+        if (!empty($formData['product']['id'])) {
+            $purchaseQuery->filterByProductId($formData['product']['id']);
+        }
 
-                if (!empty($formData['date'])) {
-                    /** @var \DateTime $date */
-                    $date = $formData['date'];
-                    $purchaseQuery->filterByCreatedAt($date->format('Y-m-d 00:00:00'), \Criteria::GREATER_EQUAL);
-                    $purchaseQuery->filterByCreatedAt($date->format('Y-m-d 23:59:59'), \Criteria::LESS_EQUAL);
-                }
-
-                if (!empty($formData['product'])) {
-                    $purchaseQuery
-                        ->useProductQuery()
-                        ->filterByName('%'.$formData['product'].'%', \Criteria::LIKE)
-                        ->endUse()
-                    ;
-                }
-
-                if (!empty($formData['member'])) {
-                    $purchaseQuery
-                        ->useMemberQuery()
-                        ->filterByFullName('%'.$formData['member'].'%', \Criteria::LIKE)
-                        ->endUse()
-                    ;
-                }
-            }
+        if (!empty($formData['member']['id'])) {
+            $purchaseQuery->filterByMemberId($formData['member']['id']);
         }
 
         $productPurchases = $purchaseQuery->paginate($page, $resultsPerPage);
@@ -65,5 +53,33 @@ class PurchaseController extends DefaultController
             'productPurchases' => $productPurchases,
             'filterForm' => $filterForm->createView(),
         ]);
+    }
+
+
+    /**
+     * Keeps log url clean and saves search parameters to session
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function logFilterAction(Request $request)
+    {
+        $filterForm = $this->createForm(new ProductPurchaseFilterForm());
+        $filterForm->handleRequest($request);
+
+        if ($filterForm->isSubmitted()) {
+            if ($filterForm->isValid()) {
+                $formData = $filterForm->getData();
+                $request->getSession()->set('purchaseLogFilter', $formData);
+            } else {
+                $errors = $filterForm->getErrors(true);
+                $request->getSession()->remove('purchaseLogFilter');
+                foreach ($errors as $error) {
+                    $this->setFlash('error', $error->getMessage());
+                }
+            }
+        }
+
+        return $this->redirect($this->generateUrl('RotaliaInventory_purchaseLog'));
     }
 }

@@ -13,7 +13,6 @@
             <link href="{{ asset('bundles/rotaliainventory/css/main.css') }}" rel="stylesheet">
             <link href="{{ asset('bundles/rotaliainventory/css/inventory.css') }}" rel="stylesheet">
             <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.css') }}" rel="stylesheet">
-            <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.structure.min.css') }}" rel="stylesheet">
             <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.theme.min.css') }}" rel="stylesheet">
         {% endblock %}
 
@@ -33,15 +32,12 @@
                     <a href="{{ path('_welcome') }}">korp! Rotalia õllekassa</a>
                 </div>
                 <div id="profile">
-                    <ul>
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <li><strong>{{ app.user.member.fullName }}</strong></li>
-                            <li><a href="{{ path('fos_user_security_logout') }}">Välju</a></li>
-                        {% else %}
-                            <li><a href="{{ path('fos_user_security_login') }}">Sisene</a></li>
-                        {% endif %}
-                        <li></li>
-                    </ul>
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        <span><strong>{{ app.user.member.fullName }}</strong></span>
+                        <span><a href="{{ path('fos_user_security_logout') }}">Välju</a></span>
+                    {% else %}
+                        <span><a href="{{ path('fos_user_security_login') }}">Sisene</a></span>
+                    {% endif %}
                 </div>
                 <div class="clear">
                     {% include 'RotaliaInventoryBundle::menu.html.twig' %}

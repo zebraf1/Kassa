@@ -74,4 +74,12 @@ class Product extends BaseProduct
 
         return false;
     }
+
+    /**
+     * @return string
+     */
+    public function getAjaxName()
+    {
+        return $this->getName();
+    }
 }

@@ -3,6 +3,8 @@
 namespace Rotalia\InventoryBundle\Form;
 
 
+use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\UserBundle\Model\MemberQuery;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -24,18 +26,21 @@ class ProductPurchaseFilterForm  extends AbstractType
                 'label' => 'Kuupäev',
                 'required' => false,
             ])
-            ->add('product', 'text', [
+            ->add('product', 'ajaxSearch', [
                 'label' => 'Toode',
                 'required' => false,
+                'route' => 'RotaliaInventory_searchProduct',
+                'query_class' => ProductQuery::create()
             ])
-            ->add('member', 'text', [
+            ->add('member', 'ajaxSearch', [
                 'label' => 'Kasutaja',
                 'required' => false,
+                'route' => 'RotaliaInventory_searchMember',
+                'query_class' => MemberQuery::create()
             ])
             ->add('save', 'submit', [
                 'label' => 'Otsi',
             ])
-            ->setMethod('GET')
         ;
     }
 
