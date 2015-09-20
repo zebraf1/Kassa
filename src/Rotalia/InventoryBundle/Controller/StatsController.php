@@ -103,7 +103,7 @@ class StatsController extends DefaultController
                     $availableUntil = 'Toode on otsas ja seda ei kulu';
                     $sort = 4;
                 } elseif ($amounts['finalAmount'] > 0 && $avgConsumption <= 0) {
-                    $availableUntil = 'Toodet ei kulu';
+                    $availableUntil = 'Toodet ei kulu või on täiendatud';
                     $sort = 3;
                 } else {
                     $availableUntil = '?';
@@ -132,7 +132,10 @@ class StatsController extends DefaultController
                 }
 
                 //When sort is equal and 2, then compare available until
-                if ($resultTable[$i]['sort'] > $resultTable[$j]['sort'] || $resultTable[$i]['sort'] == 2 && $resultTable[$i]['supplyForDays'] > $resultTable[$j]['supplyForDays']) {
+                if ($resultTable[$i]['sort'] > $resultTable[$j]['sort']
+                    || $resultTable[$i]['sort'] == 2 && $resultTable[$i]['supplyForDays'] > $resultTable[$j]['supplyForDays']
+                    || $resultTable[$i]['sort'] == 3 && $resultTable[$i]['currentSupply'] > $resultTable[$j]['currentSupply']
+                ) {
                     $tempSort = $resultTable[$i];
                     $resultTable[$i] = $resultTable[$j];
                     $resultTable[$j] = $tempSort;
