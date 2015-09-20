@@ -31,7 +31,7 @@ class StatsController extends DefaultController
             ->filterByCreatedAt($periodStart->format('c'), \Criteria::GREATER_EQUAL)
             ->filterByCreatedAt($periodEnd->format('c'), \Criteria::LESS_EQUAL)
             ->orderByCreatedAt()
-            ->joinReportRow('report_row')
+            ->joinReportRow('report_row', \Criteria::INNER_JOIN)
             ->useReportRowQuery('product', \Criteria::INNER_JOIN)
                 ->useProductQuery(null, \Criteria::INNER_JOIN)
                     ->filterByStatusId(XClassifier::STATUS_ACTIVE)
