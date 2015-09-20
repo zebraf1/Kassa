@@ -31,4 +31,8 @@ RotaliaInventory_addItem:
     pattern:  /tooted/lisa/{id}/
     defaults: { _controller: RotaliaInventoryBundle:Inventory:AddItem }
 
+#Stats
+RotaliaInventory_statsProducts:
+    pattern:  /stats/tooted/
+    defaults: { _controller: RotaliaInventoryBundle:Stats:Products }
 

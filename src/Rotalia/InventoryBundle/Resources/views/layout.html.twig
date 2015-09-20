@@ -43,6 +43,7 @@
                         <li><a href="{{ path('RotaliaReport_list') }}">Õllekassa aruanne</a></li>
                         {% if is_granted('ROLE_ADMIN') %}
                         <li><a href="{{ path('RotaliaInventory_list') }}">Tooted</a></li>
+                        <li><a href="{{ path('RotaliaInventory_statsProducts') }}">Statistika</a></li>
                         {% endif %}
                     </ul>
                 </div>
