@@ -60,13 +60,18 @@ class ReportController extends DefaultController
         }
 
         if (!$isUpdate) {
-            /** @var Report[]|\PropelObjectCollection $reports */
-            $reports = ReportQuery::create()
+            /** @var ReportQuery $reportQuery */
+            $reportQuery = ReportQuery::create()
                 ->orderByCreatedAt(\Criteria::DESC)
-                ->filterByCreatedBeforeReport($activeReport)
-                ->limit(4)
-                ->find()
-            ;
+                ->limit(4);
+
+            //Exclude active report, which is passed separately
+            if (!$activeReport->isNew()) {
+                $reportQuery->filterById($activeReport->getId(), \Criteria::NOT_EQUAL);
+            }
+
+            /** @var Report[]|\PropelObjectCollection $reports */
+            $reports = $reportQuery->find();
 
             //Sort by created at asc
             $reports->uasort(function($a, $b) {

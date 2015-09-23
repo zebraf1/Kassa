@@ -22,20 +22,6 @@ class ReportQuery extends BaseReportQuery
     }
 
     /**
-     * Fetch previous reports
-     *
-     * @return $this
-     */
-    public function filterByCreatedBeforeReport(Report $report)
-    {
-        if (!$report->isNew()) {
-            $this->filterByCreatedAt($report->getCreatedAt(), self::LESS_THAN);
-        }
-
-        return $this;
-    }
-
-    /**
      * Find previous report with type verification
      *
      * @param Report $report

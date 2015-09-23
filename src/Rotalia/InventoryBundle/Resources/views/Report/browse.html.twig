@@ -36,11 +36,11 @@
             <tr>
                 <td colspan="2">Aruande koostaja:</td>
                 {% for report in reports %}
-                    <td>{{ report.getMemberName() }}</td>
+                    <td>{{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}</td>
                 {% endfor %}
             </tr>
             <tr>
-                <td colspan="2">Sularahajääk:</td>
+                <td colspan="2">Sularaha:</td>
                 {% for report in reports %}
                     <td>
                         {% if report.isUpdate() and report.getCash() > 0 %}+{% endif %}{{ report.getCash() | number_format(2, '.', ',') }}€
