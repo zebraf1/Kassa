@@ -1,0 +1,8 @@
+/* Hide top container for print view */
+#container1 {
+    display: none !important;
+}
+
+.noPrint {
+    display: none !important;
+}

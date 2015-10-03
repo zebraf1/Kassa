@@ -12,6 +12,7 @@
         {% block stylesheets %}
             <link href="{{ asset('bundles/rotaliainventory/css/main.css') }}" rel="stylesheet">
             <link href="{{ asset('bundles/rotaliainventory/css/inventory.css') }}" rel="stylesheet">
+            <link href="{{ asset('bundles/rotaliainventory/css/print.css') }}" rel="stylesheet" media="print">
         {% endblock %}
 
         {% block javascripts %}
@@ -40,7 +41,7 @@
                 </div>
                 <div class="clear">
                     <ul>
-                        <li><a href="{{ path('RotaliaReport_list') }}">Õllekassa aruanne</a></li>
+                        <li><a href="{{ path('RotaliaReport_list') }}">Õllekassa aruanded</a></li>
                         {% if is_granted('ROLE_ADMIN') %}
                         <li><a href="{{ path('RotaliaInventory_list') }}">Tooted</a></li>
                         <li><a href="{{ path('RotaliaInventory_statsProducts') }}">Statistika</a></li>

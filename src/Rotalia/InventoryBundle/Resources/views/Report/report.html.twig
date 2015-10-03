@@ -1,0 +1,69 @@
+{#
+ @var products Product[]
+ @var report Report
+#}
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{% block title%}Õllekassa aruanne{% endblock %}
+
+{% block body %}
+    <h1>Aruanne {{ report.getCreatedAtLocalized('%e. %b %Y') }}</h1>
+
+    <div>
+        {% block flash %}{{ parent() }}{% endblock %}
+
+        <div class="noPrint">
+            <a href="#" onclick="history.go(-1)">Tagasi</a>
+        </div>
+
+
+        <table class="data sortable">
+            <tr>
+                <th colspan="2">Kuupäev:</th>
+                <th>
+                    {{ report.getCreatedAtLocalized('%e. %b %Y') }}
+                </th>
+            </tr>
+            <tr>
+                <td colspan="2">Aruande koostaja:</td>
+                <td>{{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Sularaha:</td>
+                <td>
+                    {% if report.isUpdate() and report.getCash() > 0 %}+{% endif %}{{ report.getCash() | number_format(2, '.', ',') }}€
+                </td>
+            </tr>
+            <tr>
+                <th>Toode</th>
+                <th>Hind</th>
+                <th>Kogus</th>
+            </tr>
+
+            {% set rowNum = 0 %}
+
+            {% for product in products %}
+                {% set rowNum = rowNum + 1 %}
+                <tr class="{{ cycle(['even', 'odd'], rowNum) }} {% if not product.isActive %}inactive{% endif %}">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }} €/{{ product.amountType }}</td>
+                    {% set reportRow = report.getReportRowForProduct(product) %}
+                    <td>{% if reportRow %}{{ reportRow.getAmountFormatted(product) | raw }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="2" class="right">
+                    Toodete koguväärtus:
+                </td>
+                <td>
+                    {% if report.isUpdate %}
+                        -
+                    {% else %}
+                        {{ report.getTotalProductValue() | number_format(2, '.', ',') }}
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
