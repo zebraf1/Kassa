@@ -39,7 +39,11 @@
             <tr>
                 <td colspan="2">Aruande koostaja:</td>
                 <td>
-                    {{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}
+                    {% if report.isNew() %}
+                        <strong>{{ app.user.member.fullName }} (Sina)</strong>
+                    {% else %}
+                        {{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}
+                    {% endif %}
                 </td>
             </tr>
             <tr>
