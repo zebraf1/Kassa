@@ -2,6 +2,7 @@
  @var products Product[]
  @var report Report
  @var reportForm ReportType
+ @var isEditForm boolean
 #}
 {% extends "RotaliaInventoryBundle::layout.html.twig" %}
 
@@ -64,9 +65,12 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }} €/{{ product.amountType }}</td>
                     <td>
-                        {% if reportForm.reportRowsFormEdit[product.id] is defined %}
+                        {% if isEditForm and reportForm.reportRowsFormEdit[product.id] is defined %}
                             {{ form_widget(reportForm.reportRowsFormEdit[product.id]) }}
                             {{ form_errors(reportForm.reportRowsFormEdit[product.id]) }}
+                        {% elseif not isEditForm and reportForm.reportRowsForm[product.id] is defined %}
+                            {{ form_widget(reportForm.reportRowsForm[product.id]) }}
+                            {{ form_errors(reportForm.reportRowsForm[product.id]) }}
                         {% else %}
                             Toodet ei leitud
                         {% endif %}

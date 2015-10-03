@@ -155,7 +155,9 @@ class ReportController extends DefaultController
             throw new AccessDeniedException();
         }
 
-        if ($id === null) {
+        $isEditForm = $id !== null;
+
+        if (!$isEditForm) {
             $report = new Report();
             $report->setCreatedAt(new DateTime());
             $report->setType(Report::TYPE_UPDATE);
@@ -181,7 +183,7 @@ class ReportController extends DefaultController
             }
         }
 
-        $reportForm = $this->createForm(new ReportType(true), $report);
+        $reportForm = $this->createForm(new ReportType($isEditForm), $report);
 
         $reportForm->handleRequest($request);
 
@@ -202,6 +204,7 @@ class ReportController extends DefaultController
             'products' => $products,
             'report' => $report,
             'reportForm' => $reportForm->createView(),
+            'isEditForm' => $isEditForm,
         ]);
     }
 }
