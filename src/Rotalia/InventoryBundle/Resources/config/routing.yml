@@ -2,9 +2,17 @@ RotaliaReport_list:
     pattern:  /
     defaults: { _controller: RotaliaInventoryBundle:Report:List, update: 0 }
 
+RotaliaReport_view:
+    pattern:  /aruanne/vaata/{id}/
+    defaults: { _controller: RotaliaInventoryBundle:Report:View }
+
 RotaliaReport_update:
-    pattern:  /aruanne/majandus
-    defaults: { _controller: RotaliaInventoryBundle:Report:List, update: 1 }
+    pattern:  /aruanne/majandus/
+    defaults: { _controller: RotaliaInventoryBundle:Report:Update, id: null }
+
+RotaliaReport_edit:
+    pattern:  /aruanne/muuda/{id}/
+    defaults: { _controller: RotaliaInventoryBundle:Report:Update }
 
 RotaliaReport_browse:
     pattern:  /sirvi/{page}/
@@ -31,6 +39,10 @@ RotaliaInventory_addItem:
     pattern:  /tooted/lisa/{id}/
     defaults: { _controller: RotaliaInventoryBundle:Inventory:AddItem }
 
+#Stats
+RotaliaInventory_statsProducts:
+    pattern:  /stats/tooted/
+    defaults: { _controller: RotaliaInventoryBundle:Stats:Products }
 RotaliaInventory_purchaseLog:
     pattern:  /tehingud/
     defaults: { _controller: RotaliaInventoryBundle:Purchase:Log }

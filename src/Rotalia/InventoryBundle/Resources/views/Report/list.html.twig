@@ -18,7 +18,7 @@
     <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/js/report.js') }}"></script>
 {% endblock %}
 
-{% block title%}Kassa aruanne{% endblock %}
+{% block title%}Õllekassa aruanded{% endblock %}
 
 {% block body %}
     <h1>Kassa aruanne</h1>
@@ -26,7 +26,7 @@
     <div>
         {% block flash %}{{ parent() }}{% endblock %}
 
-        <div>
+        <div class="noPrint">
             <a href="{{ path('RotaliaReport_browse', {'page':1}) }}">Sirvi</a>
             {% if is_granted('ROLE_ADMIN') %}
             <br /><a href="{{ path('RotaliaReport_update') }}">Majanduseestseisja aruande lisamine</a>
@@ -36,11 +36,11 @@
 
         {{ form_start(reportForm, {'attr': {'novalidate': 'novalidate'}}) }}
 
-        <table class="data sortable">
+        <table class="data sortable {% if reports.count > 3 %}w100pc{% endif %}">
             <tr>
                 <th colspan="2">Kuupäev:</th>
                 {% for report in reports %}
-                <th>{{ report.createdAt | custom_date }}</th>
+                <th><a href="{{ path('RotaliaReport_view', {'id':report.id}) }}">{{ report.createdAt | custom_date }}</a></th>
                 {% endfor %}
                 <th>Täna</th>
             </tr>
@@ -61,7 +61,9 @@
             <tr>
                 <td colspan="2">{{ form_label(reportForm.cash) }}</td>
                 {% for report in reports %}
-                    <td>{{ report.getCash() | number_format(2, '.', ',') }}€</td>
+                    <td>
+                        {% if report.isUpdate() and report.getCash() > 0 %}+{% endif %}{{ report.getCash() | number_format(2, '.', ',') }}€
+                    </td>
                 {% endfor %}
 
                 <td>
@@ -175,7 +177,17 @@
                 {% endif %}
             </tr>
 
-            <tr>
+            <tr class="noPrint">
+                <td colspan="2" class="right">Tegevused:</td>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    {% for report in reports %}
+                        <td>
+                            <a href="{{ path('RotaliaReport_edit', {'id':report.id}) }}">Muuda</a>
+                        </td>
+                    {% endfor %}
+                {% endif %}
+
                 <td colspan="100" class="right">
                     <input type="submit" class="button" value="Salvesta" />
                 </td>

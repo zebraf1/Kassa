@@ -7,7 +7,7 @@ P { margin: 0 0 10px 0; clear: both; }
 IMG { border: 0; }
 A { text-decoration: underline; }
 .clear { clear: both; overflow: hidden; }
-.w100p { width: 100%; }
+.w100pc { width: 100%; }
 .nowrap { white-space:nowrap; }
 #mainteinance { padding: 10px; color: #800; background-color: #fee; border-bottom: 1px solid #800; font-weight: bold; text-align: center; }
 #mainteinance SPAN { font-size: 10px; color: #a00; font-weight: normal; }
@@ -29,7 +29,7 @@ H2.toggle A { padding-left: 25px; text-decoration: none }
 #container3 { background: #fff; width: 950px; padding: 35px; margin: auto; text-align: left; }
 #footer { background: url(../images/tsirkel.png) no-repeat 50% 0; height: 130px; clear: both; margin-top: 1px; }
 H1 { font-family: Georgia, "Bitstream Charter", "Century Schoolbook L", "Liberation Serif", Times, serif; text-shadow: #ddd 2px 2px 2px; font-style: italic; font-size: 35px; font-weight: normal; line-height: 50px; margin: 0 0 10px 0; }
-TABLE.data { width: 100%; border-collapse: collapse; border-spacing: 0; border: none; margin-top: 10px; }
+TABLE.data { border-collapse: collapse; border-spacing: 0; border: none; margin-top: 10px; }
 TABLE.form { border-collapse: separate; }
 TABLE.data TH, TABLE.data TD { vertical-align: top; border: 1px solid #ddd; padding: 2px 4px; background-color: #fff; white-space:nowrap; }
 TABLE.data TH { padding: 6px 4px; text-align: left; font-weight: bold; background: #eee; }
@@ -128,3 +128,6 @@ A, .nr, .parent .desc DIV, H1, .parent .desc A, TABLE.data .header { color: #3b5
 #menu { background-color: #3b5999; }
 #menu .clear LI A { background-color: #637aae; }
 #menu .clear LI A:hover, #menu .clear LI A.active { background-color: #738abe; color: #fff; }
+.credit-negative {color: red;}
+.credit-positive {color: limegreen;}
+.credit-null {color: inherit;}

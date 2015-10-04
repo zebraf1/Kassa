@@ -67,6 +67,24 @@ class Report extends BaseReport
     }
 
     /**
+     * Get ReportRow object for form
+     *
+     * @return array
+     */
+    public function getReportRowsFormEdit()
+    {
+        $reportRows = $this->getReportRows();
+
+        $reportRowsByProductId = [];
+
+        foreach ($reportRows as $reportRow) {
+            $reportRowsByProductId[$reportRow->getProductId()] = $reportRow;
+        }
+
+        return $reportRowsByProductId;
+    }
+
+    /**
      * Setter for form
      *
      * @param $v

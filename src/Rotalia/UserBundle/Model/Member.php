@@ -6,9 +6,31 @@ use Rotalia\UserBundle\Model\om\BaseMember;
 
 class Member extends BaseMember
 {
+    private $credit;
+
     public function getFullName()
     {
         return $this->getEesnimi() . ' ' . $this->getPerenimi();
+    }
+
+    /**
+     * @return MemberCredit
+     * @throws \PropelException
+     */
+    public function getCredit()
+    {
+        //Local cache
+        if ($this->credit !== null) {
+            return $this->credit;
+        }
+
+        $credit = MemberCreditQuery::create()
+            ->filterByMember($this)
+            ->findOneOrCreate();
+
+        $this->credit = $credit;
+
+        return $credit;
     }
 
     /**

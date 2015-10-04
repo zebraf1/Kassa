@@ -255,5 +255,42 @@ CREATE TABLE `users`
     INDEX `liikmed_id` (`liikmed_id`)
 ) ENGINE=MyISAM;
 
+-- ---------------------------------------------------------------------
+-- ollekassa_member_credit
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_member_credit`;
+
+CREATE TABLE `ollekassa_member_credit`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `member_id` INTEGER NOT NULL,
+    `credit` DECIMAL(10,2) DEFAULT 0 NOT NULL,
+    `comment` VARCHAR(225) DEFAULT '',
+    `version` INTEGER DEFAULT 0,
+    `version_created_at` DATETIME,
+    `version_created_by` VARCHAR(100),
+    PRIMARY KEY (`id`),
+    INDEX `member_id` (`member_id`)
+) ENGINE=InnoDB CHARACTER SET='utf8';
+
+-- ---------------------------------------------------------------------
+-- ollekassa_member_credit_version
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_member_credit_version`;
+
+CREATE TABLE `ollekassa_member_credit_version`
+(
+    `id` INTEGER NOT NULL,
+    `member_id` INTEGER NOT NULL,
+    `credit` DECIMAL(10,2) DEFAULT 0 NOT NULL,
+    `comment` VARCHAR(225) DEFAULT '',
+    `version` INTEGER DEFAULT 0 NOT NULL,
+    `version_created_at` DATETIME,
+    `version_created_by` VARCHAR(100),
+    PRIMARY KEY (`id`,`version`)
+) ENGINE=MyISAM;
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

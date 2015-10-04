@@ -1,7 +1,8 @@
 {#
  @var products Product[]
- @var activeReport Report
+ @var report Report
  @var reportForm ReportType
+ @var isEditForm boolean
 #}
 {% extends "RotaliaInventoryBundle::layout.html.twig" %}
 
@@ -16,16 +17,16 @@
     <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/js/report.js') }}"></script>
 {% endblock %}
 
-{% block title%}Majanduseestseisja aruanne{% endblock %}
+{% block title%}Õllekassa aruanne{% endblock %}
 
 {% block body %}
-    <h1>Majanduseestseisja aruanne</h1>
+    <h1>{% if report.isUpdate %}Majanduseestseisja aruande lisamine{% else %}Aruande muutmine{% endif %}</h1>
 
     <div>
         {% block flash %}{{ parent() }}{% endblock %}
 
         <div>
-            <a href="{{ url('RotaliaReport_list') }}">Tagasi</a>
+            <a href="#" onclick="history.go(-1)">Tagasi</a>
         </div>
 
 
@@ -34,12 +35,16 @@
         <table class="data sortable">
             <tr>
                 <th colspan="2">Kuupäev:</th>
-                <th width="100%">Täna</th>
+                <th>{% if report.isNew %}Täna{% else %}{{ report.getCreatedAtLocalized('%e. %b %Y') }}{% endif %}</th>
             </tr>
             <tr>
                 <td colspan="2">Aruande koostaja:</td>
                 <td>
-                    <strong>{{ app.user.member.fullName }} (Sina)</strong>
+                    {% if report.isNew() %}
+                        <strong>{{ app.user.member.fullName }} (Sina)</strong>
+                    {% else %}
+                        {{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}
+                    {% endif %}
                 </td>
             </tr>
             <tr>
@@ -60,7 +65,10 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }} €/{{ product.amountType }}</td>
                     <td>
-                        {% if reportForm.reportRowsForm[product.id] is defined %}
+                        {% if isEditForm and reportForm.reportRowsFormEdit[product.id] is defined %}
+                            {{ form_widget(reportForm.reportRowsFormEdit[product.id]) }}
+                            {{ form_errors(reportForm.reportRowsFormEdit[product.id]) }}
+                        {% elseif not isEditForm and reportForm.reportRowsForm[product.id] is defined %}
                             {{ form_widget(reportForm.reportRowsForm[product.id]) }}
                             {{ form_errors(reportForm.reportRowsForm[product.id]) }}
                         {% else %}

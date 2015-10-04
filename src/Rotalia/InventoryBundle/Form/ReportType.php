@@ -9,18 +9,28 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ReportType extends AbstractType
 {
+    private $isEditForm;
+
+    /**
+     * @param bool $isEditForm  Includes only saved report rows when edit form
+     */
+    public function __construct($isEditForm = false)
+    {
+        $this->isEditForm = $isEditForm;
+    }
 
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $reportRowsFormName = $this->isEditForm ? 'reportRowsFormEdit' : 'reportRowsForm';
         $builder
             ->add('cash', 'number', array(
-                'label' => 'Sularahajääk:',
+                'label' => 'Sularaha:',
                 'required' => true,
             ))
-            ->add('reportRowsForm', 'collection', [
+            ->add($reportRowsFormName, 'collection', [
                 'type' => new ReportRowType()
             ])
         ;
