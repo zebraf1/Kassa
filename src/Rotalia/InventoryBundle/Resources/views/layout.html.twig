@@ -30,13 +30,15 @@
                 </div>
                 <div id="profile">
                     <ul>
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") -%}
                             <li><strong>{{ app.user.member.fullName }}</strong></li>
+                            {#<li class="credit-{{ app.user.member.credit.creditStatus }}">#}
+                                {#{{- app.user.member.credit.credit | number_format(2, '.', ',') ~ '€' -}}#}
+                            {#</li>#}
                             <li><a href="{{ path('fos_user_security_logout') }}">Välju</a></li>
                         {% else %}
                             <li><a href="{{ path('fos_user_security_login') }}">Sisene</a></li>
-                        {% endif %}
-                        <li></li>
+                        {%- endif %}
                     </ul>
                 </div>
                 <div class="clear">

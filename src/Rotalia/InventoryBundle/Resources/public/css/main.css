@@ -131,3 +131,6 @@ A, .nr, .parent .desc DIV, H1, .parent .desc A, TABLE.data .header { color: #3b5
 #menu { background-color: #3b5999; }
 #menu .clear LI A { background-color: #637aae; }
 #menu .clear LI A:hover, #menu .clear LI A.active { background-color: #738abe; color: #fff; }
+.credit-negative {color: red;}
+.credit-positive {color: limegreen;}
+.credit-null {color: inherit;}
