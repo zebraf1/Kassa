@@ -35,7 +35,7 @@
         <table class="data sortable">
             <tr>
                 <th colspan="2">Kuupäev:</th>
-                <th>{% if report.isNew %}Täna{% else %}{{ report.getCreatedAtLocalized('%e. %b %Y') }}{% endif %}</th>
+                <th>{% if report.isNew %}Täna{% else %}{{ report.createdAt | custom_date }}{% endif %}</th>
             </tr>
             <tr>
                 <td colspan="2">Aruande koostaja:</td>
