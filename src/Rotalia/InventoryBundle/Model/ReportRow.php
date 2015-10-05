@@ -24,6 +24,19 @@ class ReportRow extends BaseReportRow
     }
 
     /**
+     * @inheritdoc
+     */
+    public function setAmount($v)
+    {
+        //Convert empty string to 0
+        if (empty($v)) {
+            $v = 0;
+        }
+
+        return parent::setAmount($v);
+    }
+
+    /**
      * Return ReportRow amount and old price for template
      *
      * @param Product $product
