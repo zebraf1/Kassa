@@ -12,8 +12,8 @@
             <td>
                 {% if guardMember %}
                     <span{% if report.memberId == guardMember.id %} class="guardDutySuccess"{% endif %}>
-                                    {{ guardMember.fullName }}
-                                </span>
+                        {{ guardMember.fullName }}
+                    </span>
                 {% else %}
                     <i>Valve puudub</i>
                 {% endif %}
