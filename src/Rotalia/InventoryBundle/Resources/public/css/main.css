@@ -134,3 +134,5 @@ A, .nr, .parent .desc DIV, H1, .parent .desc A, TABLE.data .header { color: #3b5
 .credit-negative {color: red;}
 .credit-positive {color: limegreen;}
 .credit-null {color: inherit;}
+
+.guardDutySuccess { color: #080; }

@@ -1,0 +1,34 @@
+{#
+ @var reports Report[]
+ @var activeReport Report[]
+#}
+<tr>
+    <td colspan="2">Valvekohuslane:</td>
+    {% for report in reports %}
+        {% if report.isUpdate %}
+            <td>-</td>
+        {% else %}
+            {% set guardMember = report.guardDutyMember %}
+            <td>
+                {% if guardMember %}
+                    <span{% if report.memberId == guardMember.id %} class="guardDutySuccess"{% endif %}>
+                                    {{ guardMember.fullName }}
+                                </span>
+                {% else %}
+                    <i>Valve puudub</i>
+                {% endif %}
+            </td>
+        {% endif %}
+    {% endfor %}
+
+    {% if activeReport is defined %}
+    <td>
+        {% set guardMember = activeReport.guardDutyMember %}
+        {% if guardMember %}
+            {{ guardMember.fullName }}
+        {% else %}
+            <i>Valve puudub</i>
+        {% endif %}
+    </td>
+    {% endif %}
+</tr>

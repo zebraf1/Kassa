@@ -28,6 +28,7 @@
                 <td colspan="2">Aruande koostaja:</td>
                 <td>{{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}</td>
             </tr>
+            {% include 'RotaliaInventoryBundle:Report:guardDutyRow.html.twig' with {'reports': [report]} %}
             <tr>
                 <td colspan="2">Sularaha:</td>
                 <td>

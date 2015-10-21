@@ -115,6 +115,50 @@
         </vendor>
     </table>
 
+    <table name="valved" phpName="GuardDuty" idMethod="native">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="valve_tsyklid_id" phpName="ValveTsyklidId" type="INTEGER" required="true" defaultValue="0"/>
+        <column name="kuupaev" phpName="Date" type="DATE" required="true" defaultValue="0000-00-00"/>
+        <column name="aeg" phpName="Time" type="TINYINT" required="true" defaultValue="0"/>
+        <column name="liikmed_id" phpName="MemberId" type="INTEGER" required="true" defaultValue="0"/>
+        <column name="majavan" phpName="IsAssigned" type="TINYINT" required="true" defaultValue="0"/>
+        <column name="puudus" phpName="WasAbsent" type="INTEGER" size="1" required="true"/>
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+        <foreign-key foreignTable="liikmed" name="liikmed_fk" skipSql="true">
+            <reference local="liikmed_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="valve_tsyklid" name="valve_tsyklid_fk" skipSql="true">
+            <reference local="valve_tsyklid_id" foreign="id" />
+        </foreign-key>
+    </table>
+
+    <table name="valve_tsyklid" phpName="GuardDutyCycle" idMethod="native">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="nimi" phpName="Name" type="VARCHAR" size="100" required="true" defaultValue="Valve"/>
+        <column name="valvajad" phpName="Guardians" type="CHAR" sqlType="enum('koik','reb','tl')" required="true" defaultValue="koik"/>
+        <column name="koondised_id" phpName="ConventId" type="INTEGER" required="true" defaultValue="0"/>
+        <column name="algaeg" phpName="StartAt" type="DATE" required="true" defaultValue="0000-00-00"/>
+        <column name="loppaeg" phpName="EndAt" type="DATE" required="true" defaultValue="0000-00-00"/>
+        <column name="etapp" phpName="Stage" type="TINYINT" required="true" defaultValue="0"/>
+        <index name="algaeg">
+            <index-column name="algaeg"/>
+        </index>
+        <index name="loppaeg">
+            <index-column name="loppaeg"/>
+        </index>
+        <index name="etapp">
+            <index-column name="etapp"/>
+        </index>
+        <index name="koondised_id">
+            <index-column name="koondised_id"/>
+        </index>
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+    </table>
+
     <table name="ollekassa_member_credit" phpName="MemberCredit" idMethod="native">
         <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
         <column name="member_id" phpName="MemberId" type="INTEGER" required="true"/>

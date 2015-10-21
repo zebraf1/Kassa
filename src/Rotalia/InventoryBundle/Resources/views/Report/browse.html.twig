@@ -39,6 +39,7 @@
                     <td>{{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}</td>
                 {% endfor %}
             </tr>
+            {% include 'RotaliaInventoryBundle:Report:guardDutyRow.html.twig' with {'reports': reports} %}
             <tr>
                 <td colspan="2">Sularaha:</td>
                 {% for report in reports %}
