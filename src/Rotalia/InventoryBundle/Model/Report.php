@@ -109,7 +109,7 @@ class Report extends BaseReport
         /** @var DateTime $createdAt */
         $createdAt = parent::getCreatedAt();
         setlocale(LC_TIME, $locale);
-        return strftime($format, $createdAt->getTimestamp());
+        return utf8_encode(strftime($format, $createdAt->getTimestamp()));
     }
 
     /**
