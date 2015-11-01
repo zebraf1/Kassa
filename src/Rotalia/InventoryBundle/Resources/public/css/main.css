@@ -128,7 +128,7 @@ A.inactive { font-weight: normal; color: #999; }
 /* Colors */
 INPUT.text, INPUT.hasDatepicker, TEXTAREA, SELECT, INPUT.button { border-color: #3b5999; border-left-color: #1b3979; border-top-color: #1b3979; }
 A, .nr, .parent .desc DIV, H1, .parent .desc A, TABLE.data .header { color: #3b5999; }
-#menu { background-color: #3b5999; }
+#container1 { background-color: #3b5999; }
 #menu .clear LI A { background-color: #637aae; }
 #menu .clear LI A:hover, #menu .clear LI A.active { background-color: #738abe; color: #fff; }
 .credit-negative {color: red;}
