@@ -8,6 +8,10 @@ security:
             form_login:
                 provider: fos_userbundle
                 csrf_provider: form.csrf_provider
+            remember_me:
+                key:      "%secret%"
+                lifetime: 31536000 # 1 year in seconds
+                path:     /
             logout:       true
             anonymous:    true
 
