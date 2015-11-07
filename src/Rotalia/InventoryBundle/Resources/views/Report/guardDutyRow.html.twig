@@ -8,7 +8,7 @@
         {% if report.isUpdate %}
             <td>-</td>
         {% else %}
-            {% set guardMembers = report.guardDutyMember %}
+            {% set guardMembers = report.guardDutyMembers %}
             <td>
                 {% if guardMembers|length > 0 %}
                     {% for guardMember in guardMembers %}
@@ -24,7 +24,7 @@
     {% endfor %}
 
     {% if activeReport is defined %}
-        {% set guardMembers = activeReport.guardDutyMember %}
+        {% set guardMembers = activeReport.guardDutyMembers %}
         <td>
             {% if guardMembers|length > 0 %}
                 {% for guardMember in guardMembers %}

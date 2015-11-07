@@ -320,12 +320,12 @@ class Report extends BaseReport
     }
 
     /**
-     * Returns the member who should be on guard duty for the same date
+     * Returns the members who should be on guard duty for the same date
      *
      * @return null|Member
      * @throws \PropelException
      */
-    public function getGuardDutyMember()
+    public function getGuardDutyMembers()
     {
         /** @var GuardDuty[] $guardDuties */
         $guardDuties = GuardDutyQuery::create()
@@ -339,6 +339,11 @@ class Report extends BaseReport
         $result = [];
 
         foreach ($guardDuties as $guardDuty) {
+            // Sometimes member ID is 0, avoid error
+            if (!$guardDuty->getMemberId()) {
+                continue;
+            }
+
             //Avoid duplicate members when in 2 duty cycles at the same time
             $result[$guardDuty->getMemberId()] = $guardDuty->getMember();
         }
