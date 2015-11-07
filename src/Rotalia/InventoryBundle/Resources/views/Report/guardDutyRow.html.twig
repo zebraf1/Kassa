@@ -13,7 +13,7 @@
                 {% if guardMembers|length > 0 %}
                     {% for guardMember in guardMembers %}
                         <span{% if report.memberId == guardMember.id %} class="guardDutySuccess"{% endif %}>
-                            {{ guardMember.fullName }}{% if loop.index < guardMembers|length %};{% endif %}
+                            {{ guardMember.fullName }}{% if loop.index < guardMembers|length %}<br />{% endif %}
                         </span>
                     {% endfor %}
                 {% else %}

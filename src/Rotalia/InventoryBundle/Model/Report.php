@@ -339,7 +339,8 @@ class Report extends BaseReport
         $result = [];
 
         foreach ($guardDuties as $guardDuty) {
-            $result[] = $guardDuty->getMember();
+            //Avoid duplicate members when in 2 duty cycles at the same time
+            $result[$guardDuty->getMemberId()] = $guardDuty->getMember();
         }
 
         return $result;
