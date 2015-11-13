@@ -20,7 +20,11 @@ class GuardDuty extends BaseGuardDuty
         if ($member === null) {
             $member = new Member();
             $member->setId($this->getMemberId());
-            $member->setEesnimi('Tundmatu '.$this->getMemberId());
+            if ($this->getMemberId() == -1) {
+                $member->setEesnimi('Toimub üritus');
+            } else {
+                $member->setEesnimi('Tundmatu '.$this->getMemberId());
+            }
         }
 
         return $member;
