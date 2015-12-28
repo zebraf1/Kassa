@@ -43,8 +43,14 @@ RotaliaInventory_addItem:
 RotaliaInventory_statsProducts:
     pattern:  /stats/tooted/
     defaults: { _controller: RotaliaInventoryBundle:Stats:Products }
+
+#Transactions
 RotaliaInventory_purchaseLog:
     pattern:  /tehingud/
+    defaults: { _controller: RotaliaInventoryBundle:Transactions:Log }
+
+RotaliaInventory_purchaseLogMember:
+    pattern:  /tehingud/liige/{memberId}/
     defaults: { _controller: RotaliaInventoryBundle:Transactions:Log }
 
 RotaliaInventory_purchaseLogFilter:

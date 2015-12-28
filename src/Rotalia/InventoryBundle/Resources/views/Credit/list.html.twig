@@ -23,7 +23,7 @@
                         {{- member.credit.credit | number_format(2, '.', ',') ~ '€' -}}
                     </td>
                     <td>
-                        Muuda
+                        <a href="{{ path('RotaliaInventory_purchaseLogMember', {'memberId':member.id}) }}">Logi</a>
                     </td>
                 </tr>
             {% else %}

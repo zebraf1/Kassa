@@ -12,36 +12,29 @@ class TransactionsController extends DefaultController
     /**
      * View purchase log
      * @param Request $request
+     * @param null $memberId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function logAction(Request $request)
+    public function logAction(Request $request, $memberId = null)
     {
         $page = $request->get('page', 1);
         $resultsPerPage = 10;
-        $reset = $request->get('reset', false);
-        $member = $this->getMember();
 
         $purchaseQuery = TransactionQuery::create()
             ->orderByCreatedAt(\Criteria::DESC);
 
         $filterForm = $this->createForm(new TransactionFilterForm());
 
-        //Get form data from session when available
-        $formData = $request->getSession()->get('purchaseLogFilter');
-        if ($formData !== null) {
-            $filterForm->setData($formData);
+        if ($memberId !== null) {
+            $formData = [
+                'member' => ['id' => $memberId]
+            ];
         } else {
-            // Reset if not filtered to show current user
-            $reset = true;
+            //Get form data from session when available
+            $formData = $request->getSession()->get('purchaseLogFilter');
         }
 
-        // Reset filter form
-        if ($reset) {
-            $formData = [
-                'member' => ['id' => $member->getId()]
-            ];
-            $filterForm->setData($formData);
-        }
+        $filterForm->setData($formData);
 
         //Apply filters
         if (!empty($formData['date'])) {

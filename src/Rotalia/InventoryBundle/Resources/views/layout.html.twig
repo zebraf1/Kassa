@@ -36,7 +36,7 @@
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") -%}
                         <span><strong>{{ app.user.member.fullName }}</strong></span>
                         <span class="credit-{{ app.user.member.credit.creditStatus }}">
-                            <a href="{{ path('RotaliaInventory_purchaseLog', {'reset':1}) }}">
+                            <a href="{{ path('RotaliaInventory_purchaseLogMember', {'memberId':app.user.member.id}) }}">
                                 {{- app.user.member.credit.credit | number_format(2, '.', ',') ~ '€' -}}
                             </a>
                         </span>
