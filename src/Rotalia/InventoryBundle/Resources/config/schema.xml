@@ -20,6 +20,9 @@
         <column name="member_id" type="INTEGER" />
         <column name="cash" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="type" type="VARCHAR" required="true" defaultValue="VERIFICATION" />
+        <index name="member_id">
+            <index-column name="member_id"/>
+        </index>
         <foreign-key foreignTable="liikmed" name="report_member_fk" skipSql="true">
             <reference local="member_id" foreign="id" />
         </foreign-key>
@@ -48,18 +51,27 @@
         </vendor>
     </table>
 
-    <table name="ollekassa_product_purchase" phpName="ProductPurchase">
+    <table name="ollekassa_transaction" phpName="Transaction">
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-        <column name="product_id" type="INTEGER" required="true" />
+        <column name="type" type="VARCHAR" required="true" />
+        <column name="product_id" type="INTEGER" required="false" />
         <column name="member_id" type="INTEGER" required="true" />
-        <column name="amount" type="DECIMAL" size="10" scale="1" required="true" defaultValue="0" />
+        <column name="amount" type="DECIMAL" size="10" scale="1" required="false" />
         <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
+        <column name="sum" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="created_at" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
-        <foreign-key foreignTable="ollekassa_product" name="product_purchase_product_fk" onDelete="CASCADE">
+        <column name="created_by" type="INTEGER" required="true" />
+        <index name="member_id">
+            <index-column name="member_id"/>
+        </index>
+        <foreign-key foreignTable="ollekassa_product" name="product_purchase_product_fk">
             <reference local="product_id" foreign="id" />
         </foreign-key>
         <foreign-key foreignTable="liikmed" name="product_purchase_member_fk" skipSql="true">
             <reference local="member_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="liikmed" name="product_purchase_created_by_fk" skipSql="true">
+            <reference local="created_by" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>

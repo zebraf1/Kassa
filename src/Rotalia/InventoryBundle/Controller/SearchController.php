@@ -27,9 +27,13 @@ class SearchController extends DefaultController
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 100);
 
+        // TODO: get selected convent id
+        $conventId = 6; // Tallinn
+
         /** @var Member[] $members */
         $members = MemberQuery::create()
             ->filterByFullName('%'.$name.'%', \Criteria::LIKE)
+            ->filterByKoondisedId($conventId)
             ->orderByEesnimi()
             ->orderByPerenimi()
             ->paginate($page, $limit)

@@ -1,6 +1,6 @@
 {#
- @var productPurchases ProductPurchase[]|PropelModelPager
- @var filterForm ProductPurchaseFilterForm | FormView
+ @var transactions Transaction[]|PropelModelPager
+ @var filterForm TransactionFilterForm | FormView
 #}
 {% extends "RotaliaInventoryBundle::layout.html.twig" %}
 
@@ -33,20 +33,37 @@
         <table class="data sortable">
             <tr>
                 <th>Kuupäev</th>
+                <th>Tehing</th>
                 <th>Toode</th>
                 <th>Kasutaja</th>
                 <th>Hind</th>
                 <th>Kogus</th>
                 <th>Summa</th>
             </tr>
-            {% for productPurchase in productPurchases %}
+            {% for transaction in transactions %}
                 <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
-                    <td>{{ productPurchase.createdAt | custom_date('%H:%M - %e. %b %Y') }}</td>
-                    <td>{{ productPurchase.product.name }}</td>
-                    <td>{{ productPurchase.member.fullName }}</td>
-                    <td>{{ productPurchase.currentPrice }}</td>
-                    <td>{{ productPurchase.amount }}</td>
-                    <td>{{ productPurchase.sum | number_format(2, '.', ',') }}</td>
+                    <td>{{ transaction.createdAt | custom_date('%H:%M - %e. %b %Y') }}</td>
+                    <td>{{ transaction.typeText }}</td>
+                    {% if transaction.isPayment %}
+                        <td>Krediit</td>
+                        <td>
+                            {{ transaction.getMemberRelatedByMemberId.fullName }}
+                            {% if transaction.type == constant('TYPE_CREDIT_PAYMENT', transaction) %}
+                                <br /><strong>Algataja:</strong> {{ transaction.getMemberRelatedByCreatedBy.fullName }}
+                            {% endif %}
+                        </td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td class="credit-{{ transaction.sum > 0 ? 'positive' : 'negative' }}">
+                            {{ transaction.sum > 0 ? '+' : '' }}{{ transaction.sum | number_format(2, '.', ',') }}
+                        </td>
+                    {% else %}
+                        <td>{{ transaction.product.name }}</td>
+                        <td>{{ transaction.getMemberRelatedByMemberId.fullName }}</td>
+                        <td>{{ transaction.currentPrice }}</td>
+                        <td>{{ transaction.amount }}</td>
+                        <td>{{ transaction.sum | number_format(2, '.', ',') }}</td>
+                    {% endif %}
                 </tr>
             {% else %}
                 <tr>
@@ -55,7 +72,7 @@
             {% endfor %}
 
             {% include 'RotaliaInventoryBundle::pagination.html.twig' with {
-                pager: productPurchases,
+                pager: transactions,
                 url: url('RotaliaInventory_purchaseLog', {page:'__page__'})}
             %}
         </table>

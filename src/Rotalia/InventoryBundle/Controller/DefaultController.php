@@ -2,6 +2,7 @@
 
 namespace Rotalia\InventoryBundle\Controller;
 
+use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContextInterface;
@@ -30,5 +31,17 @@ class DefaultController extends Controller
         /** @var SecurityContextInterface $securityContext */
         $securityContext = $this->get('security.context');
         return $securityContext->isGranted($role);
+    }
+
+    /**
+     * @return null|Member
+     */
+    public function getMember()
+    {
+        if ($user = $this->getUser()) {
+            return $user->getMember();
+        }
+
+        return null;
     }
 }

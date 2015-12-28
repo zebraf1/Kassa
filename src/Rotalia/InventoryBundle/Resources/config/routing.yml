@@ -45,11 +45,11 @@ RotaliaInventory_statsProducts:
     defaults: { _controller: RotaliaInventoryBundle:Stats:Products }
 RotaliaInventory_purchaseLog:
     pattern:  /tehingud/
-    defaults: { _controller: RotaliaInventoryBundle:Purchase:Log }
+    defaults: { _controller: RotaliaInventoryBundle:Transactions:Log }
 
 RotaliaInventory_purchaseLogFilter:
     pattern:  /tehingud/filter/
-    defaults: { _controller: RotaliaInventoryBundle:Purchase:LogFilter }
+    defaults: { _controller: RotaliaInventoryBundle:Transactions:LogFilter }
 
 #Search
 RotaliaInventory_searchMember:

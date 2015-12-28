@@ -170,10 +170,6 @@
         <foreign-key foreignTable="liikmed" name="member_credit_liikmed_fk" skipSql="true">
             <reference local="member_id" foreign="id" />
         </foreign-key>
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-        </behavior>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>
             <parameter name="Charset" value="utf8"/>

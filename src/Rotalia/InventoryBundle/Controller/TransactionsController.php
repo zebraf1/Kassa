@@ -3,11 +3,11 @@
 namespace Rotalia\InventoryBundle\Controller;
 
 
-use Rotalia\InventoryBundle\Form\ProductPurchaseFilterForm;
-use Rotalia\InventoryBundle\Model\ProductPurchaseQuery;
+use Rotalia\InventoryBundle\Form\TransactionFilterForm;
+use Rotalia\InventoryBundle\Model\TransactionQuery;
 use Symfony\Component\HttpFoundation\Request;
 
-class PurchaseController extends DefaultController
+class TransactionsController extends DefaultController
 {
     /**
      * View purchase log
@@ -18,16 +18,28 @@ class PurchaseController extends DefaultController
     {
         $page = $request->get('page', 1);
         $resultsPerPage = 10;
+        $reset = $request->get('reset', false);
+        $member = $this->getMember();
 
-        $purchaseQuery = ProductPurchaseQuery::create()
-            ->orderByCreatedAt(\Criteria::DESC)
-        ;
+        $purchaseQuery = TransactionQuery::create()
+            ->orderByCreatedAt(\Criteria::DESC);
 
-        $filterForm = $this->createForm(new ProductPurchaseFilterForm());
+        $filterForm = $this->createForm(new TransactionFilterForm());
 
         //Get form data from session when available
         $formData = $request->getSession()->get('purchaseLogFilter');
         if ($formData !== null) {
+            $filterForm->setData($formData);
+        } else {
+            // Reset if not filtered to show current user
+            $reset = true;
+        }
+
+        // Reset filter form
+        if ($reset) {
+            $formData = [
+                'member' => ['id' => $member->getId()]
+            ];
             $filterForm->setData($formData);
         }
 
@@ -47,10 +59,10 @@ class PurchaseController extends DefaultController
             $purchaseQuery->filterByMemberId($formData['member']['id']);
         }
 
-        $productPurchases = $purchaseQuery->paginate($page, $resultsPerPage);
+        $transactions = $purchaseQuery->paginate($page, $resultsPerPage);
 
         return $this->render('RotaliaInventoryBundle:Purchase:log.html.twig', [
-            'productPurchases' => $productPurchases,
+            'transactions' => $transactions,
             'filterForm' => $filterForm->createView(),
         ]);
     }
@@ -64,7 +76,7 @@ class PurchaseController extends DefaultController
      */
     public function logFilterAction(Request $request)
     {
-        $filterForm = $this->createForm(new ProductPurchaseFilterForm());
+        $filterForm = $this->createForm(new TransactionFilterForm());
         $filterForm->handleRequest($request);
 
         if ($filterForm->isSubmitted()) {

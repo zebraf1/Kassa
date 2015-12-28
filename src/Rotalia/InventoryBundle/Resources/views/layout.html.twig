@@ -35,9 +35,11 @@
                 <div id="profile">
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") -%}
                         <span><strong>{{ app.user.member.fullName }}</strong></span>
-                        {#<span class="credit-{{ app.user.member.credit.creditStatus }}">#}
-                            {#{{- app.user.member.credit.credit | number_format(2, '.', ',') ~ '€' -}}#}
-                        {#</span>#}
+                        <span class="credit-{{ app.user.member.credit.creditStatus }}">
+                            <a href="{{ path('RotaliaInventory_purchaseLog', {'reset':1}) }}">
+                                {{- app.user.member.credit.credit | number_format(2, '.', ',') ~ '€' -}}
+                            </a>
+                        </span>
                         <span><a href="{{ path('fos_user_security_logout') }}">Välju</a></span>
                     {% else %}
                         <span><a href="{{ path('fos_user_security_login') }}">Sisene</a></span>

@@ -10,11 +10,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class ProductPurchaseFilterForm
+ * Class TransactionFilterForm
  *
  * @package Rotalia\InventoryBundle\Form
  */
-class ProductPurchaseFilterForm  extends AbstractType
+class TransactionFilterForm  extends AbstractType
 {
     /**
      * {@inheritdoc}
