@@ -1,0 +1,41 @@
+{#
+@var members Member[]
+#}
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{% block title%}Krediidihaldus{% endblock %}
+
+{% block body %}
+    <h1>Krediidihaldus</h1>
+    <div>
+        {% block flash %}{{ parent() }}{% endblock %}
+
+        <table class="data sortable">
+            <tr>
+                <th>Kasutaja</th>
+                <th>Krediit</th>
+                <th>#</th>
+            </tr>
+            {% for member in members %}
+                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
+                    <td>{{ member.fullName }}</td>
+                    <td class="credit-{{ member.credit.creditStatus }}">
+                        {{- member.credit.credit | number_format(2, '.', ',') ~ '€' -}}
+                    </td>
+                    <td>
+                        Muuda
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="100">Liikmeid ei leitud</td>
+                </tr>
+            {% endfor %}
+
+            {% include 'RotaliaInventoryBundle::pagination.html.twig' with {
+            pager: members,
+            url: url('RotaliaInventory_creditManagementList', {page:'__page__'})}
+            %}
+        </table>
+    </div>
+{% endblock %}

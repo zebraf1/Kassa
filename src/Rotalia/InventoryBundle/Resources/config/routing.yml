@@ -60,3 +60,7 @@ RotaliaInventory_searchProduct:
     pattern:  /otsi/toodet/
     defaults: { _controller: RotaliaInventoryBundle:Search:Product }
 
+#CreditManagement
+RotaliaInventory_creditManagementList:
+    pattern:  /krediit/
+    defaults: { _controller: RotaliaInventoryBundle:CreditManagement:List }

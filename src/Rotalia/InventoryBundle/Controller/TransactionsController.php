@@ -61,7 +61,7 @@ class TransactionsController extends DefaultController
 
         $transactions = $purchaseQuery->paginate($page, $resultsPerPage);
 
-        return $this->render('RotaliaInventoryBundle:Purchase:log.html.twig', [
+        return $this->render('RotaliaInventoryBundle:Transactions:log.html.twig', [
             'transactions' => $transactions,
             'filterForm' => $filterForm->createView(),
         ]);
