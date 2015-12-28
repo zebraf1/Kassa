@@ -58,6 +58,10 @@
                     {% endif %}
                 </td>
             </tr>
+            {% include 'RotaliaInventoryBundle:Report:guardDutyRow.html.twig' with {
+                'reports': reports,
+                'activeReport': activeReport
+            } %}
             <tr>
                 <td colspan="2">{{ form_label(reportForm.cash) }}</td>
                 {% for report in reports %}

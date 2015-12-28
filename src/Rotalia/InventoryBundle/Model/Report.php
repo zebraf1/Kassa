@@ -5,6 +5,8 @@ namespace Rotalia\InventoryBundle\Model;
 use DateTime;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseReport;
+use Rotalia\UserBundle\Model\GuardDuty;
+use Rotalia\UserBundle\Model\GuardDutyQuery;
 use Rotalia\UserBundle\Model\Member;
 
 class Report extends BaseReport
@@ -304,5 +306,37 @@ class Report extends BaseReport
         }
 
         return false;
+    }
+
+    /**
+     * Returns the members who should be on guard duty for the same date
+     *
+     * @return null|Member
+     * @throws \PropelException
+     */
+    public function getGuardDutyMembers()
+    {
+        /** @var GuardDuty[] $guardDuties */
+        $guardDuties = GuardDutyQuery::create()
+            ->filterByDate($this->getCreatedAt('Y-m-d'))
+            ->useGuardDutyCycleQuery()
+                ->filterByConventId(XClassifier::CONVENT_TALLINN_ID)
+            ->endUse()
+            ->find()
+        ;
+
+        $result = [];
+
+        foreach ($guardDuties as $guardDuty) {
+            // Sometimes member ID is 0, avoid error
+            if (!$guardDuty->getMemberId()) {
+                continue;
+            }
+
+            //Avoid duplicate members when in 2 duty cycles at the same time
+            $result[$guardDuty->getMemberId()] = $guardDuty->getMember();
+        }
+
+        return $result;
     }
 }

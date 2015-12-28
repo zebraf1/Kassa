@@ -1,16 +1,15 @@
 Kassa
 =====
 
-Todo: add readme
-
+Inventory system
 
 1) Installing
 -------------
 
-Install composer
-Run composer install
+Install composer packages
+composer install
 
 2) Building
 -----------
 
-Propel build
+php app/console propel:build

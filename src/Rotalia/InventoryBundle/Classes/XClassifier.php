@@ -22,4 +22,6 @@ class XClassifier
         self::AMOUNT_TYPE_LITRE => 'Liiter',
         self::AMOUNT_TYPE_KG => 'Kilogramm',
     ];
+
+    const CONVENT_TALLINN_ID = 6;
 }

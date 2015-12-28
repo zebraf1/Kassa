@@ -256,6 +256,48 @@ CREATE TABLE `users`
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
+-- valved
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `valved`;
+
+CREATE TABLE `valved`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `valve_tsyklid_id` INTEGER DEFAULT 0 NOT NULL,
+    `kuupaev` DATE DEFAULT '0000-00-00' NOT NULL,
+    `aeg` TINYINT DEFAULT 0 NOT NULL,
+    `liikmed_id` INTEGER DEFAULT 0 NOT NULL,
+    `majavan` TINYINT DEFAULT 0 NOT NULL,
+    `puudus` INTEGER(1) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `FI_kmed_fk` (`liikmed_id`),
+    INDEX `FI_ve_tsyklid_fk` (`valve_tsyklid_id`)
+) ENGINE=MyISAM;
+
+-- ---------------------------------------------------------------------
+-- valve_tsyklid
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `valve_tsyklid`;
+
+CREATE TABLE `valve_tsyklid`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `nimi` VARCHAR(100) DEFAULT 'Valve' NOT NULL,
+    `valvajad` enum('koik','reb','tl') DEFAULT 'koik' NOT NULL,
+    `koondised_id` INTEGER DEFAULT 0 NOT NULL,
+    `algaeg` DATE DEFAULT '0000-00-00' NOT NULL,
+    `loppaeg` DATE DEFAULT '0000-00-00' NOT NULL,
+    `etapp` TINYINT DEFAULT 0 NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `algaeg` (`algaeg`),
+    INDEX `loppaeg` (`loppaeg`),
+    INDEX `etapp` (`etapp`),
+    INDEX `koondised_id` (`koondised_id`)
+) ENGINE=MyISAM;
+
+-- ---------------------------------------------------------------------
 -- ollekassa_member_credit
 -- ---------------------------------------------------------------------
 

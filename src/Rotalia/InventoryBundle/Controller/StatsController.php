@@ -92,7 +92,7 @@ class StatsController extends DefaultController
             $avgConsumption = $consumed > 0 ? round($consumed / $daysBetween, 1) : 0;
             if ($amounts['finalAmount'] > 0 && $avgConsumption > 0) {
                 $supplyForDays = round($amounts['finalAmount'] / $avgConsumption);
-                $availableUntil = strftime('%e. %B %Y', strtotime('+'.$supplyForDays.' day'));
+                $availableUntil = utf8_encode(strftime('%e. %B %Y', strtotime('+'.$supplyForDays.' day')));
                 $sort = 2;
             } else {
                 $supplyForDays = null;
