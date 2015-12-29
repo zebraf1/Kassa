@@ -5,6 +5,19 @@
 
 {% block title%}Krediidihaldus{% endblock %}
 
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/rotaliainventory/jquery.alerts-1.1/jquery.alerts.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/js/credit.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/jquery.alerts-1.1/jquery.alerts.js') }}"></script>
+{% endblock %}
+
+
 {% block body %}
     <h1>Krediidihaldus</h1>
     <div>
@@ -17,13 +30,14 @@
                 <th>#</th>
             </tr>
             {% for member in members %}
-                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
+                <tr class="credit-row {{ cycle(['even', 'odd'], loop.index) }}">
                     <td>{{ member.fullName }}</td>
-                    <td class="credit-{{ member.credit.creditStatus }}">
+                    <td class="credit credit-{{ member.credit.creditStatus }}">
                         {{- member.credit.credit | number_format(2, '.', ',') ~ '€' -}}
                     </td>
                     <td>
                         <a href="{{ path('RotaliaInventory_purchaseLogMember', {'memberId':member.id}) }}">Logi</a>
+                        <a href="#" data-member="{{ member.id }}" class="adjustMemberCredit">Muuda</a>
                     </td>
                 </tr>
             {% else %}

@@ -46,14 +46,23 @@ class CreditManagementController extends DefaultController
     /**
      * Adjust members credit
      *
-     * @param $memberId
-     * @param $amount
+     * @param Request $request
      * @return JSendResponse
      */
-    public function adjustAction($memberId, $amount)
+    public function adjustAction(Request $request)
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return JSendResponse::createFail('Selleks pead olema sisse logitud admin õigustes', 403);
+        }
+
+        $memberId = $request->get('memberId');
+        $amount = $request->get('amount');
+
+        if (!$memberId) {
+            return JSendResponse::createFail('Vigane parameeter memberId', 400);
+        }
+        if (!$amount) {
+            return JSendResponse::createFail('Vigane parameeter amount', 400);
         }
 
         $member = MemberQuery::create()->findPk($memberId);
@@ -91,7 +100,12 @@ class CreditManagementController extends DefaultController
 
             $con->commit();
 
-            return JSendResponse::createSuccess(['newCredit' => $credit->getCredit()]);
+            $newCredit = number_format($credit->getCredit(), 2) . '€';
+            $creditClass = 'credit-'.$credit->getCreditStatus();
+            return JSendResponse::createSuccess([
+                'newCredit' => $newCredit,
+                'creditClass' => $creditClass,
+            ]);
         } catch (\Exception $e) {
             $con->rollBack();
             return JSendResponse::createError('Tekkis viga:'.$e->getMessage(), 500);
