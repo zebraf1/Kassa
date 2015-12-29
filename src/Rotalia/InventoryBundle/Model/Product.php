@@ -76,6 +76,20 @@ class Product extends BaseProduct
     }
 
     /**
+     * @param string $v
+     * @return Product
+     */
+    public function setProductCode($v)
+    {
+        //Trim whitespaces
+        $productCodes = explode(',', $v);
+        $productCodes = array_map(function($item) {return trim($item);}, $productCodes);
+        $v = implode(',', $productCodes);
+
+        return parent::setProductCode($v);
+    }
+
+    /**
      * @return string
      */
     public function getAjaxName()

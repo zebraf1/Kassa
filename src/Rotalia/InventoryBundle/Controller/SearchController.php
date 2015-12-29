@@ -66,22 +66,30 @@ class SearchController extends DefaultController
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 100);
 
-        /** @var Product[] $members */
-        $members = ProductQuery::create()
-            ->filterByName('%'.$name.'%', \Criteria::LIKE)
+        /** @var Product[] $products */
+        $products = ProductQuery::create()
+            ->filterByProductCode($name)
             ->orderByName()
             ->paginate($page, $limit)
         ;
+
+        if (!count($products)) {
+            $products = ProductQuery::create()
+                ->filterByName('%'.$name.'%', \Criteria::LIKE)
+                ->orderByName()
+                ->paginate($page, $limit)
+            ;
+        }
 
         $resultArray = [
             'items' => [],
             'page' => $page,
         ];
 
-        foreach ($members as $member) {
+        foreach ($products as $product) {
             $resultArray['items'][] = [
-                'id' => $member->getId(),
-                'text' => $member->getName(),
+                'id' => $product->getId(),
+                'text' => $product->getName(),
             ];
         }
 

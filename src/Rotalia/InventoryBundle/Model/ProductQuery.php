@@ -30,4 +30,15 @@ class ProductQuery extends BaseProductQuery
             ->find()
             ;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function filterByProductCode($productCode = null, $comparison = null)
+    {
+        $criterion = new \Criterion($this, 'FIND_IN_SET(?, '.ProductPeer::PRODUCT_CODE.')', $productCode, \Criteria::RAW, $comparison);
+        $this->add($criterion);
+
+        return $this;
+    }
 }
