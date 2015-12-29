@@ -70,3 +70,10 @@ RotaliaInventory_searchProduct:
 RotaliaInventory_creditManagementList:
     pattern:  /krediit/
     defaults: { _controller: RotaliaInventoryBundle:CreditManagement:List }
+
+RotaliaInventory_creditManagementAdjust:
+    pattern:  /krediit/muuda/{memberId}/{amount}/
+    defaults: { _controller: RotaliaInventoryBundle:CreditManagement:Adjust }
+    methods: [POST]
+    options:
+        expose: true
