@@ -21,4 +21,19 @@ class MemberQuery extends BaseMemberQuery
 
         return $this;
     }
+
+    /**
+     * @param string $order
+     * @return $this
+     */
+    public function orderByMemberCredit($order = \Criteria::ASC)
+    {
+        if ($order === \Criteria::ASC) {
+            $this->addAscendingOrderByColumn('IF(member_credit.id IS NULL, 0, member_credit.credit)');
+        } elseif ($order === \Criteria::DESC) {
+            $this->addDescendingOrderByColumn('IF(member_credit.id IS NULL, 0, member_credit.credit)');
+        }
+
+        return $this;
+    }
 }

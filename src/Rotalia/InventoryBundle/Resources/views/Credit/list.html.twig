@@ -1,5 +1,6 @@
 {#
 @var members Member[]
+@var pagerParams array
 #}
 {% extends "RotaliaInventoryBundle::layout.html.twig" %}
 
@@ -25,8 +26,14 @@
 
         <table class="data sortable">
             <tr>
-                <th>Kasutaja</th>
-                <th>Krediit</th>
+                <th><a href="{{ url('RotaliaInventory_creditManagementList', {sort: pagerParams.sort is defined and pagerParams.sort == 'name_asc' ? 'name_desc':'name_asc'}) }}">Nimi</a></th>
+                <th>
+                    {% if pagerParams.sort is not defined or pagerParams.sort == 'credit_asc' %}
+                        <a href="{{ url('RotaliaInventory_creditManagementList', {sort: 'credit_desc'}) }}">Krediit</a>
+                    {% else %}
+                        <a href="{{ url('RotaliaInventory_creditManagementList') }}">Krediit</a>
+                    {% endif %}
+                </th>
                 <th>#</th>
             </tr>
             {% for member in members %}
@@ -48,7 +55,7 @@
 
             {% include 'RotaliaInventoryBundle::pagination.html.twig' with {
             pager: members,
-            url: url('RotaliaInventory_creditManagementList', {page:'__page__'})}
+            url: url('RotaliaInventory_creditManagementList', pagerParams)}
             %}
         </table>
     </div>

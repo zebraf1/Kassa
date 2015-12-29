@@ -16,6 +16,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class CreditManagementController extends DefaultController
 {
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function listAction(Request $request)
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -23,23 +27,61 @@ class CreditManagementController extends DefaultController
         }
 
         $page = (int)$request->get('page', 1);
-        $limit = (int)$request->get('limit', 100);
+        $limit = (int)$request->get('limit', 50);
+        $sort = $request->get('sort');
+
+        $pagerParams = [
+            'page' => '__page__', //dynamically replaced by pagination component
+        ];
 
         //TODO: support different convents
         $conventId = 6; //Tallinn
 
-        /** @var Member[] $members */
-        $members = MemberQuery::create()
+        /** @var MemberQuery $membersQuery */
+        $membersQuery = MemberQuery::create()
             ->filterByKoondisedId($conventId)
-            ->joinMemberCredit()
-            ->useMemberCreditQuery()
-                ->orderByCredit()
-            ->endUse()
-            ->paginate($page, $limit)
+            ->leftJoinMemberCredit('member_credit')
         ;
+
+        // Sorting
+        switch ($sort) {
+            case 'name_asc':
+                $membersQuery
+                    ->orderByEesnimi()
+                    ->orderByPerenimi()
+                ;
+                $pagerParams['sort'] = $sort;
+                break;
+            case 'name_desc':
+                $membersQuery
+                    ->orderByEesnimi(\Criteria::DESC)
+                    ->orderByPerenimi(\Criteria::DESC)
+                ;
+                $pagerParams['sort'] = $sort;
+                break;
+            case 'credit_desc':
+                $membersQuery
+                    ->orderByMemberCredit(\Criteria::DESC)
+                    ->orderByEesnimi()
+                    ->orderByPerenimi()
+                ;
+                $pagerParams['sort'] = $sort;
+                break;
+            default: //credit asc
+                $membersQuery
+                    ->orderByMemberCredit()
+                    ->orderByEesnimi()
+                    ->orderByPerenimi()
+                ;
+                break;
+        }
+
+        /** @var Member[] $members */
+        $members = $membersQuery->paginate($page, $limit);
 
         return $this->render('RotaliaInventoryBundle:Credit:list.html.twig', [
             'members' => $members,
+            'pagerParams' => $pagerParams,
         ]);
     }
 
