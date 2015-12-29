@@ -77,3 +77,8 @@ RotaliaInventory_creditManagementAdjust:
     methods: [POST]
     options:
         expose: true
+
+#Purchase
+RotaliaInventory_purchasePos:
+    pattern:  /kassa/
+    defaults: { _controller: RotaliaInventoryBundle:Purchase:Pos }

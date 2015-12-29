@@ -1,0 +1,14 @@
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{% block title %}Kassa{% endblock %}
+
+{% block profile %}
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") -%}
+        <span><strong>Kassa Tallinn</strong></span>
+        <span><a href="{{ path('fos_user_security_logout') }}">Välju</a></span>
+    {%- endif %}
+{% endblock %}
+
+
+{% block menu %}
+{% endblock %}
