@@ -37,7 +37,7 @@ class InventoryController extends DefaultController
                 }
                 return $this->redirect($this->generateUrl('RotaliaInventory_list'));
             } else {
-                $this->setFlash('error', 'Järjekorra salvestamine ebaõnnestus');
+                $this->setFlashError($request,'Järjekorra salvestamine ebaõnnestus');
             }
         }
 

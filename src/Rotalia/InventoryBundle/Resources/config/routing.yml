@@ -78,6 +78,19 @@ RotaliaInventory_creditManagementAdjust:
     options:
         expose: true
 
+#PointOfSale
+RotaliaInventory_pointOfSaleList:
+    pattern: /pos/
+    defaults: { _controller: RotaliaInventoryBundle:PointOfSale:List }
+
+RotaliaInventory_pointOfSaleAdd:
+    pattern: /pos/lisa/
+    defaults: { _controller: RotaliaInventoryBundle:PointOfSale:Add }
+
+RotaliaInventory_pointOfSaleDelete:
+    pattern: /pos/kustuta/{id}/
+    defaults: { _controller: RotaliaInventoryBundle:PointOfSale:Delete }
+
 #Purchase
 RotaliaInventory_purchasePos:
     pattern:  /kassa/

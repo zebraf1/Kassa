@@ -43,10 +43,10 @@ class ReportController extends DefaultController
             $activeReport->setMember($this->getUser()->getMember());
             $activeReport->updateRowPrices();
             $activeReport->save();
-            $this->setFlash('ok', 'Aruanne salvestatud.');
+            $this->setFlashOk($request, 'Aruanne salvestatud.');
             return $this->redirect($this->generateUrl('RotaliaReport_list'));
         } elseif ($reportForm->isSubmitted()) {
-            $this->setFlash('error', 'Aruande sisestamisel tekkis vigu!');
+            $this->setFlashError($request, $reportForm->getErrors(true));
         }
 
         /** @var ReportQuery $reportQuery */
@@ -193,11 +193,11 @@ class ReportController extends DefaultController
                 $report->updateRowPrices();
             }
             $report->save();
-            $this->setFlash('ok', 'Aruanne salvestatud.');
+            $this->setFlashOk($request, 'Aruanne salvestatud.');
 
             return $this->redirect($this->generateUrl('RotaliaReport_list'));
         } elseif ($reportForm->isSubmitted()) {
-            $this->setFlash('error', 'Aruande sisestamisel tekkis vigu!');
+            $this->setFlashError($request, $reportForm->getErrors(true));
         }
 
         return $this->render('RotaliaInventoryBundle:Report:update.html.twig', [

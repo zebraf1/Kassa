@@ -19,6 +19,10 @@
     font-weight: bold;
 }
 
+.wrap {
+    white-space: normal !important;
+}
+
 td.report-error {
     background-color: #fee !important;
     color: #800;

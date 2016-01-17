@@ -77,11 +77,8 @@ class TransactionsController extends DefaultController
                 $formData = $filterForm->getData();
                 $request->getSession()->set('purchaseLogFilter', $formData);
             } else {
-                $errors = $filterForm->getErrors(true);
                 $request->getSession()->remove('purchaseLogFilter');
-                foreach ($errors as $error) {
-                    $this->setFlash('error', $error->getMessage());
-                }
+                $this->setFlashError($request, $filterForm->getErrors(true));
             }
         }
 
