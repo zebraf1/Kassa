@@ -86,6 +86,9 @@
         <column name="device_info" type="VARCHAR" size="255" required="false" />
         <column name="created_at" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
         <column name="created_by" type="INTEGER" required="true" />
+        <index name="hash">
+            <index-column name="hash"/>
+        </index>
         <foreign-key foreignTable="liikmed" name="pos_created_by_fk" skipSql="true">
             <reference local="created_by" foreign="id" />
         </foreign-key>

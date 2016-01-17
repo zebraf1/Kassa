@@ -9,10 +9,10 @@
 }
 
 .fleft {
-    float: left;
+    float: left !important;
 }
 .fright {
-    float: right;
+    float: right !important;
 }
 
 .bold {

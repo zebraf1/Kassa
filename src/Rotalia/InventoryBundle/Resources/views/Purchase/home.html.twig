@@ -1,0 +1,11 @@
+{% set layout = pos ? 'layout_pos' : 'layout' %}
+{% extends "RotaliaInventoryBundle::"~layout~".html.twig" %}
+
+{% block body %}
+    <h1>Kassa</h1>
+
+    <div>
+        {% block flash %}{{ parent() }}{% endblock %}
+
+    </div>
+{% endblock %}

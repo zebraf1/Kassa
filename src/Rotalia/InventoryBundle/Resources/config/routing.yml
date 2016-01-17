@@ -1,5 +1,5 @@
 RotaliaReport_list:
-    pattern:  /
+    pattern:  /aruanded/
     defaults: { _controller: RotaliaInventoryBundle:Report:List, update: 0 }
 
 RotaliaReport_view:
@@ -80,18 +80,18 @@ RotaliaInventory_creditManagementAdjust:
 
 #PointOfSale
 RotaliaInventory_pointOfSaleList:
-    pattern: /pos/
+    pattern: /kassad/
     defaults: { _controller: RotaliaInventoryBundle:PointOfSale:List }
 
 RotaliaInventory_pointOfSaleAdd:
-    pattern: /pos/lisa/
+    pattern: /kassad/lisa/
     defaults: { _controller: RotaliaInventoryBundle:PointOfSale:Add }
 
 RotaliaInventory_pointOfSaleDelete:
-    pattern: /pos/kustuta/{id}/
+    pattern: /kassad/kustuta/{id}/
     defaults: { _controller: RotaliaInventoryBundle:PointOfSale:Delete }
 
 #Purchase
 RotaliaInventory_purchasePos:
     pattern:  /kassa/
-    defaults: { _controller: RotaliaInventoryBundle:Purchase:Pos }
+    defaults: { _controller: RotaliaInventoryBundle:Purchase:Home }
