@@ -1,6 +1,7 @@
 <?php
 
 namespace Rotalia\InventoryBundle\Controller;
+use Rotalia\InventoryBundle\Form\ProductFilterType;
 use Rotalia\InventoryBundle\Model\PointOfSaleQuery;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,7 +14,8 @@ class PurchaseController extends DefaultController
     public function homeAction(Request $request)
     {
         return $this->render('RotaliaInventoryBundle:Purchase:home.html.twig', [
-            'pos' => $this->getPos($request)
+            'pos' => $this->getPos($request),
+            'form' => $this->createForm(new ProductFilterType())->createView(),
         ]);
     }
 

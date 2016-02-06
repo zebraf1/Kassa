@@ -1,5 +1,27 @@
+{#
+@var form ProductFilterType | FormView
+#}
 {% set layout = pos ? 'layout_pos' : 'layout' %}
 {% extends "RotaliaInventoryBundle::"~layout~".html.twig" %}
+
+
+{# Include ajaxSearch and datePicker templates, apply filter theme #}
+{% form_theme form 'RotaliaInventoryBundle:Form:kassaFormLayout.html.twig'
+'RotaliaInventoryBundle:Form:filter.html.twig'
+%}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/rotaliainventory/js/select2.min.js') }}"></script>
+    <script src="{{ asset('bundles/rotaliainventory/js/select2.et.js') }}"></script>
+    <script src="{{ asset('bundles/rotaliainventory/js/search.js') }}"></script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/rotaliainventory/css/select2.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
 
 {% block body %}
     <h1>Kassa</h1>
@@ -7,5 +29,39 @@
     <div>
         {% block flash %}{{ parent() }}{% endblock %}
 
+        <table class="data sortable">
+            <thead>
+            <tr>
+                <th><label for="product">Toode</label></th>
+                <th>Hind</th>
+                <th>Kogus</th>
+                <th>Summa</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>{{ form(form, {'action':'#'}) }}</td>
+                <td>-</td>
+                <td>-</td>
+                <td><button>Lisa toode</button></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>Kokku</td>
+                <td>0.00€</td>
+            </tr>
+            </tfoot>
+        </table>
+
+        [OSTA CASH] [OSTA krediit]
+
+        <div>
+        <h3>Viimased tehingud</h3>
+        Tehing1 Aeg Ostja Summa [Tühista] (samal päeval)
+        </div>
     </div>
 {% endblock %}
