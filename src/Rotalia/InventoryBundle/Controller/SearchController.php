@@ -66,7 +66,7 @@ class SearchController extends DefaultController
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 100);
 
-        /** @var Product[] $products */
+        /** @var Product[]|\PropelModelPager $products */
         $products = ProductQuery::create()
             ->filterByProductCode($name)
             ->orderByName()
@@ -84,12 +84,14 @@ class SearchController extends DefaultController
         $resultArray = [
             'items' => [],
             'page' => $page,
+            'hasNextPage' => !$products->isLastPage() && $products->count() > 0
         ];
 
         foreach ($products as $product) {
             $resultArray['items'][] = [
                 'id' => $product->getId(),
                 'text' => $product->getName(),
+                'price' => $product->getPrice()
             ];
         }
 

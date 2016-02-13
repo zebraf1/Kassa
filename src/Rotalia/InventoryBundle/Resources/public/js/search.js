@@ -10,12 +10,15 @@ $(function() {
                     page: params.page
                 };
             },
-            processResults: function (data, page) {
+            processResults: function (data, params) {
                 // parse the results into the format expected by Select2.
                 // since we are using custom formatting functions we do not need to
                 // alter the remote JSON data
                 return {
-                    results: data.items
+                    results: data.items,
+                    pagination: {
+                        more: data.hasNextPage
+                    }
                 };
             },
             cache: true

@@ -15,6 +15,7 @@
     <script src="{{ asset('bundles/rotaliainventory/js/select2.min.js') }}"></script>
     <script src="{{ asset('bundles/rotaliainventory/js/select2.et.js') }}"></script>
     <script src="{{ asset('bundles/rotaliainventory/js/search.js') }}"></script>
+    <script src="{{ asset('bundles/rotaliainventory/js/purchase.js') }}"></script>
 {% endblock %}
 
 {% block stylesheets %}
@@ -34,7 +35,7 @@
             <tr>
                 <th><label for="product">Toode</label></th>
                 <th>Hind</th>
-                <th>Kogus</th>
+                <th><label for="purchaseNewAmount">Kogus</label></th>
                 <th>Summa</th>
             </tr>
             </thead>
@@ -42,8 +43,8 @@
             <tbody>
             <tr>
                 <td>{{ form(form, {'action':'#'}) }}</td>
-                <td>-</td>
-                <td>-</td>
+                <td class="price-col">-</td>
+                <td><input type="number" id="purchaseNewAmount" value="1" /></td>
                 <td><button>Lisa toode</button></td>
             </tr>
             </tbody>
