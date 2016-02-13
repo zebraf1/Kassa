@@ -39,9 +39,13 @@ Building
 --------
 
 Build base model files
-
 ```bash
 > php app/console propel:model:build
+```
+
+Install web assets
+```bash
+> php app/console assets:install --relative --symlink
 ```
 
 Build database if needed (use --force if needed) or run sql manually from app/propel/sql
