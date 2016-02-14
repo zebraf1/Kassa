@@ -30,22 +30,22 @@
     <div>
         {% block flash %}{{ parent() }}{% endblock %}
 
-        <table class="data sortable">
+        <table class="data sortable" id="basketTable">
             <thead>
             <tr>
                 <th><label for="product">Toode</label></th>
                 <th>Hind</th>
-                <th><label for="purchaseNewAmount">Kogus</label></th>
+                <th><label for="purchaseAmount">Kogus</label></th>
                 <th>Summa</th>
             </tr>
             </thead>
 
             <tbody>
-            <tr>
-                <td>{{ form(form, {'action':'#'}) }}</td>
-                <td class="price-col">-</td>
-                <td><input type="number" id="purchaseNewAmount" value="1" /></td>
-                <td><button>Lisa toode</button></td>
+            <tr id="addNewProductRow">
+                <td>{{ form_start(form, {'action':'#'}) }}{{ form_widget(form.product) }}{{ form_end(form) }}</td>
+                <td id="purchasePrice">-</td>
+                <td><input type="number" id="purchaseAmount" value="1" /></td>
+                <td><button id="purchaseAddProduct">Lisa toode</button></td>
             </tr>
             </tbody>
             <tfoot>
@@ -53,7 +53,7 @@
                 <td></td>
                 <td></td>
                 <td>Kokku</td>
-                <td>0.00€</td>
+                <td id="basketTotal">0.00€</td>
             </tr>
             </tfoot>
         </table>

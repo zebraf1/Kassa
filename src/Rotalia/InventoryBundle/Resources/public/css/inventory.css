@@ -54,3 +54,20 @@ tr.even td {
 .oldPrice {
     color: #999999;
 }
+
+.basketItemAmountReduce, .basketItemAmountAdd {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+
+.basketItemAmountReduce {
+    background: url(../images/minus.png) no-repeat;
+    background-size: contain;
+}
+.basketItemAmountAdd {
+    background: url(../images/plus.png) no-repeat right bottom;
+    background-size: contain;
+}
