@@ -1,6 +1,6 @@
 $(function() {
     $('#productList').tableDnD({
-        onDragClass: "myDragClass",
+        onDragClass: "productRowDragged",
         onDrop: function(table, row) {
             var $rows = $(table.rows);
             var params = {'ProductListType':[{'id':1,'seq':1}]};
@@ -12,10 +12,12 @@ $(function() {
                 $row.find('.inputSeq').val(index);
                 if (odd) {
                     odd = false;
-                    $row.attr('class', 'odd');
+                    $row.removeClass('even');
+                    $row.addClass('odd');
                 } else {
                     odd = true;
-                    $row.attr('class', 'even');
+                    $row.removeClass('odd');
+                    $row.addClass('even');
                 }
             });
         }

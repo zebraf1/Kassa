@@ -9,14 +9,18 @@
 }
 
 .fleft {
-    float: left;
+    float: left !important;
 }
 .fright {
-    float: right;
+    float: right !important;
 }
 
 .bold {
     font-weight: bold;
+}
+
+.wrap {
+    white-space: normal !important;
 }
 
 td.report-error {
@@ -49,6 +53,29 @@ tr.even td {
 
 .oldPrice {
     color: #999999;
+}
+
+.basketItemAmountReduce, .basketItemAmountAdd {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.basketItemAmountReduce {
+    background: url(../images/minus.png) no-repeat;
+    background-size: contain;
+}
+.basketItemAmountAdd {
+    background: url(../images/plus.png) no-repeat right bottom;
+    background-size: contain;
+}
+
+.productRow {
+    cursor: ns-resize !important;
+}
+.productRowDragged {
+    cursor: pointer !important;
 }
 
 .calc_count_input_eur, .calc_count_input_cent {

@@ -30,7 +30,7 @@
                 {% set product = products[formRow.id.vars.value] %}
 
 
-                <tr class="{{ cycle(['even', 'odd'], loop.index) }}" id="row_{{ product.id }}">
+                <tr class="productRow {{ cycle(['even', 'odd'], loop.index) }}" id="row_{{ product.id }}">
                     <td class="seq">{{ product.seq }}</td>
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }} €/{{ product.amountType }}</td>
