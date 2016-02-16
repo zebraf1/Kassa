@@ -6,7 +6,7 @@ $(function() {
 
     $dialog.dialog({
         autoOpen: false,
-        width: 600,
+        width: 475,
         buttons: [
             {
                 text: 'Ok',

@@ -50,3 +50,7 @@ tr.even td {
 .oldPrice {
     color: #999999;
 }
+
+.calc_count_input_eur, .calc_count_input_cent {
+    width: 100px;
+}
