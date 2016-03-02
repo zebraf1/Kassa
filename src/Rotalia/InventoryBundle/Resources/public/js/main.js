@@ -22,6 +22,50 @@ Rotalia = function () {
     }
 }();
 
+/**
+ *  Performs an ajax GET request the the given route with parameters and runs callback on success
+ * Handles JSendResponse
+ * @param route
+ * @param params
+ * @param successCallback
+ */
+function jSendGet(route, params, successCallback) {
+    $.get(Routing.generate(route), params)
+        .done(function (data) {
+            if (data.status == 'success') {
+                successCallback(data.data);
+            } else {
+                jAlert(data.data, 'Päring ebaõnnestus');
+            }
+        }).fail(function(data) {
+            var json = data.responseJSON;
+            jAlert(json.data, 'Päring ebaõnnestus');
+        }
+    );
+}
+
+/**
+ * Performs an ajax POST request the the given route with parameters and runs callback on success
+ * Handles JSendResponse
+ * @param route
+ * @param params
+ * @param successCallback
+ */
+function jSendPost(route, params, successCallback) {
+    $.post(Routing.generate(route), params)
+        .done(function (data) {
+            if (data.status == 'success') {
+                successCallback(data.data);
+            } else {
+                jAlert(data.data, 'Päring ebaõnnestus');
+            }
+        }).fail(function(data) {
+            var json = data.responseJSON;
+            jAlert(json.data, 'Päring ebaõnnestus');
+        }
+    );
+}
+
 $(function() {
     Rotalia.initDatePicker();
     Rotalia.initButtons();

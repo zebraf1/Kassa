@@ -49,9 +49,12 @@ class AjaxSearchType extends AbstractType
         }
 
         //Add select2 class and data url
+        if (!isset($options['route_params'])) {
+            $options['route_params'] = [];
+        }
         $choiceOptions['attr'] = array_merge($options['attr'], [
             'class' => 'select2-ajax-search',
-            'data-ajax--url' => $this->router->generate($options['route']),
+            'data-ajax--url' => $this->router->generate($options['route'], $options['route_params']),
         ]);
 
         //Add event listeners to set selected choice dynamically as choices. This is required so form submit is valid
@@ -88,6 +91,7 @@ class AjaxSearchType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setRequired(['route', 'query_class']);
+        $resolver->setOptional(['route_params']);
         $resolver->setDefaults([
             'choices' => [],
             'choices_as_value' => true

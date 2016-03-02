@@ -65,11 +65,13 @@ class SearchController extends DefaultController
         $name = $request->get('name');
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 100);
+        $active = $request->get('active', null);
 
         /** @var Product[]|\PropelModelPager $products */
         $products = ProductQuery::create()
             ->filterByProductCode($name)
             ->orderByName()
+            ->filterByActiveStatus($active)
             ->paginate($page, $limit)
         ;
 
@@ -77,6 +79,7 @@ class SearchController extends DefaultController
             $products = ProductQuery::create()
                 ->filterByName('%'.$name.'%', \Criteria::LIKE)
                 ->orderByName()
+                ->filterByActiveStatus($active)
                 ->paginate($page, $limit)
             ;
         }

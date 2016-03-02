@@ -95,3 +95,9 @@ RotaliaInventory_pointOfSaleDelete:
 RotaliaInventory_purchasePos:
     pattern:  /kassa/
     defaults: { _controller: RotaliaInventoryBundle:Purchase:Home }
+
+RotaliaInventory_productInfo:
+    pattern:  /toode/info/
+    defaults: { _controller: RotaliaInventoryBundle:Product:Info }
+    options:
+        expose: true

@@ -41,4 +41,24 @@ class ProductQuery extends BaseProductQuery
 
         return $this;
     }
+
+    /**
+     * @param bool $active  null - no filtering, true - active, false - disabled
+     * @return $this
+     */
+    public function filterByActiveStatus($active)
+    {
+        // Do not filter
+        if ($active === null) {
+            return $this;
+        }
+
+        if ($active) {
+            $this->filterByStatusId(XClassifier::STATUS_ACTIVE);
+        } else {
+            $this->filterByStatusId(XClassifier::STATUS_DISABLED);
+        }
+
+        return $this;
+    }
 }

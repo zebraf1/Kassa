@@ -26,6 +26,7 @@ var BasketItem = function (id, text, price, amount) {
 var Basket = function() {
     this.items = {};
     this.item_ids = [];
+    this.version = '1.0'; // Changing the version invalidates old saved baskets
 };
 
 /**
@@ -49,8 +50,9 @@ Basket.prototype.addItem = function(item) {
 /**
  * Removes an item from the basket, saves and redraws the basket
  * @param id
+ * @param skipSave
  */
-Basket.prototype.removeItem = function(id) {
+Basket.prototype.removeItem = function(id, skipSave) {
     if (this.items[id]) {
         delete this.items[id];
     }
@@ -59,8 +61,10 @@ Basket.prototype.removeItem = function(id) {
         return itemId !== id;
     });
 
-    this.save();
-    this.draw();
+    if (!skipSave) {
+        this.save();
+        this.draw();
+    }
 };
 
 /**
@@ -71,10 +75,12 @@ Basket.prototype.load = function() {
     if (localStorage.getItem("basket")) {
         try {
             var basketObject = JSON.parse(localStorage.getItem("basket"));
-            if (basketObject.item_ids) {
+            if (basketObject.version == new Basket().version) {
                 this.items = basketObject.items;
                 this.item_ids = basketObject.item_ids;
                 this.sync();
+                console.log('Ostukorv laetud ' + this.item_ids.length + ' tootega');
+                return; // Basket is drawn in sync
             }
         } catch (e) {
             //Ignore
@@ -147,12 +153,45 @@ Basket.prototype.draw = function() {
             basket.draw();
         }
     });
-
-    console.log('Basket drawn with ' + this.item_ids.length + ' items');
 };
 
 Basket.prototype.sync = function() {
-    //TODO - refresh BasketItem prices from server, save new data
+    var $basket = this;
+
+    if (!$basket.item_ids.length) {
+        $basket.draw();
+        return;
+    }
+
+    //Refresh BasketItem prices from server
+    jSendGet('RotaliaInventory_productInfo', {product_ids: this.item_ids, active: true}, function(data) {
+        for (var itemIdx = 0 ; itemIdx < $basket.item_ids.length; itemIdx++) {
+            var itemId = $basket.item_ids[itemIdx];
+            var $itemFound = false;
+
+            if (data) {
+                for (var productIdx = 0; productIdx < data.length; productIdx++) {
+                    var productId = data[productIdx].id;
+                    if (productId == itemId) {
+                        $basket.items[itemId].price = data[productIdx].price;
+                        $basket.items[itemId].text = data[productIdx].text;
+                        $itemFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!$itemFound) {
+                // Remove items that were not returned, don't save basket until the end
+                console.log('Toode ei ole enam saadaval: ' + $basket.items[itemId].text);
+                $basket.removeItem(itemId, true);
+            }
+        }
+
+        // Save and draw at the end
+        $basket.save();
+        $basket.draw();
+    });
 };
 
 
