@@ -62,7 +62,6 @@ tr.even td {
     cursor: pointer;
 }
 
-
 .basketItemAmountReduce {
     background: url(../images/minus.png) no-repeat;
     background-size: contain;
@@ -70,4 +69,15 @@ tr.even td {
 .basketItemAmountAdd {
     background: url(../images/plus.png) no-repeat right bottom;
     background-size: contain;
+}
+
+.productRow {
+    cursor: ns-resize !important;
+}
+.productRowDragged {
+    cursor: pointer !important;
+}
+
+.calc_count_input_eur, .calc_count_input_cent {
+    width: 100px;
 }

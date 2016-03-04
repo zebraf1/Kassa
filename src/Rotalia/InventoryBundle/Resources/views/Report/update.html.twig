@@ -29,6 +29,15 @@
             <a href="#" onclick="history.go(-1)">Tagasi</a>
         </div>
 
+        <div>
+            {% if report.isUpdate %}
+                Majanduseestseisja aruanne on mõeldud kassasse toodete lisamiseks või kassast sularaha eemaldamiseks.
+                Kassast sularaha eemaldamisel sisesta sularaha negatiivse summana.
+            {% else %}
+                Aruande muutmisel ei muutu aruande kuupäev ega aruande sisestaja
+            {% endif %}
+        </div>
+
 
         {{ form_start(reportForm, {'attr': {'novalidate': 'novalidate'}}) }}
 
