@@ -110,8 +110,24 @@
                     {% if report.isUpdate %}
                         <td>-</td>
                     {% else %}
-                        <td class="report-{% if report.isNegativeProfit %}error{% else %}ok{% endif %}">
+                        <td>
                             {{ report.getActualProfit() | number_format(2, '.', ',') }}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td colspan="2" class="right">
+                    Vahe:
+                </td>
+                {% for report in reports %}
+                    {% if report.isUpdate %}
+                        <td>-</td>
+                    {% else %}
+                        <td class="report-{% if report.isNegativeProfit %}error{% else %}ok{% endif %}">
+                            {% if not report.isNegativeProfit %}+{% endif -%}
+                            {{ (report.getActualProfit() - report.getExpectedProfit()) | number_format(2, '.', ',') }}
                         </td>
                     {% endif %}
                 {% endfor %}

@@ -165,7 +165,7 @@
                     {% if report.isUpdate %}
                         <td>-</td>
                     {% else %}
-                        <td class="report-{% if report.isNegativeProfit %}error{% else %}ok{% endif %}">
+                        <td>
                             {{ report.getActualProfit() | number_format(2, '.', ',') }}
                         </td>
                     {% endif %}
@@ -173,8 +173,34 @@
 
                 {# Active report #}
                 {% if not activeReport.isNew() %}
-                    <td class="report-{% if activeReport.isNegativeProfit %}error{% else %}ok{% endif %}">
+                    <td>
                         {{ activeReport.getActualProfit() | number_format(2, '.', ',') }}
+                    </td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td colspan="2" class="right">
+                    Vahe:
+                </td>
+                {% for report in reports %}
+                    {% if report.isUpdate %}
+                        <td>-</td>
+                    {% else %}
+                        <td class="report-{% if report.isNegativeProfit %}error{% else %}ok{% endif %}">
+                            {% if not report.isNegativeProfit %}+{% endif -%}
+                            {{ (report.getActualProfit() - report.getExpectedProfit()) | number_format(2, '.', ',') }}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+
+                {# Active report #}
+                {% if not activeReport.isNew() %}
+                    <td class="report-{% if activeReport.isNegativeProfit %}error{% else %}ok{% endif %}">
+                        {% if not activeReport.isNegativeProfit %}+{% endif -%}
+                        {{ (activeReport.getActualProfit() - activeReport.getExpectedProfit()) | number_format(2, '.', ',') }}
                     </td>
                 {% else %}
                     <td>-</td>
