@@ -93,6 +93,18 @@ class PurchaseController extends DefaultController
         $connection = \Propel::getConnection(TransactionPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
 
+        switch ($payment) {
+            case 'cash':
+                $transactionType = Transaction::TYPE_CASH_PURCHASE;
+                break;
+            case 'credit':
+                $transactionType = Transaction::TYPE_CREDIT_PURCHASE;
+                break;
+            default:
+                return JSendResponse::createError('Vigane makseviis: '.$payment, 400);
+                break;
+        }
+
         try {
             // Create transactions for all purchases
             foreach ($basket as $item) {
@@ -109,7 +121,7 @@ class PurchaseController extends DefaultController
                 $transaction->setMemberRelatedByMemberId($member);
                 $transaction->setPointOfSale($pos);
                 $totalSumCents += (int)(100 * $transaction->calculateSum());
-                $transaction->setType(Transaction::TYPE_CREDIT_PURCHASE);
+                $transaction->setType($transactionType);
                 $transaction->save($connection);
             }
 
