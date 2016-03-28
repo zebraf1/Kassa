@@ -43,4 +43,17 @@ class Transaction extends BaseTransaction
         $type = $this->getType();
         return in_array($type, [self::TYPE_CREDIT_PAYMENT, self::TYPE_CASH_PAYMENT]);
     }
+
+    /**
+     * Returns transaction total sum
+     * @return double
+     */
+    public function calculateSum()
+    {
+        $sum = doubleval($this->getAmount()) * doubleval($this->getCurrentPrice());
+        $sum = round($sum, 2);
+        $this->setSum($sum);
+
+        return $sum;
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Rotalia\InventoryBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -69,5 +70,13 @@ class DefaultController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        return $this->get('logger');
     }
 }

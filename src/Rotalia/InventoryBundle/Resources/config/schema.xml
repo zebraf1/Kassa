@@ -55,7 +55,8 @@
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
         <column name="type" type="VARCHAR" required="true" />
         <column name="product_id" type="INTEGER" required="false" />
-        <column name="member_id" type="INTEGER" required="true" />
+        <column name="member_id" type="INTEGER" required="false" />
+        <column name="pos_id" type="INTEGER" required="false" />
         <column name="amount" type="DECIMAL" size="10" scale="1" required="false" />
         <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
         <column name="sum" type="DECIMAL" size="10" scale="2" required="true" />
@@ -67,11 +68,14 @@
         <foreign-key foreignTable="ollekassa_product" name="product_purchase_product_fk">
             <reference local="product_id" foreign="id" />
         </foreign-key>
-        <foreign-key foreignTable="liikmed" name="product_purchase_member_fk" skipSql="true">
+        <foreign-key foreignTable="liikmed" name="transaction_member_fk" skipSql="true">
             <reference local="member_id" foreign="id" />
         </foreign-key>
-        <foreign-key foreignTable="liikmed" name="product_purchase_created_by_fk" skipSql="true">
+        <foreign-key foreignTable="liikmed" name="transaction_created_by_fk" skipSql="true">
             <reference local="created_by" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="ollekassa_point_of_sale" name="transaction_pos_fk">
+            <reference local="pos_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>

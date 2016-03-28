@@ -48,20 +48,27 @@ function jSendGet(route, params, successCallback) {
  * Performs an ajax POST request the the given route with parameters and runs callback on success
  * Handles JSendResponse
  * @param route
- * @param params
+ * @param routeParams
+ * @param postParams
  * @param successCallback
  */
-function jSendPost(route, params, successCallback) {
-    $.post(Routing.generate(route), params)
+function jSendPost(route, routeParams, postParams, successCallback) {
+    $.post(Routing.generate(route, routeParams), postParams)
         .done(function (data) {
             if (data.status == 'success') {
                 successCallback(data.data);
             } else {
-                jAlert(data.data, 'Päring ebaõnnestus');
+                jAlert(data.message, 'Toiming ebaõnnestus');
             }
         }).fail(function(data) {
             var json = data.responseJSON;
-            jAlert(json.data, 'Päring ebaõnnestus');
+            if (json.message) {
+                jAlert(json.message, 'Toiming ebaõnnestus');
+            } else if (json.data) {
+                jAlert(json.data, 'Tekkis viga');
+            } else {
+                jAlert('Midagi läks valesti, teavita veast', 'Süsteemne viga!');
+            }
         }
     );
 }

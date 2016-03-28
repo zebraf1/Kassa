@@ -30,6 +30,14 @@ var Basket = function() {
 };
 
 /**
+ * Clears the basket
+ */
+Basket.prototype.clear = function() {
+    this.items = {};
+    this.item_ids = [];
+};
+
+/**
  * Adds an item to basket, saves and redraws the basket
  * @param item
  */
@@ -194,6 +202,21 @@ Basket.prototype.sync = function() {
     });
 };
 
+Basket.prototype.totalSumCents = function() {
+    var $this = this;
+    var totalSumCents = 0;
+
+    $.each(this.item_ids, function(key, id) {
+        if (!$this.items[id]) {
+            console.log('Missing item from basket with id '+id);
+            return;
+        }
+
+        totalSumCents += parseInt($this.items[id].price * $this.items[id].amount * 100);
+    });
+
+    return totalSumCents;
+};
 
 var basket = new Basket();
 
@@ -233,5 +256,57 @@ $(function() {
         $priceCol.html('-');
         $amountInput.val(1);
         $productInputSelect2.val(null).trigger("change");
+    });
+
+    var payment = function(paymentType) {
+        jSendPost('RotaliaInventory_purchasePayment', {payment: paymentType}, {basket: basket.items}, function(data) {
+            var newCredit = formatter.format(data.newCredit);
+            var postPaymentUpdate = function () {
+                // Clear basket
+                basket.clear();
+                basket.save();
+                basket.draw();
+
+                // Update user credit
+                var $userCredit = $('#userCredit');
+                if ($userCredit.length && newCredit !== null) {
+                    $userCredit.html(newCredit);
+                }
+            };
+
+
+            // Show warning if sum was different
+            if (basket.totalSumCents() != data.totalSumCents) {
+                var additionalNotes = 'Summa läks sinu arvelt maha';
+                if (paymentType == 'cash') {
+                    additionalNotes = 'Palun maksa vastav summa kassasse';
+                }
+
+                basket.sync();
+                jAlert('Hindade muutuse tõttu on summa ' + formatter.format(data.totalSumCents/100) + '<br />'+
+                    additionalNotes,
+                    'Hind erineb oskutkorvist', postPaymentUpdate);
+            } else {
+                if (paymentType == 'cash') {
+                    jAlert('Palun maksa kassasse ' + formatter.format(data.totalSumCents/100),
+                        'Tehing õnnestus', postPaymentUpdate);
+                } else {
+                    jAlert('Sinu saldo vähenes ' + formatter.format(data.totalSumCents/100),
+                        'Tehing õnnestus', postPaymentUpdate);
+                }
+            }
+        });
+    };
+
+    // Payment button
+    $("#paymentCash").click(function (e) {
+        e.preventDefault();
+        payment('cash');
+    });
+
+    // Payment button
+    $("#paymentCredit").click(function (e) {
+        e.preventDefault();
+        payment('credit');
     });
 });

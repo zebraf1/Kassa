@@ -29,7 +29,8 @@ class MemberCredit extends BaseMemberCredit
     {
         $currentCredit = doubleval($this->getCredit());
         $amount = doubleval($amount);
-        $this->setCredit($currentCredit + $amount);
+        $newCredit = round($currentCredit + $amount, 2);
+        $this->setCredit($newCredit);
 
         return $this;
     }

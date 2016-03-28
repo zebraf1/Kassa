@@ -25,7 +25,14 @@ class RotaliaTwigExtension extends \Twig_Extension
         }
 
         setlocale(LC_TIME, $locale);
-        return utf8_encode(strftime($format, $date->getTimestamp()));
+        $dateString = strftime($format, $date->getTimestamp());
+
+        // Sometimes the string encoding is not utf-8
+        if (!mb_check_encoding($dateString, 'UTF-8')) {
+            return utf8_encode($dateString);
+        }
+
+        return $dateString;
     }
 
     public function getName()

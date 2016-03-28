@@ -15,11 +15,13 @@
             <link href="{{ asset('bundles/rotaliainventory/css/print.css') }}" rel="stylesheet" media="print">
             <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.css') }}" rel="stylesheet">
             <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.theme.min.css') }}" rel="stylesheet">
+            <link href="{{ asset('bundles/rotaliainventory/jquery.alerts-1.1/jquery.alerts.css') }}" rel="stylesheet">
         {% endblock %}
 
         {% block javascripts %}
             <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/js/jquery.2.1.0.min.js') }}"></script>
             <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/jquery.alerts-1.1/jquery.alerts.js') }}"></script>
             <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
             <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
             <script src="{{ asset('bundles/rotaliainventory/js/main.js') }}"></script>
@@ -36,9 +38,9 @@
                     {% block profile %}
                         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") -%}
                             <span><strong>{{ app.user.member.fullName }}</strong></span>
-                            <span class="credit-{{ app.user.member.credit.creditStatus }}">
-                                <a href="{{ path('RotaliaInventory_purchaseLogMember', {'memberId':app.user.member.id}) }}">
-                                    {{- app.user.member.credit.credit | number_format(2, '.', ',') ~ '€' -}}
+                            <span>
+                                <a id="userCredit" href="{{ path('RotaliaInventory_purchaseLogMember', {'memberId':app.user.member.id}) }}">
+                                    {{- app.user.member.credit.credit | number_format(2, '.', ',') ~ ' €' -}}
                                 </a>
                             </span>
                             <span><a href="{{ path('fos_user_security_logout') }}">Välju</a></span>
