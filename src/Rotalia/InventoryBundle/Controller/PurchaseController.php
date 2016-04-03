@@ -22,6 +22,7 @@ class PurchaseController extends DefaultController
         return $this->render('RotaliaInventoryBundle:Purchase:home.html.twig', [
             'pos' => $this->getPos($request),
             'form' => $this->createForm(new ProductFilterType(true))->createView(),
+            'member' => $this->getMember()
         ]);
     }
 

@@ -1,5 +1,6 @@
 {#
 @var form ProductFilterType | FormView
+@var member Member | null
 #}
 {% set layout = pos ? 'layout_pos' : 'layout' %}
 {% extends "RotaliaInventoryBundle::"~layout~".html.twig" %}
@@ -59,8 +60,13 @@
         </table>
 
         <br />
-        <button id="paymentCash">Sularahamakse</button>
+        {% if pos %}
+        <button id="paymentCash">Sularahamakse {% if member %}({{ pos.name }}){% endif %}</button>
+        {% endif %}
+
+        {% if member %}
         <button id="paymentCredit">Krediidimakse</button>
+        {% endif %}
 
         <div>
         <h3>
