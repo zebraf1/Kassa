@@ -6,6 +6,7 @@ namespace Rotalia\InventoryBundle\Controller;
 use Rotalia\InventoryBundle\Form\TransactionFilterForm;
 use Rotalia\InventoryBundle\Model\TransactionQuery;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class TransactionsController extends DefaultController
 {
@@ -13,7 +14,7 @@ class TransactionsController extends DefaultController
      * View purchase log
      * @param Request $request
      * @param null $memberId
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function logAction(Request $request, $memberId = null)
     {
@@ -87,7 +88,7 @@ class TransactionsController extends DefaultController
 
     /**
      * @param Request $request
-     * @return JSendResponse
+     * @return Response
      * @throws \PropelException
      */
     public function listAction(Request $request)

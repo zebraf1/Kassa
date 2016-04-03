@@ -40,7 +40,7 @@ class CreditManagementController extends DefaultController
         /** @var MemberQuery $membersQuery */
         $membersQuery = MemberQuery::create()
             ->filterByKoondisedId($conventId)
-            ->leftJoinMemberCredit('member_credit')
+            ->innerJoinMemberCredit('member_credit')
         ;
 
         // Sorting
