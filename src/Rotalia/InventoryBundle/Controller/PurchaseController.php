@@ -4,7 +4,6 @@ namespace Rotalia\InventoryBundle\Controller;
 use Exception;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\ProductFilterType;
-use Rotalia\InventoryBundle\Model\PointOfSaleQuery;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\InventoryBundle\Model\TransactionPeer;
@@ -142,21 +141,6 @@ class PurchaseController extends DefaultController
             $connection->rollBack();
             return JSendResponse::createError($e->getMessage(), 500);
         }
-    }
-
-    /**
-     * @param Request $request
-     * @return null|\Rotalia\InventoryBundle\Model\PointOfSale
-     */
-    private function getPos(Request $request)
-    {
-        $hash = $request->cookies->get('pos_hash');
-        $pos = null;
-        if ($hash) {
-            $pos = PointOfSaleQuery::create()->findOneByHash($hash);
-        }
-
-        return $pos;
     }
 
     /**

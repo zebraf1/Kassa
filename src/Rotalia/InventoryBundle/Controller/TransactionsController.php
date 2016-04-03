@@ -20,7 +20,7 @@ class TransactionsController extends DefaultController
         $page = $request->get('page', 1);
         $resultsPerPage = 10;
 
-        $purchaseQuery = TransactionQuery::create()
+        $txQuery = TransactionQuery::create()
             ->orderByCreatedAt(\Criteria::DESC);
 
         $filterForm = $this->createForm(new TransactionFilterForm());
@@ -40,19 +40,19 @@ class TransactionsController extends DefaultController
         if (!empty($formData['date'])) {
             /** @var \DateTime $date */
             $date = $formData['date'];
-            $purchaseQuery->filterByCreatedAt($date->format('Y-m-d 00:00:00'), \Criteria::GREATER_EQUAL);
-            $purchaseQuery->filterByCreatedAt($date->format('Y-m-d 23:59:59'), \Criteria::LESS_EQUAL);
+            $txQuery->filterByCreatedAt($date->format('Y-m-d 00:00:00'), \Criteria::GREATER_EQUAL);
+            $txQuery->filterByCreatedAt($date->format('Y-m-d 23:59:59'), \Criteria::LESS_EQUAL);
         }
 
         if (!empty($formData['product']['id'])) {
-            $purchaseQuery->filterByProductId($formData['product']['id']);
+            $txQuery->filterByProductId($formData['product']['id']);
         }
 
         if (!empty($formData['member']['id'])) {
-            $purchaseQuery->filterByMemberId($formData['member']['id']);
+            $txQuery->filterByMemberId($formData['member']['id']);
         }
 
-        $transactions = $purchaseQuery->paginate($page, $resultsPerPage);
+        $transactions = $txQuery->paginate($page, $resultsPerPage);
 
         return $this->render('RotaliaInventoryBundle:Transactions:log.html.twig', [
             'transactions' => $transactions,
@@ -83,5 +83,24 @@ class TransactionsController extends DefaultController
         }
 
         return $this->redirect($this->generateUrl('RotaliaInventory_purchaseLog'));
+    }
+
+    /**
+     * @param Request $request
+     * @return JSendResponse
+     * @throws \PropelException
+     */
+    public function listAction(Request $request)
+    {
+        $txQuery = TransactionQuery::create()
+            ->orderByCreatedAt(\Criteria::DESC)
+        ;
+
+        $txQuery->limit((int)$request->get('limit', 20));
+        $transactions = $txQuery->find();
+
+        return $this->render('RotaliaInventoryBundle:Transactions:list.html.twig', [
+            'transactions' => $transactions,
+        ]);
     }
 }

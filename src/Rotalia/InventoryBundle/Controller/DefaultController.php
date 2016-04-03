@@ -3,6 +3,7 @@
 namespace Rotalia\InventoryBundle\Controller;
 
 use Psr\Log\LoggerInterface;
+use Rotalia\InventoryBundle\Model\PointOfSaleQuery;
 use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -78,5 +79,20 @@ class DefaultController extends Controller
     protected function getLogger()
     {
         return $this->get('logger');
+    }
+
+    /**
+     * @param Request $request
+     * @return null|\Rotalia\InventoryBundle\Model\PointOfSale
+     */
+    protected function getPos(Request $request)
+    {
+        $hash = $request->cookies->get('pos_hash');
+        $pos = null;
+        if ($hash) {
+            $pos = PointOfSaleQuery::create()->findOneByHash($hash);
+        }
+
+        return $pos;
     }
 }

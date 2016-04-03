@@ -62,8 +62,12 @@
         <a href="#" id="paymentCredit">[OSTA krediit]</a>
 
         <div>
-        <h3>Viimased tehingud</h3>
-        Tehing1 Aeg Ostja Summa [Tühista] (samal päeval)
+        <h3>
+            Viimased tehingud
+            <span class="reloadButton" title="Värskenda" id="latestTransactionsRefresh"></span>
+            <span id="spinner" style="display: none;"></span>
+        </h3>
+            <div id="latestTransactions"></div>
         </div>
     </div>
 {% endblock %}

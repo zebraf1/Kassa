@@ -45,6 +45,24 @@ function jSendGet(route, params, successCallback) {
 }
 
 /**
+ * Performs GET request for html response
+ * @param route
+ * @param params
+ * @param successCallback
+ * @param alwaysCallback
+ */
+function xhrGet(route, params, successCallback, alwaysCallback) {
+    $.get(Routing.generate(route), params)
+        .done(function (data) {
+            successCallback(data);
+        }).fail(function (data) {
+            jAlert(data, 'Päring ebaõnnestus');
+        }
+    ).always(function() {
+        alwaysCallback();
+    });
+}
+/**
  * Performs an ajax POST request the the given route with parameters and runs callback on success
  * Handles JSendResponse
  * @param route

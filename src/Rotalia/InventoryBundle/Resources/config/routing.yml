@@ -49,6 +49,12 @@ RotaliaInventory_purchaseLog:
     pattern:  /tehingud/
     defaults: { _controller: RotaliaInventoryBundle:Transactions:Log }
 
+RotaliaInventory_purchaseList:
+    pattern:  /transactions/
+    defaults: { _controller: RotaliaInventoryBundle:Transactions:List }
+    options:
+        expose: true
+
 RotaliaInventory_purchaseLogMember:
     pattern:  /tehingud/liige/{memberId}/
     defaults: { _controller: RotaliaInventoryBundle:Transactions:Log }

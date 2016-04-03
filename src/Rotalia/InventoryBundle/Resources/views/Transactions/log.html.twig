@@ -30,65 +30,11 @@
             {{ form(filterForm, {'action':path('RotaliaInventory_purchaseLogFilter')}) }}
         </div>
 
-        <table class="data sortable">
-            <tr>
-                <th>Kuupäev</th>
-                <th>Tehing</th>
-                <th>Toode</th>
-                <th>Kasutaja</th>
-                <th>Hind</th>
-                <th>Kogus</th>
-                <th>Summa</th>
-            </tr>
-            {% for transaction in transactions %}
-                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
-                    <td>{{ transaction.createdAt | custom_date('%H:%M - %e. %b %Y') }}</td>
-                    <td>{{ transaction.typeText }}</td>
-                    {% if transaction.isPayment %}
-                        <td>Krediit</td>
-                        <td>
-                            {% if transaction.getMemberRelatedByMemberId %}
-                                {{ transaction.getMemberRelatedByMemberId.fullName }}
-                            {% elseif transaction.getPointOfSaleId %}
-                                Kassa: {% if transaction.getPointOfSale %}{{ transaction.getPointOfSale.name }}{% else %}ID {{ transaction.getPointOfSaleId }}{% endif %}
-                            {% else %}
-                                Tundmatu tehingu autor/asukoht!
-                            {% endif %}
-                            {% if transaction.type == constant('TYPE_CREDIT_PAYMENT', transaction) %}
-                                <br /><strong>Algataja:</strong> {{ transaction.getMemberRelatedByCreatedBy.fullName }}
-                            {% endif %}
-                        </td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td class="credit-{{ transaction.sum > 0 ? 'positive' : 'negative' }}">
-                            {{ transaction.sum > 0 ? '+' : '' }}{{ transaction.sum | number_format(2, '.', ',') }}
-                        </td>
-                    {% else %}
-                        <td>{{ transaction.product.name }}</td>
-                        <td>
-                        {% if transaction.getMemberRelatedByMemberId %}
-                            {{ transaction.getMemberRelatedByMemberId.fullName }}
-                        {% elseif transaction.getPosId %}
-                            Kassa: {% if transaction.getPointOfSale %}{{ transaction.getPointOfSale.name }}{% else %}ID {{ transaction.getPointOfSaleId }}{% endif %}
-                        {% else %}
-                            Tundmatu tehingu autor/asukoht!
-                        {% endif %}
-                        </td>
-                        <td>{{ transaction.currentPrice }}</td>
-                        <td>{{ transaction.amount }}</td>
-                        <td>{{ transaction.sum | number_format(2, '.', ',') }}</td>
-                    {% endif %}
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="100">Tehinguid ei leitud</td>
-                </tr>
-            {% endfor %}
+        {% include 'RotaliaInventoryBundle:Transactions:list.html.twig' with {transactions: transactions} %}
 
-            {% include 'RotaliaInventoryBundle::pagination.html.twig' with {
-                pager: transactions,
-                url: url('RotaliaInventory_purchaseLog', {page:'__page__'})}
-            %}
-        </table>
+        {% include 'RotaliaInventoryBundle::pagination.html.twig' with {
+        pager: transactions,
+        url: url('RotaliaInventory_purchaseLog', {page:'__page__'})}
+        %}
     </div>
 {% endblock %}

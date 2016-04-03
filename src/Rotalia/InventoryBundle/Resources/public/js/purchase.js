@@ -225,6 +225,7 @@ $(function() {
     var $amountInput = $('#purchaseAmount');
     var $addProductButton = $('#purchaseAddProduct');
     var $productInputSelect2 = $("#ProductFilterType_product_id");
+    var $transactionsList = $("#latestTransactions");
     var selectedItem = null;
 
     basket.load();
@@ -269,9 +270,12 @@ $(function() {
 
                 // Update user credit
                 var $userCredit = $('#userCredit');
-                if ($userCredit.length && newCredit !== null) {
+                if ($userCredit.length && data.newCredit !== null) {
                     $userCredit.html(newCredit);
                 }
+
+                // Reload transactions
+                $transactionsList.trigger('load', [false]);
             };
 
 
@@ -297,6 +301,35 @@ $(function() {
             }
         });
     };
+
+    // Transactions list
+    var $spinner = $('#spinner');
+    var $reloadBtn = $('#latestTransactionsRefresh');
+    
+    $transactionsList.on('load', function(event, clear) {
+        $spinner.show();
+        $reloadBtn.hide();
+
+        if (clear) {
+            $transactionsList.html('Laen andmeid...');
+        }
+
+        xhrGet('RotaliaInventory_purchaseList', [], function(data) {
+            // Display response
+            $transactionsList.html(data);
+        }, function() {
+            //Always hide spinner and show reload button after request completes
+            $spinner.hide();
+            $reloadBtn.show();
+        });
+    });
+
+    $transactionsList.trigger('load', [true]);
+
+    $reloadBtn.click(function(e) {
+        e.preventDefault();
+        $transactionsList.trigger('load', [false]);
+    });
 
     // Payment button
     $("#paymentCash").click(function (e) {
