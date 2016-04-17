@@ -93,38 +93,4 @@ class InventoryController extends DefaultController
             'form' => $form->createView(),
         ));
     }
-
-    public function buyItemAction($id)
-    {
-        $product = ProductQuery::create()->findPk($id);
-        if (!$product)
-        {
-            throw $this->createNotFoundException('Toodet ei leitud');
-        }
-
-        try
-        {
-            $product->reduceAmount();
-            $product->save();
-        }
-        catch (OutOfStockException $e)
-        {
-            $this->get('session')->setFlash('error', 'Toode on otsas');
-            return $this->redirect($this->generateUrl('RotaliaInventory_list'));
-        }
-
-        return $this->render('RotaliaInventoryBundle:Inventory:buyItem.html.twig', array('product' => $product));
-    }
-
-    public function addItemAction($id)
-    {
-        $product = ProductQuery::create()->findPk($id);
-        if (!$product)
-        {
-            throw $this->createNotFoundException('Toodet ei leitud');
-        }
-        $product->increaseAmount();
-        $product->save();
-        return $this->render('RotaliaInventoryBundle:Inventory:addItem.html.twig', array('product' => $product));
-    }
 }

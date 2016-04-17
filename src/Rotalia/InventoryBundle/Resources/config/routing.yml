@@ -19,7 +19,7 @@ RotaliaReport_browse:
     defaults: { _controller: RotaliaInventoryBundle:Report:Browse }
 
 RotaliaInventory_list:
-    pattern:  /tooted
+    pattern:  /tooted/
     defaults: { _controller: RotaliaInventoryBundle:Inventory:List }
 
 RotaliaInventory_edit:
@@ -29,15 +29,6 @@ RotaliaInventory_edit:
 RotaliaInventory_add:
     pattern:  /tooted/lisa/
     defaults: { _controller: RotaliaInventoryBundle:Inventory:edit, id: null }
-
-
-RotaliaInventory_removeItem:
-    pattern:  /tooted/eemalda/{id}/
-    defaults: { _controller: RotaliaInventoryBundle:Inventory:BuyItem }
-
-RotaliaInventory_addItem:
-    pattern:  /tooted/lisa/{id}/
-    defaults: { _controller: RotaliaInventoryBundle:Inventory:AddItem }
 
 #Stats
 RotaliaInventory_statsProducts:
