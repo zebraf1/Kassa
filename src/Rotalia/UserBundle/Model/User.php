@@ -7,16 +7,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User extends BaseUser implements UserInterface
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_USER = 'ROLE_USER';
+
     public function getRoles()
     {
-        $roles = ['ROLE_USER'];
+        $roles = [self::ROLE_USER];
 
         //TODO: fetch roles from database
         //Jaak, Kiivet, Reimo, Tõnu, Siim, Imre
         $admins = [1886, 1968, 2081, 2114, 2099, 2073];
 
         if (in_array($this->getLiikmedId(), $admins)) {
-            $roles[] = 'ROLE_ADMIN';
+            $roles[] = self::ROLE_ADMIN;
         }
 
         return $roles;

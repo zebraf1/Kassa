@@ -2,14 +2,12 @@
 
 namespace Rotalia\InventoryBundle\Controller;
 
-use Rotalia\InventoryBundle\Classes\OutOfStockException;
 use Rotalia\InventoryBundle\Form\ProductListType;
 use Rotalia\InventoryBundle\Form\ProductType;
 use Rotalia\InventoryBundle\Model\Form\ProductList;
 use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 
-use Rotalia\UserBundle\Model\SessionQuery;
 use Symfony\Component\HttpFoundation\Request;
 
 class InventoryController extends DefaultController
@@ -20,6 +18,8 @@ class InventoryController extends DefaultController
      */
     public function listAction(Request $request)
     {
+        $this->requireAdmin();
+
         /** @var Product[] $products */
         $products = ProductQuery::create()
             ->orderBySeq()
@@ -62,6 +62,8 @@ class InventoryController extends DefaultController
      */
     public function editAction(Request $request, $id = null)
     {
+        $this->requireAdmin();
+
         if ($id) {
             /** @var Product $product */
             $product = ProductQuery::create()->findPk($id);

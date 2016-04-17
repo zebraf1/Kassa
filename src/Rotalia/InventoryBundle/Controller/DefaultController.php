@@ -8,6 +8,7 @@ use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
@@ -59,6 +60,26 @@ class DefaultController extends Controller
         /** @var SecurityContextInterface $securityContext */
         $securityContext = $this->get('security.context');
         return $securityContext->isGranted($role);
+    }
+
+    /**
+     * @throws AccessDeniedException
+     */
+    protected function requireAdmin()
+    {
+        if (!$this->isGranted(User::ROLE_ADMIN)) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    /**
+     * @throws AccessDeniedException
+     */
+    protected function requireUser()
+    {
+        if (!$this->isGranted(User::ROLE_USER)) {
+            throw new AccessDeniedException();
+        }
     }
 
     /**

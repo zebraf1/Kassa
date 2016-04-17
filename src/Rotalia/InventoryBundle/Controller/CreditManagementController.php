@@ -7,8 +7,8 @@ use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\MemberCreditQuery;
 use Rotalia\UserBundle\Model\MemberQuery;
+use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class CreditManagementController
@@ -22,9 +22,7 @@ class CreditManagementController extends DefaultController
      */
     public function listAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException();
-        }
+        $this->requireAdmin();
 
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 50);
@@ -93,7 +91,7 @@ class CreditManagementController extends DefaultController
      */
     public function adjustAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted(User::ROLE_ADMIN)) {
             return JSendResponse::createFail('Selleks pead olema sisse logitud admin õigustes', 403);
         }
 

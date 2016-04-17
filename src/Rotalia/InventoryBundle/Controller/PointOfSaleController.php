@@ -7,7 +7,6 @@ use Rotalia\InventoryBundle\Model\PointOfSale;
 use Rotalia\InventoryBundle\Model\PointOfSaleQuery;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class PointOfSaleController
@@ -17,9 +16,7 @@ class PointOfSaleController extends DefaultController
 {
     public function listAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException();
-        }
+        $this->requireAdmin();
 
         $pointsOfSale = PointOfSaleQuery::create()->orderByCreatedBy(\Criteria::DESC)->find();
 
@@ -52,9 +49,7 @@ class PointOfSaleController extends DefaultController
      */
     public function addAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException();
-        }
+        $this->requireAdmin();
 
         $pos = null;
 
@@ -102,9 +97,7 @@ class PointOfSaleController extends DefaultController
      */
     public function deleteAction(Request $request, $id)
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException();
-        }
+        $this->requireAdmin();
 
         $pos = PointOfSaleQuery::create()->findPk($id);
 

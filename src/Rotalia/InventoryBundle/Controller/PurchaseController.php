@@ -7,9 +7,11 @@ use Rotalia\InventoryBundle\Form\ProductFilterType;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\InventoryBundle\Model\TransactionPeer;
+use Rotalia\UserBundle\Model\User;
 use Rotalia\UserBundle\Model\UserQuery;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class PurchaseController
@@ -19,6 +21,10 @@ class PurchaseController extends DefaultController
 {
     public function homeAction(Request $request)
     {
+        if (!$this->isGranted(User::ROLE_USER) && $this->getPos($request) === null) {
+            throw new AccessDeniedException();
+        }
+
         return $this->render('RotaliaInventoryBundle:Purchase:home.html.twig', [
             'pos' => $this->getPos($request),
             'form' => $this->createForm(new ProductFilterType(true))->createView(),

@@ -4,6 +4,7 @@ namespace Rotalia\InventoryBundle\Controller;
 
 
 use Rotalia\InventoryBundle\Model\PointOfSaleQuery;
+use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -13,7 +14,7 @@ class HomeController extends DefaultController
     public function homeAction(Request $request)
     {
         // Logged in user is shown reports page
-        if ($this->isGranted('ROLE_USER')) {
+        if ($this->isGranted(User::ROLE_USER)) {
             return $this->forward('RotaliaInventoryBundle:Report:list');
         }
 

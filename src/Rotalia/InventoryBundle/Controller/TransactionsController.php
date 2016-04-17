@@ -5,6 +5,7 @@ namespace Rotalia\InventoryBundle\Controller;
 
 use Rotalia\InventoryBundle\Form\TransactionFilterForm;
 use Rotalia\InventoryBundle\Model\TransactionQuery;
+use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,6 +19,8 @@ class TransactionsController extends DefaultController
      */
     public function logAction(Request $request, $memberId = null)
     {
+        $this->requireUser();
+
         $page = $request->get('page', 1);
         $resultsPerPage = 10;
 
@@ -70,6 +73,8 @@ class TransactionsController extends DefaultController
      */
     public function logFilterAction(Request $request)
     {
+        $this->requireUser();
+
         $filterForm = $this->createForm(new TransactionFilterForm());
         $filterForm->handleRequest($request);
 
@@ -93,6 +98,13 @@ class TransactionsController extends DefaultController
      */
     public function listAction(Request $request)
     {
+        if (!$this->isGranted(User::ROLE_USER) && $this->getPos($request) === null) {
+            return $this->render('RotaliaInventoryBundle::flash.html.twig', [
+                'type' => 'error',
+                'message' => 'Sessioon on aegunud, palun logi sisse',
+            ]);
+        }
+
         $txQuery = TransactionQuery::create()
             ->orderByCreatedAt(\Criteria::DESC)
         ;
