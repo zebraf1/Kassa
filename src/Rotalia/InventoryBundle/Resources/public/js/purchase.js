@@ -1,8 +1,19 @@
-var formatter = new Intl.NumberFormat('et-EE', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2
-});
+var is_safari = navigator.userAgent.indexOf("Safari") > -1;
+
+// Intl is not supported in Safari
+if (is_safari) {
+    var formatter = new function() {
+        this.format = function(number) {
+            return parseFloat(number).toFixed(2) + ' €';
+        };
+    };
+} else {
+    formatter = new Intl.NumberFormat('et-EE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2
+    });
+}
 
 /**
  * BasketItem class
@@ -234,7 +245,7 @@ $(function() {
         var $this = $(this);
         var data = $this.select2('data');
         var price = data[0].price;
-        $priceCol.html(price);
+        $priceCol.html(formatter.format(price));
 
         selectedItem = new BasketItem(data[0].id, data[0].text, data[0].price, 0);
     }).on("select2:unselect", function() {
