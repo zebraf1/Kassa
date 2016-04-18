@@ -23,7 +23,7 @@ $(function() {
             },
             cache: true
         },
-        minimumInputLength: 1,
+        minimumInputLength: 0,
         width: 200,
         language: 'et',
         allowClear: true,
