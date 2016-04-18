@@ -376,8 +376,8 @@ class Report extends BaseReport
         $this->expectedAmounts = [];
 
         // Set initial amounts to expected amounts for products that haven't been purchased
-        foreach ($this->productAmounts as $productId => $amount) {
-            $this->expectedAmounts[$productId] = $amount;
+        foreach ($this->productAmounts as $id => $amount) {
+            $this->expectedAmounts[$id] = $amount;
         }
 
         // Update amounts for products that were purchased since previous report
