@@ -72,6 +72,7 @@ class ReportController extends DefaultController
             'products' => $products,
             'reports' => $reports,
             'activeReport' => $activeReport,
+            'newReport' => new Report(),
             'reportForm' => $reportForm->createView(),
         ]);
     }

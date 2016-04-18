@@ -2,6 +2,7 @@
  @var products Product[]
  @var reports Report[]
  @var activeReport Report
+ @var newReport Report - used for current inventory state
  @var reportRowArray array
  @var reportForm ReportType
 #}
@@ -42,13 +43,23 @@
                 {% for report in reports %}
                 <th><a href="{{ path('RotaliaReport_view', {'id':report.id}) }}">{{ report.createdAt | custom_date }}</a></th>
                 {% endfor %}
-                <th>Täna</th>
+                {% if activeReport.isNew() %}
+                    <th>Prognoos</th>
+                    <th>Täna</th>
+                {% else %}
+                    <th><a href="{{ path('RotaliaReport_view', {'id':activeReport.id}) }}">Täna</a></th>
+                    <th>Prognoos</th>
+                {% endif %}
             </tr>
             <tr>
                 <td colspan="2">Aruande koostaja:</td>
                 {% for report in reports %}
                     <td>{{ report.getMemberName() }}{% if report.isUpdate %} <strong>*</strong>{% endif %}</td>
                 {% endfor %}
+
+                {% if activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
 
                 <td>
                     {% if activeReport.isNew() %}
@@ -57,10 +68,14 @@
                         {{ activeReport.memberName() }}
                     {% endif %}
                 </td>
+
+                {% if not activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
             </tr>
             {% include 'RotaliaInventoryBundle:Report:guardDutyRow.html.twig' with {
                 'reports': reports,
-                'activeReport': activeReport
+                'activeReport': activeReport,
             } %}
             <tr>
                 <td colspan="2">{{ form_label(reportForm.cash) }}</td>
@@ -70,11 +85,23 @@
                     </td>
                 {% endfor %}
 
+                {% if activeReport.isNew() %}
+                    <td>
+                        {{ activeReport.getExpectedCash() | number_format(2, '.', ',') }}€
+                    </td>
+                {% endif %}
+
                 <td>
                     {{ form_widget(reportForm.cash) }}
                     <div id="calculator" class="ui-icon ui-icon-calculator"></div>
                     {{ form_errors(reportForm.cash) }}
                 </td>
+
+                {% if not activeReport.isNew() %}
+                <td>
+                    {{ newReport.getExpectedCash() | number_format(2, '.', ',') }}€
+                </td>
+                {% endif %}
             </tr>
             <tr>
                 <th>Toode</th>
@@ -83,7 +110,13 @@
                     <th>Kogus</th>
                 {% endfor %}
 
+                {% if activeReport.isNew() %}
+                    <th>Laoseis</th>
+                {% endif %}
                 <th>Kogus</th>
+                {% if not activeReport.isNew() %}
+                    <th>Laoseis</th>
+                {% endif %}
             </tr>
 
             {% set rowNum = 0 %}
@@ -102,12 +135,20 @@
                             <td>{% if reportRow %}{{ reportRow.getAmountFormatted(product) | raw }}{% endif %}</td>
                         {% endfor %}
 
+                        {% if activeReport.isNew() %}
+                            <td>{{ activeReport.getExpectedProductAmount(product.id) }}</td>
+                        {% endif %}
+
                         <td>
                             {% if product.isActive %}
                                 {{ form_widget(reportForm.reportRowsForm[product.id]) }}
                                 {{ form_errors(reportForm.reportRowsForm[product.id]) }}
                             {% endif %}
                         </td>
+
+                        {% if not activeReport.isNew() %}
+                            <td>{{ newReport.getExpectedProductAmount(product.id) }}</td>
+                        {% endif %}
                     </tr>
                 {% endif %}
 
@@ -127,12 +168,20 @@
                     </td>
                 {% endfor %}
 
+                {% if activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
+
                 {# Active report #}
                 <td>
                     {% if not activeReport.isNew() %}
                         {{ activeReport.getTotalProductValue() | number_format(2, '.', ',') }}
                     {% endif %}
                 </td>
+
+                {% if not activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
             </tr>
 
             <tr>
@@ -149,12 +198,20 @@
                     </td>
                 {% endfor %}
 
+                {% if activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
+
                 {# Active report #}
                 <td>
                     {% if not activeReport.isNew() %}
                         {{ activeReport.getExpectedProfit() | number_format(2, '.', ',') }}
                     {% endif %}
                 </td>
+
+                {% if not activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
             </tr>
 
             <tr>
@@ -171,6 +228,10 @@
                     {% endif %}
                 {% endfor %}
 
+                {% if activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
+
                 {# Active report #}
                 {% if not activeReport.isNew() %}
                     <td>
@@ -178,6 +239,10 @@
                     </td>
                 {% else %}
                     <td>-</td>
+                {% endif %}
+
+                {% if not activeReport.isNew() %}
+                    <td></td>
                 {% endif %}
             </tr>
 
@@ -196,6 +261,10 @@
                     {% endif %}
                 {% endfor %}
 
+                {% if activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
+
                 {# Active report #}
                 {% if not activeReport.isNew() %}
                     <td class="report-{% if activeReport.isNegativeProfit %}error{% else %}ok{% endif %}">
@@ -204,6 +273,10 @@
                     </td>
                 {% else %}
                     <td>-</td>
+                {% endif %}
+
+                {% if not activeReport.isNew() %}
+                    <td></td>
                 {% endif %}
             </tr>
 
@@ -218,9 +291,17 @@
                     {% endfor %}
                 {% endif %}
 
-                <td colspan="100" class="right">
+                {% if activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
+
+                <td class="right">
                     <input type="submit" class="button" value="Salvesta" />
                 </td>
+
+                {% if not activeReport.isNew() %}
+                    <td></td>
+                {% endif %}
             </tr>
         </table>
 

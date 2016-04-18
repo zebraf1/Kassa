@@ -16,7 +16,13 @@ class Report extends BaseReport
 
     protected $expectedProfit = null;
     protected $actualProfit = null;
+    protected $initialCash = null;
     protected $totalValue = null;
+    /** @var null|Report */
+    protected $previousVerification = null;
+    protected $productAmounts = [];
+    protected $currentAmounts = [];
+    protected $expectedAmounts = null;
 
     private $calculatedTotalProductValue = null;
 
@@ -174,6 +180,8 @@ class Report extends BaseReport
         }
 
         $previousVerification = ReportQuery::findPreviousVerificationReport($this);
+        $this->previousVerification = $previousVerification;
+
         if (empty($previousVerification)) {
             $this->expectedProfit = 0;
             $this->actualProfit = 0;
@@ -217,11 +225,13 @@ class Report extends BaseReport
             $end = !empty($productAmount['end']) ? $productAmount['end'] : 0;
             $diff = ($start - $end) * $product->getPrice() * 100;
             $expectedProfit += $diff;
+            $this->productAmounts[$productId] = $start;
         }
 
         //We expect that cash must increase the same amount as product value has decreased
         $this->expectedProfit = $expectedProfit / 100;
         $this->actualProfit = ($currentCash - $initialCash) / 100;
+        $this->initialCash = $initialCash / 100;
     }
 
     /**
@@ -291,6 +301,111 @@ class Report extends BaseReport
         $this->calculateProfit();
 
         return $this->actualProfit;
+    }
+
+    /**
+     * @return null
+     * @throws \PropelException
+     */
+    public function getExpectedCash()
+    {
+        if ($this->isUpdate()) {
+            return null;
+        }
+
+        $this->calculateProfit();
+
+        // Find cash transactions between this and previous verification reports
+        $transactionsQuery = TransactionQuery::create()
+            ->filterByType([Transaction::TYPE_CASH_PURCHASE, Transaction::TYPE_CASH_PAYMENT])
+        ;
+
+        if ($this->previousVerification !== null) {
+            $transactionsQuery->filterByCreatedAt($this->previousVerification->getCreatedAt(), \Criteria::GREATER_EQUAL);
+        }
+
+        // Get all recent transactions if new
+        if (!$this->isNew()) {
+            $transactionsQuery->filterByCreatedAt($this->getCreatedAt(), \Criteria::LESS_THAN);
+        }
+
+        $transactionsQuery->withColumn('SUM(ollekassa_transaction.sum)', 'income');
+
+        $result = $transactionsQuery->findOne();
+        $income = doubleval($result->getVirtualColumn('income'));
+
+        return $this->initialCash + $income;
+    }
+
+    /**
+     * @param $productId
+     * @return int|mixed
+     * @throws \PropelException
+     */
+    public function getExpectedProductAmount($productId)
+    {
+        // Local caching
+        if ($this->expectedAmounts !== null) {
+            return isset($this->expectedAmounts[$productId]) ? $this->expectedAmounts[$productId] : 0;
+        }
+
+        $this->calculateProfit();
+
+        // Find cash transactions between this and previous verification reports
+        $transactionsQuery = TransactionQuery::create()
+            ->filterByProductId(null, \Criteria::ISNOTNULL)
+        ;
+
+        if ($this->previousVerification !== null) {
+            $transactionsQuery->filterByCreatedAt($this->previousVerification->getCreatedAt(), \Criteria::GREATER_EQUAL);
+        }
+
+        // Get all recent transactions if new
+        if (!$this->isNew()) {
+            $transactionsQuery->filterByCreatedAt($this->getCreatedAt(), \Criteria::LESS_THAN);
+        }
+
+        $transactionsQuery
+            ->groupByProductId()
+            ->withColumn('SUM(ollekassa_transaction.amount)', 'consumed')
+        ;
+
+        /** @var Transaction[] $result */
+        $result = $transactionsQuery->find();
+
+        $this->expectedAmounts = [];
+
+        // Set initial amounts to expected amounts for products that haven't been purchased
+        foreach ($this->productAmounts as $productId => $amount) {
+            $this->expectedAmounts[$productId] = $amount;
+        }
+
+        // Update amounts for products that were purchased since previous report
+        foreach ($result as $tx) {
+            $consumed = doubleval($tx->getVirtualColumn('consumed'));
+
+            // Reduce by consumed amount
+            if (isset($this->expectedAmounts[$tx->getProductId()])) {
+                $this->expectedAmounts[$tx->getProductId()] -= $consumed;
+            } else {
+                $this->expectedAmounts[$tx->getProductId()] = $consumed;
+            }
+        }
+
+        return isset($this->expectedAmounts[$productId]) ? $this->expectedAmounts[$productId] : 0;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCreatedAt($format = null)
+    {
+        // Pass current time for new report
+        if ($this->isNew() && $format === null) {
+            return new DateTime();
+        }
+
+        return parent::getCreatedAt($format);
     }
 
     /**
