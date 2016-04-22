@@ -7,7 +7,7 @@
 {% block title%}Õllekassa aruanne{% endblock %}
 
 {% block body %}
-    <h1>Aruanne {{ report.getCreatedAtLocalized('%e. %b %Y') }}</h1>
+    <h1>Aruanne {{ report.createdAt | custom_date }}</h1>
 
     <div>
         {% block flash %}{{ parent() }}{% endblock %}
@@ -21,7 +21,7 @@
             <tr>
                 <th colspan="2">Kuupäev:</th>
                 <th>
-                    {{ report.getCreatedAtLocalized('%e. %b %Y') }}
+                    {{ report.createdAt | custom_date }}
                 </th>
             </tr>
             <tr>

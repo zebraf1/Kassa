@@ -32,4 +32,14 @@ class Member extends BaseMember
 
         return $credit;
     }
+
+    /**
+     * Auto-complete representation of this object
+     *
+     * @return string
+     */
+    public function getAjaxName()
+    {
+        return $this->getFullName();
+    }
 }

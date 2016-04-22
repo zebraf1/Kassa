@@ -6,9 +6,6 @@ INPUT, SELECT, TEXTAREA { padding: 2px 3px; line-height: 17px; }
 P { margin: 0 0 10px 0; clear: both; }
 IMG { border: 0; }
 A { text-decoration: underline; }
-UL, LI { list-style: none; list-style-type: none; padding: 0; margin: 0; }
-UL { padding: 3px 0 3px 10px; margin: 5px 0 0 0; }
-LI { padding: 0 0 3px 15px; background: url(../images/dot.png) 2px 7px no-repeat; margin: 0; }
 .clear { clear: both; overflow: hidden; }
 .w100pc { width: 100%; }
 .nowrap { white-space:nowrap; }
@@ -109,13 +106,13 @@ A.inactive { font-weight: normal; color: #999; }
 #logo { float: left; font-size: 26px; font-family: "Arial Rounded", arial, helvetica; padding: 20px 0 0 50px; background: url(../images/kilp.gif) 20px 20px no-repeat; }
 #logo A { text-decoration: none; }
 #profile { float: right; padding: 15px 20px 15px 0; }
+#profile span { padding: 0 0 0 20px; }
 #menu LI { float: left; background: none; padding: 0; }
-#menu #profile LI { padding: 0 0 0 20px; }
-#menu #profile LI A { padding-top: 5px; }
 #menu #view { margin-top: -3px; }
 #menu .clear UL { padding: 0; font-weight: bold; margin: auto; }
 #menu .clear LI A { display: block; padding: 6px 7px; /*border-left: 2px solid #999;*/ text-decoration: none; color: #f8f8f8; }
-
+#main-menu, #main-menu.li { list-style: none none; padding: 0; margin: 0; }
+#main-menu { padding: 3px 0 3px 10px; margin: 5px 0 0 0; }
 
 
 /* Login */

@@ -17,6 +17,7 @@
         "symfony/monolog-bundle": "~2.4",
         "sensio/distribution-bundle": "~3.0",
         "sensio/framework-extra-bundle": "~3.0",
+        "select2/select2": "4.0.0",
         "incenteev/composer-parameter-handler": "~2.0",
         "propel/propel1": "~1.7.1",
         "propel/propel-bundle": "~1.4",

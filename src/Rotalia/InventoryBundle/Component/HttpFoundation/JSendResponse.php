@@ -59,7 +59,7 @@ class JSendResponse extends JsonResponse
      *
      * @param mixed $jSendData    required parameter data
      * @param array $httpHeaders  optional HTTP headers
-     * @return static
+     * @return JSendResponse
      */
     public static function createSuccess($jSendData, $httpHeaders = array())
     {
@@ -73,7 +73,7 @@ class JSendResponse extends JsonResponse
      * @param mixed $jSendData      required parameter data
      * @param int $httpStatus       HTTP response code
      * @param array $httpHeaders    optional HTTP headers
-     * @return static
+     * @return JSendResponse
      */
     public static function createFail($jSendData, $httpStatus, $httpHeaders = array())
     {
@@ -89,7 +89,7 @@ class JSendResponse extends JsonResponse
      * @param null|mixed $jSendData     optional generic container for any other information about the error
      * @param null|string $jSendCode    optional numeric code corresponding to the error, if applicable
      * @param array $httpHeaders        optional HTTP headers
-     * @return static
+     * @return JSendResponse
      */
     public static function createError($jSendMessage, $httpStatus, $jSendData = null, $jSendCode = null, $httpHeaders = array())
     {

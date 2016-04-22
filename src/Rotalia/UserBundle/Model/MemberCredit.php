@@ -20,4 +20,18 @@ class MemberCredit extends BaseMemberCredit
             return self::STATUS_NULL;
         }
     }
+
+    /**
+     * @param $amount
+     * @return $this
+     */
+    public function adjustCredit($amount)
+    {
+        $currentCredit = doubleval($this->getCredit());
+        $amount = doubleval($amount);
+        $newCredit = round($currentCredit + $amount, 2);
+        $this->setCredit($newCredit);
+
+        return $this;
+    }
 }

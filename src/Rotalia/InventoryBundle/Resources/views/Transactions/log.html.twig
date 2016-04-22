@@ -1,0 +1,40 @@
+{#
+ @var transactions Transaction[]|PropelModelPager
+ @var filterForm TransactionFilterForm | FormView
+#}
+{% extends "RotaliaInventoryBundle::layout.html.twig" %}
+
+{# Include ajaxSearch and datePicker templates, apply filter theme #}
+{% form_theme filterForm 'RotaliaInventoryBundle:Form:kassaFormLayout.html.twig'
+    'RotaliaInventoryBundle:Form:filter.html.twig'
+%}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/rotaliainventory/css/select2.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/rotaliainventory/js/select2.min.js') }}"></script>
+    <script src="{{ asset('bundles/rotaliainventory/js/select2.et.js') }}"></script>
+    <script src="{{ asset('bundles/rotaliainventory/js/search.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <h1>Ostutehingute logi</h1>
+    <div>
+        {% block flash %}{{ parent() }}{% endblock %}
+
+        <div class="archieve">
+            {{ form(filterForm, {'action':path('RotaliaInventory_purchaseLogFilter')}) }}
+        </div>
+
+        {% include 'RotaliaInventoryBundle:Transactions:list.html.twig' with {transactions: transactions} %}
+
+        {% include 'RotaliaInventoryBundle::pagination.html.twig' with {
+        pager: transactions,
+        url: url('RotaliaInventory_purchaseLog', {page:'__page__'})}
+        %}
+    </div>
+{% endblock %}

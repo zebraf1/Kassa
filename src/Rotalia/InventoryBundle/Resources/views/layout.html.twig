@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <!-- Set the viewport width to device width for mobile -->
         <meta name="viewport" content="width=device-width" />
@@ -13,12 +13,18 @@
             <link href="{{ asset('bundles/rotaliainventory/css/main.css') }}" rel="stylesheet">
             <link href="{{ asset('bundles/rotaliainventory/css/inventory.css') }}" rel="stylesheet">
             <link href="{{ asset('bundles/rotaliainventory/css/print.css') }}" rel="stylesheet" media="print">
+            <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.css') }}" rel="stylesheet">
+            <link href="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.theme.min.css') }}" rel="stylesheet">
+            <link href="{{ asset('bundles/rotaliainventory/jquery.alerts-1.1/jquery.alerts.css') }}" rel="stylesheet">
         {% endblock %}
 
         {% block javascripts %}
             <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/js/jquery.2.1.0.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/jquery-ui/jquery-ui.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('bundles/rotaliainventory/jquery.alerts-1.1/jquery.alerts.js') }}"></script>
             <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
             <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+            <script src="{{ asset('bundles/rotaliainventory/js/main.js') }}"></script>
         {% endblock %}
     </head>
 
@@ -29,26 +35,24 @@
                     <a href="{{ path('_welcome') }}">korp! Rotalia õllekassa</a>
                 </div>
                 <div id="profile">
-                    <ul>
+                    {% block profile %}
                         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") -%}
-                            <li><strong>{{ app.user.member.fullName }}</strong></li>
-                            {#<li class="credit-{{ app.user.member.credit.creditStatus }}">#}
-                                {#{{- app.user.member.credit.credit | number_format(2, '.', ',') ~ '€' -}}#}
-                            {#</li>#}
-                            <li><a href="{{ path('fos_user_security_logout') }}">Välju</a></li>
+                            <span><strong>{{ app.user.member.fullName }}</strong></span>
+                            <span>
+                                <a id="userCredit" href="{{ path('RotaliaInventory_purchaseLogMember', {'memberId':app.user.member.id}) }}">
+                                    {{- app.user.member.credit.credit | number_format(2, '.', ',') ~ ' €' -}}
+                                </a>
+                            </span>
+                            <span><a href="{{ path('fos_user_security_logout') }}">Välju</a></span>
                         {% else %}
-                            <li><a href="{{ path('fos_user_security_login') }}">Sisene</a></li>
+                            <span><a href="{{ path('fos_user_security_login') }}">Sisene</a></span>
                         {%- endif %}
-                    </ul>
+                    {% endblock %}
                 </div>
                 <div class="clear">
-                    <ul>
-                        <li><a href="{{ path('RotaliaReport_list') }}">Õllekassa aruanded</a></li>
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <li><a href="{{ path('RotaliaInventory_list') }}">Tooted</a></li>
-                        <li><a href="{{ path('RotaliaInventory_statsProducts') }}">Statistika</a></li>
-                        {% endif %}
-                    </ul>
+                    {% block menu %}
+                        {% include 'RotaliaInventoryBundle::menu.html.twig' %}
+                    {% endblock %}
                 </div>
             </div>
         </div>

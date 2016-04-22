@@ -2,17 +2,12 @@
 
 namespace Rotalia\InventoryBundle\Controller;
 
-
-use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Form\ReportType;
-use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 use Rotalia\InventoryBundle\Model\Report;
 use Rotalia\InventoryBundle\Model\ReportQuery;
 use \DateTime;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Validator\Constraints\Date;
 
 class ReportController extends DefaultController
 {
@@ -24,6 +19,8 @@ class ReportController extends DefaultController
      */
     public function listAction(Request $request)
     {
+        $this->requireUser();
+        
         $activeReport = ReportQuery::create()
             ->filterByCreatedToday()
             ->filterByType(Report::TYPE_VERIFICATION) //Avoid update reports as active
@@ -43,10 +40,10 @@ class ReportController extends DefaultController
             $activeReport->setMember($this->getUser()->getMember());
             $activeReport->updateRowPrices();
             $activeReport->save();
-            $this->setFlash('ok', 'Aruanne salvestatud.');
+            $this->setFlashOk($request, 'Aruanne salvestatud.');
             return $this->redirect($this->generateUrl('RotaliaReport_list'));
         } elseif ($reportForm->isSubmitted()) {
-            $this->setFlash('error', 'Aruande sisestamisel tekkis vigu!');
+            $this->setFlashError($request, $reportForm->getErrors(true));
         }
 
         /** @var ReportQuery $reportQuery */
@@ -75,6 +72,7 @@ class ReportController extends DefaultController
             'products' => $products,
             'reports' => $reports,
             'activeReport' => $activeReport,
+            'newReport' => new Report(),
             'reportForm' => $reportForm->createView(),
         ]);
     }
@@ -86,6 +84,8 @@ class ReportController extends DefaultController
      */
     public function browseAction(Request $request)
     {
+        $this->requireUser();
+
         $page = $request->get('page', 1);
 
         $products = ProductQuery::getActiveProductsFirst();
@@ -117,6 +117,8 @@ class ReportController extends DefaultController
      */
     public function viewAction($id)
     {
+        $this->requireUser();
+
         /** @var Report $report */
         $report = ReportQuery::create()
             ->useReportRowQuery('report_row')
@@ -151,9 +153,7 @@ class ReportController extends DefaultController
      */
     public function updateAction(Request $request, $id = null)
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException();
-        }
+        $this->requireAdmin();
 
         $isEditForm = $id !== null;
 
@@ -193,11 +193,11 @@ class ReportController extends DefaultController
                 $report->updateRowPrices();
             }
             $report->save();
-            $this->setFlash('ok', 'Aruanne salvestatud.');
+            $this->setFlashOk($request, 'Aruanne salvestatud.');
 
             return $this->redirect($this->generateUrl('RotaliaReport_list'));
         } elseif ($reportForm->isSubmitted()) {
-            $this->setFlash('error', 'Aruande sisestamisel tekkis vigu!');
+            $this->setFlashError($request, $reportForm->getErrors(true));
         }
 
         return $this->render('RotaliaInventoryBundle:Report:update.html.twig', [

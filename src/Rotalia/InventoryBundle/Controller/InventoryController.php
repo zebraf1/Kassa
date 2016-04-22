@@ -2,14 +2,12 @@
 
 namespace Rotalia\InventoryBundle\Controller;
 
-use Rotalia\InventoryBundle\Classes\OutOfStockException;
 use Rotalia\InventoryBundle\Form\ProductListType;
 use Rotalia\InventoryBundle\Form\ProductType;
 use Rotalia\InventoryBundle\Model\Form\ProductList;
 use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 
-use Rotalia\UserBundle\Model\SessionQuery;
 use Symfony\Component\HttpFoundation\Request;
 
 class InventoryController extends DefaultController
@@ -20,6 +18,8 @@ class InventoryController extends DefaultController
      */
     public function listAction(Request $request)
     {
+        $this->requireAdmin();
+
         /** @var Product[] $products */
         $products = ProductQuery::create()
             ->orderBySeq()
@@ -37,7 +37,7 @@ class InventoryController extends DefaultController
                 }
                 return $this->redirect($this->generateUrl('RotaliaInventory_list'));
             } else {
-                $this->setFlash('error', 'Järjekorra salvestamine ebaõnnestus');
+                $this->setFlashError($request,'Järjekorra salvestamine ebaõnnestus');
             }
         }
 
@@ -62,6 +62,8 @@ class InventoryController extends DefaultController
      */
     public function editAction(Request $request, $id = null)
     {
+        $this->requireAdmin();
+
         if ($id) {
             /** @var Product $product */
             $product = ProductQuery::create()->findPk($id);
@@ -92,39 +94,5 @@ class InventoryController extends DefaultController
         return $this->render('RotaliaInventoryBundle:Inventory:productEdit.html.twig', array(
             'form' => $form->createView(),
         ));
-    }
-
-    public function buyItemAction($id)
-    {
-        $product = ProductQuery::create()->findPk($id);
-        if (!$product)
-        {
-            throw $this->createNotFoundException('Toodet ei leitud');
-        }
-
-        try
-        {
-            $product->reduceAmount();
-            $product->save();
-        }
-        catch (OutOfStockException $e)
-        {
-            $this->get('session')->setFlash('error', 'Toode on otsas');
-            return $this->redirect($this->generateUrl('RotaliaInventory_list'));
-        }
-
-        return $this->render('RotaliaInventoryBundle:Inventory:buyItem.html.twig', array('product' => $product));
-    }
-
-    public function addItemAction($id)
-    {
-        $product = ProductQuery::create()->findPk($id);
-        if (!$product)
-        {
-            throw $this->createNotFoundException('Toodet ei leitud');
-        }
-        $product->increaseAmount();
-        $product->save();
-        return $this->render('RotaliaInventoryBundle:Inventory:addItem.html.twig', array('product' => $product));
     }
 }

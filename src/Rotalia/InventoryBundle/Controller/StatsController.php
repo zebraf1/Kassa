@@ -18,9 +18,7 @@ class StatsController extends DefaultController
      */
     public function productsAction()
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException();
-        }
+        $this->requireAdmin();
 
         //Find all reports within last 30 days
         $periodStart = new DateTime('-30 days');

@@ -95,7 +95,7 @@ CREATE TABLE `ollekassa_report`
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),
-    INDEX `FI_ort_member_fk` (`member_id`)
+    INDEX `member_id` (`member_id`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
@@ -125,26 +125,29 @@ CREATE TABLE `ollekassa_report_row`
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
--- ollekassa_product_purchase
+-- ollekassa_transaction
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `ollekassa_product_purchase`;
+DROP TABLE IF EXISTS `ollekassa_transaction`;
 
-CREATE TABLE `ollekassa_product_purchase`
+CREATE TABLE `ollekassa_transaction`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `product_id` INTEGER NOT NULL,
+    `type` VARCHAR(255) NOT NULL,
+    `product_id` INTEGER,
     `member_id` INTEGER NOT NULL,
-    `amount` DECIMAL(10,1) DEFAULT 0 NOT NULL,
+    `amount` DECIMAL(10,1),
     `current_price` DECIMAL(10,2),
+    `sum` DECIMAL(10,2) NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
+    INDEX `member_id` (`member_id`),
     INDEX `FI_duct_purchase_product_fk` (`product_id`),
-    INDEX `FI_duct_purchase_member_fk` (`member_id`),
+    INDEX `FI_duct_purchase_created_by_fk` (`created_by`),
     CONSTRAINT `product_purchase_product_fk`
         FOREIGN KEY (`product_id`)
         REFERENCES `ollekassa_product` (`id`)
-        ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
@@ -309,30 +312,9 @@ CREATE TABLE `ollekassa_member_credit`
     `member_id` INTEGER NOT NULL,
     `credit` DECIMAL(10,2) DEFAULT 0 NOT NULL,
     `comment` VARCHAR(225) DEFAULT '',
-    `version` INTEGER DEFAULT 0,
-    `version_created_at` DATETIME,
-    `version_created_by` VARCHAR(100),
     PRIMARY KEY (`id`),
     INDEX `member_id` (`member_id`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
-
--- ---------------------------------------------------------------------
--- ollekassa_member_credit_version
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `ollekassa_member_credit_version`;
-
-CREATE TABLE `ollekassa_member_credit_version`
-(
-    `id` INTEGER NOT NULL,
-    `member_id` INTEGER NOT NULL,
-    `credit` DECIMAL(10,2) DEFAULT 0 NOT NULL,
-    `comment` VARCHAR(225) DEFAULT '',
-    `version` INTEGER DEFAULT 0 NOT NULL,
-    `version_created_at` DATETIME,
-    `version_created_by` VARCHAR(100),
-    PRIMARY KEY (`id`,`version`)
-) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

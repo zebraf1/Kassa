@@ -1,0 +1,23 @@
+<ul id="main-menu">
+    {% if is_granted('ROLE_USER') %}
+        <li><a href="{{ path('RotaliaReport_list') }}">Õllekassa aruanded</a></li>
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <li><a href="{{ path('RotaliaInventory_list') }}">Tooted</a></li>
+        <li><a href="{{ path('RotaliaInventory_creditManagementList') }}">Krediit</a></li>
+        <li><a href="{{ path('RotaliaInventory_pointOfSaleList') }}">Kassad</a></li>
+    {% endif %}
+    {% if is_granted('ROLE_USER') %}
+        <li><a href="{{ path('RotaliaInventory_purchaseLog') }}">Tehingud</a></li>
+        <li><a href="{{ path('RotaliaInventory_statsProducts') }}">Statistika</a></li>
+    {% endif %}
+</ul>
+
+{% if is_granted('ROLE_USER') %}
+    <div class="fright">
+        <a href="{{ path('RotaliaInventory_purchasePos') }}">Ostukorv<img
+                    src="{{ asset('bundles/rotaliainventory/images/empty-cart-light.png') }}"
+                    height="24"
+                    alt="Ostukorv" /></a>
+    </div>
+{% endif %}

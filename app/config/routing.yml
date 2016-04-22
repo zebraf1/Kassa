@@ -4,9 +4,9 @@
 
 _welcome:
     pattern:  /
-    defaults: { _controller: RotaliaInventoryBundle:Report:list }
+    defaults: { _controller: RotaliaInventoryBundle:Home:home }
 
-rotalia_inventar:
+rotalia_inventory:
     resource: "@RotaliaInventoryBundle/Resources/config/routing.yml"
     prefix:   /
 

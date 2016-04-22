@@ -30,7 +30,7 @@
             <tr>
                 <th colspan="2">Kuupäev:</th>
                 {% for report in reports %}
-                <th><a href="{{ path('RotaliaReport_view', {'id':report.id}) }}">{{ report.getCreatedAtLocalized('%e. %b %Y') }}</a></th>
+                <th><a href="{{ path('RotaliaReport_view', {'id':report.id}) }}">{{ report.createdAt | custom_date }}</a></th>
                 {% endfor %}
             </tr>
             <tr>

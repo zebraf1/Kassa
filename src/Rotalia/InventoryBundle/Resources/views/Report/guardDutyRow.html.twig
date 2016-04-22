@@ -25,6 +25,9 @@
 
     {% if activeReport is defined %}
         {% set guardMembers = activeReport.guardDutyMembers %}
+        {% if activeReport.isNew() %}
+            <td></td>
+        {% endif %}
         <td>
             {% if guardMembers|length > 0 %}
                 {% for guardMember in guardMembers %}
@@ -36,5 +39,8 @@
                 <i>Valve puudub</i>
             {% endif %}
         </td>
+        {% if not activeReport.isNew() %}
+            <td></td>
+        {% endif %}
     {% endif %}
 </tr>

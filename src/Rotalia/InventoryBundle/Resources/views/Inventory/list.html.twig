@@ -24,6 +24,7 @@
                 <th>Nimi</th>
                 <th>Hind</th>
                 <th>Staatus</th>
+                <th>Tootekood</th>
                 <th>&nbsp;</th>
             </tr>
             {% for formRow in form.products %}
@@ -35,6 +36,7 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }} €/{{ product.amountType }}</td>
                     <td>{{ product.statusType }}</td>
+                    <td>{{ product.productCode }}</td>
                     <td>
                         <a href="{{ path('RotaliaInventory_edit', {'id':product.id}) }}">Muuda</a>
                         {{ form_row(formRow.id) }}
