@@ -270,8 +270,8 @@ $(function() {
         $productInputSelect2.val(null).trigger("change");
     });
 
-    var payment = function(paymentType) {
-        jSendPost('RotaliaInventory_purchasePayment', {payment: paymentType}, {basket: basket.items}, function(data) {
+    var payment = function(paymentType, sum) {
+        jSendPost('RotaliaInventory_purchasePayment', {payment: paymentType}, {basket: basket.items, sum: sum}, function(data) {
             var newCredit = formatter.format(data.newCredit);
             var postPaymentUpdate = function () {
                 // Clear basket
@@ -291,7 +291,13 @@ $(function() {
 
 
             // Show warning if sum was different
-            if (basket.totalSumCents() != data.totalSumCents) {
+            if (paymentType == 'refund') {
+                var actionName = data.totalSumCents < 0 ? 'maksa kassasse ' : 'võta kassast ',
+                    totalSumCents = Math.abs(data.totalSumCents);
+
+                jAlert('Palun ' + actionName + formatter.format(totalSumCents/100),
+                    'Tehing õnnestus', postPaymentUpdate);
+            } else if (basket.totalSumCents() != data.totalSumCents) {
                 var additionalNotes = 'Summa läks sinu arvelt maha';
                 if (paymentType == 'cash') {
                     additionalNotes = 'Palun maksa vastav summa kassasse';
@@ -346,6 +352,16 @@ $(function() {
     $("#paymentCash").click(function (e) {
         e.preventDefault();
         payment('cash');
+    });
+
+    // Payment button
+    $("#refundCash").click(function (e) {
+        e.preventDefault();
+        sum = jPrompt('');
+        var promptText = 'Sisesta positiivne summa kui lisad raha kassasse või negatiivne summa, kui võtad raha välja';
+        jPrompt(promptText, '', 'Sisesta summa', function (sum) {
+            payment('refund', sum);
+        });
     });
 
     // Payment button

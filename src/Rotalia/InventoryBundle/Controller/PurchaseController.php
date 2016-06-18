@@ -67,9 +67,15 @@ class PurchaseController extends DefaultController
 
         $basket = $request->get('basket');
 
-        if ($basket === null) {
-            return JSendResponse::createFail('Ostukorv puudub', 400);
+        if ($payment !== 'refund') {
+            if ($basket === null) {
+                return JSendResponse::createFail('Ostukorv puudub', 400);
+            }
+            if (!is_array($basket) && $payment !== 'refund') {
+                return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
+            }
         }
+
 
         // Get Point of Sale
         $pos = $this->getPos($request);
@@ -110,8 +116,8 @@ class PurchaseController extends DefaultController
             return JSendResponse::createError($paymentType.' nõuab sisse logimist', 401);
         }
 
-        if (!is_array($basket) && $payment !== 'refund') {
-            return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
+        if ($pos === null && $payment !== 'credit') {
+            return JSendResponse::createError($paymentType.' nõuab kassat (näiteks konvendi arvuti)', 401);
         }
 
         // Use integer for summarizing double values (see: programming floating point issue)
