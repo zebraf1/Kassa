@@ -1,0 +1,8 @@
+parameters:
+    rotalia_api.exception_listener.class: Rotalia\APIBundle\Security\Http\ExceptionListener
+
+services:
+    rotalia_api.exception_listener:
+        class: %rotalia_api.exception_listener.class%
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, priority: 20 }

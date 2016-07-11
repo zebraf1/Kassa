@@ -23,7 +23,8 @@
         "propel/propel-bundle": "~1.4",
         "friendsofsymfony/jsrouting-bundle": "~1.5",
         "friendsofsymfony/user-bundle": "~2.0@dev",
-        "willdurand/propel-typehintable-behavior": "dev-master"
+        "willdurand/propel-typehintable-behavior": "dev-master",
+        "nelmio/api-doc-bundle": "^2.13"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

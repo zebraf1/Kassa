@@ -10,6 +10,14 @@ rotalia_inventory:
     resource: "@RotaliaInventoryBundle/Resources/config/routing.yml"
     prefix:   /
 
+rotalia_api:
+    resource: "@RotaliaAPIBundle/Resources/config/routing.yml"
+    prefix:   /api/
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc
+
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 

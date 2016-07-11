@@ -28,7 +28,7 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
-    cache:            true
+    cache:            ~
 
 monolog:
     handlers:
@@ -77,8 +77,19 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
 
+nelmio_api_doc:
+    name: "Rotalia Kassa API"
+    sandbox:
+        accept_type: "application/json"
+        body_format:
+            formats: ["form"]
+            default_format: "form"
+        request_format:
+            formats:
+                json: "application/json"
+
 propel:
-    path:       "%kernel.root_dir%/../vendor/propel"
+    path:       "%kernel.root_dir%/../vendor/propel/propel1"
     phing_path: "%kernel.root_dir%/../vendor/phing"
     dbal:
         driver:   "%database_driver%"

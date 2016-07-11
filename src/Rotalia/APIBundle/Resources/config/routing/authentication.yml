@@ -1,0 +1,14 @@
+RotaliaAPI_authentication_check:
+    pattern:  /authentication/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:Authentication:Token }
+
+RotaliaAPI_authentication_login:
+    pattern:  /authentication/
+    methods: [POST]
+    defaults: { _controller: RotaliaAPIBundle:Authentication:Login }
+
+RotaliaAPI_authentication_logout:
+    pattern:  /authentication/
+    methods: [DELETE]
+    defaults: { _controller: RotaliaAPIBundle:Authentication:Logout }
