@@ -1,0 +1,9 @@
+RotaliaAPI_product_list:
+    pattern:  /product/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:Product:List }
+
+RotaliaAPI_product_get:
+    pattern:  /product/{id}/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:Product:Get }

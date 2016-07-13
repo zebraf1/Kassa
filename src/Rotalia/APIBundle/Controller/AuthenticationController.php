@@ -5,7 +5,6 @@ namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\UserBundle\Model\UserQuery;
-use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
@@ -132,15 +131,6 @@ class AuthenticationController extends DefaultController
         } else {
             return JSendResponse::createError('Välja logimine ebaõnnestus', 500);
         }
-    }
-
-    /**
-     * Note: CsrfProviderInterface is deprecated. Upgrade FosUserBundle to fix this and use CsrfTokenManagerInterface
-     * @return CsrfProviderInterface
-     */
-    protected function getCSRFProvider()
-    {
-        return $this->get('form.csrf_provider'); // todo: use security.csrf.token_manager since symfony 3.0
     }
 
     /**

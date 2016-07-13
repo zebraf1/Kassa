@@ -1,9 +1,9 @@
 /web/bundles/
 /web/1/
 /app/bootstrap.php.cache
-/app/cache/*
+/app/cache/
 /app/config/parameters.yml
-/app/logs/*
+/app/logs/
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 /build/
@@ -14,3 +14,5 @@
 /src/Rotalia/*Bundle/Model/om/
 /composer.phar
 .idea/
+app/propel/generated-schemas/
+components/

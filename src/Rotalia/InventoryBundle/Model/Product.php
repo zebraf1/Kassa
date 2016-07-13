@@ -96,4 +96,16 @@ class Product extends BaseProduct
     {
         return $this->getName();
     }
+
+    /**
+     * @return string
+     */
+    public function getAjaxData()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getAjaxName(),
+            'price' => doubleval($this->getPrice())
+        ];
+    }
 }

@@ -1,2 +1,5 @@
 authentication:
     resource: "@RotaliaAPIBundle/Resources/config/routing/authentication.yml"
+
+product:
+    resource: "@RotaliaAPIBundle/Resources/config/routing/product.yml"
