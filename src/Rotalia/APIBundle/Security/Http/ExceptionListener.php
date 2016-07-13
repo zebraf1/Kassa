@@ -30,7 +30,7 @@ class ExceptionListener
         $controllerClass = substr($controllerNamespace, 0, strpos($controllerNamespace, '::'));
 
         // Handle all APIBundle controller request errors
-        if ((new $controllerClass) instanceof DefaultController) {
+        if ($controllerClass && (new $controllerClass) instanceof DefaultController) {
             $message = $exception->getMessage();
 
             if ($exception instanceof HttpExceptionInterface) {
