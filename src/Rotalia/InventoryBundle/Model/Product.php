@@ -105,7 +105,8 @@ class Product extends BaseProduct
         return [
             'id' => $this->getId(),
             'name' => $this->getAjaxName(),
-            'price' => doubleval($this->getPrice())
+            'price' => doubleval($this->getPrice()),
+            'productGroupId' => $this->getProductGroupId(),
         ];
     }
 }
