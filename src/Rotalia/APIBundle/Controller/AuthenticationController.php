@@ -20,7 +20,7 @@ class AuthenticationController extends DefaultController
 {
     /**
      * Check current session.
-     * Return logged in member name or null.
+     * Return logged in member data (id, name, conventId, creditBalance)  or null.
      * Return current browser pointOfSale name or null.
      * Generate and return a CSRF token for the session when member is not logged in. This token is required upon login.
      *
