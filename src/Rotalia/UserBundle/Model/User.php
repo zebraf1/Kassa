@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User extends BaseUser implements UserInterface
 {
+    const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     const ROLE_ADMIN = 'ROLE_ADMIN';
     const ROLE_USER = 'ROLE_USER';
 
@@ -15,11 +16,18 @@ class User extends BaseUser implements UserInterface
         $roles = [self::ROLE_USER];
 
         //TODO: fetch roles from database
-        //Jaak, Kiivet, Reimo, Tõnu, Siim, Imre, Tanel Kiis
-        $admins = [1886, 1968, 2081, 2114, 2099, 2073, 2164];
+        //Reimo, Tõnu, Siim, Imre, Tanel
+        $admins = [2081, 2114, 2099, 2073];
 
-        if (in_array($this->getLiikmedId(), $admins)) {
+        //Jaak, Kiivet, Kiis
+        $superAdmins = [1886, 1968, 2164];
+
+        if (in_array($this->getLiikmedId(), array_merge($admins, $superAdmins))) {
             $roles[] = self::ROLE_ADMIN;
+        }
+
+        if (in_array($this->getLiikmedId(), $superAdmins)) {
+            $roles[] = self::ROLE_SUPER_ADMIN;
         }
 
         return $roles;
@@ -33,5 +41,17 @@ class User extends BaseUser implements UserInterface
     public function eraseCredentials()
     {
         return;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAjaxData()
+    {
+        return [
+            'id' => $this->getId(),
+            'username' => $this->getUsername(),
+            'roles' => $this->getRoles(),
+        ];
     }
 }
