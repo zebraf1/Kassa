@@ -38,7 +38,7 @@ class AuthenticationController extends DefaultController
         $pos = $this->getPos($request);
 
         $data = [
-            'member' =>  $member ? $member->getAjaxName() : null,
+            'member' =>  $member ? $member->getAjaxData() : null,
             'pointOfSale' =>  $pos ? $pos->getName() : null,
             'csrfToken' => $member ? null : $this->getCSRFProvider()->generateCsrfToken($this->getTokenId())
         ];

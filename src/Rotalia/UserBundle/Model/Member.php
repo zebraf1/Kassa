@@ -42,4 +42,19 @@ class Member extends BaseMember
     {
         return $this->getFullName();
     }
+
+    /**
+     * REST API output data for Member object
+     *
+     * @return string
+     */
+    public function getAjaxData()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getFullName(),
+            'convent_id' => $this->koondised_id,
+            'credit' => doubleval($this->getCredit()->getCredit())
+        ];
+    }
 }
