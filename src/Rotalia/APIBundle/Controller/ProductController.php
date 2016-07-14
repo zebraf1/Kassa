@@ -15,7 +15,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 class ProductController extends DefaultController
 {
     /**
-     * Fetch list of product objects (id, name, price). Supports pagination (page=1, limit=100).
+     * Fetch list of product objects (id, name, price, unit). Supports pagination (page=1, limit=100).
      * Allows filtering active/inactive products, by name and productCode
      *
      * @ApiDoc(
@@ -24,6 +24,7 @@ class ProductController extends DefaultController
      *     filters={
      *          {"name"="name","type"="string"},
      *          {"name"="productCode","type"="string"},
+     *          {"name"="productGroupId","type"="int"},
      *          {"name"="page","type"="int","default"="1"},
      *          {"name"="limit","type"="int","default"="100"},
      *          {"name"="active","type"="boolean"},
@@ -40,6 +41,7 @@ class ProductController extends DefaultController
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 100);
         $active = $request->get('active', null);
+        $productGroupId = $request->get('productGroupId', null);
 
         if ($active !== null) {
             $active = filter_var($active, FILTER_VALIDATE_BOOLEAN);
@@ -57,6 +59,10 @@ class ProductController extends DefaultController
 
         if ($productCode !== null) {
             $productQuery->filterByProductCode($productCode);
+        }
+
+        if ($productGroupId !== null) {
+            $productQuery->filterByProductGroupId($productGroupId);
         }
 
         $products = $productQuery
