@@ -2,8 +2,8 @@
 <database name="default" namespace="Rotalia\UserBundle\Model" defaultIdMethod="native">
     <table name="koondised" phpName="Convent" idMethod="native">
         <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-        <column name="nimi" phpName="Nimi" type="VARCHAR" size="100" required="true" defaultValue=""/>
-        <column name="kassa_aktiivne" phpName="KassaAktiivne" type="INTEGER" size="1" defaultValue="0"/>
+        <column name="nimi" phpName="Name" type="VARCHAR" size="100" required="true" defaultValue=""/>
+        <column name="kassa_aktiivne" phpName="IsActive" type="INTEGER" size="1" defaultValue="0"/>
         <index name="nimi">
             <index-column name="nimi"/>
         </index>

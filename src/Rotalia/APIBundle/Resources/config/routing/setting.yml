@@ -1,0 +1,4 @@
+RotaliaAPI_setting_list:
+    pattern:  /setting/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:Setting:List }

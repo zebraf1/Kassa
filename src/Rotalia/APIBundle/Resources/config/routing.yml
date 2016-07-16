@@ -3,3 +3,6 @@ authentication:
 
 product:
     resource: "@RotaliaAPIBundle/Resources/config/routing/product.yml"
+
+setting:
+    resource: "@RotaliaAPIBundle/Resources/config/routing/setting.yml"
