@@ -99,3 +99,6 @@ tr.even td {
     display: inline-block;
 }
 @-webkit-keyframes sweep { to { -webkit-transform: rotate(360deg); } }
+
+#logo-new { float: left; font-size: 26px; font-family: "Arial Rounded", arial, helvetica; padding: 20px 0 0 10px; }
+#logo-new A { text-decoration: none; }
