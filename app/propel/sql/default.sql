@@ -76,6 +76,26 @@ CREATE TABLE `ollekassa_product`
     `amount_type_id` VARCHAR(50) DEFAULT 'PIECE',
     `status_id` VARCHAR(50) DEFAULT 'ACTIVE',
     `seq` INTEGER(3) DEFAULT 1,
+    `product_group_id` INTEGER,
+    PRIMARY KEY (`id`),
+    INDEX `FI_duct_group_fk` (`product_group_id`),
+    CONSTRAINT `product_group_fk`
+        FOREIGN KEY (`product_group_id`)
+        REFERENCES `ollekassa_product_group` (`id`)
+        ON DELETE CASCADE
+) ENGINE=InnoDB CHARACTER SET='utf8';
+
+-- ---------------------------------------------------------------------
+-- ollekassa_product_group
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_product_group`;
+
+CREATE TABLE `ollekassa_product_group`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL,
+    `seq` INTEGER(3) DEFAULT 1,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
@@ -135,7 +155,8 @@ CREATE TABLE `ollekassa_transaction`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `type` VARCHAR(255) NOT NULL,
     `product_id` INTEGER,
-    `member_id` INTEGER NOT NULL,
+    `member_id` INTEGER,
+    `pos_id` INTEGER,
     `amount` DECIMAL(10,1),
     `current_price` DECIMAL(10,2),
     `sum` DECIMAL(10,2) NOT NULL,
@@ -144,11 +165,49 @@ CREATE TABLE `ollekassa_transaction`
     PRIMARY KEY (`id`),
     INDEX `member_id` (`member_id`),
     INDEX `FI_duct_purchase_product_fk` (`product_id`),
-    INDEX `FI_duct_purchase_created_by_fk` (`created_by`),
+    INDEX `FI_nsaction_created_by_fk` (`created_by`),
+    INDEX `FI_nsaction_pos_fk` (`pos_id`),
     CONSTRAINT `product_purchase_product_fk`
         FOREIGN KEY (`product_id`)
-        REFERENCES `ollekassa_product` (`id`)
+        REFERENCES `ollekassa_product` (`id`),
+    CONSTRAINT `transaction_pos_fk`
+        FOREIGN KEY (`pos_id`)
+        REFERENCES `ollekassa_point_of_sale` (`id`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
+
+-- ---------------------------------------------------------------------
+-- ollekassa_point_of_sale
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_point_of_sale`;
+
+CREATE TABLE `ollekassa_point_of_sale`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL,
+    `hash` VARCHAR(100) NOT NULL,
+    `device_info` VARCHAR(255),
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `hash` (`hash`),
+    INDEX `FI__created_by_fk` (`created_by`)
+) ENGINE=InnoDB CHARACTER SET='utf8';
+
+-- ---------------------------------------------------------------------
+-- koondised
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `koondised`;
+
+CREATE TABLE `koondised`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `nimi` VARCHAR(100) DEFAULT '' NOT NULL,
+    `kassa_aktiivne` INTEGER(1) DEFAULT 0,
+    PRIMARY KEY (`id`),
+    INDEX `nimi` (`nimi`)
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- liikmed
