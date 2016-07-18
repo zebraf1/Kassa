@@ -9,18 +9,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 
 /**
- * Class ProductController
+ * Class ProductsController
  * @package Rotalia\APIBundle\Controller
  */
-class ProductController extends DefaultController
+class ProductsController extends DefaultController
 {
     /**
      * Fetch list of product objects (id, name, price, unit). Supports pagination (page=1, limit=100).
      * Allows filtering active/inactive products, by name and productCode
      *
      * @ApiDoc(
+     *     resource = true,
+     *     statusCodes = {
+     *          200 = "Returned when successful",
+     *     },
      *     description="Fetch Product list",
-     *     section="Product",
+     *     section="Products",
      *     filters={
      *          {"name"="name","type"="string"},
      *          {"name"="productCode","type"="string"},
@@ -86,8 +90,14 @@ class ProductController extends DefaultController
      * Finds a Product for the given ID. Returns a product object (id, name, price) or error 404 when product is not found.
      *
      * @ApiDoc(
+     *     resource = true,
+     *     statusCodes = {
+     *          200 = "Returned when successful",
+     *          400 = "Returned when ID is not valid",
+     *          404 = "Returned when Product for ID is not found",
+     *     },
      *     description="Fetch Product for ID",
-     *     section="Product",
+     *     section="Products",
      * )
      *
      * @param $id

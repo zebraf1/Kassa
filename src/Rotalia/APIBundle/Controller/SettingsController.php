@@ -8,17 +8,20 @@ use Rotalia\UserBundle\Model\ConventQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 
 /**
- * Class SettingController
+ * Class SettingsController
  * @package Rotalia\APIBundle\Controller
  */
-class SettingController extends DefaultController
+class SettingsController extends DefaultController
 {
     /**
      * Get all global and user settings
      *
      * @ApiDoc(
+     *     statusCodes = {
+     *          200 = "Returned when successful",
+     *     },
      *     description="Fetch settings list",
-     *     section="Setting",
+     *     section="Settings",
      * )
      * @return JSendResponse
      */

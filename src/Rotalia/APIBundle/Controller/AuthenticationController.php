@@ -25,6 +25,9 @@ class AuthenticationController extends DefaultController
      * Generate and return a CSRF token for the session when member is not logged in. This token is required upon login.
      *
      * @ApiDoc(
+     *     statusCodes = {
+     *          200 = "Returned when successful",
+     *     },
      *     description="Fetch session state",
      *     section="Authentication"
      * )
@@ -63,6 +66,11 @@ class AuthenticationController extends DefaultController
      * for further communication between the server.
      *
      * @ApiDoc(
+     *     statusCodes = {
+     *          200 = "Returned when successful",
+     *          400 = "Returned when CSRF token is missing or it is invalid",
+     *          401 = "Returned when username or password provided is incorrect",
+     *     },
      *     description="Create new session",
      *     section="Authentication",
      *     formType="POST",
@@ -94,7 +102,7 @@ class AuthenticationController extends DefaultController
 
         $user = UserQuery::create()->findOneByUsername($username);
         if ($user === null) {
-            return JSendResponse::createFail('Kasutajat ei leitud', 400);
+            return JSendResponse::createFail('Kasutajat ei leitud', 401);
         }
 
         // Get the encoder to check user password
@@ -105,7 +113,7 @@ class AuthenticationController extends DefaultController
         // Note the difference
         if (!$encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
             // Get profile list
-            return JSendResponse::createFail('Vale parool', 400);
+            return JSendResponse::createFail('Vale parool', 401);
         }
 
         // Login the user
@@ -124,6 +132,10 @@ class AuthenticationController extends DefaultController
      * Invalidate the current session and destroy any authentication data
      *
      * @ApiDoc(
+     *     statusCodes = {
+     *          200 = "Returned when successful",
+     *          500 = "Returned when session invalidation fails",
+     *     },
      *     description="Logout",
      *     section="Authentication",
      *     formType="POST"
