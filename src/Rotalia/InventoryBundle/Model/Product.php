@@ -106,8 +106,20 @@ class Product extends BaseProduct
             'id' => $this->getId(),
             'name' => $this->getAjaxName(),
             'price' => doubleval($this->getPrice()),
-            'unit' => $this->getAmountType(),
+            'unit' => $this->getAmountTypeId(),
+            'unitName' => $this->getAmountType(),
+            'status' => $this->getStatusId(),
+            'statusName' => $this->getStatusType(),
             'productGroupId' => $this->getProductGroupId(),
         ];
+    }
+
+    /**
+     * FK Validation
+     * @return bool
+     */
+    public function isProductGroupValid()
+    {
+        return $this->getProductGroupId() === null || $this->getProductGroup() !== null;
     }
 }

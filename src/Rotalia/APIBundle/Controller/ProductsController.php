@@ -3,8 +3,10 @@
 namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\InventoryBundle\Form\ProductType;
 use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 
@@ -121,12 +123,83 @@ class ProductsController extends DefaultController
     }
 
     /**
-     * CRSF token ID for current controller
+     * Creates a new Product
      *
-     * @return string
+     * @ApiDoc(
+     *   resource = true,
+     *   section="Products",
+     *   description = "Creates a new product from the submitted data.",
+     *   input = "Rotalia\InventoryBundle\Form\ProductType",
+     *   statusCodes = {
+     *     201 = "Returned when new product is created. Includes created object",
+     *     400 = "Returned when the form has errors"
+     *   }
+     * )
+     * @param Request $request
+     * @return JSendResponse
      */
-    protected function getTokenId()
+    public function postAction(Request $request)
     {
-        return 'restApiProductToken';
+        return $this->handleSubmit(new Product(), $request);
+    }
+
+    /**
+     * Update product data
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   section="Products",
+     *   description = "Applies given attributes to the Product with the selected ID",
+     *   input = "Rotalia\InventoryBundle\Form\ProductType",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *     404 = "Returned when the Product is not found for ID",
+     *   }
+     * )
+     * @param Request $request
+     * @return JSendResponse
+     */
+    public function patchAction(Request $request, $id)
+    {
+        $product = ProductQuery::create()->findPk($id);
+
+        if ($product === null) {
+            return JSendResponse::createFail('Toodet ei leitud', 404);
+        }
+
+        return $this->handleSubmit($product, $request);
+    }
+
+    /**
+     *
+     * @param Product $product
+     * @param Request $request
+     * @return JSendResponse
+     */
+    private function handleSubmit(Product $product, Request $request)
+    {
+        if (!$this->isGranted(User::ROLE_ADMIN)) {
+            return JSendResponse::createFail('Access Denied', 403);
+        }
+
+        $form = $this->createForm(new ProductType(), $product, [
+            'csrf_protection' => false, // Disable for REST api
+            'method' => $request->getMethod(),
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $product = $form->getData();
+            $product->save();
+            $code = $request->getMethod() === 'POST' ? 201 : 200;
+            return JSendResponse::createSuccess(['product' => $product->getAjaxData()], [], $code);
+        } else {
+            return JSendResponse::createFail([
+                'message' => 'Toote lisamine ebaõnnestus',
+                'errors' => (string)$form->getErrors(true)
+            ], 400);
+        }
     }
 }

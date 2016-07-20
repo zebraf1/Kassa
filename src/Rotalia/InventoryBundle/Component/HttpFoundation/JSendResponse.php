@@ -57,13 +57,18 @@ class JSendResponse extends JsonResponse
      * Creates a JSend successful response.
      * All went well, and (usually) some data was returned.
      *
-     * @param mixed $jSendData    required parameter data
-     * @param array $httpHeaders  optional HTTP headers
+     * @param mixed $jSendData required parameter data
+     * @param array $httpHeaders optional HTTP headers
+     * @param int $httpStatus
      * @return JSendResponse
+     * @throws \Exception
      */
-    public static function createSuccess($jSendData, $httpHeaders = array())
+    public static function createSuccess($jSendData, $httpHeaders = [], $httpStatus = 200)
     {
-        return new static(self::JSEND_STATUS_SUCCESS, $jSendData, null, null, 200, $httpHeaders);
+        if ($httpStatus >= 400) {
+            throw new \Exception('Invalid httpStatus given:'.$httpStatus);
+        }
+        return new static(self::JSEND_STATUS_SUCCESS, $jSendData, null, null, $httpStatus, $httpHeaders);
     }
 
     /**

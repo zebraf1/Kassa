@@ -43,6 +43,10 @@ class ProductType extends AbstractType
                 'label' => 'Tootekood',
                 'required' => false,
             ))
+            ->add('product_group_id', 'text', array(
+                'label' => 'Toote grupp',
+                'required' => false,
+            ))
         ;
     }
 

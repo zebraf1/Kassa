@@ -1,4 +1,19 @@
-RotaliaInventoryBundle\Model\Report:
+Rotalia\InventoryBundle\Model\Report:
     properties:
         cash:
             - NotBlank: ~
+Rotalia\InventoryBundle\Model\Product:
+    properties:
+        name:
+            - NotBlank: ~
+        price:
+            - NotBlank: ~
+            - GreaterThanOrEqual: 0
+        amount_type_id:
+            - NotBlank: ~
+        status_id:
+            - NotBlank: ~
+    getters:
+        productGroupValid:
+            - 'True':
+                message: 'Tootegruppi pole olemas'

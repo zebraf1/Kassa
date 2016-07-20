@@ -7,3 +7,13 @@ RotaliaAPI_products_get:
     pattern:  /products/{id}/
     methods: [GET]
     defaults: { _controller: RotaliaAPIBundle:Products:Get }
+
+RotaliaAPI_products_post:
+    pattern:  /products/
+    methods: [POST]
+    defaults: { _controller: RotaliaAPIBundle:Products:Post }
+
+RotaliaAPI_products_patch:
+    pattern:  /products/{id}/
+    methods: [PATCH]
+    defaults: { _controller: RotaliaAPIBundle:Products:Patch }

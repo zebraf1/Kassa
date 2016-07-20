@@ -2,6 +2,8 @@
 
 namespace Rotalia\InventoryBundle\Controller;
 use Rotalia\InventoryBundle\Model\Product;
+use Rotalia\InventoryBundle\Model\ProductGroup;
+use Rotalia\InventoryBundle\Model\ProductGroupQuery;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\MemberQuery;
@@ -95,6 +97,39 @@ class SearchController extends DefaultController
                 'id' => $product->getId(),
                 'text' => $product->getName(),
                 'price' => $product->getPrice()
+            ];
+        }
+
+        return JsonResponse::create($resultArray);
+    }
+
+    /**
+     * Search product groups by name
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function productGroupAction(Request $request)
+    {
+        $name = $request->get('name');
+
+        /** @var ProductGroup[] $productGroups */
+        $productGroups = ProductGroupQuery::create()
+            ->filterByName('%'.$name.'%', \Criteria::LIKE)
+            ->orderBySeq()
+            ->find()
+        ;
+
+        $resultArray = [
+            'items' => [],
+            'page' => 1,
+            'hasNextPage' => false
+        ];
+
+        foreach ($productGroups as $productGroup) {
+            $resultArray['items'][] = [
+                'id' => $productGroup->getId(),
+                'text' => $productGroup->getAjaxName(),
             ];
         }
 
