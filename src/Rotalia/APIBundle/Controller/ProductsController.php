@@ -3,6 +3,7 @@
 namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\InventoryBundle\Form\FormErrorHelper;
 use Rotalia\InventoryBundle\Form\ProductType;
 use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
@@ -196,9 +197,11 @@ class ProductsController extends DefaultController
             $code = $request->getMethod() === 'POST' ? 201 : 200;
             return JSendResponse::createSuccess(['product' => $product->getAjaxData()], [], $code);
         } else {
+            $errors = FormErrorHelper::getErrors($form);
+
             return JSendResponse::createFail([
                 'message' => 'Toote lisamine ebaõnnestus',
-                'errors' => (string)$form->getErrors(true)
+                'errors' => $errors
             ], 400);
         }
     }
