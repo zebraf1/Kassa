@@ -279,7 +279,8 @@ CREATE TABLE `liikmed`
     INDEX `eesnimi` (`eesnimi`),
     INDEX `perenimi` (`perenimi`),
     INDEX `staatused_id` (`staatused_id`),
-    INDEX `coet_a` (`coet_a`)
+    INDEX `coet_a` (`coet_a`),
+    INDEX `FI_ndised_alg_fk` (`koondised_alg`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------

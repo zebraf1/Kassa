@@ -1,9 +1,7 @@
 <?php
 
 namespace Rotalia\APIBundle\Tests\Controller;
-
-
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Class AuthenticationControllerTest
@@ -11,10 +9,18 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class AuthenticationControllerTest extends WebTestCase
 {
-    public function testGetAction()
+    /**
+     * Check that user is not logged in and fetch login token
+     * Attempt login, check that it is successful
+     * Get login info, check that user name is correct
+     * Logout
+     * Check that user is logged out
+     */
+    public function testSuccessfulLoginAndLogout()
     {
-        $client = static::createClient();
+        $client = static::$client;
 
+        // GET - fetch CSRF Token
         $client->request(
             'GET',
             '/api/authentication/'
@@ -24,11 +30,177 @@ class AuthenticationControllerTest extends WebTestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $result = json_decode($response->getContent());
+        $getResult = json_decode($response->getContent());
 
-        $this->assertEquals('success', $result->status);
-        $this->assertEquals(null, $result->data->member);
-        $this->assertEquals(null, $result->data->pointOfSale);
-        $this->assertNotEmpty($result->data->csrfToken);
+        $this->assertEquals('success', $getResult->status);
+        $this->assertEquals(null, $getResult->data->member);
+        $this->assertEquals(null, $getResult->data->pointOfSale);
+        $this->assertNotEmpty($getResult->data->csrfToken);
+
+        // POST - login
+        $client->request(
+            'POST',
+            '/api/authentication/',
+            [
+                'csrfToken' => $getResult->data->csrfToken,
+                'username' => 'user1', // from fixtures
+                'password' => 'test123', // from fixtures
+            ]
+        );
+
+        $response = $client->getResponse();
+        $postResult = json_decode($response->getContent());
+
+        $this->assertEquals(200, $response->getStatusCode(), 'Failed: '.$postResult->data);
+        $this->assertEquals('Autoriseerimine õnnestus', $postResult->data);
+
+        $postResult = json_decode($response->getContent());
+        $this->assertEquals('success', $postResult->status);
+
+        $cookies = $response->headers->getCookies();
+        /** @var Cookie $sessionCookie */
+        $sessionCookie = $cookies[0];
+        $this->assertEquals('MOCKSESSID', $sessionCookie->getName());
+        $sessionId = $sessionCookie->getValue();
+
+        $clientCookie = $client->getCookieJar()->get('MOCKSESSID');
+        $this->assertEquals($sessionId, $clientCookie->getValue());
+
+        // GET - check login status
+        $client->request(
+            'GET',
+            '/api/authentication/'
+        );
+
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $getResult = json_decode($response->getContent());
+
+        $this->assertEquals('success', $getResult->status);
+        $this->assertNotEmpty($getResult->data->member);
+        $this->assertEquals('Jaak Tamre', $getResult->data->member->name);
+        $this->assertEquals(null, $getResult->data->pointOfSale);
+        $this->assertEmpty($getResult->data->csrfToken);
+
+        // DELETE - logout
+        $client->request(
+            'DELETE',
+            '/api/authentication/'
+        );
+
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $deleteResult = json_decode($response->getContent());
+
+        $this->assertEquals('success', $deleteResult->status);
+
+        // GET - check that user is logged out
+        $client->request(
+            'GET',
+            '/api/authentication/'
+        );
+
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $getResult = json_decode($response->getContent());
+        $this->assertEquals('success', $getResult->status);
+        $this->assertEquals(null, $getResult->data->member);
+        $this->assertEquals(null, $getResult->data->pointOfSale);
+        $this->assertNotEmpty($getResult->data->csrfToken);
+    }
+
+    // Test authentication failed 400 403
+    public function testAuthenticationWithoutToken()
+    {
+        $client = static::$client;
+
+        // POST - login
+        $client->request(
+            'POST',
+            '/api/authentication/',
+            [
+                'username' => 'user1', // from fixtures
+                'password' => 'test123', // from fixtures
+            ]
+        );
+
+        $response = $client->getResponse();
+        $postResult = json_decode($response->getContent());
+
+        $this->assertEquals(400, $response->getStatusCode(), 'Failed: '.$postResult->data);
+        $this->assertEquals('Login token puudub', $postResult->data);
+    }
+
+    public function testAuthenticationWrongUsername()
+    {
+        $client = static::$client;
+
+        // GET - fetch CSRF Token
+        $client->request(
+            'GET',
+            '/api/authentication/'
+        );
+
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $getResult = json_decode($response->getContent());
+
+        // POST - login
+        $client->request(
+            'POST',
+            '/api/authentication/',
+            [
+                'csrfToken' => $getResult->data->csrfToken,
+                'username' => 'wrong',
+                'password' => 'test123',
+            ]
+        );
+
+        $response = $client->getResponse();
+        $postResult = json_decode($response->getContent());
+
+        $this->assertEquals(401, $response->getStatusCode(), 'Failed: '.$postResult->data);
+        $this->assertEquals('Kasutajat ei leitud', $postResult->data);
+    }
+
+    public function testAuthenticationWrongPassword()
+    {
+        $client = static::$client;
+
+        // GET - fetch CSRF Token
+        $client->request(
+            'GET',
+            '/api/authentication/'
+        );
+
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $getResult = json_decode($response->getContent());
+
+        // POST - login
+        $client->request(
+            'POST',
+            '/api/authentication/',
+            [
+                'csrfToken' => $getResult->data->csrfToken,
+                'username' => 'user1',
+                'password' => 'wrong',
+            ]
+        );
+
+        $response = $client->getResponse();
+        $postResult = json_decode($response->getContent());
+
+        $this->assertEquals(401, $response->getStatusCode(), 'Failed: '.$postResult->data);
+        $this->assertEquals('Vale parool', $postResult->data);
     }
 }

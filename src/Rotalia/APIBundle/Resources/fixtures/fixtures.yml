@@ -1,0 +1,119 @@
+Rotalia\UserBundle\Model\Convent:
+    Convent_1:
+        nimi: 'Los Angeles'
+        kassa_aktiivne: '0'
+    Convent_2:
+        nimi: 'New York'
+        kassa_aktiivne: '0'
+    Convent_3:
+        nimi: Ottawa
+        kassa_aktiivne: '0'
+    Convent_4:
+        nimi: Rootsi
+        kassa_aktiivne: '0'
+    Convent_5:
+        nimi: Seattle
+        kassa_aktiivne: '0'
+    Convent_6:
+        nimi: Tallinn
+        kassa_aktiivne: '1'
+    Convent_7:
+        nimi: Tartu
+        kassa_aktiivne: '1'
+    Convent_8:
+        nimi: Toronto
+        kassa_aktiivne: '0'
+    Convent_9:
+        nimi: Vancouver
+        kassa_aktiivne: '0'
+    Convent_10:
+        nimi: Washington
+        kassa_aktiivne: '0'
+    Convent_12:
+        nimi: mujal
+        kassa_aktiivne: '0'
+    Convent_11:
+        nimi: Brüssel
+        kassa_aktiivne: '0'
+
+Rotalia\UserBundle\Model\Member:
+    Member_1886:
+        koondised_id: Convent_6
+        koondised_alg: Convent_6
+        staatused_id: '5'
+        eesnimi: Jaak
+        perenimi: Tamre
+    Member_2122:
+            koondised_id: Convent_6
+            koondised_alg: Convent_6
+            staatused_id: '3'
+            eesnimi: Gerd
+            perenimi: Kukemilk
+
+Rotalia\UserBundle\Model\MemberCredit:
+    MemberCredit_1:
+        member_id: Member_1886
+        credit: '2.85'
+        comment: Test
+
+
+Rotalia\UserBundle\Model\User:
+    User_300:
+        username: user1
+        password: 39817a786ddf7333 #test123
+        liikmed_id: Member_1886
+        lastlogin: '2015-04-09 20:13:15'
+        jutukas_lastaccess: '0'
+        jutukas_firstmess: '8765'
+    User_520:
+        username: user2
+        password: 39817a786ddf7333 #test123
+        liikmed_id: Member_2122
+        lastlogin: '2015-04-01 14:59:04'
+        jutukas_lastaccess: '0'
+
+Rotalia\InventoryBundle\Model\PointOfSale:
+    PointOfSale_7:
+        name: Tallinn
+        hash: abcdef1234567890abcdef1234567890
+        device_info: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36'
+        created_at: '2016-01-17 22:02:57'
+        created_by: Member_1886
+
+Rotalia\InventoryBundle\Model\ProductGroup:
+    ProductGroup_1:
+        name: Õlu
+        seq: '1'
+    ProductGroup_2:
+        name: Toit
+        seq: '2'
+
+Rotalia\InventoryBundle\Model\Product:
+    Product_1:
+        name: 'A le Coq Premium'
+        product_code: '12345678'
+        price: '1.00'
+        amount_type_id: PIECE
+        status_id: ACTIVE
+        seq: '1'
+        product_group_id: ProductGroup_1
+    Product_2:
+        name: 'A le Coq Aleksander'
+        price: '1.50'
+        amount_type_id: PIECE
+        status_id: ACTIVE
+        seq: '2'
+        product_group_id: ProductGroup_1
+    Product_3:
+        name: 'A le Coq Pilsner'
+        price: '1.00'
+        amount_type_id: PIECE
+        status_id: DISABLED
+        seq: '10'
+    Product_42:
+        name: 'Tuc Küpsis'
+        price: '1.00'
+        amount_type_id: PIECE
+        status_id: ACTIVE
+        seq: '43'
+        product_group_id: ProductGroup_2

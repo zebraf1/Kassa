@@ -69,6 +69,12 @@
         <column name="amet" phpName="Amet" type="VARCHAR" size="100" required="false"/>
         <column name="leibcantus" phpName="Leibcantus" type="VARCHAR" size="200" required="false"/>
         <column name="tegevusala" phpName="Tegevusala" type="VARCHAR" size="200" required="true"/>
+        <foreign-key foreignTable="koondised" name="koondised_fk" skipSql="true">
+            <reference local="koondised_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="koondised" name="koondised_alg_fk" skipSql="true">
+            <reference local="koondised_alg" foreign="id" />
+        </foreign-key>
         <index name="koondised_id">
             <index-column name="koondised_id"/>
         </index>

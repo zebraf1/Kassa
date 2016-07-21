@@ -14,3 +14,7 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+propel:
+    dbal:
+        dsn: %database_driver%:host=%database_host%;dbname=%database_name%_test;charset=UTF8
