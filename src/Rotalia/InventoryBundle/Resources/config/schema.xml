@@ -18,6 +18,24 @@
         </vendor>
     </table>
 
+    <table name="ollekassa_product_info" phpName="ProductInfo">
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="product_id" type="INTEGER" required="true" />
+        <column name="convent_id" type="INTEGER" required="true" />
+        <column name="price" type="DECIMAL" size="10" scale="2" required="true" />
+        <column name="status_id" type="VARCHAR" size="50" defaultValue="ACTIVE" />
+        <foreign-key foreignTable="ollekassa_product" name="product_info_product_fk" onUpdate="CASCADE" onDelete="CASCADE">
+            <reference local="product_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="koondised" name="koondised_fk" skipSql="true">
+            <reference local="convent_id" foreign="id" />
+        </foreign-key>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+    </table>
+
     <table name="ollekassa_product_group" phpName="ProductGroup">
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
         <column name="name" type="VARCHAR" size="100" required="true" />

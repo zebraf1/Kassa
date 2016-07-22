@@ -86,6 +86,29 @@ CREATE TABLE `ollekassa_product`
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
+-- ollekassa_product_info
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_product_info`;
+
+CREATE TABLE `ollekassa_product_info`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `product_id` INTEGER NOT NULL,
+    `convent_id` INTEGER NOT NULL,
+    `price` DECIMAL(10,2) NOT NULL,
+    `status_id` VARCHAR(50) DEFAULT 'ACTIVE',
+    PRIMARY KEY (`id`),
+    INDEX `FI_duct_info_product_fk` (`product_id`),
+    INDEX `FI_ndised_fk` (`convent_id`),
+    CONSTRAINT `product_info_product_fk`
+        FOREIGN KEY (`product_id`)
+        REFERENCES `ollekassa_product` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB CHARACTER SET='utf8';
+
+-- ---------------------------------------------------------------------
 -- ollekassa_product_group
 -- ---------------------------------------------------------------------
 

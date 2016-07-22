@@ -51,15 +51,36 @@ class ProductsController extends DefaultController
         $active = $request->get('active', null);
         $productGroupId = $request->get('productGroupId', null);
 
+        $conventId = $request->get('conventId', null);
+
+        if ($conventId === null) {
+            $conventId = $this->getMember()->getKoondisedId();
+        }
+
         if ($active !== null) {
             $active = filter_var($active, FILTER_VALIDATE_BOOLEAN);
         }
 
         /** @var Product[]|\PropelModelPager $products */
         $productQuery = ProductQuery::create()
-            ->filterByActiveStatus($active)
             ->orderByName()
         ;
+
+        $productQuery
+            ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
+            ->filterByConventId($conventId)
+            ->_or()
+            ->filterByConventId(null, \Criteria::ISNULL)
+            ->endUse()
+        ;
+
+        if ($active !== null) {
+            $productQuery
+                ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
+                    ->filterByActiveStatus($active)
+                ->endUse()
+            ;
+        }
 
         if ($name !== null) {
             $productQuery->filterByName('%'.$name.'%', \Criteria::LIKE);
@@ -84,6 +105,7 @@ class ProductsController extends DefaultController
         ];
 
         foreach ($products as $product) {
+            $product->setConventId($conventId);
             $resultArray['products'][] = $product->getAjaxData();
         }
 

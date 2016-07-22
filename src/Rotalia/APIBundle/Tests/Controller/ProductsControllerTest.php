@@ -94,7 +94,7 @@ class ProductsControllerTest extends WebTestCase
 
     public function testGetListFilterActive()
     {
-        $this->loginSimpleUser();
+        $this->loginSimpleUser(); // Convent_6
 
         static::$client->request('GET', '/api/products/', ['active' => 1]);
         $response = static::$client->getResponse();
@@ -102,7 +102,7 @@ class ProductsControllerTest extends WebTestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNotEmpty($result->data->products);
-        $this->assertCount(3, $result->data->products);
+        $this->assertCount(2, $result->data->products);
 
         foreach ($result->data->products as $product) {
             $this->assertEquals(XClassifier::STATUS_ACTIVE, $product->status);

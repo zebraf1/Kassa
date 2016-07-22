@@ -117,3 +117,35 @@ Rotalia\InventoryBundle\Model\Product:
         status_id: ACTIVE
         seq: '43'
         product_group_id: ProductGroup_2
+
+Rotalia\InventoryBundle\Model\ProductInfo:
+    ProductInfo_1:
+        product_id: Product_1
+        convent_id: Convent_6
+        price: '1.00'
+        status_id: ACTIVE
+    ProductInfo_2:
+        product_id: Product_1
+        convent_id: Convent_7
+        price: '1.10'
+        status_id: ACTIVE
+    ProductInfo_3:
+        product_id: Product_2
+        convent_id: Convent_6
+        price: '1.50'
+        status_id: ACTIVE
+    ProductInfo_4:
+        product_id: Product_2
+        convent_id: Convent_7
+        price: '1.50'
+        status_id: DISABLED
+    ProductInfo_5:
+        product_id: Product_3
+        convent_id: Convent_6
+        price: '1.00'
+        status_id: DISABLED
+    ProductInfo_6:
+        product_id: Product_3
+        convent_id: Convent_7
+        price: '1.00'
+        status_id: DISABLED
