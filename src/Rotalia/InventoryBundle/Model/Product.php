@@ -103,6 +103,32 @@ class Product extends BaseProduct
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getPrice()
+    {
+        if ($info = $this->getProductInfo()) {
+            return $info->getPrice();
+        }
+
+        // todo remove
+        return parent::getPrice();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getStatusId()
+    {
+        if ($info = $this->getProductInfo()) {
+            return $info->getStatusId();
+        }
+
+        // todo remove
+        return parent::getStatusId();
+    }
+
+    /**
      * @param $v
      * @return $this
      */

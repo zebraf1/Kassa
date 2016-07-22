@@ -36,6 +36,7 @@ class ProductsController extends DefaultController
      *          {"name"="page","type"="int","default"="1"},
      *          {"name"="limit","type"="int","default"="0"},
      *          {"name"="active","type"="boolean"},
+     *          {"name"="conventId","type"="int","description"="Fetch price and status for another convent than member home convent"},
      *     }
      * )
      *
@@ -124,15 +125,25 @@ class ProductsController extends DefaultController
      *     },
      *     description="Fetch Product for ID",
      *     section="Products",
+     *     filters={
+     *          {"name"="conventId","type"="int","description"="Fetch price and status for another convent than member home convent"},
+     *     }
      * )
      *
+     * @param Request $request
      * @param $id
      * @return JSendResponse
      */
-    public function getAction($id)
+    public function getAction(Request $request, $id)
     {
         if (empty($id)) {
             return JSendResponse::createFail('ID puudub', 400);
+        }
+
+        $conventId = $request->get('conventId', null);
+
+        if ($conventId === null) {
+            $conventId = $this->getMember()->getKoondisedId();
         }
 
         $product = ProductQuery::create()->findPk($id);
@@ -140,6 +151,8 @@ class ProductsController extends DefaultController
         if ($product === null) {
             return JSendResponse::createFail('Toodet ei leitud', 404);
         }
+
+        $product->setConventId($conventId);
 
         return JSendResponse::createSuccess([
             'product' => $product->getAjaxData(),
@@ -154,9 +167,13 @@ class ProductsController extends DefaultController
      *   section="Products",
      *   description = "Creates a new product from the submitted data.",
      *   input = "Rotalia\InventoryBundle\Form\ProductType",
+     *   filters={
+     *      {"name"="conventId","type"="int","description"="Set price and status for selected convent instead of member home convent"},
+     *   },
      *   statusCodes = {
      *     201 = "Returned when new product is created. Includes created object",
-     *     400 = "Returned when the form has errors"
+     *     400 = "Returned when the form has errors",
+     *     403 = "Returned when user has insufficient privileges",
      *   }
      * )
      * @param Request $request
@@ -175,9 +192,13 @@ class ProductsController extends DefaultController
      *   section="Products",
      *   description = "Applies given attributes to the Product with the selected ID",
      *   input = "Rotalia\InventoryBundle\Form\ProductType",
+     *   filters={
+     *      {"name"="conventId","type"="int","description"="Set price and status for selected convent instead of member home convent"},
+     *   },
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     400 = "Returned when the form has errors",
+     *     403 = "Returned when user has insufficient privileges",
      *     404 = "Returned when the Product is not found for ID",
      *   }
      * )
@@ -204,8 +225,21 @@ class ProductsController extends DefaultController
     private function handleSubmit(Product $product, Request $request)
     {
         if (!$this->isGranted(User::ROLE_ADMIN)) {
-            return JSendResponse::createFail('Access Denied', 403);
+            return JSendResponse::createFail('Tegevus vajab admin õiguseid', 403);
         }
+
+        $conventId = $request->get('conventId', null);
+        $memberConventId = $this->getMember()->getKoondisedId();
+
+        if ($conventId === null) {
+            $conventId = $memberConventId;
+        }
+
+        if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+            return JSendResponse::createFail('Teise konvendi tooteid saab muuta ainult super admin', 403);
+        }
+
+        $product->setConventId($conventId);
 
         $form = $this->createForm(new ProductType(), $product, [
             'csrf_protection' => false, // Disable for REST api
