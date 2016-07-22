@@ -19,6 +19,7 @@ class SettingsController extends DefaultController
      * @ApiDoc(
      *     statusCodes = {
      *          200 = "Returned when successful",
+     *          403 = "Returned when user is not authenticated",
      *     },
      *     description="Fetch settings list",
      *     section="Settings",

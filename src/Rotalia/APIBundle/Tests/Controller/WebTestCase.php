@@ -30,7 +30,7 @@ class WebTestCase extends BaseWebTestCase
         \Propel::disableInstancePooling();
 
 //        self::runCommand('propel:build --insert-sql');
-        self::runCommand('propel:fixtures:load @RotaliaAPIBundle --env=test');
+        self::runCommand('propel:fixtures:load @RotaliaAPIBundle --env=test --quiet');
     }
 
     protected static function getApplication()
@@ -50,5 +50,50 @@ class WebTestCase extends BaseWebTestCase
         $command = sprintf('%s', $command);
 
         return self::getApplication()->run(new StringInput($command));
+    }
+
+    /**
+     * @param $username
+     * @param $password
+     */
+    protected function login($username, $password)
+    {
+        $client = static::$client;
+
+        // GET - fetch CSRF Token
+        $client->request(
+            'GET',
+            '/api/authentication/'
+        );
+
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $getResult = json_decode($response->getContent());
+
+        $this->assertEquals('success', $getResult->status);
+
+        if (empty($getResult->data->member)) {
+            $this->assertNotEmpty($getResult->data->csrfToken);
+
+            // POST - login
+            $client->request(
+                'POST',
+                '/api/authentication/',
+                [
+                    'csrfToken' => $getResult->data->csrfToken,
+                    'username' => $username,
+                    'password' => $password,
+                ]
+            );
+
+            $response = $client->getResponse();
+            $postResult = json_decode($response->getContent());
+
+            $this->assertEquals(200, $response->getStatusCode(), 'Failed: '.$postResult->data);
+            $this->assertEquals('Autoriseerimine õnnestus', $postResult->data);
+        }
+
     }
 }
