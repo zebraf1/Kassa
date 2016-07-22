@@ -94,6 +94,15 @@ class WebTestCase extends BaseWebTestCase
             $this->assertEquals(200, $response->getStatusCode(), 'Failed: '.$postResult->data);
             $this->assertEquals('Autoriseerimine õnnestus', $postResult->data);
         }
+    }
 
+    protected function loginSuperAdmin()
+    {
+        $this->login('user1', 'test123');
+    }
+
+    protected function loginSimpleUser()
+    {
+        $this->login('user2', 'test123');
     }
 }

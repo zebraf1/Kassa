@@ -25,6 +25,7 @@ class ProductsController extends DefaultController
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
+     *          403 = "Returned when user is not authenticated",
      *     },
      *     description="Fetch Product list",
      *     section="Products",
@@ -33,7 +34,7 @@ class ProductsController extends DefaultController
      *          {"name"="productCode","type"="string"},
      *          {"name"="productGroupId","type"="int"},
      *          {"name"="page","type"="int","default"="1"},
-     *          {"name"="limit","type"="int","default"="100"},
+     *          {"name"="limit","type"="int","default"="0"},
      *          {"name"="active","type"="boolean"},
      *     }
      * )
@@ -46,7 +47,7 @@ class ProductsController extends DefaultController
         $name = $request->get('name', null);
         $productCode = $request->get('productCode', null);
         $page = (int)$request->get('page', 1);
-        $limit = (int)$request->get('limit', 100);
+        $limit = (int)$request->get('limit', 0);
         $active = $request->get('active', null);
         $productGroupId = $request->get('productGroupId', null);
 
