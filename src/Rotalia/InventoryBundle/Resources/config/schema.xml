@@ -6,6 +6,7 @@
         <column name="product_code" type="VARCHAR" size="100" required="false" />
         <column name="price" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="amount_type_id" type="VARCHAR" size="50" defaultValue="PIECE" />
+        <column name="amount" type="DECIMAL" size="10" scale="2" defaultValue="1" />
         <column name="status_id" type="VARCHAR" size="50" defaultValue="DISABLED" />
         <column name="seq" type="INTEGER" size="3" defaultValue="1" />
         <column name="product_group_id" type="INTEGER" required="false" />

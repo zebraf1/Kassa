@@ -25,6 +25,10 @@ class ProductType extends AbstractType
                 'label' => 'Hind',
                 'required' => true,
             ))
+            ->add('amount', 'text', array(
+                'label' => 'Kogus',
+                'required' => true,
+            ))
             ->add('amount_type_id', 'choice', array(
                 'label' => 'Ühik',
                 'required' => true,

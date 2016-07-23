@@ -74,6 +74,7 @@ CREATE TABLE `ollekassa_product`
     `product_code` VARCHAR(100),
     `price` DECIMAL(10,2) NOT NULL,
     `amount_type_id` VARCHAR(50) DEFAULT 'PIECE',
+    `amount` DECIMAL(10,2) DEFAULT 1,
     `status_id` VARCHAR(50) DEFAULT 'DISABLED',
     `seq` INTEGER(3) DEFAULT 1,
     `product_group_id` INTEGER,
