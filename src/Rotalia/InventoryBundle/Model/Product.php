@@ -173,6 +173,18 @@ class Product extends BaseProduct
     }
 
     /**
+     * @return null|string
+     */
+    public function getStatusType()
+    {
+        if ($info = $this->getProductInfo()) {
+            return $info->getStatusType();
+        }
+
+        return null;
+    }
+
+    /**
      * @return string
      */
     public function getAjaxData()

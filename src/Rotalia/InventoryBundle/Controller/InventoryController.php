@@ -42,8 +42,10 @@ class InventoryController extends DefaultController
         }
 
         $productsIndexed = [];
+        $conventId = $this->getMember()->getKoondisedId();
 
         foreach ($products as $product) {
+            $product->setConventId($conventId);
             $productsIndexed[$product->getId()] = $product;
         }
 
