@@ -4,6 +4,8 @@ namespace Rotalia\InventoryBundle\Model;
 
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseProduct;
+use Rotalia\UserBundle\Model\Convent;
+use Rotalia\UserBundle\Model\ConventQuery;
 
 class Product extends BaseProduct
 {
@@ -213,5 +215,30 @@ class Product extends BaseProduct
     public function isProductGroupValid()
     {
         return $this->getProductGroupId() === null || $this->getProductGroup() !== null;
+    }
+
+    /**
+     * Create missing ProductInfo objects for the current product and active convents
+     */
+    public function ensureProductInfos()
+    {
+        $infos = $this->getProductInfos();
+        $infoConventIds = array_map(function (ProductInfo $info) { return $info->getConventId(); }, $infos->getArrayCopy());
+
+        /** @var Convent[] $activeConvents */
+        $activeConvents = ConventQuery::create()->filterByIsActive(true)->find();
+
+        // Add entries for other active convents too that are missing
+        foreach ($activeConvents as $convent) {
+            if (!in_array($convent->getId(), $infoConventIds)) {
+                $productInfo = new ProductInfo();
+                $productInfo
+                    ->setProduct($this)
+                    ->setConvent($convent)
+                    ->setPrice($this->getPrice()) // use the same price
+                    ->setStatus(XClassifier::STATUS_DISABLED) // but set disabled
+                ;
+            }
+        }
     }
 }

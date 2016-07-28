@@ -251,23 +251,7 @@ class ProductsController extends DefaultController
             /** @var Product $product */
             $product = $form->getData();
 
-            if ($product->isNew()) {
-                /** @var Convent[] $activeConvents */
-                $activeConvents = ConventQuery::create()->filterByIsActive(true)->find();
-
-                // Add entries for other active convents too
-                foreach ($activeConvents as $convent) {
-                    if ($convent->getId() != $conventId) {
-                        $productInfo = new ProductInfo();
-                        $productInfo
-                            ->setProduct($product)
-                            ->setConvent($convent)
-                            ->setPrice($product->getPrice()) // use the same price
-                            ->setStatus(XClassifier::STATUS_DISABLED) // but set disabled
-                        ;
-                    }
-                }
-            }
+            $product->ensureProductInfos();
 
             $product->save();
             $code = $request->getMethod() === 'POST' ? 201 : 200;

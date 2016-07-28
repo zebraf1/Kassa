@@ -58,7 +58,7 @@ class InventoryController extends DefaultController
     /**
      * @param Request $request
      * @param null $id
-     * @return \Symfony\Component\HttpFoundation\Response|static
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @throws \Exception
      * @throws \PropelException
      */
@@ -81,6 +81,8 @@ class InventoryController extends DefaultController
             $product->setSeq($seq);
         }
 
+        $product->setConventId($this->getMember()->getKoondisedId());
+
         $form = $this->createForm(new ProductType(), $product);
 
         $form->handleRequest($request);
@@ -88,6 +90,7 @@ class InventoryController extends DefaultController
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $product = $form->getData();
+                $product->ensureProductInfos();
                 $product->save();
                 return $this->redirect($this->generateUrl('RotaliaInventory_list'));
             }
