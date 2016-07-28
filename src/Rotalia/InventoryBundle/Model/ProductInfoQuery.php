@@ -19,9 +19,9 @@ class ProductInfoQuery extends BaseProductInfoQuery
         }
 
         if ($active) {
-            $this->filterByStatusId(XClassifier::STATUS_ACTIVE);
+            $this->filterByStatus(XClassifier::STATUS_ACTIVE);
         } else {
-            $this->filterByStatusId(XClassifier::STATUS_DISABLED);
+            $this->filterByStatus(XClassifier::STATUS_DISABLED);
         }
 
         return $this;

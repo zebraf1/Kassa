@@ -32,7 +32,7 @@ class StatsController extends DefaultController
             ->joinReportRow('report_row', \Criteria::INNER_JOIN)
             ->useReportRowQuery('product', \Criteria::INNER_JOIN)
                 ->useProductQuery(null, \Criteria::INNER_JOIN)
-                    ->filterByStatusId(XClassifier::STATUS_ACTIVE)
+                    ->filterByStatus(XClassifier::STATUS_ACTIVE)
                 ->endUse()
             ->endUse()
             ->with('report_row')

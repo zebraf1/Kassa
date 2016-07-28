@@ -29,25 +29,25 @@ class ProductType extends AbstractType
                 'label' => 'Kogus',
                 'required' => true,
             ))
-            ->add('amount_type_id', 'choice', array(
+            ->add('amountType', 'choice', array(
                 'label' => 'Ühik',
                 'required' => true,
                 'expanded' => false,
                 'multiple' => false,
                 'choices' => XClassifier::$AMOUNT_TYPES
             ))
-            ->add('status_id', 'choice', array(
+            ->add('status', 'choice', array(
                 'label' => 'Staatus',
                 'required' => true,
                 'expanded' => false,
                 'multiple' => false,
                 'choices' => XClassifier::$STATUSES
             ))
-            ->add('product_code', 'text', array(
+            ->add('productCode', 'text', array(
                 'label' => 'Tootekood',
                 'required' => false,
             ))
-            ->add('product_group_id', 'text', array(
+            ->add('productGroupId', 'text', array(
                 'label' => 'Toote grupp',
                 'required' => false,
             ))

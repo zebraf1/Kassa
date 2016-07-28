@@ -14,9 +14,9 @@ class Product extends BaseProduct
      *
      * @return string
      */
-    public function getAmountType()
+    public function getAmountTypeName()
     {
-        switch ($this->getAmountTypeId()) {
+        switch ($this->getAmountType()) {
             case XClassifier::AMOUNT_TYPE_PIECE:
                 return 'tk';
                 break;
@@ -26,8 +26,11 @@ class Product extends BaseProduct
             case XClassifier::AMOUNT_TYPE_KG:
                 return 'kg';
                 break;
+            case XClassifier::AMOUNT_TYPE_G:
+                return 'g';
+                break;
             default:
-                return $this->getAmountTypeId();
+                return $this->getAmountType();
                 break;
         }
     }
@@ -38,7 +41,7 @@ class Product extends BaseProduct
      */
     public function isActive()
     {
-        return $this->getStatusId() == XClassifier::STATUS_ACTIVE;
+        return $this->getStatus() == XClassifier::STATUS_ACTIVE;
     }
 
     /**
@@ -90,13 +93,13 @@ class Product extends BaseProduct
     /**
      * @inheritdoc
      */
-    public function setStatusId($v)
+    public function setStatus($v)
     {
         // todo remove
-        parent::setStatusId($v);
+        parent::setStatus($v);
 
         if ($info = $this->getProductInfo()) {
-            $info->setStatusId($v);
+            $info->setStatus($v);
         }
 
         return $this;
@@ -118,14 +121,14 @@ class Product extends BaseProduct
     /**
      * @inheritdoc
      */
-    public function getStatusId()
+    public function getStatus()
     {
         if ($info = $this->getProductInfo()) {
-            return $info->getStatusId();
+            return $info->getStatus();
         }
 
         // todo remove
-        return parent::getStatusId();
+        return parent::getStatus();
     }
 
     /**
@@ -197,10 +200,8 @@ class Product extends BaseProduct
             'productCode' => $this->getProductCode(),
             'price' => $productInfo ? doubleval($productInfo->getPrice()) : null,
             'amount' => doubleval($this->getAmount()),
-            'amountType' => $this->getAmountTypeId(),
-            'amountTypeName' => $this->getAmountType(),
-            'status' => $productInfo ? $productInfo->getStatusId() : null,
-            'statusName' => $productInfo ? $productInfo->getStatusType() : null,
+            'amountType' => $this->getAmountType(),
+            'status' => $productInfo ? $productInfo->getStatus() : null,
             'productGroupId' => $this->getProductGroupId(),
         ];
     }

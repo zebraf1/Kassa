@@ -93,28 +93,28 @@ Rotalia\InventoryBundle\Model\Product:
         name: 'A le Coq Premium'
         product_code: '12345678'
         price: '1.00'
-        amount_type_id: PIECE
-        status_id: ACTIVE
+        amount_type: PIECE
+        status: ACTIVE
         seq: '1'
         product_group_id: ProductGroup_1
     Product_2:
         name: 'A le Coq Aleksander'
         price: '1.50'
-        amount_type_id: PIECE
-        status_id: ACTIVE
+        amount_type: PIECE
+        status: ACTIVE
         seq: '2'
         product_group_id: ProductGroup_1
     Product_3:
         name: 'A le Coq Pilsner'
         price: '1.00'
-        amount_type_id: PIECE
-        status_id: DISABLED
+        amount_type: PIECE
+        status: DISABLED
         seq: '10'
     Product_42:
         name: 'Tuc Küpsis'
         price: '1.00'
-        amount_type_id: PIECE
-        status_id: ACTIVE
+        amount_type: PIECE
+        status: ACTIVE
         seq: '43'
         product_group_id: ProductGroup_2
 
@@ -123,29 +123,39 @@ Rotalia\InventoryBundle\Model\ProductInfo:
         product_id: Product_1
         convent_id: Convent_6
         price: '1.00'
-        status_id: ACTIVE
+        status: ACTIVE
     ProductInfo_2:
         product_id: Product_1
         convent_id: Convent_7
         price: '1.10'
-        status_id: ACTIVE
+        status: ACTIVE
     ProductInfo_3:
         product_id: Product_2
         convent_id: Convent_6
         price: '1.50'
-        status_id: ACTIVE
+        status: ACTIVE
     ProductInfo_4:
         product_id: Product_2
         convent_id: Convent_7
         price: '1.50'
-        status_id: DISABLED
+        status: DISABLED
     ProductInfo_5:
         product_id: Product_3
         convent_id: Convent_6
         price: '1.00'
-        status_id: DISABLED
+        status: DISABLED
     ProductInfo_6:
         product_id: Product_3
         convent_id: Convent_7
         price: '1.00'
-        status_id: DISABLED
+        status: DISABLED
+    ProductInfo_7:
+        product_id: Product_42
+        convent_id: Convent_6
+        price: '1.00'
+        status: ACTIVE
+    ProductInfo_8:
+        product_id: Product_42
+        convent_id: Convent_7
+        price: '1.00'
+        status: ACTIVE

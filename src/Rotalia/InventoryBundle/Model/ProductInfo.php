@@ -14,7 +14,7 @@ class ProductInfo extends BaseProductInfo
      */
     public function getStatusType()
     {
-        switch ($this->getStatusId()) {
+        switch ($this->getStatus()) {
             case XClassifier::STATUS_ACTIVE:
                 return 'Aktiivne';
                 break;
@@ -22,7 +22,7 @@ class ProductInfo extends BaseProductInfo
                 return 'Suletud';
                 break;
             default:
-                return $this->getStatusId();
+                return $this->getStatus();
                 break;
         }
     }

@@ -13,7 +13,7 @@ class ProductQuery extends BaseProductQuery
     public static function getActiveProductsFirst()
     {
         return self::create()
-            ->orderByStatusId() //ACTIVE then DISABLED
+            ->orderByStatus() //ACTIVE then DISABLED
             ->orderBySeq()
             ->find()
         ;
@@ -26,7 +26,7 @@ class ProductQuery extends BaseProductQuery
     {
         return self::create()
             ->orderBySeq()
-            ->filterByStatusId(XClassifier::STATUS_ACTIVE)
+            ->filterByStatus(XClassifier::STATUS_ACTIVE)
             ->find()
             ;
     }
@@ -38,26 +38,6 @@ class ProductQuery extends BaseProductQuery
     {
         $criterion = new \Criterion($this, 'FIND_IN_SET(?, '.ProductPeer::PRODUCT_CODE.')', $productCode, \Criteria::RAW, $comparison);
         $this->add($criterion);
-
-        return $this;
-    }
-
-    /**
-     * @param bool $active  null - no filtering, true - active, false - disabled
-     * @return $this
-     */
-    public function filterByActiveStatus($active)
-    {
-        // Do not filter
-        if ($active === null) {
-            return $this;
-        }
-
-        if ($active) {
-            $this->filterByStatusId(XClassifier::STATUS_ACTIVE);
-        } else {
-            $this->filterByStatusId(XClassifier::STATUS_DISABLED);
-        }
 
         return $this;
     }

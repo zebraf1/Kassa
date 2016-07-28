@@ -63,7 +63,7 @@
                     {% set rowNum = rowNum + 1 %}
                     <tr class="{{ cycle(['even', 'odd'], rowNum) }} {% if not product.isActive %}inactive{% endif %}">
                         <td>{{ product.name }}</td>
-                        <td>{{ product.price }} €/{{ product.amountType }}</td>
+                        <td>{{ product.price }} €/{{ product.amountTypeName }}</td>
                         {% for report in reports %}
                             {% set reportRow = report.getReportRowForProduct(product) %}
                             <td>{% if reportRow %}{{ reportRow.getAmountFormatted(product) | raw }}{% endif %}</td>

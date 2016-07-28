@@ -73,7 +73,9 @@ class SearchController extends DefaultController
         $products = ProductQuery::create()
             ->filterByProductCode($name)
             ->orderByName()
-            ->filterByActiveStatus($active)
+            ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
+                ->filterByActiveStatus($active)
+            ->endUse()
             ->paginate($page, $limit)
         ;
 
@@ -81,7 +83,9 @@ class SearchController extends DefaultController
             $products = ProductQuery::create()
                 ->filterByName('%'.$name.'%', \Criteria::LIKE)
                 ->orderByName()
-                ->filterByActiveStatus($active)
+                ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
+                    ->filterByActiveStatus($active)
+                ->endUse()
                 ->paginate($page, $limit)
             ;
         }

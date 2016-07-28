@@ -73,7 +73,7 @@
             {% for product in products %}
                 <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
                     <td>{{ product.name }}</td>
-                    <td>{{ product.price }} €/{{ product.amountType }}</td>
+                    <td>{{ product.price }} €/{{ product.amountTypeName }}</td>
                     <td>
                         {% if isEditForm and reportForm.reportRowsFormEdit[product.id] is defined %}
                             {{ form_widget(reportForm.reportRowsFormEdit[product.id]) }}

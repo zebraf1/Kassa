@@ -2,11 +2,15 @@
 
 namespace Rotalia\APIBundle\Controller;
 
+use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
 use Rotalia\InventoryBundle\Form\ProductType;
 use Rotalia\InventoryBundle\Model\Product;
+use Rotalia\InventoryBundle\Model\ProductInfo;
 use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\UserBundle\Model\Convent;
+use Rotalia\UserBundle\Model\ConventQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
@@ -69,19 +73,14 @@ class ProductsController extends DefaultController
 
         $productQuery
             ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
+                ->filterByActiveStatus($active)
+            ->endUse()
+            ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
             ->filterByConventId($conventId)
-            ->_or()
-            ->filterByConventId(null, \Criteria::ISNULL)
+                ->_or()
+                ->filterByConventId(null, \Criteria::ISNULL)
             ->endUse()
         ;
-
-        if ($active !== null) {
-            $productQuery
-                ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
-                    ->filterByActiveStatus($active)
-                ->endUse()
-            ;
-        }
 
         if ($name !== null) {
             $productQuery->filterByName('%'.$name.'%', \Criteria::LIKE);
@@ -249,7 +248,27 @@ class ProductsController extends DefaultController
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            /** @var Product $product */
             $product = $form->getData();
+
+            if ($product->isNew()) {
+                /** @var Convent[] $activeConvents */
+                $activeConvents = ConventQuery::create()->filterByIsActive(true)->find();
+
+                // Add entries for other active convents too
+                foreach ($activeConvents as $convent) {
+                    if ($convent->getId() != $conventId) {
+                        $productInfo = new ProductInfo();
+                        $productInfo
+                            ->setProduct($product)
+                            ->setConvent($convent)
+                            ->setPrice($product->getPrice()) // use the same price
+                            ->setStatus(XClassifier::STATUS_DISABLED) // but set disabled
+                        ;
+                    }
+                }
+            }
+
             $product->save();
             $code = $request->getMethod() === 'POST' ? 201 : 200;
             return JSendResponse::createSuccess(['product' => $product->getAjaxData()], [], $code);

@@ -5,6 +5,7 @@ namespace Rotalia\InventoryBundle\Controller;
 
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -23,9 +24,12 @@ class ProductController extends DefaultController
         $active = $request->get('active', null);
 
         $productIds = $request->get('product_ids');
+        /** @var Product[] $products */
         $products = ProductQuery::create()
-            ->filterByStatusId(XClassifier::STATUS_ACTIVE)
-            ->filterByActiveStatus($active)
+            ->filterByStatus(XClassifier::STATUS_ACTIVE)
+            ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
+                ->filterByActiveStatus($active)
+            ->endUse()
             ->findPks($productIds);
 
         $result = [];

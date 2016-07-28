@@ -9,9 +9,9 @@ Rotalia\InventoryBundle\Model\Product:
         price:
             - NotBlank: ~
             - GreaterThanOrEqual: 0
-        amount_type_id:
+        amount_type:
             - NotBlank: ~
-        status_id:
+        status:
             - NotBlank: ~
     getters:
         productGroupValid:

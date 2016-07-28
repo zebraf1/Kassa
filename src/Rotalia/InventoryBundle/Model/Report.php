@@ -43,14 +43,14 @@ class Report extends BaseReport
     {
         /** @var Product[] $activeProducts */
         $activeProducts = ProductQuery::create()
-            ->filterByStatusId(XClassifier::STATUS_ACTIVE)
+            ->filterByStatus(XClassifier::STATUS_ACTIVE)
             ->orderBySeq()
             ->find()
         ;
 
         $criteria = ReportRowQuery::create()
             ->useProductQuery()
-            ->filterByStatusId(XClassifier::STATUS_ACTIVE)
+            ->filterByStatus(XClassifier::STATUS_ACTIVE)
             ->endUse()
         ;
         $reportRows = $this->getReportRows($criteria);
@@ -426,7 +426,7 @@ class Report extends BaseReport
     /**
      * Returns the members who should be on guard duty for the same date
      *
-     * @return null|Member
+     * @return Member[]
      * @throws \PropelException
      */
     public function getGuardDutyMembers()
