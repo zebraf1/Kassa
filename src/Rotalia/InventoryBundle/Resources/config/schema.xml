@@ -10,7 +10,7 @@
         <column name="status" type="VARCHAR" size="50" defaultValue="DISABLED" />
         <column name="seq" type="INTEGER" size="3" defaultValue="1" />
         <column name="product_group_id" type="INTEGER" required="false" />
-        <foreign-key foreignTable="ollekassa_product_group" name="product_group_fk" onDelete="CASCADE">
+        <foreign-key foreignTable="ollekassa_product_group" name="product_group_fk" onDelete="SETNULL" onUpdate="CASCADE">
             <reference local="product_group_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
