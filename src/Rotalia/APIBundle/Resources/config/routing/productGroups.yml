@@ -1,0 +1,4 @@
+RotaliaAPI_productGroups_list:
+    pattern:  /productGroups/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:ProductGroups:List }
