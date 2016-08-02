@@ -17,3 +17,8 @@ Rotalia\InventoryBundle\Model\Product:
         productGroupValid:
             - 'True':
                 message: 'Tootegruppi pole olemas'
+
+Rotalia\InventoryBundle\Model\ProductGroup:
+    properties:
+        name:
+            - NotBlank: ~

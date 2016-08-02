@@ -41,14 +41,20 @@ Rotalia\UserBundle\Model\Member:
         koondised_id: Convent_6
         koondised_alg: Convent_6
         staatused_id: '5'
-        eesnimi: Jaak
-        perenimi: Tamre
+        eesnimi: Super
+        perenimi: Oluline
     Member_2122:
-            koondised_id: Convent_6
-            koondised_alg: Convent_6
-            staatused_id: '3'
-            eesnimi: Gerd
-            perenimi: Kukemilk
+        koondised_id: Convent_6
+        koondised_alg: Convent_6
+        staatused_id: '3'
+        eesnimi: Keegi
+        perenimi: Oluline
+    Member_2123:
+        koondised_id: Convent_6
+        koondised_alg: Convent_6
+        staatused_id: '3'
+        eesnimi: Mitte
+        perenimi: Keegi
 
 Rotalia\UserBundle\Model\MemberCredit:
     MemberCredit_1:
@@ -58,19 +64,33 @@ Rotalia\UserBundle\Model\MemberCredit:
 
 
 Rotalia\UserBundle\Model\User:
-    User_300:
+    User_SUPER:
         username: user1
         password: 39817a786ddf7333 #test123
         liikmed_id: Member_1886
         lastlogin: '2015-04-09 20:13:15'
         jutukas_lastaccess: '0'
         jutukas_firstmess: '8765'
-    User_520:
+    User_ADMIN:
         username: user2
         password: 39817a786ddf7333 #test123
         liikmed_id: Member_2122
         lastlogin: '2015-04-01 14:59:04'
         jutukas_lastaccess: '0'
+    User_MEMBER:
+        username: user3
+        password: 39817a786ddf7333 #test123
+        liikmed_id: Member_2123
+        lastlogin: '2015-04-01 14:59:04'
+        jutukas_lastaccess: '0'
+
+Rotalia\UserBundle\Model\UserRight:
+    UserRight_300_SUPERADMIN:
+        id: User_SUPER
+        code: 'KASSASUPER'
+    UserRight_520_ADMIN:
+        id: User_ADMIN
+        code: 'KASSAADMIN'
 
 Rotalia\InventoryBundle\Model\PointOfSale:
     PointOfSale_7:

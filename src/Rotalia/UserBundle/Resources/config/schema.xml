@@ -132,6 +132,18 @@
         </vendor>
     </table>
 
+    <table name="users_rights" phpName="UserRight" idMethod="native">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true" defaultValue="0"/>
+        <column name="code" phpName="RoleName" type="VARCHAR" size="10" primaryKey="true" required="true" defaultValue=""/>
+        <column name="selgitus" phpName="Comment" type="VARCHAR" size="100" required="true"/>
+        <foreign-key foreignTable="users" name="users_rights_users_fk" skipSql="true">
+            <reference local="id" foreign="id" />
+        </foreign-key>
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+    </table>
+
     <table name="valved" phpName="GuardDuty" idMethod="native">
         <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
         <column name="valve_tsyklid_id" phpName="ValveTsyklidId" type="INTEGER" required="true" defaultValue="0"/>

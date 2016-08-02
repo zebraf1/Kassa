@@ -101,8 +101,13 @@ class WebTestCase extends BaseWebTestCase
         $this->login('user1', 'test123');
     }
 
-    protected function loginSimpleUser()
+    protected function loginAdmin()
     {
         $this->login('user2', 'test123');
+    }
+
+    protected function loginSimpleUser()
+    {
+        $this->login('user3', 'test123');
     }
 }

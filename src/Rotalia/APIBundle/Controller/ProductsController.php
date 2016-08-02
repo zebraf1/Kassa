@@ -256,7 +256,7 @@ class ProductsController extends DefaultController
             $errors = FormErrorHelper::getErrors($form);
 
             return JSendResponse::createFail([
-                'message' => 'Toote lisamine ebaõnnestus',
+                'message' => 'Toote salvestamine ebaõnnestus',
                 'errors' => $errors
             ], 400);
         }

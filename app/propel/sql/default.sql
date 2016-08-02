@@ -83,7 +83,8 @@ CREATE TABLE `ollekassa_product`
     CONSTRAINT `product_group_fk`
         FOREIGN KEY (`product_group_id`)
         REFERENCES `ollekassa_product_group` (`id`)
-        ON DELETE CASCADE
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
@@ -340,6 +341,20 @@ CREATE TABLE `users`
     PRIMARY KEY (`id`),
     INDEX `username` (`username`),
     INDEX `liikmed_id` (`liikmed_id`)
+) ENGINE=MyISAM;
+
+-- ---------------------------------------------------------------------
+-- users_rights
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `users_rights`;
+
+CREATE TABLE `users_rights`
+(
+    `id` INTEGER DEFAULT 0 NOT NULL,
+    `code` VARCHAR(10) DEFAULT '' NOT NULL,
+    `selgitus` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`id`,`code`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------

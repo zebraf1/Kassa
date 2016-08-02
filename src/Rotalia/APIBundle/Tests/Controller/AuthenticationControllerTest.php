@@ -80,7 +80,7 @@ class AuthenticationControllerTest extends WebTestCase
 
         $this->assertEquals('success', $getResult->status);
         $this->assertNotEmpty($getResult->data->member);
-        $this->assertEquals('Jaak Tamre', $getResult->data->member->name);
+        $this->assertEquals('Super Oluline', $getResult->data->member->name);
         $this->assertEquals(null, $getResult->data->pointOfSale);
         $this->assertEmpty($getResult->data->csrfToken);
 

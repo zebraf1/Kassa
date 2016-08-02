@@ -10,27 +10,29 @@ class User extends BaseUser implements UserInterface
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     const ROLE_ADMIN = 'ROLE_ADMIN';
     const ROLE_USER = 'ROLE_USER';
+    const USER_RIGHT_KASSA_ADMIN = 'KASSAADMIN';
+    const USER_RIGHT_KASSA_SUPER_ADMIN = 'KASSASUPER';
 
     public function getRoles()
     {
         $roles = [self::ROLE_USER];
 
-        //TODO: fetch roles from database
-        //Reimo, Tõnu, Siim, Imre, Tanel
-        $admins = [2081, 2114, 2099, 2073];
-
-        //Jaak, Kiivet, Kiis
-        $superAdmins = [1886, 1968, 2164];
-
-        if (in_array($this->getLiikmedId(), array_merge($admins, $superAdmins))) {
-            $roles[] = self::ROLE_ADMIN;
+        foreach ($this->getUserRights() as $userRight) {
+            switch($userRight->getRoleName()) {
+                case self::USER_RIGHT_KASSA_SUPER_ADMIN:
+                    // Role hierarchy
+                    $roles[] = self::ROLE_SUPER_ADMIN;
+                    $roles[] = self::ROLE_ADMIN;
+                    break;
+                case self::USER_RIGHT_KASSA_ADMIN:
+                    $roles[] = self::ROLE_ADMIN;
+                    break;
+                default:
+                    break;
+            }
         }
 
-        if (in_array($this->getLiikmedId(), $superAdmins)) {
-            $roles[] = self::ROLE_SUPER_ADMIN;
-        }
-
-        return $roles;
+        return array_unique($roles);
     }
 
     public function getSalt()
