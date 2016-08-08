@@ -19,6 +19,7 @@ class AppKernel extends Kernel
 
             // Rotalia
             new Rotalia\APIBundle\RotaliaAPIBundle(),
+            new Rotalia\FrontendBundle\RotaliaFrontendBundle(),
             new Rotalia\InventoryBundle\RotaliaInventoryBundle(),
             new Rotalia\UserBundle\RotaliaUserBundle(),
 

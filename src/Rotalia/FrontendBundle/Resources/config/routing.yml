@@ -1,0 +1,3 @@
+rotalia_frontend_homepage:
+    path:     /
+    defaults: { _controller: RotaliaFrontendBundle:Home:index }

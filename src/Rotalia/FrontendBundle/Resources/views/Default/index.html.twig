@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {# assetid on symlingitud src/Rotalia/Resources/public -> web/bundles/rotaliafrontend #}
+        {# assetite  uuesti buildimiseks lasta käima "php app/console assets:install --relative --symlink" #}
+        <link href="{{ asset('bundles/rotaliafrontend/css/main.css') }}" rel="stylesheet">
+        <script src="{{ asset('bundles/rotaliafrontend/js/main.js') }}"></script>
+    </head>
+    <body>
+        {% set param = 'Test' %} {# protsendiga on funktsionaalsed tegevused #}
+        {{ param }} {# See on echo #}
+        <div class="test" onclick="test();">TEST</div>
+    </body>
+</html>
