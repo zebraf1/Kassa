@@ -1,14 +1,183 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        {# assetid on symlingitud src/Rotalia/Resources/public -> web/bundles/rotaliafrontend #}
-        {# assetite  uuesti buildimiseks lasta käima "php app/console assets:install --relative --symlink" #}
-        <link href="{{ asset('bundles/rotaliafrontend/css/main.css') }}" rel="stylesheet">
-        <script src="{{ asset('bundles/rotaliafrontend/js/main.js') }}"></script>
-    </head>
-    <body>
-        {% set param = 'Test' %} {# protsendiga on funktsionaalsed tegevused #}
-        {{ param }} {# See on echo #}
-        <div class="test" onclick="test();">TEST</div>
-    </body>
+<html lang="et">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	<title>ÕKassa</title>
+
+	<!-- Chrome for Android theme color -->
+	<meta name="theme-color" content="#84bd00">
+
+	<!-- Web Application Manifest -->
+	<link rel="manifest" href="{{ asset('bundles/rotaliafrontend/manifest.json') }}">
+
+	<!-- Tile color for Win8 -->
+	<meta name="msapplication-TileColor" content="#0077c8">
+
+	<!-- Add to homescreen for Chrome on Android -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="application-name" content="ÕKassa">
+	<link rel="icon" sizes="192x192" href="{{ asset('bundles/rotaliafrontend/images/icons/chrome-touch-icon-192x192.png') }}">
+
+	<!-- Add to homescreen for Safari on iOS -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="ÕKassa">
+	<link rel="apple-touch-icon" href="{{ asset('bundles/rotaliafrontend/images/icons/apple-touch-icon.png') }}">
+
+	<!-- Tile icon for Win8 (144x144) -->
+	<meta name="msapplication-TileImage" content="{{ asset('bundles/rotaliafrontend/images/icons/ms-touch-icon-144x144-precomposed.png') }}">
+	
+	<link rel="import" href="{{ asset('bundles/rotaliafrontend/elements/kassa-app.html') }}" async>
+
+	<style is="custom-style">
+		:root {
+            font-family: 'Roboto', sans-serif;
+            
+			--kassa-primary-color: #84bd00; /* green */
+			--kassa-secondary-color: #0077c8; /* blue */
+			--kassa-dark-color: #1A1A1A;
+			--kassa-success-color: #3be53f;
+			--kassa-error-color: #e51c23;
+
+			--paper-button: {
+				background: var(--kassa-secondary-color);
+				color: #FFF;
+                height: 2.5em;
+			};
+        }
+        
+        paper-dialog {
+            min-width: 300px;
+        }
+        
+         paper-dialog paper-material {
+            margin: 1em 1em 0 1em;
+        }
+        
+        paper-dialog .split-h {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 60px;
+        }
+        
+        paper-dialog .split-h * {
+            margin: 0.5em;
+            margin-left: auto;
+            flex-grow: 0;
+        }
+        
+        paper-dialog .split-h *:first-child {
+            margin-left: 0;
+        }
+        
+        paper-dialog .split-v {
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+        
+        paper-dialog .split-h * {
+            flex: 0 0 auto;
+        }
+        
+        paper-dialog .split-h .expanding {
+            flex-grow: 1;
+        }
+        
+        /*Skeleton for fast first paint*/
+        html, body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        
+        #skeleton {
+			display: none;
+		}
+		
+		.loading #skeleton {
+			display: flex;
+			flex-flow: row nowrap;
+            height: 100%;
+		}
+        
+		#left {
+			flex: 0 0 256px;
+            background-color: #1A1A1A;
+            height: 100%;
+            box-shadow: 4px 0 4px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+		}
+		
+		#main {
+			flex: 1 1 100%;
+			background-color: #84bd00;
+            height: 192px;
+            color: #fff;
+            position: relative;
+            z-index: 0;
+		}
+		
+		#right {
+			flex: 0 0 320px;
+            background-color: #f1f1f1;
+            height: 100%;
+            box-shadow: -4px 0 4px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+		}
+        
+        #title {
+            font-size: 50px;
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+        }
+
+        #title img {
+            height: 1.2em;
+            width: 1.2em;
+        }
+
+        #title span {
+            position: absolute;
+            bottom: 0.15em;
+        }
+        
+        @media screen and (max-width: 800px) {
+            #left {
+                display: none;
+            }
+        }
+        
+        @media screen and (max-width: 1120px) {
+            #right {
+                display: none;
+            }
+        }
+	</style>
+
+</head>
+
+<body class="loading">
+	
+	<!-- Skeleton for fast first paint -->
+	<div id="skeleton">
+		<div id="left"></div>
+		<div id="main">
+            <div id="title"><img src="{{ asset('bundles/rotaliafrontend/images/icons/icon-96x96.png') }}" alt="õkassa logo" /><span>KASSA</span></div>
+        </div>
+		<div id="right"></div>
+	</div>
+	
+	<kassa-app></kassa-app>
+	
+	
+    <script src="{{ asset('bundles/rotaliafrontend/js/main.js') }}"></script>
+
+</body>
+
 </html>
