@@ -205,6 +205,11 @@ class Product extends BaseProduct
             'amountType' => $this->getAmountType(),
             'status' => $productInfo ? $productInfo->getStatus() : null,
             'productGroupId' => $this->getProductGroupId(),
+            'inventoryAmounts' => $productInfo ?
+                [
+                    'warehouse' => doubleval($productInfo->getWarehouseAmount()),
+                    'storage' => doubleval($productInfo->getStorageAmount()),
+                ] : null,
         ];
     }
 

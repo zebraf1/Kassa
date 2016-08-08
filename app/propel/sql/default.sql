@@ -99,6 +99,8 @@ CREATE TABLE `ollekassa_product_info`
     `product_id` INTEGER NOT NULL,
     `convent_id` INTEGER NOT NULL,
     `price` DECIMAL(10,2) NOT NULL,
+    `warehouse_amount` DECIMAL(10,2) DEFAULT 0,
+    `storage_amount` DECIMAL(10,2) DEFAULT 0,
     `status` VARCHAR(50) DEFAULT 'DISABLED',
     PRIMARY KEY (`id`),
     INDEX `FI_duct_info_product_fk` (`product_id`),

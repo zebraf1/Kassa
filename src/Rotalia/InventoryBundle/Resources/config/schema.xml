@@ -24,6 +24,8 @@
         <column name="product_id" type="INTEGER" required="true" />
         <column name="convent_id" type="INTEGER" required="true" />
         <column name="price" type="DECIMAL" size="10" scale="2" required="true" />
+        <column name="warehouse_amount" type="DECIMAL" size="10" scale="2" defaultValue="0" />
+        <column name="storage_amount" type="DECIMAL" size="10" scale="2" defaultValue="0" />
         <column name="status" type="VARCHAR" size="50" defaultValue="DISABLED" />
         <foreign-key foreignTable="ollekassa_product" name="product_info_product_fk" onUpdate="CASCADE" onDelete="CASCADE">
             <reference local="product_id" foreign="id" />
