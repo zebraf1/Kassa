@@ -1,0 +1,230 @@
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="kassa-ost-tootegrupp.html">
+<link rel="import" href="kassa-ost-toode-valitud.html">
+<link rel="import" href="kassa-confirm-button.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+
+<dom-module id="kassa-ost">
+    <template>
+        <style>
+            main {
+                display: flex;
+                flex-flow: column nowrap;
+                padding-bottom: 300px;
+            }
+
+            .split-h {
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1em;
+            }
+            
+            .split-h span {
+                margin-left: auto;
+            }
+            
+            kassa-confirm-button {
+                margin-left: auto;
+            }
+
+        </style>
+
+        <main id="mainContent">
+            <paper-material class="split-h">
+                <vaadin-combo-box id="tasujaComboBox" label="Tasuja" value="[[member.id]]"
+                                  disabled="[[ostFixed]]" on-focusin="_onFocusinSelect" on-focusout="_onFocusoutTasuja"
+                                  item-label-path="nimi" item-value-path="id" items="[[pageData.kasutajad]]"></vaadin-combo-box>
+
+                <span style="font-size: 1.8em">Summa: [[_computeOstSumma(chosenProducts.*)]]</span>
+            </paper-material>
+
+            <template is="dom-repeat" items="[[chosenProducts]]" as="product">
+                <kassa-ost-valitud-toode product="[[product]]" on-tap="_removeChosenProduct" fixed="[[ostFixed]]"></kassa-ost-valitud-toode>
+            </template>
+
+
+            <paper-material class="split-h">
+                <paper-input id="filterInput" disabled="[[ostFixed]]" on-focusin="_onFilterInputFocusin" label="Otsi Toodet" value="{{filterVal}}" on-keypress="_onFilterKeyPress"></paper-input>
+                <kassa-confirm-button disabled$="[[!chosenProducts.length]]" confirmed="{{ostFixed}}" double-confirm
+                                      on-kassa-confirm="_scrollToTop" on-kassa-double-confirm="_kinnitaOst">Osta</kassa-confirm-button>
+            </paper-material>
+
+            <template is="dom-repeat" items="[[_computeProductGroups(productGroups, products)]]" as="productGroup">
+                <kassa-ost-tootegrupp products="[[productGroup.products]]" filter-val="[[filterVal]]"
+                                      on-kassa-select-product="_onToodeValitud">[[productGroup.name]]</kassa-ost-tootegrupp>
+            </template>
+        </main>
+
+
+        <paper-dialog id="tooteKogusDialog" modal>
+            <paper-material class="split-h">
+                <span class="expanding">[[valitudToode.name]]</span>
+                <paper-input on-focusin="_onFocusinSelect" type="number" min="1" step="1" no-label-float style="flex: 0 1 3em"
+                             value="{{valitudToode.valitudKogus}}" autofocus></paper-input>
+                <span style="text-align:right"> &times; [[formatAmount(valitudToode.amount, valitudToode.amountType)]]</span>
+                <span style="text-align:right">[[_computeHind(valitudToode.valitudKogus, valitudToode.price)]]</span>
+            </paper-material>
+
+            <div class="buttons">
+                <paper-button dialog-dismiss>Katkesta</paper-button>
+                <paper-button dialog-confirm on-tap="_onToodeLisatud">Lisa toode</paper-button>
+            </div>
+        </paper-dialog>
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-ost",
+            properties: {
+                member: {
+                    type: Object
+                },
+                products: {
+                    type: Array
+                },
+                productGroups: {
+                    type: Array
+                },
+                conventId: {
+                    type: Number
+                },
+                //Delay timer kahe lisatava toote vahel
+                _nextAllowedTime: {
+                    type: Number,
+                    value: 0,
+                    readOnly: true
+                }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            observers: ['_loadProducts(pageActive, member.selectedConventId)'],
+            setUp: function () {
+                this.chosenProducts = [];
+            },
+            cleanUp: function () {
+                if (this.member) {
+                    this.$.tasujaComboBox.value = this.member.id;    
+                }
+                this.set('ostFixed', false);
+            },
+            _computeOstSumma: function (chosenProducts) {
+                //Arvutab kuvamiseks ostu summa
+                var summa = 0;
+
+                for(var i = 0; i < chosenProducts.base.length; i++) {
+                    summa += this.eur2cent(chosenProducts.base[i].summa);
+                }
+
+                return this.cent2str(summa)
+            },
+
+            _computeHind: function (kogus, hind) {
+                //Valitud toote hind
+                return this.eur2str(Math.floor(kogus)*hind)
+            },
+
+            _onToodeValitud: function (e) {
+                //Avame toote koguse valimis dialoogi
+                if (!this.ostFixed && Date.now() > this._nextAllowedTime) {
+                    this.valitudToode = e.detail;
+                    this.set('valitudToode.valitudKogus', "1");
+                    this.$.tooteKogusDialog.open();
+                    this.set('filterVal', '');
+                }
+            },
+
+            _onToodeLisatud: function (e) {
+                //Toode on lisatud valitud toodete hulka
+
+                //Puutetundlikul ekraanil on vaja väikest delayd.
+                this._set_nextAllowedTime(Date.now() + 200);
+                    //Teeme nö deep-copy
+                this.push('chosenProducts',
+                        {id: this.valitudToode.id, name: this.valitudToode.name,
+                         size: this.formatAmount(this.valitudToode.amount, this.valitudToode.amountType), 
+                         valitudKogus: Math.floor(this.valitudToode.valitudKogus),
+                         summa: this.valitudToode.price*Math.floor(this.valitudToode.valitudKogus)});
+                
+                this.async(function() {
+                    this.$.filterInput.focus();
+                    this.fire('kassa-scroll-to-pos', {pos: this.$.filterInput.getBoundingClientRect().top - this.getBoundingClientRect().top}); 
+                });
+            },
+            _onFocusoutTasuja: function (e) {
+                //Tühja tasuja korral on kasutaja ise tasuja
+
+                var target = e.target || e.srcElement;
+                if (target.value == ''){
+                    this.$.tasujaComboBox.value = this.member.id;
+                }
+            },
+            _onFilterInputFocusin: function (event) {
+                //Kerime ekraani õige koha peale
+
+                this._onFocusinSelect(event);
+                var target = Polymer.dom(event).rootTarget;
+                this.fire('kassa-scroll-to-pos', {pos: target.getBoundingClientRect().top - this.getBoundingClientRect().top});
+            },
+            _onFocusinSelect: function(event) {
+                Polymer.dom(event).rootTarget.select();
+            },
+            _removeChosenProduct: function (event) {
+                if (!this.ostFixed && (Polymer.dom(event).rootTarget.id == "icon" || Polymer.dom(event).rootTarget.localName === "paper-icon-button")) {
+                    this.splice('chosenProducts', event.model.__data__.index, 1);
+                }
+            },
+            _scrollToTop: function () {
+                this.fire('kassa-scroll-to-pos', {pos: 0});
+            },
+            _loadProducts: function(pageActive, conventId) {
+                if(pageActive) {
+                    this.fire('kassa-backend-action', {action: 'doProductsGetActive', conventId: conventId});
+                    this.fire('kassa-backend-action', {action: 'doProductGroupsGet'}); 
+                }
+            },
+            _computeProductGroups: function(productGroups, products){
+                groups = {};
+                
+                for(var i=0; i<products.length; i++) {
+                    var product = products[i];
+                    if(!groups[product.productGroupId]) {
+                        groups[product.productGroupId] = [];
+                    }
+                    
+                    groups[product.productGroupId].push(product);
+                }
+                
+                result = []
+                for(var i=0; i<productGroups.length; i++) {
+                    result.push({name: productGroups[i].name, products: groups[productGroups[i].id]});
+                }
+                
+                if(this.isTrue(groups[null])) {
+                    result.push({name: 'Grupeerimata', products: groups[null]});
+                }
+                
+                return result
+            },
+            _onFilterKeyPress: function(event) {
+                if(event.code === "Enter") {
+                    var productGroups = this.$.mainContent.querySelectorAll('kassa-ost-tootegrupp');
+                    for(var i=0; i<productGroups.length; i++) {
+                        if(productGroups[i].selectFirst()) {
+                            return null
+                        }
+                    }
+                }
+            }
+        })
+    </script>
+</dom-module>
+
+
+

@@ -1,0 +1,191 @@
+<link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">
+<link rel="import" href="../bower_components/iron-data-table/default-styles.html">
+<link rel="import" href="../bower_components/iron-data-table/data-table-column.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="kassa-fab.html">
+<link rel="import" href="kassa-icons.html">
+<link rel="import" href="kassa-behavior.html">
+
+<dom-module id="kassa-table">
+    <template>
+        <style>
+            :host {
+                display: block;
+                position: relative;
+            }
+            .detail {
+                margin-left: calc(48px + 2em);
+            }
+
+            .detail div {
+                padding: 0.1em 0;
+                display: flex;
+                flex-flow: row nowrap;
+            }
+            
+            span.DISABLED {
+                color: #888;
+            }
+            
+            paper-icon-button {
+                padding: 0;
+                width: 24px;
+                height: 24px;
+            }
+            
+            kassa-fab {
+                position: absolute;
+                right: 1.5em;
+                bottom: 1.5em;
+            }
+
+        </style>
+
+        <iron-data-table id="table" items="[[items]]" filter="{{filter}}" data-source="{{dataSource}}" columns="{{columns}}" details-enabled>
+            <content></content>
+            <data-table-column name="" width="24px" flex="0" hidden$="[[!isTrue(editFunc)]]">
+                <template>
+                    <span class="DISABLED"><paper-icon-button icon="kassa:edit" on-tap="_editItem"></paper-icon-button></span>
+                </template>
+            </data-table-column>    
+        </iron-data-table>
+        
+        <kassa-fab hidden$="[[!isTrue(addFunc)]]" on-tap="_addItem"></kassa-fab>
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-table",
+            properties: {
+                //Table properties
+                items: {
+                    type: Array
+                },
+                dataSource: Object,
+                filter: Array,
+                columns: Array,
+                filteredItems: {
+                    //Ei saa computed olla (datasource kasutab callbacki -> 2 funci + observerit vaja)
+                    type: Array,
+                    value: function () {
+                        return []
+                    },
+                    notify: true,
+                    readOnly: true
+                },
+                //dialog properties
+                addFunc: {
+                    type: String,
+                    value: ''
+                },
+                editFunc: {
+                    type: String,
+                    value: ''
+                },
+                dialog: {
+                    type: Node,
+                    observer: '_attachDialogListener'
+                },
+                conventId: {
+                    type: Number
+                },
+                _activeItemId: {
+                    type: Number,
+                    readOnly: true
+                }
+            },
+            observers: ['_computeFilteredItems(dataSource, filter.*)'],
+            behaviors: [KassaBehavior],
+            attached: function() {
+                this.$$('kassa-fab').scrollTarget = this.$.table.$.list
+            },
+            computeCell: function (pattern, data) {
+                var matchFunc = pattern.match(/^([\w\d]+)\((.+)\)$/);
+                if (matchFunc) {
+                    switch(matchFunc[1]){
+                        case 'eur':
+                            return this.eur2str(this.computeCell(matchFunc[2], data));
+                        case 'sum':
+                            var summa = 0;
+                            for (var i=0; i<data.length; i++) {
+                                summa += this.computeCell(matchFunc[2], data[i]);
+                            }
+                            return summa
+                        default:
+                            return
+                    }
+                } else {
+                   return eval(pattern.replace(/([\w\d]+)/g, function (property) {
+                        return data[property]
+                    }))
+                }
+            },
+            _computeFilteredItems: function (dataSource, filter) {
+                dataSource({filter: filter.base, page: 0, pageSize: this.items.length}, function (items) {
+                    this._setFilteredItems(items);
+                }.bind(this));
+            },
+            _attachDialogListener: function(newVal) {
+                this.listen(newVal, 'kassa-confirm', '_onDialogSubbmit');
+            },
+            _addItem: function() {
+                var fields = this.dialog.querySelectorAll('[data-field]');
+                
+                for(var i=0; i<fields.length; i++){
+                    this._setElementValue(fields[i], '');
+                }
+                this._set_activeItemId(null);
+                this.dialog.open();
+            },
+            _editItem: function(event) {
+                var fields = this.dialog.querySelectorAll('[data-field]');
+                
+                for(var i=0; i<fields.length; i++){
+                    this._setElementValue(fields[i], event.model.item[fields[i].getAttribute('data-field')]);
+                }
+                this._set_activeItemId(event.model.item.id);
+                this.dialog.open();
+            },
+            _onDialogSubbmit: function(event) {
+                var data = {action: this._activeItemId ? this.editFunc : this.addFunc,
+                            id: this._activeItemId, 
+                            conventId: this.conventId, 
+                            itemType: {},
+                           onSuccess: this._onDialogSuccess.bind(this),
+                           onError: this._onDialogError.bind(this)}
+                var fields = this.dialog.querySelectorAll('[data-field]')
+
+                for(var i=0; i<fields.length; i++){
+                    data.itemType[fields[i].getAttribute('data-field')] = this._getElementvalue(fields[i]);
+                }
+                this.fire('kassa-backend-action', data);
+            },
+            _onDialogSuccess: function() {
+                this.dialog.close();
+                this.dialog.querySelector('kassa-confirm-button').reset();
+            },
+            _onDialogError: function() {
+                this.dialog.querySelector('kassa-confirm-button').reset();
+            },
+            _setElementValue: function(element, value) {
+                if(element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
+                    element.checked = value === 'ACTIVE';
+                } else {
+                    element.value = value;
+                }
+            },
+            _getElementvalue: function(element) {
+                if(element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
+                    return element.checked ? "ACTIVE" : "DISABLED"
+                } else {
+                    return element.value
+                }
+            }
+
+        })
+    </script>
+</dom-module>
+
+
+

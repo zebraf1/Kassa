@@ -1,0 +1,88 @@
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+
+<dom-module id="kassa-toast">
+    <template>
+        <style>
+            .error {
+                --iron-icon-fill-color: var(--kassa-error-color);
+            }
+
+            .success {
+                --iron-icon-fill-color: var(--kassa-success-color);
+            }
+
+            span {
+                margin: 0 1.5em;
+            }
+
+            paper-button {
+                background: #323232;
+                color: #fff;
+                margin-left: auto;
+            }
+            
+            div {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-flow: row wrap;
+                align-items: center;
+            }
+            
+            div * {
+                flex: 0 0 auto;
+            }
+                        
+            [hidden] {
+                display: none;
+            }
+        </style>
+
+        <paper-toast id="toast" duration="[[duration]]">
+            <div>
+                <iron-icon class="error" icon="kassa:error-outline" hidden$="[[!_error]]"></iron-icon><iron-icon class="success" icon="kassa:done" hidden$="[[_error]]"></iron-icon><span>[[text]]</span><paper-button on-tap="close"><content></content></paper-button>
+            </div>
+        </paper-toast>
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-toast",
+            properties: {
+                duration: {
+                    type: Number,
+                    value: 3000
+                },
+                _error: {
+                    type: Boolean,
+                    value: false
+                },
+                text: {
+                    type: String,
+                    value: ""
+                }
+            },
+            success: function(message) {
+				this.close();
+                this.set('_error', false);
+                this.set('text', message);
+                this.open();
+            },
+            error: function(message) {
+				this.close();
+                this.set('_error', true);
+                this.set('text', message);
+                this.open();
+            },
+            open: function () {
+                return this.$.toast.open();
+            },
+            close: function (e) {
+                return this.$.toast.close();
+            }
+        })
+    </script>
+</dom-module>
+ 

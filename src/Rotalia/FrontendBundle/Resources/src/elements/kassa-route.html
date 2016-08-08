@@ -1,0 +1,70 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="kassa-behavior.html">
+
+<dom-module id="kassa-route">
+    <template>
+        <app-location route="{{route}}" use-hash-as-path></app-location>
+        <app-route route="{{route}}"
+                   pattern="/:page"
+                   data="{{routeData}}"></app-route>
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-route",
+            properties: {
+                member: {
+                    type: Object
+                },
+                page: {
+                    type: String,
+                    notify: true,
+                    readOnly: true
+                },
+                navigation: {
+                    type: Array
+                }
+            },
+            observers: ['_computePage(routeData, member, navigation)'],
+            behaviors: [KassaBehavior],
+            _computePage: function(routeData, member, navigation) {                
+                var _default = navigation[0].page;
+                
+                //Pole sisse logitud?
+                if(!this.isTrue(member)) {
+                    this.set('routeData.page', 'login');
+                    this._setPage('login');
+                    return null 
+                }
+                
+                // Suuname kasutaja ümber pärast sisse logimist
+                if (this.page === 'login' && this.isTrue(member)) {
+                    this.set('routeData.page', _default);
+                    this._setPage(_default);
+                    return null
+                }
+                
+                if (this.isTrue(routeData) && routeData.page) {
+                    if (routeData.page === 'login') {
+                        this._setPage('login');
+                        return null 
+                    }
+                    //Kas on sobivate õigustega??
+                    for(var i=0; i<navigation.length; i++) {
+                        if(routeData.page === navigation[i].page && member.roles.indexOf(navigation[i].role) >= 0) {
+                            this._setPage(navigation[i].page);
+                            return null
+                        }
+                    }
+                }
+                
+                //Kui muud ei leia
+                this._setPage(_default);
+                return null
+                
+                
+            }
+        })
+    </script>
+</dom-module>

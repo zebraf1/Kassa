@@ -1,0 +1,49 @@
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="kassa-behavior.html">
+
+<dom-module id="kassa-ost-toode">
+    <template>
+        <style>
+            paper-material {
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                cursor: pointer;
+                padding: 1em;
+            }
+
+            span {
+                display: block;
+                text-align: right;
+                flex: 0 0 auto;
+                margin-left: auto;
+                padding-left: 0.8em;
+            }
+
+            span:first-child {
+                flex: 1 1 auto;
+                text-align: left;
+                padding: 0;
+            }
+
+        </style>
+
+        <paper-material elevation="1">
+            <span>[[product.name]]</span> <span>[[formatAmount(product.amount, product.amountType)]]</span> <span>[[eur2str(product.price)]]</span>
+        </paper-material>
+
+
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-ost-toode",
+            properties: {
+                product: {
+                    type: Object
+                }
+            },
+            behaviors: [KassaBehavior]
+        })
+    </script>
+</dom-module>

@@ -1,0 +1,10 @@
+{
+  "entrypoint": "index.html",
+  "shell": "elements/kassa-app.html",
+  "fragments": [
+	"elements/kassa-ost.html",
+	"elements/kassa-login.html",
+    "elements/kassa-admin-tooted.html",
+    "elements/kassa-admin-tootegrupid.html"
+  ]
+}

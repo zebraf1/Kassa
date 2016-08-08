@@ -1,0 +1,202 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+
+
+<link rel="import" href="kassa-left-drawer.html">
+<link rel="import" href="kassa-right-drawer.html">
+<link rel="import" href="kassa-pages.html">
+<link rel="import" href="kassa-backend.html">
+<link rel="import" href="kassa-toast.html">
+<link rel="import" href="kassa-icons.html">
+<link rel="import" href="kassa-route.html">
+<link rel="import" href="kassa-behavior.html">
+
+<dom-module id="kassa-app">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            app-header {
+                background-color: var(--kassa-primary-color);
+                color: #FFFFFF;
+            }
+
+            div[title] {
+                font-size: 50px;
+                position: absolute;
+                bottom: 0;
+                left: 10%;
+            }
+
+            app-toolbar img {
+                height: 1.2em;
+                width: 1.2em;
+            }
+
+            app-toolbar span {
+                position: absolute;
+                bottom: 0.15em;
+
+            }
+            
+            #leftDrawer {
+                --app-drawer-width: 256px;
+            }
+            
+            #rightDrawer {
+                --app-drawer-width: 320px;
+            }
+            
+            [hidden] {
+                display: none;
+            }
+        </style>
+
+
+        <kassa-backend id="backend" member="{{member}}" csrf-token="{{csrfToken}}" settings="{{settings}}" active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}" 
+                       product-groups="{{productGroups}}"></kassa-backend>
+        <kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]"></kassa-route>
+        
+        <kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
+
+        <app-drawer-layout fullbleed responsive-width="800px" narrow="{{leftNarrow}}">
+            <app-drawer id="leftDrawer" align="left">
+                <kassa-left-drawer page="[[page]]" member="{{member}}" active-convents="[[settings.activeConvents]]"  navigation="[[navigation]]"></kassa-left-drawer>
+            </app-drawer>
+            <app-drawer-layout fullbleed responsive-width="1120px" narrow="{{rightNarrow}}">
+                <app-drawer id="rightDrawer" align="right">
+                    <kassa-right-drawer page="[[page]]"></kassa-right-drawer>
+                </app-drawer>
+                <app-header-layout has-scrolling-region>
+
+                    <app-header condenses reveals effects="material"> 
+                        <app-toolbar>
+                            <paper-icon-button icon="kassa:menu" hidden$="[[!leftNarrow]]" on-tap="_toggleLeftDrawer"></paper-icon-button>
+                            <div condensed-title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
+                            <paper-icon-button icon="kassa:help" hidden$="[[!rightNarrow]]" on-tap="_toggleRightDrawer"></paper-icon-button>
+                        </app-toolbar>
+                        <app-toolbar></app-toolbar>
+                        <app-toolbar class="tall">
+                            <div title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
+                        </app-toolbar>
+                    </app-header>
+
+                     <kassa-pages selected="[[page]]">
+                         <kassa-login data-page="login" csrf-token="[[csrfToken]]"></kassa-login>
+                         <kassa-ost data-page="ost" member="[[member]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
+                         <kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]" active-products="[[activeProducts]]" inactive-products="[[inactiveProducts]]" product-groups="[[productGroups]]"></kassa-admin-tooted>
+                         <kassa-admin-tootegrupid data-page="admin-tootegrupid" product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
+                     </kassa-pages>
+
+                </app-header-layout>
+
+            </app-drawer-layout>
+        </app-drawer-layout>
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-app",
+            properties: {
+                //Navigation
+                navigation: {
+                    type: Array,
+                    readOnly: true,
+                    value: function() {
+                        return  [
+                            {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
+                            {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
+                            {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'}
+                        ];
+                    }
+                },
+                page: {
+                    type: String,
+                    observer: '_observePageChange'
+                }
+            },
+            behaviors: [KassaBehavior],
+            listeners: {
+                'kassa-scroll-to-pos': '_scrollHandler',
+                'kassa-set-scroll-target': '_setScrollTarget',
+                'kassa-message-success': '_onMessage',
+                'kassa-message-error': '_onMessage',
+                'kassa-backend-action': '_onBackendAction',
+            },
+            ready: function () {
+                //Shortcuts to use in kassa-app
+                this._appHeader = this.$$('app-header');
+                this._appHeaderLayout = this.$$('app-header-layout');
+            },
+            attached: function() {
+                this.fire('kassa-app-loaded');
+                // On some smartphones the drawer will close on load.
+                this.listen(this, 'kassa-page-loaded', '_openDrawer');
+            },
+            _scrollHandler: function(e) {
+                this._appHeader.scroll(0, this._appHeader._dHeight + e.detail.pos);
+            },
+            _setScrollTarget: function(event) {
+                //Scroll to top on page change
+                this._appHeader.scroll(0, 0);
+                this._appHeader._updateScrollState(0);
+                this._onScroll();
+                
+                this._appHeaderLayout.hasScrollingRegion = !this.isTrue(event.detail.target);
+                
+                if(this._appHeader.scrollTarget) {
+                    this.unlisten(this._appHeader.scrollTarget, 'scroll', '_onScroll');
+                }
+                
+                if(event.detail.target !== null) {
+                    this._appHeader.scrollTarget = event.detail.target;
+                    this.listen(this._appHeader.scrollTarget, 'scroll', '_onScroll');
+                } else {
+                    this._appHeaderLayout._updateScroller();
+                }
+                
+            },
+            _onScroll: function() {
+                this._appHeaderLayout.$.contentContainer.style.paddingTop = Math.max(this._appHeader._height - this._appHeader._top, 0) + 'px';
+            },
+            _onMessage: function(e) {
+                if (e.type == 'kassa-message-success') {
+                    this.$.toast.success(e.detail);
+                } else if (e.type == 'kassa-message-error') {
+                    this.$.toast.error(e.detail);
+                }
+            },
+            _onBackendAction: function(event) {
+                this.$.backend.doAction(event.detail);
+            },
+            _observePageChange: function(newValue, oldValue) {
+                if((typeof oldValue === 'undefined' && newValue !== 'login') || oldValue === 'login') {
+                    this.$.leftDrawer.open();           
+                } else if(this.leftNarrow) {
+                    this.$.leftDrawer.close();
+                }
+            },
+            _toggleLeftDrawer: function() {
+                this.$.leftDrawer.toggle();
+            },
+            _toggleRightDrawer: function() {
+                this.$.rightDrawer.toggle();
+            },
+            _openDrawer: function() {
+                if (this.page !== 'login') {
+                    this.$.leftDrawer.open();
+                }
+                //Unlisten this event
+                this.unlisten(this, 'kassa-page-loaded', '_openDrawer');
+            }
+        })
+    </script>
+</dom-module>

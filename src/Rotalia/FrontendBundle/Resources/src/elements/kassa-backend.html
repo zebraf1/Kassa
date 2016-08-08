@@ -1,0 +1,280 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="kassa-behavior.html">
+
+
+<dom-module id="kassa-backend">
+    <template>
+        <!-- Authentication -->
+        <iron-ajax id="authenticationDelete" handle-as="json" url='[[_computeURL("authentication")]]' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="authenticationGet" handle-as="json" url='[[_computeURL("authentication")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <!-- Settings -->
+        <iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Products -->
+        <iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <iron-ajax id="productsPatch" handle-as="json" url='[[_computeURL("products", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <!-- ProductGroups --->
+        <iron-ajax id="productGroupsGet" handle-as="json" url='[[_computeURL("productGroups")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="productGroupsPost" handle-as="json" url='[[_computeURL("productGroups")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+    </template>
+    <script>
+        Polymer({
+            is: 'kassa-backend',
+            properties: {
+                _id: {
+                    type: Number
+                },
+                /* Authentication */
+                member: {
+                    type: Object,
+                    notify: true,
+                    readOnly: true
+                },
+                csrfToken: {
+                    type: String,
+                    notify: true,
+                    readOnly: true
+                },
+                /* Settings */
+                settings: {
+                    type: Object,
+                    notify: true,
+                    readOnly: true
+                },
+                /* Products */
+                activeProducts: {
+                    type: Array,
+                    notify: true,
+                    readOnly: true
+                },
+                inactiveProducts: {
+                    type: Array,
+                    notify: true,
+                    readOnly: true
+                },
+                /* ProductGroups */
+                productGroups: {
+                    type: Array,
+                    notify: true,
+                    readOnly: true
+                }
+            },
+            listeners: {
+                'error': '_onRequestError'
+            },
+            behaviors: [KassaBehavior],
+            attached: function() {
+                this.doAuthenticationGet();
+            },
+            /* Authentication */
+            doLogin: function(username, password) {
+                this.$.authenticationPost.set('body', {username: username, password: password, csrfToken: this.csrfToken});
+                return this.$.authenticationPost.generateRequest().completes.then(function(result) {
+                        this.fire('kassa-message-success', this._checkSuccess(result));
+                        this.doAuthenticationGet();
+                        return result
+                    }.bind(this))
+            },
+            doLogout: function() {
+                if(this.isTrue(this.member)) {
+                    this.$.authenticationDelete.generateRequest().completes.then(function(result) {
+                        this.fire('kassa-message-success', this._checkSuccess(result));
+                        this.doAuthenticationGet();
+                    }.bind(this));
+                }
+            },
+            doAuthenticationGet: function() {
+                return this.$.authenticationGet.generateRequest().completes.then(function(result) {
+                        var data = this._checkSuccess(result);
+                
+                        if(data.csrfToken) {
+                            this._setCsrfToken(data.csrfToken);
+                            this._setMember(null);
+                        } else {
+                            this._setCsrfToken(null);
+                            this._setMember(data.member);
+                            this.doSettingsGet();
+                        }
+                    }.bind(this))
+            },
+            /* Settings */
+            doSettingsGet: function() {
+                return this.$.settingsGet.generateRequest().completes.then(function(result) {
+                        var data = this._checkSuccess(result);
+                        this._setSettings(data);
+                    }.bind(this))
+            },
+            /* Products */
+            doProductsGetAll: function(conventId) {
+                return Promise.all([this.doProductsGetActive(conventId), this.doProductsGetInactive(conventId)])
+            },
+            doProductsGetActive: function(conventId) {
+                this.$.productsGet.set('params', {conventId: conventId, active: true});
+                return this.$.productsGet.generateRequest().completes.then(function(result) {
+                    var data = this._checkSuccess(result);
+                    this._setActiveProducts(data.products);
+                }.bind(this))
+            },
+            doProductsGetInactive: function(conventId) {
+                this.$.productsGet.set('params', {conventId: conventId, active: false});
+                return this.$.productsGet.generateRequest().completes.then(function(result) {
+                    var data = this._checkSuccess(result);
+                    this._setInactiveProducts(data.products);
+                }.bind(this))
+            },
+            doProductsPost: function(conventId, ProductType) {
+                this.$.productsPost.set('body', this.formatBody({conventId: conventId, ProductType: ProductType}));
+                return this.$.productsPost.generateRequest().completes.then(function(result) {
+                        this._checkSuccess(result);
+                        this.doProductsGetAll(conventId);
+                        this.fire('kassa-message-success', 'Toode edukalt lisatud');
+                        return result
+                    }.bind(this))
+            },
+            doProductsPatch: function(conventId, productId, ProductType) {
+                this.$.productsPatch.set('body', this.formatBody({conventId: conventId, ProductType: ProductType}));
+                this.set('_id', productId);
+                return this.$.productsPatch.generateRequest().completes.then(function(result) {
+                        this._checkSuccess(result);
+                        this.doProductsGetAll(conventId);
+                        this.fire('kassa-message-success', 'Toode edukalt muudetud');
+                        return result
+                    }.bind(this))
+            },
+            /* ProductGroups */
+            doProductGroupsGet: function() {
+                return this.$.productGroupsGet.generateRequest().completes.then(function(result) {
+                    var data = this._checkSuccess(result);
+                    this._setProductGroups(data.productGroups);
+                }.bind(this))
+            },
+            doProductGroupsPost: function(ProductGroupType) {
+                this.$.productGroupsPost.set('body', this.formatBody({ProductGroupType: ProductGroupType}));
+                return this.$.productGroupsPost.generateRequest().completes.then(function(result) {
+                        this._checkSuccess(result);
+                        this.doProductGroupsGet();
+                        this.fire('kassa-message-success', 'Tootegrupp edukalt lisatud');
+                        return result
+                    }.bind(this))
+            },
+            doProductGroupsPatch: function(productGroupId, ProductGroupType) {
+                this.$.productGroupsPatch.set('body', this.formatBody({ProductGroupType: ProductGroupType}));
+                this.set('_id', productGroupId);
+                return this.$.productGroupsPatch.generateRequest().completes.then(function(result) {
+                        this._checkSuccess(result);
+                        this.doProductGroupsGet();
+                        this.fire('kassa-message-success', 'Tootegrupp edukalt muudetud');
+                        return result
+                    }.bind(this))
+            },
+            /* General */
+            doAction: function(data) {
+                var promise;
+                switch(data.action) {
+                    /* Authentication */
+                    case 'doLogin':
+                        promise = this.doLogin(data.username, data.password);
+                        break;
+                    case 'doLogout':
+                        this.doLogout(); 
+                        break;
+                    /* Products */
+                    case 'doProductsGetAll':
+                        promise = this.doProductsGetAll(data.conventId);
+                        break;
+                    case 'doProductsGetActive':
+                        promise = this.doProductsGetActive(data.conventId);
+                        break;    
+                    case 'doProductsPost':
+                        promise = this.doProductsPost(data.conventId, data.itemType);
+                        break; 
+                    case 'doProductsPatch':
+                        promise = this.doProductsPatch(data.conventId, data.id, data.itemType);
+                        break;
+                    /* ProductGroups */
+                    case 'doProductGroupsGet':
+                        promise = this.doProductGroupsGet();
+                        break;
+                    case 'doProductGroupsPost':
+                        promise = this.doProductGroupsPost(data.itemType);
+                        break; 
+                    case 'doProductGroupsPatch':
+                        promise = this.doProductGroupsPatch(data.id, data.itemType);
+                        break;    
+                    /* General */    
+                    default:
+                        console.error('Vale action.', data);
+                }
+                
+                if(promise) {
+                    promise.then(function(){
+                        if(data.onSuccess) {
+                            data.onSuccess.call();
+                        }
+                    }, function(error){
+                        if(data.onError) {
+                            data.onError.call();
+                        } else {
+                            console.error(error);
+                        }
+                    });
+                }
+            },
+            formatBody: function(body) {
+                var newBody = {};
+                for (var key in body) {
+                    if(body.hasOwnProperty(key) && this.isTrue(body[key])) {
+                        if(body[key].constructor === Object) {
+                            for (var key2 in body[key]) {
+                                if(body[key].hasOwnProperty(key2)) {
+                                    newBody[key+'['+key2+']'] = body[key][key2];
+                                }
+                            }
+                        } else {
+                            newBody[key] = body[key];
+                        }
+                    }
+                }
+                
+                return newBody
+            },
+            _checkSuccess: function(result) {
+                if(result.xhr.response.status === 'success') {
+                    return result.xhr.response.data;
+                } else {
+                    console.error('Vigane vastus serverilt.', result);
+                }
+            },
+            _checkError: function(event) {
+                if(event.detail.request.xhr.response) {
+                    if (event.detail.request.xhr.response.status === 'fail' || event.detail.request.xhr.response.status === 'error') {
+                        return event.detail.request.xhr.response.data.message ? event.detail.request.xhr.response.data.message : event.detail.request.xhr.response.data
+                    } else {
+                        console.error('Vigane vastus serverilt.', event);
+                    }      
+                } else {
+                    console.error('Ei saanud vastust serverilt.', event);
+                } 
+                
+                return 'Tekkis tundmatu viga.'
+            },
+            _computeURL: function(endpoint, id) {
+                if (typeof id === 'undefined') {
+                    return '/api/'+endpoint+'/'
+                } else {
+                    return '/api/'+endpoint+'/'+id+'/'
+                }
+                
+            },
+            _onRequestError: function(event) {
+                event.stopPropagation();
+                this.fire('kassa-message-error', this._checkError(event));
+            }
+        })
+    
+    </script>
+</dom-module>

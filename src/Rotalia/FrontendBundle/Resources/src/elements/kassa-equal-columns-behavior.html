@@ -1,0 +1,32 @@
+<script>
+    EqualColumnsBehavior = {
+
+        ready: function () {
+            window.addEventListener('resize', this.setColumnWidths.bind(this));
+        },
+
+        setColumnWidths: function (event) {
+            this.async(function() {
+                var children = this.$.items.querySelectorAll('[kassa-columns-item]');
+                if (children.length > 0) {
+                    var parent = children[0].parentElement;
+
+                    var parentStyle = getComputedStyle(parent);
+                    var childStyle = getComputedStyle(children[0]);
+
+                    var parentWidth = parseFloat(parentStyle.width);
+                    var parentPadding = parseFloat(parentStyle.paddingLeft) + parseFloat(parentStyle.paddingRight);
+                    var childWidth = parseFloat(childStyle.flexBasis);
+                    var childMargin = parseFloat(childStyle.marginLeft) + parseFloat(childStyle.marginRight);
+
+                    var columns = Math.floor((parentWidth - parentPadding) / (childWidth + childMargin));
+                    var maxWidth = (parentWidth - parentPadding) / columns - childMargin;
+
+                    for (var i = 0; i < children.length; i++) {
+                        children[i].style.maxWidth = maxWidth + 'px';
+                    }
+                }
+            });
+        }
+    }
+</script>

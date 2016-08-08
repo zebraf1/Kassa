@@ -1,0 +1,174 @@
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">
+<link rel="import" href="../bower_components/iron-data-table/default-styles.html">
+<link rel="import" href="../bower_components/iron-data-table/data-table-column.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-date-picker.html">
+<link rel="import" href="kassa-icons.html">
+
+<dom-module id="kassa-ylevaade">
+    <template>
+        <style>
+            paper-material {
+                padding: 0.5em;
+                margin: 0.2em 0;
+            }
+
+            .detail {
+                margin-left: calc(48px + 2em);
+            }
+
+            .detail div {
+                padding: 0.1em 0;
+                display: flex;
+                flex-flow: row nowrap;
+            }
+
+            .detail span:first-child {
+                flex: 1 0 8em;
+            }
+
+            .detail span:nth-child(2) {
+                flex: 0 0 6em;
+                text-align: right;
+            }
+
+            .detail span:last-child {
+                flex: 0 0 4em;
+                text-align: right;
+            }
+
+
+
+        </style>
+        
+        <paper-material>
+            <kassa-date-picker start-date="[[startDate]]" selected-start-date="{{selectedStartDate}}" selected-end-date="{{selectedEndDate}}"></kassa-date-picker>
+            <paper-icon-button icon="kassa:refresh" on-tap="_refreshData" hidden$="[[loading]]"></paper-icon-button>
+            <paper-spinner active hidden$="[[!loading]]"></paper-spinner>
+        </paper-material>
+
+        <paper-material>
+            <h3>Ostud:</h3>
+            <iron-data-table items="[[pageData.ostud]]" selection-enabled details-enabled filter="{{filter}}" data-source="{{dataSource}}">
+                <data-table-column name="Id" width="2em" align-right flex="0">
+                    <template>
+                        [[item.id]]
+                    </template>
+                </data-table-column>
+                <data-table-column name="Ostja" filter-by="ostja">
+                    <template>
+                        [[item.ostja]]
+                    </template>
+                </data-table-column>
+                <data-table-column name="Tasuja" filter-by="tasuja">
+                    <template>
+                        [[item.tasuja]]
+                    </template>
+                </data-table-column>
+                <data-table-column name="Koht" filter-by="koht">
+                    <template>
+                        [[item.koht]]
+                    </template>
+                </data-table-column>
+                <data-table-column name="Ostu summa" align-right width="4em">
+                    <template>
+                        [[_computeOstSumma(item.tooted)]]€
+                    </template>
+                </data-table-column>
+                <data-table-column name="Aeg" flex="0" width="9em" align-right>
+                    <template>
+                        [[item.aeg]]
+                    </template>
+                </data-table-column>
+                <template is="row-detail">
+                    <div class="detail">
+                        <template is="dom-repeat" items="[[item.tooted]]" as="toode">
+                            <div>
+                                <span>[[toode.nimi]]</span>
+                                <span>[[toode.kogus]] &times; [[toode.suurus]]</span>
+                                <span>[[_computeTooteSumma(toode.hind, toode.kogus)]]€</span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </iron-data-table>
+        </paper-material>
+
+        <paper-material>
+            <h3>Ülekanded:</h3>
+            <iron-data-table items="[[pageData.ylekanded]]" selection-enabled details-enabled>
+                <data-table-column name="Id" width="2em" align-right flex="0">
+                    <template>
+                        [[item.id]]
+                    </template>
+                </data-table-column>
+                <data-table-column name="Koht" filter-by="koht">
+                    <template>
+                        [[item.koht]]
+                    </template>
+                </data-table-column>
+                <data-table-column name="Ülekande summa" align-right width="4em">
+                    <template>
+                        [[_eur2str(item.summa)]]€
+                    </template>
+                </data-table-column>
+                <data-table-column name="Aeg" flex="0" width="9em" align-right>
+                    <template>
+                        [[item.aeg]]
+                    </template>
+                </data-table-column>
+                <template is="row-detail">
+                    <div class="detail">
+                        [[item.kommentaar]]
+                    </div>
+                </template>
+            </iron-data-table>
+        </paper-material>
+
+
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-ylevaade",
+            properties: {
+                startDate: Object
+            },
+            behaviors: [PageBehavior],
+            _computeTooteSumma: function (hind, kogus) {
+                return this._eur2str(hind*kogus)
+            },
+
+            _computeOstSumma: function (tooted) {
+                var summa = 0;
+
+                if(!tooted) {
+                    //Iron data table annab vahest tühja itemi, siit tuleb muidu error ja edasi läheb katki
+                    //Ei suuda leida, kust see tühi item tuleb
+                    return 0
+                }
+
+                for (var i=0; i<tooted.length; i++){
+                    summa += tooted[i].hind*tooted[i].kogus;
+                }
+
+                return this._eur2str(summa)
+            },
+            _computeRequestBody: function (startDate, endDate) {
+                return {"startDate": startDate, "endDate": endDate}
+            },
+
+            _refreshData: function (e) {
+                console.log(this.dataSource);
+                this.querySelector('kassa-ajax').clearCache();
+            }
+        })
+    </script>
+</dom-module>
+
+
+

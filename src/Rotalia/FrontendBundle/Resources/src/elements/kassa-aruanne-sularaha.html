@@ -1,0 +1,125 @@
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="kassa-behavior.html">
+
+<dom-module id="kassa-aruanne-sularaha">
+    <template>
+        <style>
+            main {
+                margin: 0 auto;
+                width: 16em;
+            }
+
+            .raha-all {
+                display: flex;
+                flex-flow: column nowrap;
+            }
+
+            .raha {
+                display: flex;
+                flex-flow: row nowrap;
+                align-items: baseline;
+                width: 15em;
+            }
+
+            .raha span:first-child {
+                flex: 0 0 6em;
+            }
+
+            .raha span:last-child {
+                flex: 1 0 5em;
+                text-align: right;
+            }
+
+            paper-input {
+                width: 5em;
+            }
+
+        </style>
+
+        <main>
+            <h3>Sularaha kassas:</h3>
+            <div class="raha-all">
+                <template is="dom-repeat" items="{{bills}}" as="bill">
+                    <div class="raha">
+                        <span>[[eur2str(bill.value)]] &times;</span>
+                        <paper-input value="{{bill.kogus}}" type="number" step="1" min="0" on-change="_computeSularahaKassas"  disabled="[[fixed]]" no-label-float></paper-input>
+                        <span>= [[_computeBillSumma(bill.value, bill.kogus)]]</span>
+                    </div>
+                </template>
+                <div><h4>Kokku:</h4><span>[[eur2str(sularahaKassas)]]</span></div>
+            </div>
+
+            <h4>Sularaha varem välja võetud:</h4>
+            <span>[[eur2str(sularahaPostkastiVarem)]]</span>
+
+            <h4>Sularaha nüüd välja võetud:</h4>
+            <paper-input type="number" value="{{_sularahaPostkasti}}" step="0.01" disabled="[[fixed]]" no-label-float>
+                <span suffix>€</span>
+            </paper-input>
+        </main>
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-aruanne-sularaha",
+            properties: {
+                sularahaKassas: {
+                    type: Number,
+                    value: 0,
+                    notify: true,
+                    readOnly: true
+                },
+                sularahaPostkasti: {
+                    type: Number,
+                    computed: '_computeSularahaPostkasti(_sularahaPostkasti, sularahaPostkastiVarem)',
+                    notify: true
+                },
+                _sularahaPostkasti: {
+                    type: Number,
+                    value: 0
+                },
+                sularahaPostkastiVarem: {
+                    type: Number,
+                    value: 0
+                },
+                fixed: {
+                    type: Boolean,
+                    value: false
+                },
+                bills: {
+                    type: Array,
+                    value: function () {
+                        var bills = [];
+                        var values = [500, 200, 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01];
+
+                        for(var i=0; i<values.length; i++){
+                            bills.push({value: values[i], kogus: 0});
+                        }
+
+                        return bills
+                    }
+                }
+            },
+            behaviors: [KassaBehavior],
+            cleanUp: function () {
+                this.set('bills', this.properties.bills.value());
+                this.set('_sularahaPostkasti', 0)
+            },
+
+            _computeBillSumma: function (value, kogus) {
+                return this.eur2str(value*kogus);
+            },
+            
+            _computeSularahaKassas: function (e) {
+                var summa = 0;
+                for(var i=0; i<this.bills.length; i++){
+                    summa += this.bills[i].value*Math.floor(this.bills[i].kogus);
+                }
+                this._setSularahaKassas(summa);
+            },
+            _computeSularahaPostkasti: function (_sularahaPostkasti, sularahaPostkastiVarem) {
+                return 100*_sularahaPostkasti + sularahaPostkastiVarem
+            }
+        })
+    </script>
+</dom-module>

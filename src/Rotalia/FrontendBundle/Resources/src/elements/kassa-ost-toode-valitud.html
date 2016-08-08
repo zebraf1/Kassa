@@ -1,0 +1,75 @@
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="kassa-icons.html">
+<link rel="import" href="kassa-behavior.html">
+
+<dom-module id="kassa-ost-valitud-toode">
+    <template>
+        <style>
+            paper-material {
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: flex-start;
+                align-items: center;
+                padding: 1em;
+            }
+
+            span {
+                display: block;
+                flex: 0 0 auto;
+                text-align: right;
+                padding-left: 0.8em;
+                margin-left: auto;
+            }
+
+            span.name {
+                flex: 1 1 auto;
+                text-align: left;
+                padding: 0;
+            }
+            
+            div {
+                display: flex;
+                flex: 0 0 auto;
+                margin-left: auto;
+            }
+            
+            paper-icon-button {
+                flex: 0 0 3em;
+            }
+
+            [data-invisible] {
+                visibility: hidden;
+            }
+
+        </style>
+
+        <paper-material elevation="1">
+            <paper-icon-button icon="kassa:clear" data-invisible$="[[fixed]]"></paper-icon-button>
+            <span class="name">[[product.name]]</span>
+            <div>
+                <span>[[product.valitudKogus]] &times; [[product.size]]</span>
+                <span>[[eur2str(product.summa)]]</span>
+            </div>
+        </paper-material>
+
+
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-ost-valitud-toode",
+            properties: {
+                product: {
+                    type: Object
+                },
+                fixed: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            behaviors: [KassaBehavior]
+        })
+    </script>
+</dom-module>

@@ -1,0 +1,116 @@
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-table.html">
+
+<dom-module id="kassa-admin-tooted">
+    <template>
+        <style>            
+            span.DISABLED {
+                color: #888;
+            }
+        </style>
+        <kassa-table items="[[products]]" kassa-scroll-target edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]" convent-id="[[conventId]]">
+            <data-table-column name="Id" width="2em" align-right flex="0">
+                <template>
+                    <span class$="[[item.status]]">[[item.id]]</span>
+                </template>
+            </data-table-column>
+            <data-table-column name="Nimi" width="5em" flex="10"  filter-by="name">
+                <template> 
+                    <span class$="[[item.status]]">[[item.name]]</span>
+                </template>
+            </data-table-column>
+            <data-table-column name="Suurus" width="3em" align-right flex="0">
+                <template>
+                    <span class$="[[item.status]]">[[formatAmount(item.amount, item.amountType)]]</span>
+                </template>
+            </data-table-column>
+            <data-table-column name="Grupp" width="4em" flex="1">
+                <template>
+                    <span class$="[[item.status]]">[[_computeProductGroup(item.productGroupId, productGroups)]]</span>
+                </template>
+            </data-table-column>
+            <data-table-column name="Hind" width="3em" flex="0">
+                <template>
+                    <span class$="[[item.status]]">[[eur2str(item.price)]]</span>
+                </template>
+            </data-table-column>
+        </kassa-table>
+        
+        <paper-dialog id="dialog" modal style="max-width: 350px">
+            <paper-material class="spilt-v">
+                <div class="split-h"><paper-input data-field="name" label="Nimi" type="text"></paper-input></div>
+                <div class="split-h" style="flex-wrap:nowrap">
+                    <paper-input data-field="amount" label="Suurus" type="number" min="0" style="flex: 1 1 60%"></paper-input>
+                    <vaadin-combo-box data-field="amountType" label="Ühik" item-label-path="label" item-value-path="value" items="[[productAmountTypeNames]]" style="flex: 1 1 30%"></vaadin-combo-box>
+                </div>
+                <vaadin-combo-box data-field="productGroupId" label="Grupp" item-label-path="name" item-value-path="id" items="[[productGroups]]"></vaadin-combo-box>
+                <div class="split-h"><paper-input data-field="price" label="Hind (€)" type="number" min="0"></paper-input></div>
+                <div class="split-h"><paper-toggle-button data-field="status">Käibel?</paper-toggle-button></div>
+            </paper-material>
+            <div class="buttons">   
+                <paper-button dialog-dismiss raised>Sulge</paper-button>
+                <kassa-confirm-button>Salvesta</kassa-confirm-button>
+            </div>
+        </paper-dialog>
+    
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-admin-tooted",
+            properties: {
+                conventId: {
+                    type: Number
+                },
+                activeProducts: {
+                    type: Array
+                },
+                inactiveProducts: {
+                    type: Array
+                },
+                products: {
+                    type: Array,
+                    computed: '_merge(activeProducts.*, inactiveProducts.*)'
+                },
+                productGroups: {
+                    type: Array
+                },
+                dialog: {
+                    type: Node,
+                    value: function() {
+                        return this.$.dialog
+                    }
+                }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            observers: ['_loadProducts(pageActive, conventId)'],
+            _loadProducts: function(pageActive, conventId) {
+                if(pageActive) {
+                    this.fire('kassa-backend-action', {action: 'doProductsGetAll', conventId: conventId});
+                    this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
+                }
+            },
+            _merge: function(array1, array2) {
+                return array1.base.concat(array2.base)
+            },
+            _computeProductGroup: function(productGroupId, productGroups) {
+                for(var i=0; i<productGroups.length; i++) {
+                    if(productGroups[i].id === productGroupId){
+                        return productGroups[i].name
+                    }
+                }
+                return ''
+            }
+        })
+    </script>
+</dom-module>
+
+
+

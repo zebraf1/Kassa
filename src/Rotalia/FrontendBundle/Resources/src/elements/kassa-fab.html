@@ -1,0 +1,44 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+
+<link rel="import" href="kassa-icons.html">
+
+<dom-module id="kassa-fab">
+    <template>
+        <style>
+            :host {
+                pointer-events: none;
+            }
+            
+            paper-fab {
+                --paper-fab-background: var(--kassa-secondary-color);
+                --paper-fab-keyboard-focus-background: var(--kassa-secondary-color);
+                transition: all 0.4s;
+                pointer-events: auto;
+            }
+            
+            paper-fab.on-scroll {
+                transform: scale(0);
+            }
+        </style>
+        <paper-fab icon="kassa:add" id="fab"></paper-fab>
+        
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-fab",
+            behaviors: [Polymer.IronScrollTargetBehavior],
+            _scrollHandler: function() {
+                this.$.fab.classList.add('on-scroll');
+                this.debounce('fab-scroll', function() {
+                    //Isn't scrolled to the bottom
+                    if(this.scrollTarget.scrollHeight - this.scrollTarget.scrollTop !== this.scrollTarget.clientHeight ||
+                       this.scrollTarget.scrollHeight === this.scrollTarget.clientHeight) {
+                        this.$.fab.classList.remove('on-scroll');
+                    }
+                }.bind(this), 200);
+            }
+        })
+    </script>
+</dom-module>

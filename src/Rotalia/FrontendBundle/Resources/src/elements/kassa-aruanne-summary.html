@@ -1,0 +1,153 @@
+<link rel="import" href="kassa-behavior.html">
+
+<dom-module id="kassa-aruanne-summary">
+    <template>
+        <style>
+            table {
+                max-width: 30em;
+            }
+            .sub-row {
+                color: #888888;
+            }
+
+            .sub-row td:first-child {
+                padding-left: 1em;
+            }
+
+            td:first-child {
+                width: 100%;
+            }
+
+            td:last-child {
+                text-align: right;
+                padding-left: 2em;
+            }
+
+            .border-top td {
+                border-top: 1px solid #000;
+            }
+
+            td {
+               margin: 0.1em 0;
+            }
+
+        </style>
+        <h3>Kokkuvõte</h3>
+        <table>
+            <tr>
+                <td>Kassa väärtus alguses</td>
+                <td>[[eur2str(_valueAlguses)]]</td>
+            </tr>
+            <tr class="sub-row">
+                <td>Tooted</td>
+                <td>[[eur2str(_tootedAlguses)]]</td>
+            </tr>
+            <tr class="sub-row" hidden$="[[!sularahaKasutusel]]">
+                <td>Sularaha</td>
+                <td>[[eur2str(sularahaAlguses)]]</td>
+            </tr>
+            <tr>
+                <td>Juurde lisatud</td>
+                <td>[[eur2str(_valueJuurde)]]</td>
+            </tr>
+            <tr class="sub-row">
+                <td>Tooted</td>
+                <td>[[eur2str(_tootedJuurde)]]</td>
+            </tr>
+            <tr class="sub-row" hidden$="[[!sularahaKasutusel]]">
+                <td>Sularaha</td>
+                <td>[[eur2str(_negSularahaPostkasti)]]</td>
+            </tr>
+            <tr>
+                <td>Elektroonilised ostud</td>
+                <td>[[eur2str(_elektroonilisedOstud)]]</td>
+            </tr>
+            <tr hidden$="[[!sularahaKasutusel]]">
+                <td>Sularahaostud</td>
+                <td>[[eur2str(_sularahaostud)]]</td>
+            </tr>
+            <tr class="border-top">
+                <td>Eeldatav väärtus</td>
+                <td>[[eur2str(_valueArvutatud)]]</td>
+            </tr>
+            <tr>
+                <td>Tegelik väärtus</td>
+                <td>[[eur2str(_valueTegelik)]]</td>
+            </tr>
+            <tr class="sub-row">
+                <td>Tooted</td>
+                <td>[[eur2str(_tootedLopus)]]</td>
+            </tr>
+            <tr class="sub-row" hidden$="[[!sularahaKasutusel]]">
+                <td>Sularaha</td>
+                <td>[[eur2str(sularahaSumma)]]</td>
+            </tr>
+            <tr>
+                <td>Erinevus</td>
+                <td>[[eur2str(_valueErinevus)]]</td>
+            </tr>
+        </table>
+        
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-aruanne-summary",
+            properties: {
+                //Kas sularaha on kasutusel
+                sularahaKasutusel: {
+                    type: Boolean,
+                    value: false
+                },
+                //Palju on sularaha tõestetud kassast ära
+                sularahaPostkasti: {
+                    type: Number,
+                    value: 0
+                },
+                //Palju oli sularaha selle aruande alguses (eelmise lõpus)
+                sularahaAlguses: {
+                    type: Number,
+                    value: 0
+                },
+                //Palju on sularaha praegu
+                sularahaSumma: {
+                    type: Number,
+                    value: 0
+                },
+                tooted: {
+                    type: Object,
+                    value: function () {
+                        return {}
+                    }
+                },
+            },
+            behaviors: [KassaBehavior],
+            calcSummary: function () {
+                var _tootedAlguses = 0;
+                var _tootedJuurde = 0;
+                var _elektroonilisedOstud = 0;
+                var _tootedLopus = 0;
+                for (var i = 0; i < this.tooted.length; i++){
+                    _tootedAlguses += this.tooted[i].kogusEelmises*this.tooted[i].hind;
+                    _tootedJuurde += this.tooted[i].kogusLisatud*this.tooted[i].hind;
+                    _elektroonilisedOstud += this.tooted[i].kogusOstetud*this.tooted[i].hind;
+                    _tootedLopus += this.tooted[i].kogusTegelik*this.tooted[i].hind;
+                }
+
+                this.set('_valueAlguses', _tootedAlguses + this.sularahaAlguses);
+                this.set('_valueJuurde', _tootedJuurde - this.sularahaPostkasti);
+                this.set('_sularahaostud', _tootedAlguses +_tootedJuurde - (_tootedLopus + _elektroonilisedOstud));
+                this.set('_valueArvutatud', this._valueAlguses + this._valueJuurde - _elektroonilisedOstud);
+                this.set('_valueTegelik', _tootedLopus + this.sularahaSumma);
+                this.set('_valueErinevus', this._valueTegelik - this._valueArvutatud);
+
+                this.set('_tootedAlguses', _tootedAlguses);
+                this.set('_tootedJuurde', _tootedJuurde);
+                this.set('_elektroonilisedOstud', _elektroonilisedOstud);
+                this.set('_tootedLopus', _tootedLopus);
+
+                this.set('_negSularahaPostkasti', -this.sularahaPostkasti);
+
+            }
+        })
+    </script>
+</dom-module>

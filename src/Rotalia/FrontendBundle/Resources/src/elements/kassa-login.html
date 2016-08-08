@@ -1,0 +1,64 @@
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+
+<link rel="import" href="kassa-confirm-button.html">
+
+
+<dom-module id="kassa-login">
+    <template>
+        <style>
+            main {
+                display: flex;
+                flex-flow: column nowrap;
+                max-width: 20em;
+            }
+
+        </style>
+        
+            
+        <main hidden$="[[!isTrue(csrfToken)]]">
+            <form>
+                <paper-input id="usernameInput" label="Kasutajanimi" type="text" disabled="[[confirmed]]" value="{{username}}" required></paper-input>
+                <paper-input label="Parool" type="password" disabled="[[confirmed]]" value="{{password}}" required></paper-input>
+                <kassa-confirm-button id="confirmButton" confirmed="{{confirmed}}" on-kassa-confirm="_doLogin">Sisene</kassa-confirm-button>            
+            </form>
+        </main>
+        
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-login",
+            properties: {
+                csrfToken: {
+                    type: String
+                }
+            },
+            behaviors: [PageBehavior, Polymer.IronA11yKeysBehavior, KassaBehavior],
+            keyBindings: {
+                'enter': '_doLogin'
+            },
+            setUp: function() {
+                this.fire('kassa-backend-action', {action: 'doLogout'});
+            },
+            cleanUp: function() {
+                this.set('username', '');
+                this.set('password', '');
+                this.set('confirmed', false);
+            },
+            _doLogin: function(event) {
+				event.preventDefault();
+                //If executed by pressing enter key.
+                this.set('confirmed', true);
+                this.$.confirmButton._setLoading(true);
+                this.fire('kassa-backend-action', {action: 'doLogin', username: this.username, password: this.password, onError: this._loginError.bind(this)});
+            },
+            _loginError: function() {
+                this.cleanUp();
+                this.$.usernameInput.focus();
+            }
+        })
+    </script>
+</dom-module>

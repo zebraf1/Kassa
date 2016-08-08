@@ -1,0 +1,72 @@
+<link rel="import" href="../bower_components/neon-animation/neon-animatable-behavior.html">
+
+<script>
+    PageBehaviorImpl = {
+
+        properties: {
+            pageActive: {
+                type: Boolean,
+                value: false,
+                readOnly: true
+            },
+            productAmountTypeNames: {
+                type: Array,
+                readOnly: true,
+                value: function() {
+                    return [
+                        {label: 'Tükk', value: 'PIECE'},
+                        {label: 'Liiter', value: 'LITRE'},
+                        {label: 'Kg', value: 'KG'}
+                    ]
+                }
+            }
+        },
+
+        attached: function () {
+           //kassa-scroll-target
+            var target = this.$$('[kassa-scroll-target]');
+            if(target) {
+                target.$.table.$.list.addEventListener('scroll', this._setTableHeight.bind(target.$.table));
+            }
+            
+             //Väike fix, dialoogid ja toast jäävad muidu varju
+            var body = document.querySelector('body');
+            var elements = Polymer.dom(this.root).querySelectorAll('paper-dialog');
+            for (var i = 0; i < elements.length; i++) {
+                body.appendChild(elements[i]);
+            }
+        },
+        sharedSetUp: function () {
+            this._setPageActive(true);
+            
+            //kassa-scroll-target
+            var target = this.$$('[kassa-scroll-target]');
+            if (target) {
+                this.fire('kassa-set-scroll-target', {target: target.$.table.$.list});
+                this._setTableHeight.bind(target.$.table)();
+            } else {
+                this.fire('kassa-set-scroll-target', {target: null});
+            }
+            //Private set up
+            this.setUp();
+        },
+        sharedCleanUp: function () {
+            this.cleanUp();
+            this._setPageActive(false);
+        },
+        //Methods to be overridden by implementing elements
+        setUp: function () {},
+        cleanUp: function () {},
+        
+        //Utility functions
+        _setTableHeight: function() {
+            //Timeout gives time for events to fire and calculate correct height (filtering is problem)
+            setTimeout(function() {
+                var rect = this.getBoundingClientRect();
+                this.style.height = rect.height + window.innerHeight - rect.bottom + 'px';
+            }.bind(this), 200);
+        }
+    };
+
+    PageBehavior = [PageBehaviorImpl, Polymer.NeonAnimatableBehavior]
+</script>

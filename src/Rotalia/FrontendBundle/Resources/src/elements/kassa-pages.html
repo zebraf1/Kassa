@@ -1,0 +1,65 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+
+<link rel="import" href="kassa-loading-page.html">
+
+<dom-module id="kassa-pages">
+    <template>
+        <style>
+            main {
+                padding: 1em;
+            }
+        </style>
+
+        <main>
+            <neon-animated-pages selected="[[shown]]" attr-for-selected="data-page" selected-item="{{selectedItem}}"
+                                 entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+                <kassa-loading-page data-page="loading"></kassa-loading-page>
+                <content></content>
+            </neon-animated-pages>
+        </main>
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-pages",
+
+            properties: {
+                selected: {
+                    type: String,
+                    observer: '_onSelectedChange'
+                },
+                shown: {
+                    type: String,
+                    value: 'loading',
+                    readOnly: true
+                },
+                selectedItem: {
+                    type: Object,
+                    observer: '_onPageChange'
+                }
+            },
+            _onSelectedChange: function (newPage, oldPage) {
+                this._setShown('loading');
+                this.importHref(this.resolveUrl('kassa-' + newPage + '.html'), function(){
+                    this._setShown(newPage);
+                    this.fire('kassa-page-loaded');
+                }, null, true);
+
+            },
+            _onPageChange: function (newPage, oldPage) {
+                //kassa-page-behavior
+                if(newPage && newPage.sharedSetUp){
+                    newPage.sharedSetUp();
+                }
+
+                if(oldPage && oldPage.sharedCleanUp){
+                    oldPage.sharedCleanUp();
+                }
+
+            }
+        })
+    </script>
+</dom-module>

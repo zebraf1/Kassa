@@ -1,0 +1,27 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+<dom-module id="kassa-loading-page">
+    <template>
+        <style>
+            :host {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+        </style>
+        <paper-spinner active></paper-spinner>
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-loading-page"
+        })
+    </script>
+</dom-module>
+

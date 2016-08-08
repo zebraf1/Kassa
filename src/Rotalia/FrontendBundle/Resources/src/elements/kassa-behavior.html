@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+    KassaBehavior = {
+        eur2str: function (eur) {
+            if (eur) {
+                return eur.toFixed(2) + '€'
+            } else {
+                return '0.00€'
+            }                        
+        },
+
+        eur2cent: function(eur) {
+            if (eur) {
+                return Math.round(100*eur)
+            } else {
+                return 0
+            }
+        },
+
+        cent2eur: function(cent) {
+            return cent/100
+        },
+
+        cent2str: function(cent) {
+            return this.eur2str(this.cent2eur(cent))
+        },
+        isTrue: function (thing) {
+            if (typeof thing === "undefined" || thing === null) {
+                return false
+            } else if (thing.constructor === Array && thing.length === 0) {
+                return false
+            } else if (thing.constructor === Object && Object.keys(thing).length === 0) {
+                return false
+            } else {
+                return !!thing
+            }
+        },
+        formatAmount: function(amount, amountType) {
+            switch(amountType) {
+                case 'PIECE':
+                    return amount + ' tk'
+                    break;
+                case 'LITRE':
+                    return amount + ' l'
+                    break;
+                case 'KG':
+                    if(amount < 1) {
+                        return amount*1000 + ' g'
+                    } else {
+                        return amount + ' kg'
+                    }
+            }
+        }
+    };
+</script>

@@ -1,0 +1,112 @@
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-date-picker.html">
+<link rel="import" href="kassa-table.html">
+<link rel="import" href="kassa-icons.html">
+
+
+<dom-module id="kassa-admin-ostud">
+    <template>
+        <style>
+
+            .detail span:first-child {
+                flex: 1 0 8em;
+            }
+
+            .detail span:nth-child(2) {
+                flex: 0 0 6em;
+                text-align: right;
+            }
+
+            .detail span:last-child {
+                flex: 0 0 4em;
+                text-align: right;
+            }
+
+
+
+        </style>
+
+        <kassa-date-picker start-date="[[startDate]]" selected-start-date="{{selectedStartDate}}" selected-end-date="{{selectedEndDate}}"></kassa-date-picker>
+        <paper-icon-button icon="kassa:refresh" on-tap="_refreshData" hidden$="[[loading]]"></paper-icon-button>
+        <paper-spinner active hidde$n="[[!loading]]"></paper-spinner>
+        Ostude summa: [[_computeOstudSumma(filteredItems.*)]]
+
+        <kassa-table items="[[pageData.ostud]]" filtered-items="{{filteredItems}}" kassa-scroll-target>
+            <data-table-column name="Id" width="2em" align-right flex="0">
+                <template>
+                    [[item.id]]
+                </template>
+            </data-table-column>
+            <data-table-column name="Ostja" filter-by="ostja">
+                <template>
+                    [[item.ostja]]
+                </template>
+            </data-table-column>
+            <data-table-column name="Tasuja" filter-by="tasuja">
+                <template>
+                    [[item.tasuja]]
+                </template>
+            </data-table-column>
+            <data-table-column name="Ostu summa" align-right width="4em">
+                <template>
+                    [[computeCell('eur(sum(hind*kogus))', item.tooted)]]
+                </template>
+            </data-table-column>
+            <data-table-column name="Aeg" flex="0" width="9em" align-right>
+                <template>
+                    [[item.aeg]]
+                </template>
+            </data-table-column>
+            <template is="row-detail">
+                <div class="detail">
+                    <template is="dom-repeat" items="[[item.tooted]]" as="toode">
+                        <div>
+                            <span>[[toode.nimi]]</span>
+                            <span>[[toode.kogus]] &times; [[toode.suurus]]</span>
+                            <span>[[computeCell('eur(hind*kogus)', toode)]]</span>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </kassa-table>
+
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-admin-ostud",
+            properties: {
+                startDate: Object
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            ready: function () {
+                this.computeCell = this.$$('kassa-table').computeCell;
+            },
+            _computeRequestBody: function (startDate, endDate) {
+                return {"startDate": startDate, "endDate": endDate}
+            },
+            _computeOstudSumma: function (items) {
+                var ostud = items.base;
+                var summa = 0;
+
+                for(var i=0; i<ostud.length; i++){
+                    for(var j=0; j<ostud[i].tooted.length; j++){
+                        summa += ostud[i].tooted[j].hind*ostud[i].tooted[j].kogus
+                    }
+                }
+
+                return this._eur2str(summa)
+            },
+            _refreshData: function (e) {
+                this.querySelector('kassa-ajax').clearCache();
+            }
+
+        })
+    </script>
+</dom-module>
+
+
+
