@@ -105,6 +105,7 @@ gulp.task('move-files', function() {
 	//Move files, that weren't moved by polymer-build, to temp folder
 	gutil.log('Moving static files...');
 	return gulp.src([root+'/manifest.json', root+'/js/main.js', root+'/bower_components/webcomponentsjs/webcomponents-lite.min.js'], {base: root})
+		.pipe(gulpif(/\.js$/, uglify()))
         .pipe(gulp.dest(buildRoot + '/_temp/' + root))
 });
 
