@@ -41,14 +41,41 @@ class PurchaseController extends DefaultController
      */
     public function paymentAction(Request $request, $payment, $username = null, $password = null)
     {
+        switch ($payment) {
+            case 'cash':
+                // Put cash into register to pay for products
+                $transactionType = Transaction::TYPE_CASH_PURCHASE;
+                $paymentType = 'Sularahamakse';
+                break;
+            case 'credit':
+                // Use credit balance to pay for products
+                $transactionType = Transaction::TYPE_CREDIT_PURCHASE;
+                $paymentType = 'Krediidimakse';
+                break;
+            case 'refund':
+                // Put money into cash register to receive credit
+                $transactionType = Transaction::TYPE_CASH_PAYMENT;
+                $paymentType = 'Krediidi lisamine';
+                break;
+            default:
+                return JSendResponse::createError('Vigane makseviis: '.$payment, 400);
+                break;
+        }
+
         $currentMember = $this->getMember();
         $member = null;
 
         $basket = $request->get('basket');
 
-        if ($basket === null) {
-            return JSendResponse::createFail('Ostukorv puudub', 400);
+        if ($payment !== 'refund') {
+            if ($basket === null) {
+                return JSendResponse::createFail('Ostukorv puudub', 400);
+            }
+            if (!is_array($basket) && $payment !== 'refund') {
+                return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
+            }
         }
+
 
         // Get Point of Sale
         $pos = $this->getPos($request);
@@ -86,11 +113,11 @@ class PurchaseController extends DefaultController
         }
 
         if ($member === null && $payment !== 'cash') {
-            return JSendResponse::createError('Krediidimakse jaoks pead olema sisse logitud', 401);
+            return JSendResponse::createError($paymentType.' nõuab sisse logimist', 401);
         }
 
-        if (!is_array($basket)) {
-            return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
+        if ($pos === null && $payment !== 'credit') {
+            return JSendResponse::createError($paymentType.' nõuab kassat (näiteks konvendi arvuti)', 401);
         }
 
         // Use integer for summarizing double values (see: programming floating point issue)
@@ -99,36 +126,44 @@ class PurchaseController extends DefaultController
         $connection = \Propel::getConnection(TransactionPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
 
-        switch ($payment) {
-            case 'cash':
-                $transactionType = Transaction::TYPE_CASH_PURCHASE;
-                break;
-            case 'credit':
-                $transactionType = Transaction::TYPE_CREDIT_PURCHASE;
-                break;
-            default:
-                return JSendResponse::createError('Vigane makseviis: '.$payment, 400);
-                break;
-        }
+
 
         try {
-            // Create transactions for all purchases
-            foreach ($basket as $item) {
-                if (!$this->validateBasketItem($item)) {
-                    return JSendResponse::createError('Ostukorvis on vigane toode: '.json_encode($item), 400);
+            if ($payment === 'refund') {
+                // If sum is positive then cash was put in, otherwise cash was taken out
+                $sum = doubleval($request->get('sum'));
+                if ($sum == 0) {
+                    return JSendResponse::createError('Sisesta summa', 400);
                 }
 
                 $transaction = new Transaction();
-                $product = ProductQuery::create()->findPk($item['id']);
-                $transaction->setAmount($item['amount']);
-                $transaction->setProduct($product);
-                $transaction->setCurrentPrice($product->getPrice());
+                $transaction->setSum($sum);
                 $transaction->setMemberRelatedByCreatedBy($currentMember);
                 $transaction->setMemberRelatedByMemberId($member);
                 $transaction->setPointOfSale($pos);
-                $totalSumCents += (int)(100 * $transaction->calculateSum());
                 $transaction->setType($transactionType);
                 $transaction->save($connection);
+                // credit balance changes the same way (positive cash = positive credit). This sum is deducted from balance
+                $totalSumCents = (int)(100 * -$sum);
+            } else {
+                // Create transactions for all purchases
+                foreach ($basket as $item) {
+                    if (!$this->validateBasketItem($item)) {
+                        return JSendResponse::createError('Ostukorvis on vigane toode: '.json_encode($item), 400);
+                    }
+
+                    $transaction = new Transaction();
+                    $product = ProductQuery::create()->findPk($item['id']);
+                    $transaction->setAmount($item['amount']);
+                    $transaction->setProduct($product);
+                    $transaction->setCurrentPrice($product->getPrice());
+                    $transaction->setMemberRelatedByCreatedBy($currentMember);
+                    $transaction->setMemberRelatedByMemberId($member);
+                    $transaction->setPointOfSale($pos);
+                    $totalSumCents += (int)(100 * $transaction->calculateSum());
+                    $transaction->setType($transactionType);
+                    $transaction->save($connection);
+                }
             }
 
             // Reduce member credit
