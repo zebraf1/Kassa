@@ -11,7 +11,14 @@
 
 <dom-module id="kassa-admin-tooted">
     <template>
-        <style>            
+        <style>
+            .detail div span:first-child {
+                flex: 1 0 8em;
+            }
+            .detail-number {
+                text-align: right;
+                flex: 1 0 2em;
+            }
             span.DISABLED {
                 color: #888;
             }
@@ -42,6 +49,16 @@
                     <span class$="[[item.status]]">[[eur2str(item.price)]]</span>
                 </template>
             </data-table-column>
+            <template is="row-detail">
+                <div class="detail">
+                    <div>
+                        <span>Kogus laos:</span><span class="detail-number">[[item.inventoryAmounts.warehouse]]</span>
+                    </div>
+                    <div>
+                        <span>Kogus müügil:</span><span class="detail-number">[[item.inventoryAmounts.storage]]</span>
+                    </div>
+                </div>
+            </template>
         </kassa-table>
         
         <paper-dialog id="dialog" modal style="max-width: 350px">
