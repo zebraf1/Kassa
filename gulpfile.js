@@ -68,6 +68,11 @@ function string_src(filename, string) {
   return src
 }
 
+
+/////////////////////////////
+//          Tasks          //
+/////////////////////////////
+
 gulp.task('bower-install', function() {
 	//Install bower dependencies
 	return bower({cwd: root})
@@ -113,27 +118,33 @@ gulp.task('imagemin', function() {
 	gutil.log('Compressing images...');
 	return gulp.src(root+'/images/**/*.png')
         .pipe(imagemin())
-        .pipe(gulp.dest(buildRoot+'/images'))
+        .pipe(gulp.dest(buildRoot + '/_temp/' + root + '/images'))
 });
 
 gulp.task('move-files', function() {
 	//Move files, that weren't moved by polymer-build, to temp folder
 	gutil.log('Moving static files...');
-	return gulp.src([root+'/manifest.json', root+'/js/main.js', root+'/bower_components/webcomponentsjs/webcomponents-lite.min.js'], {base: root})
+	return gulp.src([root+'/manifest.json', root+'/js/main.js', root+'/bower_components/webcomponentsjs/webcomponents-lite.min.js', root+'/../views/Default/index.html.twig'], {base: root})
 		.pipe(gulpif(/\.js$/, uglify()))
         .pipe(gulp.dest(buildRoot + '/_temp/' + root))
 });
 
 gulp.task('gen-sw', function(cb) {
-	//Generate service workers in the temp folder
-	gutil.log('Generating service workers...');
-	return polymer.generateServiceWorker({
+	//Generate service worker in the temp folder
+	gutil.log('Generating service worker...');
+	polymer.generateServiceWorker({
 		buildRoot: buildRoot + '/_temp/' + root,
 		project: polymerProject,
-		bundled: argv.bundled
+		bundled: argv.bundled,
+		swConfig: {
+			staticFileGlobs: ['manifest.json', 'js/main.js', 'bower_components/webcomponentsjs/webcomponents-lite.min.js', 'images/icons/*.png', '../views/Default/index.html.twig']
+		}
 	}).then(function(fileContents) {
-		return string_src('service-worker.js', fileContents.toString().split('["/').join('["/bundles/rotaliafrontend/'))
+		string_src('service-worker.js', fileContents.toString().split('["/').join('["/bundles/rotaliafrontend/'))
+			.pipe(replace(/"[\w\d\/]+index\.html\.twig"/gi, '"/fe/"'))
+			.pipe(uglify())
 			.pipe(gulp.dest(buildRoot + '/_temp/' + root))
+			.on('finish', cb)
 	});	
 });
 
