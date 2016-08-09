@@ -1,3 +1,7 @@
 rotalia_frontend_homepage:
     path:     /
     defaults: { _controller: RotaliaFrontendBundle:Home:index }
+
+rotalia_frontend_service_worker:
+    path:     /service-worker.js
+    defaults: { _controller: RotaliaFrontendBundle:Home:showServiceWorker }

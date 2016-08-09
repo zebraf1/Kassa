@@ -53,6 +53,21 @@ catch(err) {
 	}
 }
 
+//Utility functions
+function string_src(filename, string) {
+  var src = require('stream').Readable({ objectMode: true })
+  src._read = function () {
+    this.push(new gutil.File({
+      cwd: "",
+      base: "",
+      path: filename,
+      contents: new Buffer(string)
+    }))
+    this.push(null)
+  }
+  return src
+}
+
 gulp.task('bower-install', function() {
 	//Install bower dependencies
 	return bower({cwd: root})
@@ -109,15 +124,19 @@ gulp.task('move-files', function() {
         .pipe(gulp.dest(buildRoot + '/_temp/' + root))
 });
 
-gulp.task('gen-sw', function() {
+gulp.task('gen-sw', function(cb) {
 	//Generate service workers in the temp folder
 	gutil.log('Generating service workers...');
-	return polymer.addServiceWorker({
-		  buildRoot: buildRoot + '/_temp/' + root,
-		  project: polymerProject,
-		  bundled: argv.bundled
-	});
+	return polymer.generateServiceWorker({
+		buildRoot: buildRoot + '/_temp/' + root,
+		project: polymerProject,
+		bundled: argv.bundled
+	}).then(function(fileContents) {
+		return string_src('service-worker.js', fileContents.toString().split('["/').join('["/bundles/rotaliafrontend/'))
+			.pipe(gulp.dest(buildRoot + '/_temp/' + root))
+	});	
 });
+
 
 gulp.task('rm-temp', function() {	  
 	// Remove temp
