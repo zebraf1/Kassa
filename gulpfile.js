@@ -6,7 +6,6 @@ const del = require('del');
 const gulp = require('gulp');
 const gulpif = require('gulp-if');
 const htmlmin = require('gulp-htmlmin');
-const imagemin = require('gulp-imagemin');
 const mergeStream = require('merge-stream');
 const polymer = require('polymer-build');
 const replace = require('gulp-replace');
@@ -113,18 +112,10 @@ gulp.task('build-temp', function() {
       .pipe(gulp.dest(buildRoot+'/_temp'))
 });
 
-gulp.task('imagemin', function() {
-	//Compress images
-	gutil.log('Compressing images...');
-	return gulp.src(root+'/images/**/*.png')
-        .pipe(imagemin())
-        .pipe(gulp.dest(buildRoot + '/_temp/' + root + '/images'))
-});
-
 gulp.task('move-files', function() {
 	//Move files, that weren't moved by polymer-build, to temp folder
 	gutil.log('Moving static files...');
-	return gulp.src([root+'/manifest.json', root+'/js/main.js', root+'/bower_components/webcomponentsjs/webcomponents-lite.min.js', root+'/../views/Default/index.html.twig'], {base: root})
+	return gulp.src([root+'/manifest.json', root+'/js/main.js', root+'/bower_components/webcomponentsjs/webcomponents-lite.min.js', root+'/../views/Default/index.html.twig', root+'/images/**/*.png'], {base: root})
 		.pipe(gulpif(/\.js$/, uglify()))
         .pipe(gulp.dest(buildRoot + '/_temp/' + root))
 });
@@ -163,7 +154,7 @@ gulp.task('rm-temp', function() {
 
 gulp.task('build', function(cb) {
 	//Build for production
-	runSequence('bower-install', ['build-temp', 'imagemin', 'move-files'], 'gen-sw', 'rm-temp', cb)
+	runSequence('bower-install', ['build-temp', 'move-files'], 'gen-sw', 'rm-temp', cb)
 
 });
 
