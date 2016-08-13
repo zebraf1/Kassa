@@ -4,6 +4,9 @@ authentication:
 product:
     resource: "@RotaliaAPIBundle/Resources/config/routing/product.yml"
 
+pointOfSale:
+    resource: "@RotaliaAPIBundle/Resources/config/routing/pointOfSale.yml"
+
 productGroups:
     resource: "@RotaliaAPIBundle/Resources/config/routing/productGroups.yml"
 

@@ -212,13 +212,15 @@ CREATE TABLE `ollekassa_point_of_sale`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
+    `convent_id` INTEGER DEFAULT 6 NOT NULL,
     `hash` VARCHAR(100) NOT NULL,
     `device_info` VARCHAR(255),
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `created_by` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `hash` (`hash`),
-    INDEX `FI__created_by_fk` (`created_by`)
+    INDEX `FI__created_by_fk` (`created_by`),
+    INDEX `FI_ndised_fk` (`convent_id`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------

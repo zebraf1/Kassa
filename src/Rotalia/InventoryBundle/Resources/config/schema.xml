@@ -121,6 +121,7 @@
     <table name="ollekassa_point_of_sale" phpName="PointOfSale">
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
         <column name="name" type="VARCHAR" size="100" required="true" />
+        <column name="convent_id" type="INTEGER" required="true" defaultValue="6" />
         <column name="hash" type="VARCHAR" size="100" required="true" />
         <column name="device_info" type="VARCHAR" size="255" required="false" />
         <column name="created_at" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
@@ -130,6 +131,9 @@
         </index>
         <foreign-key foreignTable="liikmed" name="pos_created_by_fk" skipSql="true">
             <reference local="created_by" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="koondised" name="koondised_fk" skipSql="true">
+            <reference local="convent_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>
