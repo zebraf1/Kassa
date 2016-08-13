@@ -62,7 +62,7 @@
 
 
         <kassa-backend id="backend" member="{{member}}" csrf-token="{{csrfToken}}" settings="{{settings}}" active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}" 
-                       product-groups="{{productGroups}}"></kassa-backend>
+                       product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"></kassa-backend>
         <kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]"></kassa-route>
         
         <kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
@@ -94,6 +94,7 @@
                          <kassa-ost data-page="ost" member="[[member]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
                          <kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]" active-products="[[activeProducts]]" inactive-products="[[inactiveProducts]]" product-groups="[[productGroups]]"></kassa-admin-tooted>
                          <kassa-admin-tootegrupid data-page="admin-tootegrupid" product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
+                         <kassa-admin-kassad data-page="admin-kassad" point-of-sales="[[pointOfSales]]" active-convents="[[settings.activeConvents]]"></kassa-admin-kassad>
                      </kassa-pages>
 
                 </app-header-layout>
@@ -114,7 +115,8 @@
                         return  [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
                             {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
-                            {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'}
+                            {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},
+                            {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'}
                         ];
                     }
                 },

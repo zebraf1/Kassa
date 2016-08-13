@@ -1,0 +1,58 @@
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-table.html">
+
+<dom-module id="kassa-admin-kassad">
+    <template>
+        <style>
+        </style>
+        <kassa-table items="[[pointOfSales]]" kassa-scroll-target>
+            <data-table-column name="Id" width="2em" align-right flex="0">
+                <template>
+                    <span>[[item.id]]</span>
+                </template>
+            </data-table-column>
+            <data-table-column name="Nimi" width="5em" flex="10"  filter-by="name">
+                <template> 
+                    <span>[[item.name]]</span>
+                </template>
+            </data-table-column>
+            <data-table-column name="Konvent" width="3em" flex="1">
+                <template>
+                    <span>[[mapIdToValue(item.conventId, activeConvents, 'name')]]</span>
+                </template>
+            </data-table-column>
+            <data-table-column name="Looja" width="5em" flex="1">
+                <template>
+                    <span>[[item.createdBy]]</span>
+                </template>
+            </data-table-column>
+            <data-table-column name="Loodud" width="6em" align-right flex="1">
+                <template>
+                    <span>[[item.createdAt]]</span>
+                </template>
+            </data-table-column>
+        </kassa-table>
+    
+    </template>
+    <script>
+        Polymer({
+            is: "kassa-admin-kassad",
+            properties: {
+                pointOfSales: {
+                    type: Array
+                },
+                activeConvents: {
+                    type: Array
+                }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            setUp: function() {
+                this.fire('kassa-backend-action', {action: 'doPointOfSalesGet'});
+            }
+        })
+    </script>
+</dom-module>
+
+
+

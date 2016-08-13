@@ -3,7 +3,6 @@
 
 <link rel="import" href="kassa-behavior.html">
 
-
 <dom-module id="kassa-backend">
     <template>
         <!-- Authentication -->
@@ -16,10 +15,12 @@
         <iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
         <iron-ajax id="productsPatch" handle-as="json" url='[[_computeURL("products", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
-        <!-- ProductGroups --->
+        <!-- ProductGroups -->
         <iron-ajax id="productGroupsGet" handle-as="json" url='[[_computeURL("productGroups")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <iron-ajax id="productGroupsPost" handle-as="json" url='[[_computeURL("productGroups")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
         <iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <!-- PointOfSales -->
+        <iron-ajax id="pointOfSalesGet" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
     </template>
     <script>
         Polymer({
@@ -58,6 +59,12 @@
                 },
                 /* ProductGroups */
                 productGroups: {
+                    type: Array,
+                    notify: true,
+                    readOnly: true
+                },
+                /* PointOfSales */
+                pointOfSales: {
                     type: Array,
                     notify: true,
                     readOnly: true
@@ -171,6 +178,13 @@
                         return result
                     }.bind(this))
             },
+            /* PointOfSales */
+            doPointOfSalesGet: function() {
+                return this.$.pointOfSalesGet.generateRequest().completes.then(function(result) {
+                    var data = this._checkSuccess(result);
+                    this._setPointOfSales(data.pointOfSales);
+                }.bind(this))
+            },
             /* General */
             doAction: function(data) {
                 var promise;
@@ -205,6 +219,10 @@
                     case 'doProductGroupsPatch':
                         promise = this.doProductGroupsPatch(data.id, data.itemType);
                         break;    
+                    /* PointOfSales */
+                    case 'doPointOfSalesGet':
+                        promise = this.doPointOfSalesGet();
+                        break;
                     /* General */    
                     default:
                         console.error('Vale action.', data);

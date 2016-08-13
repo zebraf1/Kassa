@@ -51,6 +51,15 @@
                         return amount + ' kg'
                     }
             }
+        },
+        mapIdToValue: function(id, items, key) {
+            for(var i=0; i<items.length; i++) {
+                if(items[i].id === id) {
+                    return items[i][key]
+                }
+            }
+            
+            return ''
         }
     };
 </script>
