@@ -135,6 +135,23 @@ class PointOfSalesController extends DefaultController
         return $response;
     }
 
+    /**
+     * Updates a PointOfSale
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   section="PointOfSales",
+     *   description = "Update PointOfSale from the submitted data.",
+     *   input = "Rotalia\APIBundle\Form\PointOfSaleType",
+     *   statusCodes = {
+     *     200 = "Returned when new PointOfSale is created. Includes created object",
+     *     400 = "Returned when there are errors with the submitted data",
+     *     403 = "Returned when user has insufficient privileges",
+     *   }
+     * )
+     * @param Request $request
+     * @return JSendResponse
+     */
     public function updateAction($id, Request $request)
     {
         $pos = PointOfSaleQuery::create()->findPk($id);

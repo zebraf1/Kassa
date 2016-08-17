@@ -14,7 +14,7 @@ RotaliaAPI_products_create:
     defaults: { _controller: RotaliaAPIBundle:PointOfSales:Create }
 
 RotaliaAPI_products_update:
-    pattern:  /pointOfSales/
+    pattern:  /pointOfSales/{id}/
     methods: [PATCH]
     defaults: { _controller: RotaliaAPIBundle:PointOfSales:Update }
 
