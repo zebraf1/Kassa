@@ -6,6 +6,7 @@ namespace Rotalia\APIBundle\Controller;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\UserBundle\Model\User;
 use Rotalia\UserBundle\Model\UserQuery;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
@@ -53,12 +54,22 @@ class AuthenticationController extends DefaultController
 
         $data = [
             'member' =>  $memberData,
-            'pointOfSale' =>  $pos ? $pos->getName() : null,
+            'pointOfSaleId' =>  $pos ? $pos->getId() : null,
             'csrfToken' => $member ? null : $this->getCSRFProvider()->generateCsrfToken($this->getTokenId())
         ];
 
         
-        return JSendResponse::createSuccess($data);
+        $response = JSendResponse::createSuccess($data);
+
+        if ($pos === null && $hash = $request->cookies->get('pos_hash')) {
+            // Delete cookie
+            $response->headers->setCookie(new Cookie('pos_hash', 'deleted', 1));
+        } elseif ($pos !== null) {
+            // Refresh cookie lifetime
+            $response->headers->setCookie(new Cookie('pos_hash', $pos->getHash(), new \DateTime('+1 year')));
+        }
+
+        return $response;
     }
 
     /**

@@ -13,6 +13,11 @@ RotaliaAPI_products_create:
     methods: [POST]
     defaults: { _controller: RotaliaAPIBundle:PointOfSales:Create }
 
+RotaliaAPI_products_update:
+    pattern:  /pointOfSales/
+    methods: [PATCH]
+    defaults: { _controller: RotaliaAPIBundle:PointOfSales:Update }
+
 RotaliaAPI_products_delete:
     pattern:  /pointOfSales/{id}/
     methods: [DELETE]
