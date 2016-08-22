@@ -10,5 +10,8 @@ pointOfSale:
 productGroups:
     resource: "@RotaliaAPIBundle/Resources/config/routing/productGroups.yml"
 
+reports:
+    resource: "@RotaliaAPIBundle/Resources/config/routing/reports.yml"
+
 setting:
     resource: "@RotaliaAPIBundle/Resources/config/routing/setting.yml"

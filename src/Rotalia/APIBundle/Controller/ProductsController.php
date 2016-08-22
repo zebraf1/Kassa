@@ -72,7 +72,7 @@ class ProductsController extends DefaultController
                 ->filterByActiveStatus($active)
             ->endUse()
             ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
-            ->filterByConventId($conventId)
+                ->filterByConventId($conventId)
                 ->_or()
                 ->filterByConventId(null, \Criteria::ISNULL)
             ->endUse()
@@ -144,7 +144,7 @@ class ProductsController extends DefaultController
         $product = ProductQuery::create()->findPk($id);
 
         if ($product === null) {
-            return JSendResponse::createFail('Toodet ei leitud', 404);
+            return JSendResponse::createFail(['message' => 'Toodet ei leitud'], 404);
         }
 
         $product->setConventId($conventId);
@@ -205,7 +205,7 @@ class ProductsController extends DefaultController
         $product = ProductQuery::create()->findPk($id);
 
         if ($product === null) {
-            return JSendResponse::createFail('Toodet ei leitud', 404);
+            return JSendResponse::createFail(['message' => 'Toodet ei leitud'], 404);
         }
 
         return $this->handleSubmit($product, $request);
@@ -220,7 +220,7 @@ class ProductsController extends DefaultController
     private function handleSubmit(Product $product, Request $request)
     {
         if (!$this->isGranted(User::ROLE_ADMIN)) {
-            return JSendResponse::createFail('Tegevus vajab admin õiguseid', 403);
+            return JSendResponse::createFail(['message' => 'Tegevus vajab admin õiguseid'], 403);
         }
 
         $conventId = $request->get('conventId', null);
@@ -231,7 +231,7 @@ class ProductsController extends DefaultController
         }
 
         if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            return JSendResponse::createFail('Teise konvendi tooteid saab muuta ainult super admin', 403);
+            return JSendResponse::createFail(['message' => 'Teise konvendi tooteid saab muuta ainult super admin'], 403);
         }
 
         $product->setConventId($conventId);

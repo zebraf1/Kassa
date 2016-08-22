@@ -86,4 +86,13 @@ class ReportRow extends BaseReportRow
         $product = $this->getProduct($con);
         $this->setCurrentPrice($product->getPrice());
     }
+
+    public function getAjaxData()
+    {
+        return [
+            'productId' => $this->getProductId(),
+            'amount' => $this->getAmount(),
+            'currentPrice' => $this->getCurrentPrice(),
+        ];
+    }
 }

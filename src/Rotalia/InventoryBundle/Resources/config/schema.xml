@@ -53,6 +53,7 @@
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
         <column name="name" type="VARCHAR" size="100" required="true" />
         <column name="member_id" type="INTEGER" />
+        <column name="convent_id" type="INTEGER" required="true" defaultValue="6" />
         <column name="cash" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="type" type="VARCHAR" required="true" defaultValue="VERIFICATION" />
         <index name="member_id">
@@ -60,6 +61,9 @@
         </index>
         <foreign-key foreignTable="liikmed" name="report_member_fk" skipSql="true">
             <reference local="member_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="koondised" name="koondised_fk" skipSql="true">
+            <reference local="convent_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>

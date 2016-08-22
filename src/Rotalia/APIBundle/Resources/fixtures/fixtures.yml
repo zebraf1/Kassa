@@ -144,6 +144,7 @@ Rotalia\InventoryBundle\Model\ProductInfo:
         convent_id: Convent_6
         price: '1.00'
         status: ACTIVE
+        storage_amount: 5
     ProductInfo_2:
         product_id: Product_1
         convent_id: Convent_7
@@ -179,3 +180,18 @@ Rotalia\InventoryBundle\Model\ProductInfo:
         convent_id: Convent_7
         price: '1.00'
         status: ACTIVE
+
+Rotalia\InventoryBundle\Model\Report:
+    Report_1:
+        name: 'Mitte Keegi'
+        member_id: Member_2123
+        cash: '5.12'
+        convent_id: Convent_6
+
+Rotalia\InventoryBundle\Model\ReportRow:
+    ReportRow_1_1:
+        report_id: Report_1
+        product_id: Product_1
+        amount: 5
+        current_price: 1
+

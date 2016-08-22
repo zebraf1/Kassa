@@ -1,0 +1,4 @@
+RotaliaAPI_reports_list:
+    pattern:  /reports/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:Reports:List }

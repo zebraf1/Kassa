@@ -34,7 +34,7 @@ class AuthenticationControllerTest extends WebTestCase
 
         $this->assertEquals('success', $getResult->status);
         $this->assertEquals(null, $getResult->data->member);
-        $this->assertEquals(null, $getResult->data->pointOfSale);
+        $this->assertEquals(null, $getResult->data->pointOfSaleId);
         $this->assertNotEmpty($getResult->data->csrfToken);
 
         // POST - login
@@ -81,7 +81,7 @@ class AuthenticationControllerTest extends WebTestCase
         $this->assertEquals('success', $getResult->status);
         $this->assertNotEmpty($getResult->data->member);
         $this->assertEquals('Super Oluline', $getResult->data->member->name);
-        $this->assertEquals(null, $getResult->data->pointOfSale);
+        $this->assertEquals(null, $getResult->data->pointOfSaleId);
         $this->assertEmpty($getResult->data->csrfToken);
 
         // DELETE - logout
@@ -110,7 +110,7 @@ class AuthenticationControllerTest extends WebTestCase
         $getResult = json_decode($response->getContent());
         $this->assertEquals('success', $getResult->status);
         $this->assertEquals(null, $getResult->data->member);
-        $this->assertEquals(null, $getResult->data->pointOfSale);
+        $this->assertEquals(null, $getResult->data->pointOfSaleId);
         $this->assertNotEmpty($getResult->data->csrfToken);
     }
 

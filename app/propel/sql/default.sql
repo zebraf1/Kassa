@@ -137,12 +137,14 @@ CREATE TABLE `ollekassa_report`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
     `member_id` INTEGER,
+    `convent_id` INTEGER DEFAULT 6 NOT NULL,
     `cash` DECIMAL(10,2) NOT NULL,
     `type` VARCHAR(255) DEFAULT 'VERIFICATION' NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),
-    INDEX `member_id` (`member_id`)
+    INDEX `member_id` (`member_id`),
+    INDEX `FI_ndised_fk` (`convent_id`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------

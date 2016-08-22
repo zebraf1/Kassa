@@ -454,4 +454,29 @@ class Report extends BaseReport
 
         return $result;
     }
+
+    /**
+     * @return array
+     */
+    public function getAjaxData()
+    {
+        $reportRows = [];
+
+        foreach ($this->getReportRows() as $reportRow) {
+            $reportRows[] = $reportRow->getAjaxData();
+        }
+
+        return [
+            'id' => $this->getId(),
+            'memberName' => $this->getMemberName(),
+            'memberId' => $this->getMemberId(),
+            'type' => $this->getType(),
+            'createdAt' => $this->getCreatedAt('Y-m-d H:i:s'),
+            'cash' => $this->getCash(),
+            'expectedCash' => $this->getExpectedCash(),
+            'profit' => $this->getActualProfit(),
+            'expectedProfit' => $this->getExpectedProfit(),
+            'reportRows' => $reportRows,
+        ];
+    }
 }
