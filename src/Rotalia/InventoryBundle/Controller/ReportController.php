@@ -197,7 +197,7 @@ class ReportController extends DefaultController
 
             return $this->redirect($this->generateUrl('RotaliaReport_list'));
         } elseif ($reportForm->isSubmitted()) {
-            $this->setFlashError($request, $reportForm->getErrors(true));
+            $this->setFlashError($request, 'Salvestamine ebaõnnestus');
         }
 
         return $this->render('RotaliaInventoryBundle:Report:update.html.twig', [

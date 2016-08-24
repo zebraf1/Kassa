@@ -28,7 +28,7 @@ class ReportType extends AbstractType
         $builder
             ->add('cash', 'number', array(
                 'label' => 'Sularaha:',
-                'required' => true,
+                'required' => false,
             ))
             ->add($reportRowsFormName, 'collection', [
                 'type' => new ReportRowType()

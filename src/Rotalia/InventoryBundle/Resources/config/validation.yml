@@ -1,7 +1,3 @@
-Rotalia\InventoryBundle\Model\Report:
-    properties:
-        cash:
-            - NotBlank: ~
 Rotalia\InventoryBundle\Model\Product:
     properties:
         name:
