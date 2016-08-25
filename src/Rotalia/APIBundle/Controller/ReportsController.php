@@ -173,6 +173,10 @@ class ReportsController extends DefaultController
             return JSendResponse::createFail(['message' => 'Tegevuseks pead olema super admin'], 403);
         }
 
+        if ($report->getMemberId() != $this->getMember()->getId() && !$this->isGranted(User::ROLE_ADMIN)) {
+            return JSendResponse::createFail(['message' => 'Tegevuseks pead olema admin või raporti looja'], 403);
+        }
+
         return $this->handleSubmit($request, $report);
     }
 
