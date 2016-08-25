@@ -2,3 +2,13 @@ RotaliaAPI_reports_list:
     pattern:  /reports/
     methods: [GET]
     defaults: { _controller: RotaliaAPIBundle:Reports:List }
+
+RotaliaAPI_reports_create:
+    pattern:  /reports/
+    methods: [POST]
+    defaults: { _controller: RotaliaAPIBundle:Reports:Create }
+
+RotaliaAPI_reports_update:
+    pattern:  /reports/{id}/
+    methods: [PATCH]
+    defaults: { _controller: RotaliaAPIBundle:Reports:Update }

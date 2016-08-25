@@ -3,7 +3,10 @@
 namespace Rotalia\APIBundle\Controller;
 
 
+use Rotalia\APIBundle\Form\ReportType;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\InventoryBundle\Form\FormErrorHelper;
+use Rotalia\InventoryBundle\Model\Report;
 use Rotalia\InventoryBundle\Model\ReportQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,8 +29,8 @@ class ReportsController extends DefaultController
      *     description="Fetch Reports list",
      *     section="Reports",
      *     filters={
-     *          {"name"="dateFrom","type"="string"},
-     *          {"name"="dateUntil","type"="string"},
+     *          {"name"="dateFrom","type"="string","description":"datetime string, default today 00:00"},
+     *          {"name"="dateUntil","type"="string","description":"datetime string, default today 23:59"},
      *          {"name"="conventId","type"="int","description"="Fetch reports for another convent than member home convent"},
      *     }
      * )
@@ -71,8 +74,8 @@ class ReportsController extends DefaultController
             ->filterByCreatedAt(['min' => $from, 'max' => $until])
             ->filterByConventId($conventId)
             ->orderByCreatedAt(\Criteria::DESC)
-            ->leftJoinReportRow('report_row')
-            ->with('report_row')
+            ->leftJoinReportRow('reportRow')
+            ->with('reportRow')
             ->find()
         ;
 
@@ -83,5 +86,127 @@ class ReportsController extends DefaultController
         }
 
         return JSendResponse::createSuccess(['reports' => $resultReports]);
+    }
+
+    /**
+     * Create a new report
+     * @ApiDoc(
+     *   resource = true,
+     *   section="Reports",
+     *   description = "Creates a new Report with the given attributes",
+     *   input = "Rotalia\APIBundle\Form\ReportType",
+     *   filters={
+     *      {"name"="conventId","type"="int","description"="Save report for selected convent instead of member home convent"},
+     *      {"name"="type","type"="string","description"="Report type: VERIFICATION (default) or UPDATE"},
+     *   },
+     *   statusCodes = {
+     *     201 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *     403 = "Returned when user has insufficient privileges",
+     *   }
+     * )
+     * @param Request $request
+     * @return JSendResponse
+     */
+    public function createAction(Request $request)
+    {
+        $conventId = $request->get('conventId', null);
+        $memberConventId = $this->getMember()->getKoondisedId();
+
+        if ($conventId === null) {
+            $conventId = $memberConventId;
+        }
+
+        if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+            return JSendResponse::createFail(['message' => 'Tegevuseks pead olema super admin'], 403);
+        }
+
+        $type = $request->get('type', Report::TYPE_VERIFICATION);
+
+        if (!in_array($type, Report::$types)) {
+            return JSendResponse::createFail(['type' => 'Vigane raporti tüüp'], 400);
+        }
+
+        if ($type === Report::TYPE_UPDATE && $this->isGranted(User::ROLE_ADMIN) === false) {
+            return JSendResponse::createFail(['type' => 'Sellist tüüpi raportit saab tekitada admin'], 403);
+        }
+
+        $report = new Report();
+        $report->setConventId($conventId);
+        $report->setMember($this->getMember());
+        $report->setType($type);
+
+        return $this->handleSubmit($request, $report);
+    }
+
+    /**
+     * Update a report
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   section="Reports",
+     *   description = "Updates a Report with the given attributes",
+     *   input = "Rotalia\APIBundle\Form\ReportType",
+     *   statusCodes = {
+     *     201 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *     403 = "Returned when user has insufficient privileges",
+     *     404 = "Returned when the Report is not found for ID",
+     *   }
+     * )
+     * @param Request $request
+     * @param $id
+     * @return JSendResponse
+     */
+    public function updateAction(Request $request, $id)
+    {
+        $report = ReportQuery::create()->findPk($id);
+
+        if ($report === null) {
+            return JSendResponse::createFail(['message' => 'Aruannet ei leitud'], 404);
+        }
+
+        $conventId = $report->getConventId();
+        $memberConventId = $this->getMember()->getKoondisedId();
+
+        if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+            return JSendResponse::createFail(['message' => 'Tegevuseks pead olema super admin'], 403);
+        }
+
+        return $this->handleSubmit($request, $report);
+    }
+
+
+    /**
+     * @param Request $request
+     * @param Report $report
+     * @return JSendResponse
+     */
+    protected function handleSubmit(Request $request, Report $report)
+    {
+        if (!$this->isGranted(User::ROLE_USER)) {
+            return JSendResponse::createFail(['message' => 'Tegevuseks pead olema sisse logitud'], 403);
+        }
+
+        $form = $this->createForm(new ReportType(), $report, [
+            'method' => $request->getMethod(),
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            /** @var Report $report */
+            $report = $form->getData();
+            $report->save();
+            $code = $request->getMethod() === 'POST' ? 201 : 200;
+            return JSendResponse::createSuccess([], [], $code);
+        } else {
+            $errors = FormErrorHelper::getErrors($form);
+
+            return JSendResponse::createFail([
+                'message' => 'Aruande salvestamine ebaõnnestus',
+                'errors' => $errors
+            ], 400);
+        }
     }
 }

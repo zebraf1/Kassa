@@ -14,6 +14,11 @@ class Report extends BaseReport
     const TYPE_VERIFICATION = 'VERIFICATION'; //Physical verification report
     const TYPE_UPDATE = 'UPDATE'; //Inventory update report
 
+    public static $types = [
+        self::TYPE_VERIFICATION,
+        self::TYPE_UPDATE,
+    ];
+
     protected $expectedProfit = null;
     protected $actualProfit = null;
     protected $initialCash = null;
@@ -435,7 +440,7 @@ class Report extends BaseReport
         $guardDuties = GuardDutyQuery::create()
             ->filterByDate($this->getCreatedAt('Y-m-d'))
             ->useGuardDutyCycleQuery()
-                ->filterByConventId(XClassifier::CONVENT_TALLINN_ID)
+                ->filterByConventId($this->getConventId())
             ->endUse()
             ->find()
         ;
@@ -469,6 +474,7 @@ class Report extends BaseReport
         return [
             'id' => $this->getId(),
             'memberName' => $this->getMemberName(),
+            'guardDutyMembers' => $this->getGuardDutyMembers(),
             'memberId' => $this->getMemberId(),
             'type' => $this->getType(),
             'createdAt' => $this->getCreatedAt('Y-m-d H:i:s'),
