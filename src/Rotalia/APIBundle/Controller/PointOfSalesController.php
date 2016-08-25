@@ -122,12 +122,20 @@ class PointOfSalesController extends DefaultController
              return JSendResponse::createFail(['message' => 'See brauser on juba müügipunkt'], 400);
         }
 
+        $conventId = $request->get('conventId', null);
+        $memberConventId = $this->getMember()->getKoondisedId();
+
+        if ($this->isGranted(User::ROLE_SUPER_ADMIN) === false && $conventId != $memberConventId) {
+            return JSendResponse::createFail(['message' => 'Õigused puuduvad, vajab super admin õigusi'], 403);
+        }
+
         $hash = md5($request->getClientIp() . time());
         $pos = new PointOfSale();
         $pos->setMember($this->getMember());
         $pos->setHash($hash);
         $pos->setDeviceInfo($request->headers->get('User-Agent'));
         $pos->setCreatedAt(new \DateTime());
+        $pos->setConventId($conventId);
 
         $response = $this->handleSubmit($pos, $request);
         $response->headers->setCookie(new Cookie('pos_hash', $pos->getHash(), new \DateTime('+1 year')));
