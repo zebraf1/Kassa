@@ -89,7 +89,7 @@ class ReportsController extends DefaultController
     }
 
     /**
-     * Create a new report
+     * Create a new report. Use productId's as reportRows array keys to avoid unpredictable results when updating.
      * @ApiDoc(
      *   resource = true,
      *   section="Reports",
@@ -140,7 +140,7 @@ class ReportsController extends DefaultController
     }
 
     /**
-     * Update a report
+     * Update a report. Use productId's as reportRows array keys to avoid unpredictable results.
      *
      * @ApiDoc(
      *   resource = true,
@@ -203,7 +203,7 @@ class ReportsController extends DefaultController
             $report = $form->getData();
             $report->save();
             $code = $request->getMethod() === 'POST' ? 201 : 200;
-            return JSendResponse::createSuccess([], [], $code);
+            return JSendResponse::createSuccess(['reportId' => $report->getId()], [], $code);
         } else {
             $errors = FormErrorHelper::getErrors($form);
 
