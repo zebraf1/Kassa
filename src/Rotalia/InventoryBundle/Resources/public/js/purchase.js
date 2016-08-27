@@ -271,7 +271,7 @@ $(function() {
     });
 
     var payment = function(paymentType, sum) {
-        jSendPost('RotaliaInventory_purchasePayment', {payment: paymentType}, {basket: basket.items, sum: sum}, function(data) {
+        jSendPost('RotaliaAPI_purchasePayment', {payment: paymentType}, {basket: basket.items, sum: sum}, function(data) {
             var newCredit = formatter.format(data.newCredit);
             var postPaymentUpdate = function () {
                 // Clear basket

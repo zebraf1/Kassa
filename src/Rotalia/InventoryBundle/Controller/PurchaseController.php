@@ -12,6 +12,7 @@ use Rotalia\UserBundle\Model\UserQuery;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Class PurchaseController
@@ -33,6 +34,29 @@ class PurchaseController extends DefaultController
     }
 
     /**
+     * Purchase products with credit or cash, add credit by paying cash to point of sale
+     *
+     * @ApiDoc (
+     *   resource = false,
+     *   section="Purchase",
+     *   description = "Creates transactions, reduces member credit and product storage amount",
+     *   requirements={
+     *     {"name"="payment","requirement"="cash|credit|refund","description"="Payment type"}
+     *   },
+     *   parameters={
+     *      {"name"="username","dataType"="string","required"=false,"description"="Temporary login username"},
+     *      {"name"="password","dataType"="string","required"=false,"description"="Temporary login password"},
+     *      {"name"="basket","dataType"="Object","required"=false,"description"="Not required for refund payment"},
+     *      {"name"="basket[0][id]","dataType"="int","required"=true,"description"="Product ID"},
+     *      {"name"="basket[0][amount]","dataType"="float","required"=true,"description"="Amount purchased"},
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when input data has errors",
+     *     403 = "Returned when user is not logged in and browser is not point of sale",
+     *     500 = "Returned when the transaction fails, all actions are reverted. Try again or report a problem",
+     *   }
+     * )
      * @param Request $request
      * @param $payment
      * @param null $username
@@ -41,7 +65,7 @@ class PurchaseController extends DefaultController
      */
     public function paymentAction(Request $request, $payment, $username = null, $password = null)
     {
-        switch ($payment) {
+        switch (strtolower($payment)) {
             case 'cash':
                 // Put cash into register to pay for products
                 $transactionType = Transaction::TYPE_CASH_PURCHASE;
@@ -109,15 +133,15 @@ class PurchaseController extends DefaultController
         }
 
         if ($member === null && $pos === null) {
-            return JSendResponse::createError('Tehing ei ole lubatud, logi sisse', 401);
+            return JSendResponse::createError('Tehing ei ole lubatud, logi sisse', 403);
         }
 
         if ($member === null && $payment !== 'cash') {
-            return JSendResponse::createError($paymentType.' nõuab sisse logimist', 401);
+            return JSendResponse::createError($paymentType.' nõuab sisse logimist', 403);
         }
 
         if ($pos === null && $payment !== 'credit') {
-            return JSendResponse::createError($paymentType.' nõuab kassat (näiteks konvendi arvuti)', 401);
+            return JSendResponse::createError($paymentType.' nõuab kassat (näiteks konvendi arvuti)', 403);
         }
 
         // Use integer for summarizing double values (see: programming floating point issue)
@@ -126,7 +150,11 @@ class PurchaseController extends DefaultController
         $connection = \Propel::getConnection(TransactionPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
 
-
+        if ($pos !== null) {
+            $conventId = $pos->getConventId();
+        } else {
+            $conventId = $member->getKoondisedId();
+        }
 
         try {
             if ($payment === 'refund') {
@@ -154,6 +182,7 @@ class PurchaseController extends DefaultController
 
                     $transaction = new Transaction();
                     $product = ProductQuery::create()->findPk($item['id']);
+                    $product->setConventId($conventId);
                     $transaction->setAmount($item['amount']);
                     $transaction->setProduct($product);
                     $transaction->setCurrentPrice($product->getPrice());
@@ -163,6 +192,9 @@ class PurchaseController extends DefaultController
                     $totalSumCents += (int)(100 * $transaction->calculateSum());
                     $transaction->setType($transactionType);
                     $transaction->save($connection);
+
+                    $product->getProductInfo()->reduceStorageAmount($item['amount']);
+                    $product->save();
                 }
             }
 

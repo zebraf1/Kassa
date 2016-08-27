@@ -26,4 +26,14 @@ class ProductInfo extends BaseProductInfo
                 break;
         }
     }
+
+    /**
+     * Reduce storage amount by the given amount
+     * @param $amount
+     * @return ProductInfo
+     */
+    public function reduceStorageAmount($amount)
+    {
+        return $this->setStorageAmount(doubleval($this->getStorageAmount()) - $amount);
+    }
 }

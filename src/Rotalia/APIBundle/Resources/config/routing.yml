@@ -15,3 +15,11 @@ reports:
 
 setting:
     resource: "@RotaliaAPIBundle/Resources/config/routing/setting.yml"
+
+
+RotaliaAPI_purchasePayment:
+    pattern:  /purchase/{payment}/
+    defaults: { _controller: RotaliaInventoryBundle:Purchase:Payment }
+    methods: [POST]
+    options:
+        expose: true

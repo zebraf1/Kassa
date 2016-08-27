@@ -97,13 +97,6 @@ RotaliaInventory_purchasePos:
     pattern:  /kassa/
     defaults: { _controller: RotaliaInventoryBundle:Purchase:Home }
 
-RotaliaInventory_purchasePayment:
-    pattern:  /kassa/tehing/{payment}/
-    defaults: { _controller: RotaliaInventoryBundle:Purchase:Payment }
-    methods: [POST]
-    options:
-        expose: true
-
 RotaliaInventory_productInfo:
     pattern:  /toode/info/
     defaults: { _controller: RotaliaInventoryBundle:Product:Info }
