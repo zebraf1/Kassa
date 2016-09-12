@@ -5,6 +5,7 @@ use Exception;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\ProductFilterType;
 use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\InventoryBundle\Model\SettingQuery;
 use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\InventoryBundle\Model\TransactionPeer;
 use Rotalia\UserBundle\Model\User;
@@ -203,6 +204,15 @@ class PurchaseController extends DefaultController
                 $memberCredit = $member->getCredit();
                 $memberCredit->adjustCredit(-$totalSumCents / 100);
                 $memberCredit->save($connection);
+            }
+
+            // Add convent cash
+            if ($payment !== 'credit') {
+                $setting = SettingQuery::getCurrentCashSetting($conventId);
+                $currentCash = doubleval($setting->getValue()) * 100;
+                $currentCash += $totalSumCents;
+                $setting->setValue($currentCash / 100);
+                $setting->save();
             }
 
             $connection->commit();
