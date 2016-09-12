@@ -174,6 +174,22 @@ CREATE TABLE `ollekassa_report_row`
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
+-- ollekassa_setting
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_setting`;
+
+CREATE TABLE `ollekassa_setting`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `object` VARCHAR(20) NOT NULL,
+    `object_id` INTEGER NOT NULL,
+    `reference` VARCHAR(100) NOT NULL,
+    `value` VARCHAR(100),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB CHARACTER SET='utf8';
+
+-- ---------------------------------------------------------------------
 -- ollekassa_transaction
 -- ---------------------------------------------------------------------
 

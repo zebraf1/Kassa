@@ -90,6 +90,18 @@
         </vendor>
     </table>
 
+    <table name="ollekassa_setting" phpName="Setting">
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="object" type="VARCHAR" size="20" required="true" />
+        <column name="object_id" type="INTEGER" required="true" />
+        <column name="reference" type="VARCHAR" size="100" required="true" />
+        <column name="value" type="VARCHAR" size="100" required="false" />
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+    </table>
+
     <table name="ollekassa_transaction" phpName="Transaction">
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
         <column name="type" type="VARCHAR" required="true" />
