@@ -8,7 +8,7 @@ class Setting extends BaseSetting
 {
     const REFERENCE_CURRENT_CASH = 'currentCash';
 
-    const OBJECT_CONVENT = 'CONVENT';
+    const OBJECT_CONVENT = 'convent';
 
     /**
      * @param $conventId

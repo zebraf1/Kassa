@@ -198,11 +198,11 @@ Rotalia\InventoryBundle\Model\ReportRow:
 Rotalia\InventoryBundle\Model\Setting:
     Setting_CurrentCash_Tallinn:
         reference: 'current_cash'
-        object: 'CONVENT'
+        object: 'convent'
         object_id: Convent_6
         value: 122
     Setting_CurrentCash_Tartu:
         reference: 'current_cash'
-        object: 'CONVENT'
+        object: 'convent'
         object_id: Convent_7
         value: 0
