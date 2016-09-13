@@ -3,11 +3,14 @@
 namespace Rotalia\InventoryBundle\Model;
 
 use DateTime;
+use Monolog\Logger;
+use PropelPDO;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseReport;
 use Rotalia\UserBundle\Model\GuardDuty;
 use Rotalia\UserBundle\Model\GuardDutyQuery;
 use Rotalia\UserBundle\Model\Member;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Report extends BaseReport
 {
@@ -458,6 +461,31 @@ class Report extends BaseReport
         }
 
         return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function preSave(PropelPDO $con = null)
+    {
+        // Update convent cash
+        if ($this->isUpdate()) {
+
+            // When update report is modified, it would require to calculate the diff.
+            if (!$this->isNew() && $this->isColumnModified(ReportPeer::CASH)) {
+                throw new HttpException(400, 'Update report modified, changing cash would cause errors!');
+            }
+
+            if ($cash = $this->getCash()) {
+                $currentCash = Setting::getCurrentCash($this->getConventId());
+                $cash = (doubleval($this->getCash()) * 100 + doubleval($currentCash) * 100) / 100;
+                Setting::setCurrentCash($this->getConventId(), $cash);
+            }
+        } else {
+            Setting::setCurrentCash($this->getConventId(), $this->getCash());
+        }
+
+        return parent::preSave($con);
     }
 
     /**
