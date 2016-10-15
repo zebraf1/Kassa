@@ -3,8 +3,11 @@
 namespace Rotalia\APIBundle\Tests\Controller;
 
 
+use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\InventoryBundle\Model\Report;
 use Rotalia\InventoryBundle\Model\ReportQuery;
+use Rotalia\UserBundle\Model\ConventQuery;
 
 class ReportsControllerTest extends WebTestCase
 {
@@ -103,5 +106,74 @@ class ReportsControllerTest extends WebTestCase
                 $this->assertEquals(13, $reportRow->getAmount());
             }
         }
+    }
+
+    /**
+     * @dataProvider providerCreateUpdateReport
+     * @param $source
+     * @param $target
+     */
+    public function testCreateUpdateReport($source, $target)
+    {
+        // A le Coq Premium
+        $product = ProductQuery::create()->findOneByProductCode('12345678');
+        $convent = ConventQuery::create()->findOneByName('Tallinn');
+        $product->setConventId($convent->getId());
+        $productInfo = $product->getProductInfo();
+
+        $addedAmount = 9;
+
+        $expectedWarehouseAmount = $productInfo->getWarehouseAmount();
+        $expectedStorageAmount = $productInfo->getStorageAmount();
+
+        if ($source === Product::INVENTORY_TYPE_WAREHOUSE) {
+            $expectedWarehouseAmount -= $addedAmount;
+        }
+        if ($source === Product::INVENTORY_TYPE_STORAGE) {
+            $expectedStorageAmount -= $addedAmount;
+        }
+
+        if ($target === Product::INVENTORY_TYPE_STORAGE) {
+            $expectedStorageAmount += $addedAmount;
+        }
+        if ($target === Product::INVENTORY_TYPE_WAREHOUSE) {
+            $expectedWarehouseAmount += $addedAmount;
+        }
+
+        $this->loginSuperAdmin();
+
+        $params = [
+            'conventId' => $convent->getId(),
+            'type' => Report::TYPE_UPDATE,
+            'inventorySource' => $source,
+            'inventoryTarget' => $target,
+            'Report' => [
+                'reportRows' => [
+                    ['amount' => $addedAmount, 'productId' => $product->getId()]
+                ],
+            ]
+        ];
+
+        static::$client->request('POST', '/api/reports/', $params);
+
+        $response = static::$client->getResponse();
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $productInfo->reload();
+
+        $this->assertEquals($expectedStorageAmount, $productInfo->getStorageAmount());
+        $this->assertEquals($expectedWarehouseAmount, $productInfo->getWarehouseAmount());
+    }
+
+    public function providerCreateUpdateReport()
+    {
+        return [
+            'warehouse_to_storage' => [Product::INVENTORY_TYPE_WAREHOUSE, Product::INVENTORY_TYPE_STORAGE],
+            'storage_to_warehouse' => [Product::INVENTORY_TYPE_STORAGE, Product::INVENTORY_TYPE_WAREHOUSE],
+            'to_warehouse' => [null, Product::INVENTORY_TYPE_WAREHOUSE],
+            'to_storage' => [null, Product::INVENTORY_TYPE_STORAGE],
+            'from_warehouse' => [Product::INVENTORY_TYPE_WAREHOUSE, null],
+            'from_storage' => [Product::INVENTORY_TYPE_STORAGE, null],
+        ];
     }
 }

@@ -9,6 +9,9 @@ use Rotalia\UserBundle\Model\ConventQuery;
 
 class Product extends BaseProduct
 {
+    const INVENTORY_TYPE_WAREHOUSE = 'warehouse';
+    const INVENTORY_TYPE_STORAGE = 'storage';
+
     public $conventId = null;
 
     /**

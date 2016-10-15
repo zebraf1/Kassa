@@ -488,6 +488,65 @@ class Report extends BaseReport
         return parent::preSave($con);
     }
 
+
+    /**
+     * @return bool
+     */
+    public function isLatest()
+    {
+        if ($this->isNew()) {
+            return true;
+        }
+
+        $latestReport = ReportQuery::create()->orderById(\Criteria::DESC)->findOne();
+
+        return $this->getId() == $latestReport->getId();
+    }
+
+    /**
+     * @param $inventoryType
+     * @param string $action
+     * @throws \HttpException
+     */
+    public function saveProductAmounts($inventoryType, $action = 'set')
+    {
+        if (!in_array($action, ['set', 'add', 'reduce'])) {
+            throw new HttpException(500, 'Invalid action for saveProductAmounts:'.$action);
+        }
+
+        foreach ($this->getReportRows() as $row) {
+            $product = $row->getProduct();
+            $product->setConventId($this->getConventId());
+            $productInfo = $product->getProductInfo();
+            $amount = $row->getAmount();
+
+            switch (strtolower($inventoryType)) {
+                case Product::INVENTORY_TYPE_WAREHOUSE:
+                    if ($action === 'add') {
+                        $productInfo->addWarehouseAmount($amount);
+                    } else if ($action === 'reduce') {
+                        $productInfo->reduceWarehouseAmount($amount);
+                    } else {
+                        $productInfo->setWarehouseAmount($amount)->save();
+                    }
+                    break;
+                case Product::INVENTORY_TYPE_STORAGE:
+                    if ($action === 'add') {
+                        $productInfo->addStorageAmount($amount);
+                    } else if ($action === 'reduce') {
+                        $productInfo->reduceStorageAmount($amount);
+                    } else {
+                        $productInfo->setStorageAmount($amount);
+                    }
+                    break;
+                default:
+                    throw new \HttpException(400, 'Invalid inventoryType: '.$inventoryType);
+            }
+
+            $productInfo->save();
+        }
+    }
+
     /**
      * @return array
      */

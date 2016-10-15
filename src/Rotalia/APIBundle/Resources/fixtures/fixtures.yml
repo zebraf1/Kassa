@@ -145,6 +145,7 @@ Rotalia\InventoryBundle\Model\ProductInfo:
         price: '1.00'
         status: ACTIVE
         storage_amount: 5
+        warehouse_amount: 15
     ProductInfo_2:
         product_id: Product_1
         convent_id: Convent_7

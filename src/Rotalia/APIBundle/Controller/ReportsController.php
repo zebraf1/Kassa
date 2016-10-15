@@ -6,6 +6,7 @@ namespace Rotalia\APIBundle\Controller;
 use Rotalia\APIBundle\Form\ReportType;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
+use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\Report;
 use Rotalia\InventoryBundle\Model\ReportQuery;
 use Rotalia\UserBundle\Model\User;
@@ -98,6 +99,8 @@ class ReportsController extends DefaultController
      *   filters={
      *      {"name"="conventId","type"="int","description"="Save report for selected convent instead of member home convent"},
      *      {"name"="type","type"="string","description"="Report type: VERIFICATION (default) or UPDATE"},
+     *      {"name"="inventorySource","type"="string","description"="Use 'warehouse' to take products from warehouse for update report"},
+     *      {"name"="inventoryTarget","type"="string","description"="Save product amounts to selected inventory: warehouse or storage"},
      *   },
      *   statusCodes = {
      *     201 = "Returned when successful",
@@ -166,6 +169,10 @@ class ReportsController extends DefaultController
             return JSendResponse::createFail(['message' => 'Aruannet ei leitud'], 404);
         }
 
+        if ($report->isUpdate()) {
+            return JSendResponse::createFail(['message' => 'Majanduseestseisja aruannet ei saa muuta, lisa uus aruanne'], 400);
+        }
+
         $conventId = $report->getConventId();
         $memberConventId = $this->getMember()->getKoondisedId();
 
@@ -201,7 +208,30 @@ class ReportsController extends DefaultController
         if ($form->isValid()) {
             /** @var Report $report */
             $report = $form->getData();
+            if ($report->isNew()) {
+                $report->setMember($this->getUser()->getMember());
+                $report->updateRowPrices();
+            }
             $report->save();
+
+            if (!$report->isUpdate() && $report->isLatest()) {
+                // Save storage amounts
+                $report->saveProductAmounts(Product::INVENTORY_TYPE_STORAGE);
+            } else if ($report->isUpdate()) {
+                $source = $request->get('inventorySource', null);
+                $target = $request->get('inventoryTarget', Product::INVENTORY_TYPE_STORAGE);
+
+                // Remove from source inventory (warehouse and in some cases storage)
+                if (!empty($source)) {
+                    $report->saveProductAmounts($source, 'reduce');
+                }
+
+                if (!empty($target)) {
+                    // Add to target inventory (warehouse or storage)
+                    $report->saveProductAmounts($target, 'add');
+                }
+            }
+
             $code = $request->getMethod() === 'POST' ? 201 : 200;
             return JSendResponse::createSuccess(['reportId' => $report->getId()], [], $code);
         } else {
