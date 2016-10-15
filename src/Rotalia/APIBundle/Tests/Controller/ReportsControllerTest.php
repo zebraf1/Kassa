@@ -24,13 +24,14 @@ class ReportsControllerTest extends WebTestCase
     public function testList()
     {
         $this->loginSimpleUser();
+        $limit = 1;
 
-        static::$client->request('GET', '/api/reports/');
+        static::$client->request('GET', '/api/reports/', ['limit' => $limit, 'reportType' => Report::TYPE_VERIFICATION]);
         $response = static::$client->getResponse();
         $result = json_decode($response->getContent());
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertCount(1, $result->data->reports);
+        $this->assertEquals(200, $response->getStatusCode(), 'Error: '.$response->getContent());
+        $this->assertCount($limit, $result->data->reports);
     }
 
     public function testCreateAndUpdate()

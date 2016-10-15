@@ -30,8 +30,10 @@ class ReportsController extends DefaultController
      *     description="Fetch Reports list",
      *     section="Reports",
      *     filters={
-     *          {"name"="dateFrom","type"="string","description":"datetime string, default today 00:00"},
-     *          {"name"="dateUntil","type"="string","description":"datetime string, default today 23:59"},
+     *          {"name"="dateFrom","type"="string","description":"datetime string"},
+     *          {"name"="dateUntil","type"="string","description":"datetime string"},
+     *          {"name"="limit","type"="int","description":"Limit number of reports returned, default 5"},
+     *          {"name"="offset","type"="int","description":"Offset reports returned for pagination, default 0"},
      *          {"name"="conventId","type"="int","description"="Fetch reports for another convent than member home convent"},
      *     }
      * )
@@ -41,9 +43,15 @@ class ReportsController extends DefaultController
      */
     public function listAction(Request $request)
     {
-        $dateFrom = $request->get('dateFrom', 'today 00:00');
-        $dateUntil = $request->get('dateUntil', 'today 23:59');
+        $dateFrom = $request->get('dateFrom', null);
+        $dateUntil = $request->get('dateUntil', null);
         $conventId = $request->get('conventId', null);
+        $reportType = $request->get('reportType', null);
+        $limit = $request->get('limit', 5);
+        $offset = $request->get('offset', 0);
+
+        $reportQuery = ReportQuery::create();
+
         $memberConventId = $this->getMember()->getKoondisedId();
 
         if ($conventId === null) {
@@ -59,24 +67,38 @@ class ReportsController extends DefaultController
         }
 
 
-        try {
-            $from = new DateTime($dateFrom);
-        } catch (\Exception $e) {
-            return JSendResponse::createFail(['dateFrom' => $e->getMessage()], 400);
+        if (!empty($dateFrom)) {
+            try {
+                $from = new DateTime($dateFrom);
+                $reportQuery->filterByCreatedAt(['min' => $from]);
+            } catch (\Exception $e) {
+                return JSendResponse::createFail(['dateFrom' => $e->getMessage()], 400);
+            }
         }
 
-        try {
-            $until = new DateTime($dateUntil);
-        } catch (\Exception $e) {
-            return JSendResponse::createFail(['dateUntil' => $e->getMessage()], 400);
+        if (!empty($dateUntil)) {
+            try {
+                $until = new DateTime($dateUntil);
+                $reportQuery->filterByCreatedAt(['max' => $until]);
+            } catch (\Exception $e) {
+                return JSendResponse::createFail(['dateUntil' => $e->getMessage()], 400);
+            }
         }
 
-        $reports = ReportQuery::create()
-            ->filterByCreatedAt(['min' => $from, 'max' => $until])
+
+        if (!empty($reportType)) {
+            if (!in_array($reportType, Report::$types)) {
+                return JSendResponse::createFail(['reportType' => 'Vigane raporti tüüp: '.$reportType], 400);
+            }
+
+            $reportQuery->filterByType($reportType);
+        }
+
+        $reports = $reportQuery
             ->filterByConventId($conventId)
             ->orderByCreatedAt(\Criteria::DESC)
-            ->leftJoinReportRow('reportRow')
-            ->with('reportRow')
+            ->limit($limit)
+            ->offset($offset)
             ->find()
         ;
 
