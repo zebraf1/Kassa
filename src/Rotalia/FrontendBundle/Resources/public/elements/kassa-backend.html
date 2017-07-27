@@ -21,6 +21,9 @@
         <iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
         <!-- PointOfSales -->
         <iron-ajax id="pointOfSalesGet" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="pointOfSalesPost" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <iron-ajax id="pointOfSalesPatch" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
     </template>
     <script>
         Polymer({
@@ -185,6 +188,33 @@
                     this._setPointOfSales(data.pointOfSales);
                 }.bind(this))
             },
+            doPointOfSalesPost: function(conventId, PointOfSaleType) {
+                this.$.pointOfSalesPost.set('body', this.formatBody({conventId: conventId, PointOfSaleType: PointOfSaleType}));
+                return this.$.pointOfSalesPost.generateRequest().completes.then(function(result) {
+                    this._checkSuccess(result);
+                    this.doPointOfSalesGet();
+                    this.fire('kassa-message-success', 'Müügipunkt edukalt lisatud');
+                    return result
+                }.bind(this))
+            },
+            doPointOfSalesPatch: function(pointOfSaleId, PointOfSaleType) {
+                this.$.pointOfSalesPatch.set('body', this.formatBody({PointOfSaleType: PointOfSaleType}));
+                this.set('_id', pointOfSaleId);
+                return this.$.pointOfSalesPatch.generateRequest().completes.then(function(result) {
+                    this._checkSuccess(result);
+                    this.doPointOfSalesGet();
+                    this.fire('kassa-message-success', 'Müügipunkt edukalt muudetud');
+                    return result
+                }.bind(this))
+            },
+            doPointOfSalesDelete: function (pointOfSaleId) {
+                this.set('_id', pointOfSaleId);
+                return this.$.pointOfSalesDelete.generateRequest().completes.then(function(result) {
+                    this._checkSuccess(result);
+                    this.doPointOfSalesGet();
+                    this.fire('kassa-message-success', 'Müügipunkt edukalt kustutatud');
+                }.bind(this))
+            },
             /* General */
             doAction: function(data) {
                 var promise;
@@ -222,6 +252,15 @@
                     /* PointOfSales */
                     case 'doPointOfSalesGet':
                         promise = this.doPointOfSalesGet();
+                        break;
+                    case 'doPointOfSalesPost':
+                        promise = this.doPointOfSalesPost(data.conventId, data.itemType);
+                        break;
+                    case 'doPointOfSalesPatch':
+                        promise = this.doPointOfSalesPatch(data.id, data.itemType);
+                        break;
+                    case 'doPointOfSalesDelete':
+                        promise = this.doPointOfSalesDelete(data.id);
                         break;
                     /* General */    
                     default:

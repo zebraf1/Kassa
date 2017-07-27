@@ -1,0 +1,29 @@
+{
+  "entrypoint": "index.html",
+  "shell": "elements/kassa-app.html",
+  "fragments": [
+	"elements/kassa-ost.html",
+	"elements/kassa-login.html",
+    "elements/kassa-aruanne.html",
+    "elements/kassa-ylevaade.html",
+    "elements/kassa-admin-tooted.html",
+    "elements/kassa-admin-tootegrupid.html",
+    "elements/kassa-admin-kassad.html"
+  ],
+  "sources": [
+    "elements/*",
+    "js/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.js"
+  ],
+  "builds": [{
+    "preset": "es5-bundled"
+  }],
+  "lint": {
+    "rules": ["polymer-1"]
+  }
+}

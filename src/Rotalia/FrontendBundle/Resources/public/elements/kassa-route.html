@@ -24,6 +24,10 @@
                 },
                 navigation: {
                     type: Array
+                },
+                routeData: {
+                    type: Object,
+                    notify: false
                 }
             },
             observers: ['_computePage(routeData, member, navigation)'],

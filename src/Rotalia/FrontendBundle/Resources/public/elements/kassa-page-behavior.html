@@ -1,6 +1,9 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animatable-behavior.html">
 
 <script>
+    /**
+     * @polymerBehavior
+     */
     PageBehaviorImpl = {
 
         properties: {
@@ -23,12 +26,11 @@
         },
 
         attached: function () {
-           //kassa-scroll-target
             var target = this.$$('[kassa-scroll-target]');
             if(target) {
-                target.$.table.$.list.addEventListener('scroll', this._setTableHeight.bind(target.$.table));
+                target.$.table.$.scroller.$.outerscroller.scrollTarget.addEventListener('scroll', this._setTableHeight.bind(target.$.table));
             }
-            
+
              //Väike fix, dialoogid ja toast jäävad muidu varju
             var body = document.querySelector('body');
             var elements = Polymer.dom(this.root).querySelectorAll('paper-dialog');
@@ -42,7 +44,7 @@
             //kassa-scroll-target
             var target = this.$$('[kassa-scroll-target]');
             if (target) {
-                this.fire('kassa-set-scroll-target', {target: target.$.table.$.list});
+                this.fire('kassa-set-scroll-target', {target: target.$.table.$.scroller.$.outerscroller.scrollTarget});
                 this._setTableHeight.bind(target.$.table)();
             } else {
                 this.fire('kassa-set-scroll-target', {target: null});
@@ -57,16 +59,16 @@
         //Methods to be overridden by implementing elements
         setUp: function () {},
         cleanUp: function () {},
-        
+
         //Utility functions
         _setTableHeight: function() {
-            //Timeout gives time for events to fire and calculate correct height (filtering is problem)
-            setTimeout(function() {
-                var rect = this.getBoundingClientRect();
-                this.style.height = rect.height + window.innerHeight - rect.bottom + 'px';
-            }.bind(this), 200);
+            var rect = this.getBoundingClientRect();
+            this.style.height = rect.height + window.innerHeight - rect.bottom -10 + 'px';
         }
     };
 
+    /**
+     * @polymerBehavior
+     */
     PageBehavior = [PageBehaviorImpl, Polymer.NeonAnimatableBehavior]
 </script>

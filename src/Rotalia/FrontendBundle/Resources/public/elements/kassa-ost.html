@@ -173,7 +173,7 @@
                 this.fire('kassa-scroll-to-pos', {pos: target.getBoundingClientRect().top - this.getBoundingClientRect().top});
             },
             _onFocusinSelect: function(event) {
-                Polymer.dom(event).rootTarget.select();
+                //Polymer.dom(event).rootTarget.select();
             },
             _removeChosenProduct: function (event) {
                 if (!this.ostFixed && (Polymer.dom(event).rootTarget.id == "icon" || Polymer.dom(event).rootTarget.localName === "paper-icon-button")) {
@@ -203,13 +203,13 @@
                 
                 result = []
                 for(var i=0; i<productGroups.length; i++) {
-                    result.push({name: productGroups[i].name, products: groups[productGroups[i].id]});
+                    result.push({name: productGroups[i].name, products: typeof groups[productGroups[i].id] === 'undefined' ? [] : groups[productGroups[i].id]});
                 }
                 
                 if(this.isTrue(groups[null])) {
                     result.push({name: 'Grupeerimata', products: groups[null]});
                 }
-                
+
                 return result
             },
             _onFilterKeyPress: function(event) {

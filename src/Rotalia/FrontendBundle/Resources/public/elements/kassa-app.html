@@ -2,12 +2,10 @@
 
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
-
 
 <link rel="import" href="kassa-left-drawer.html">
 <link rel="import" href="kassa-right-drawer.html">
@@ -61,7 +59,8 @@
         </style>
 
 
-        <kassa-backend id="backend" member="{{member}}" csrf-token="{{csrfToken}}" settings="{{settings}}" active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}" 
+        <kassa-backend id="backend" member="{{member}}" csrf-token="{{csrfToken}}" settings="{{settings}}"
+                       active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}"
                        product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"></kassa-backend>
         <kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]"></kassa-route>
         
@@ -75,29 +74,28 @@
                 <app-drawer id="rightDrawer" align="right">
                     <kassa-right-drawer page="[[page]]"></kassa-right-drawer>
                 </app-drawer>
-                <app-header-layout has-scrolling-region>
+                <app-header condenses reveals effects="material">
+                    <app-toolbar>
+                        <paper-icon-button icon="kassa:menu" hidden$="[[!leftNarrow]]" on-tap="_toggleLeftDrawer"></paper-icon-button>
+                        <div condensed-title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
+                        <paper-icon-button icon="kassa:help" hidden$="[[!rightNarrow]]" on-tap="_toggleRightDrawer"></paper-icon-button>
+                    </app-toolbar>
+                    <app-toolbar></app-toolbar>
+                    <app-toolbar class="tall">
+                        <div title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
+                    </app-toolbar>
+                </app-header>
 
-                    <app-header condenses reveals effects="material"> 
-                        <app-toolbar>
-                            <paper-icon-button icon="kassa:menu" hidden$="[[!leftNarrow]]" on-tap="_toggleLeftDrawer"></paper-icon-button>
-                            <div condensed-title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
-                            <paper-icon-button icon="kassa:help" hidden$="[[!rightNarrow]]" on-tap="_toggleRightDrawer"></paper-icon-button>
-                        </app-toolbar>
-                        <app-toolbar></app-toolbar>
-                        <app-toolbar class="tall">
-                            <div title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
-                        </app-toolbar>
-                    </app-header>
-
-                     <kassa-pages selected="[[page]]">
-                         <kassa-login data-page="login" csrf-token="[[csrfToken]]"></kassa-login>
-                         <kassa-ost data-page="ost" member="[[member]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
-                         <kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]" active-products="[[activeProducts]]" inactive-products="[[inactiveProducts]]" product-groups="[[productGroups]]"></kassa-admin-tooted>
-                         <kassa-admin-tootegrupid data-page="admin-tootegrupid" product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
-                         <kassa-admin-kassad data-page="admin-kassad" point-of-sales="[[pointOfSales]]" active-convents="[[settings.activeConvents]]"></kassa-admin-kassad>
-                     </kassa-pages>
-
-                </app-header-layout>
+                 <kassa-pages selected="[[page]]">
+                     <kassa-login data-page="login" csrf-token="[[csrfToken]]"></kassa-login>
+                     <kassa-ost data-page="ost" member="[[member]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
+                     <kassa-aruanne data-page="aruanne"></kassa-aruanne>
+                     <kassa-ylevaade data-page="ylevaade"></kassa-ylevaade>
+                     <kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]"
+                                         active-products="[[activeProducts]]" inactive-products="[[inactiveProducts]]" product-groups="[[productGroups]]"></kassa-admin-tooted>
+                     <kassa-admin-tootegrupid data-page="admin-tootegrupid" product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
+                     <kassa-admin-kassad data-page="admin-kassad" point-of-sales="[[pointOfSales]]" active-convents="[[settings.activeConvents]]"></kassa-admin-kassad>
+                 </kassa-pages>
 
             </app-drawer-layout>
         </app-drawer-layout>
@@ -114,6 +112,8 @@
                     value: function() {
                         return  [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
+                            {page: 'aruanne', name: 'Koosta aruanne', role: 'ROLE_USER'},
+                            {page: 'ylevaade', name: 'Kasutaja ülevaade', role: 'ROLE_USER'},
                             {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'}
@@ -136,7 +136,6 @@
             ready: function () {
                 //Shortcuts to use in kassa-app
                 this._appHeader = this.$$('app-header');
-                this._appHeaderLayout = this.$$('app-header-layout');
             },
             attached: function() {
                 this.fire('kassa-app-loaded');
@@ -144,30 +143,31 @@
                 this.listen(this, 'kassa-page-loaded', '_openDrawer');
             },
             _scrollHandler: function(e) {
-                this._appHeader.scroll(0, this._appHeader._dHeight + e.detail.pos);
+                this._appHeader.scroll(0, e.detail.pos);
+                this._appHeader._updateScrollState(e.detail.pos);
             },
             _setScrollTarget: function(event) {
                 //Scroll to top on page change
                 this._appHeader.scroll(0, 0);
                 this._appHeader._updateScrollState(0);
                 this._onScroll();
-                
-                this._appHeaderLayout.hasScrollingRegion = !this.isTrue(event.detail.target);
-                
+
                 if(this._appHeader.scrollTarget) {
                     this.unlisten(this._appHeader.scrollTarget, 'scroll', '_onScroll');
                 }
-                
-                if(event.detail.target !== null) {
-                    this._appHeader.scrollTarget = event.detail.target;
-                    this.listen(this._appHeader.scrollTarget, 'scroll', '_onScroll');
+
+                var scrolltarget;
+                if (event.detail.target === null) {
+                    scrolltarget = this.$$('kassa-pages').$$('main');
                 } else {
-                    this._appHeaderLayout._updateScroller();
+                    scrolltarget = event.detail.target;
                 }
-                
+                this._appHeader.scrollTarget = scrolltarget;
+                this.listen(this._appHeader.scrollTarget, 'scroll', '_onScroll');
+
             },
             _onScroll: function() {
-                this._appHeaderLayout.$.contentContainer.style.paddingTop = Math.max(this._appHeader._height - this._appHeader._top, 0) + 'px';
+                this._appHeader.style.marginBottom = -Math.max(this._appHeader._top, 0) + 'px';
             },
             _onMessage: function(e) {
                 if (e.type == 'kassa-message-success') {
