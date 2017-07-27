@@ -32,7 +32,7 @@
 
         <kassa-date-picker start-date="[[startDate]]" selected-start-date="{{selectedStartDate}}" selected-end-date="{{selectedEndDate}}"></kassa-date-picker>
         <paper-icon-button icon="kassa:refresh" on-tap="_refreshData" hidden$="[[loading]]"></paper-icon-button>
-        <paper-spinner active hidde$n="[[!loading]]"></paper-spinner>
+        <paper-spinner active hidden$="[[!loading]]"></paper-spinner>
         Ostude summa: [[_computeOstudSumma(filteredItems.*)]]
 
         <kassa-table items="[[pageData.ostud]]" filtered-items="{{filteredItems}}" kassa-scroll-target>

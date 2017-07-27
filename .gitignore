@@ -16,7 +16,4 @@
 .idea/
 app/propel/generated-schemas/
 components/
-node_modules/
-bower_components/
-/src/Rotalia/FrontendBundle/Resources/public/
 .directory

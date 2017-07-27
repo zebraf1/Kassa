@@ -12,53 +12,40 @@
 <dom-module id="kassa-admin-tooted">
     <template>
         <style>
-            .detail div span:first-child {
-                flex: 1 0 8em;
-            }
-            .detail-number {
-                text-align: right;
-                flex: 1 0 2em;
-            }
             span.DISABLED {
                 color: #888;
             }
         </style>
         <kassa-table items="[[products]]" kassa-scroll-target edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]" convent-id="[[conventId]]">
-            <data-table-column name="Id" width="2em" align-right flex="0">
+            <vaadin-grid-column flex-grow="0">
+                <template class="header">Id</template>
                 <template>
                     <span class$="[[item.status]]">[[item.id]]</span>
                 </template>
-            </data-table-column>
-            <data-table-column name="Nimi" width="5em" flex="10"  filter-by="name">
-                <template> 
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="10">
+                <template>
                     <span class$="[[item.status]]">[[item.name]]</span>
                 </template>
-            </data-table-column>
-            <data-table-column name="Suurus" width="3em" align-right flex="0">
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="0">
+                <template class="header">Suurus</template>
                 <template>
                     <span class$="[[item.status]]">[[formatAmount(item.amount, item.amountType)]]</span>
                 </template>
-            </data-table-column>
-            <data-table-column name="Grupp" width="4em" flex="1">
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="1">
+                <template class="header">Grupp</template>
                 <template>
                     <span class$="[[item.status]]">[[_computeProductGroup(item.productGroupId, productGroups)]]</span>
                 </template>
-            </data-table-column>
-            <data-table-column name="Hind" width="3em" flex="0">
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="0">
+                <template class="header">Hind</template>
                 <template>
                     <span class$="[[item.status]]">[[eur2str(item.price)]]</span>
                 </template>
-            </data-table-column>
-            <template is="row-detail">
-                <div class="detail">
-                    <div>
-                        <span>Kogus laos:</span><span class="detail-number">[[item.inventoryAmounts.warehouse]]</span>
-                    </div>
-                    <div>
-                        <span>Kogus müügil:</span><span class="detail-number">[[item.inventoryAmounts.storage]]</span>
-                    </div>
-                </div>
-            </template>
+            </vaadin-grid-column>
         </kassa-table>
         
         <paper-dialog id="dialog" modal style="max-width: 350px">

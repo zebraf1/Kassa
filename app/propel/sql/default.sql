@@ -13,9 +13,9 @@ CREATE TABLE `fos_user`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(255),
-    `username_canonical` VARCHAR(255),
+    `username_canonical` VARCHAR(191),
     `email` VARCHAR(255),
-    `email_canonical` VARCHAR(255),
+    `email_canonical` VARCHAR(191),
     `enabled` TINYINT(1) DEFAULT 0,
     `salt` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,

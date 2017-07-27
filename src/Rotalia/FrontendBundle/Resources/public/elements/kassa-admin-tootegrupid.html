@@ -9,22 +9,29 @@
 
 <dom-module id="kassa-admin-tootegrupid">
     <template>
-        <kassa-table items="[[productGroups]]" kassa-scroll-target edit-func="doProductGroupsPatch" add-func="doProductGroupsPost" dialog="[[dialog]]">
-            <data-table-column name="Id" width="2em" align-right flex="0">
+        <kassa-table items="[[productGroups]]" edit-func="doProductGroupsPatch" add-func="doProductGroupsPost" dialog="[[dialog]]" kassa-scroll-target>
+            <vaadin-grid-column flex-grow="0">
+                <template class="header">Id</template>
                 <template>
                     <span>[[item.id]]</span>
                 </template>
-            </data-table-column>
-            <data-table-column name="Nimi" width="5em" flex="1"  filter-by="name">
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="1">
+                <template class="header">
+                    <vaadin-grid-filter path="name" value="{{_nameFilter}}">
+                        <paper-input label="Nimi" value="{{_nameFilter}}"></paper-input>
+                    </vaadin-grid-filter>
+                </template>
                 <template> 
                     <span>[[item.name]]</span>
                 </template>
-            </data-table-column>
-            <data-table-column name="Järjekord" width="3em" align-right flex="0">
+            </vaadin-grid-column>
+            <vaadin-grid-column align-right flex-grow="0">
+                <template class="header">Järjekord</template>
                 <template>
                     <span>[[item.seq]]</span>
                 </template>
-            </data-table-column>
+            </vaadin-grid-column>
         </kassa-table>
         
         <paper-dialog id="productGroupsDialog" modal style="max-width: 350px">

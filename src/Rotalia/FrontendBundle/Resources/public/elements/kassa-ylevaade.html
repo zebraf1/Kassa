@@ -1,7 +1,4 @@
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../bower_components/iron-data-table/iron-data-table.html">
-<link rel="import" href="../bower_components/iron-data-table/default-styles.html">
-<link rel="import" href="../bower_components/iron-data-table/data-table-column.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 
@@ -53,7 +50,8 @@
 
         <paper-material>
             <h3>Ostud:</h3>
-            <iron-data-table items="[[pageData.ostud]]" selection-enabled details-enabled filter="{{filter}}" data-source="{{dataSource}}">
+            <!--
+            <iron-data-table items="[[pageData.ostud]]" selection-enabled details-enabled filter="{{filter}}" data-source$="{{dataSource}}">
                 <data-table-column name="Id" width="2em" align-right flex="0">
                     <template>
                         [[item.id]]
@@ -127,6 +125,7 @@
                     </div>
                 </template>
             </iron-data-table>
+            -->
         </paper-material>
 
 
