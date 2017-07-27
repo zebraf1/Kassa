@@ -51,6 +51,6 @@ class SettingsControllerTest extends WebTestCase
 
         $result = json_decode($response->getContent());
 
-        $this->assertEquals('Access Denied', $result->message);
+        $this->assertEquals('Access Denied.', $result->message);
     }
 }

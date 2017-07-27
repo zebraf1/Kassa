@@ -1,0 +1,4 @@
+RotaliaAPI_members_list:
+    pattern:  /members/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:Members:List }

@@ -18,7 +18,7 @@ class ReportsControllerTest extends WebTestCase
         $result = json_decode($response->getContent());
 
         $this->assertEquals(403, $response->getStatusCode());
-        $this->assertEquals('Access Denied', $result->message);
+        $this->assertEquals('Access Denied.', $result->message);
     }
 
     public function testList()

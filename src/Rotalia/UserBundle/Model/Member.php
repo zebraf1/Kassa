@@ -46,7 +46,7 @@ class Member extends BaseMember
     /**
      * REST API output data for Member object
      *
-     * @return string
+     * @return array
      */
     public function getAjaxData()
     {

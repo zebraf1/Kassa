@@ -9,24 +9,10 @@ use Rotalia\UserBundle\Model\Member;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 
 class BaseController extends Controller
 {
-    /**
-     * Check that current user has given role
-     *
-     * @param $role
-     * @return bool
-     */
-    protected function isGranted($role)
-    {
-        /** @var SecurityContextInterface $securityContext */
-        $securityContext = $this->get('security.context');
-        return $securityContext->isGranted($role);
-    }
-
     /**
      * @throws AccessDeniedException
      */
@@ -64,7 +50,10 @@ class BaseController extends Controller
      */
     protected function getLogger()
     {
-        return $this->get('logger');
+        /** @var LoggerInterface $logger */
+        $logger = $this->get('logger');
+
+        return $logger;
     }
 
     /**
