@@ -46,9 +46,9 @@
             },
             behaviors: [EqualColumnsBehavior, KassaBehavior],
             selectFirst: function() {
-                var first = this.$.items.querySelector('kassa-ost-toode')
+                var first = this.$.items.querySelector('kassa-ost-toode');
                 if (this.isTrue(first)) {
-                    this._selectProduct({model: {product: first.product}})
+                    this._selectProduct({model: {product: first.product}});
                     return true
                 }
                 return false

@@ -59,7 +59,7 @@
         </style>
 
 
-        <kassa-backend id="backend" member="{{member}}" csrf-token="{{csrfToken}}" settings="{{settings}}"
+        <kassa-backend id="backend" member="{{member}}" csrf-token="{{csrfToken}}" settings="{{settings}}" members="{{members}}"
                        active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}"
                        product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"></kassa-backend>
         <kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]"></kassa-route>
@@ -88,7 +88,7 @@
 
                  <kassa-pages selected="[[page]]">
                      <kassa-login data-page="login" csrf-token="[[csrfToken]]"></kassa-login>
-                     <kassa-ost data-page="ost" member="[[member]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
+                     <kassa-ost data-page="ost" member="[[member]]" members="[[members]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
                      <kassa-aruanne data-page="aruanne"></kassa-aruanne>
                      <kassa-ylevaade data-page="ylevaade"></kassa-ylevaade>
                      <kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]"
@@ -142,13 +142,12 @@
                 // On some smartphones the drawer will close on load.
                 this.listen(this, 'kassa-page-loaded', '_openDrawer');
             },
-            _scrollHandler: function(e) {
-                this._appHeader.scroll(0, e.detail.pos);
-                this._appHeader._updateScrollState(e.detail.pos);
+            _scrollHandler: function(event) {
+                this._appHeader._updateScrollState(event.detail.pos);
+                this._onScroll();
             },
             _setScrollTarget: function(event) {
                 //Scroll to top on page change
-                this._appHeader.scroll(0, 0);
                 this._appHeader._updateScrollState(0);
                 this._onScroll();
 

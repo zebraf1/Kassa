@@ -11,6 +11,8 @@
         <iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
         <!-- Settings -->
         <iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Members -->
+        <iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <!-- Products -->
         <iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
@@ -46,6 +48,12 @@
                 /* Settings */
                 settings: {
                     type: Object,
+                    notify: true,
+                    readOnly: true
+                },
+                /* Members */
+                members: {
+                    type: Array,
                     notify: true,
                     readOnly: true
                 },
@@ -117,6 +125,13 @@
                         var data = this._checkSuccess(result);
                         this._setSettings(data);
                     }.bind(this))
+            },
+            /* Members */
+            doMembersGet: function () {
+                this.$.membersGet.generateRequest().completes.then(function (result) {
+                    var data = this._checkSuccess(result);
+                    this._setMembers(data.members);
+                }.bind(this))
             },
             /* Products */
             doProductsGetAll: function(conventId) {
@@ -225,6 +240,10 @@
                         break;
                     case 'doLogout':
                         this.doLogout(); 
+                        break;
+                    /* Members */
+                    case 'doMembersGet':
+                        promise = this.doMembersGet();
                         break;
                     /* Products */
                     case 'doProductsGetAll':
