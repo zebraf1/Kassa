@@ -1,12 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 
-<link rel="import" href="kassa-page-behavior.html">
 <link rel="import" href="kassa-behavior.html">
 <link rel="import" href="kassa-confirm-button.html">
-
+<link rel="import" href="kassa-toast.html">
 
 <dom-module id="kassa-login">
     <template>
@@ -19,15 +19,19 @@
             }
 
         </style>
-        
-            
-        <main hidden$="[[!isTrue(csrfToken)]]">
-            <form>
-                <paper-input id="usernameInput" label="Kasutajanimi" type="text" disabled="[[confirmed]]" value="{{username}}" required></paper-input>
-                <paper-input label="Parool" type="password" disabled="[[confirmed]]" value="{{password}}" required></paper-input>
+        <iron-ajax id="authenticationGet" handle-as="json" url='/api/authentication/' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="authenticationDelete" handle-as="json" url='/api/authentication/' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="authenticationPost" handle-as="json" url='/api/authentication/' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+
+        <main>
+            <form name="loginForm" id="loginForm" action="index.html">
+                <paper-input name="username" label="Kasutajanimi" type="text" disabled="[[confirmed]]" value="{{username}}" required></paper-input>
+                <paper-input name="password" label="Parool" type="password" disabled="[[confirmed]]" value="{{password}}" required></paper-input>
                 <kassa-confirm-button id="confirmButton" confirmed="{{confirmed}}" on-kassa-confirm="_doLogin">Sisene</kassa-confirm-button>            
             </form>
         </main>
+
+        <kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
         
     </template>
     <script>
@@ -35,31 +39,60 @@
             is: "kassa-login",
             properties: {
                 csrfToken: {
-                    type: String
+                    type: String,
+                    notify: true,
+                    readOnly: true,
+                    value: ''
                 }
             },
-            behaviors: [PageBehavior, Polymer.IronA11yKeysBehavior, KassaBehavior],
+            behaviors: [Polymer.IronA11yKeysBehavior],
             keyBindings: {
                 'enter': '_doLogin'
             },
-            setUp: function() {
-                this.fire('kassa-backend-action', {action: 'doLogout'});
+            listeners: {
+                'error': '_onRequestError'
             },
-            cleanUp: function() {
-                this.set('username', '');
-                this.set('password', '');
-                this.set('confirmed', false);
+            ready: function () {
+                this.$.authenticationDelete.generateRequest().completes.then(function () {
+                    console.log('Välja logitud');
+                    this.$.authenticationGet.generateRequest().completes.then(function (result) {
+                        if(result.xhr.response.status === 'success') {
+                            this._setCsrfToken(result.xhr.response.data.csrfToken)
+                            console.log('Token kätte saadud');
+                        } else {
+                            console.error('Vigane vastus serverilt.', result);
+                        }
+                    }.bind(this))
+                }.bind(this));
             },
             _doLogin: function(event) {
 				event.preventDefault();
                 //If executed by pressing enter key.
                 this.set('confirmed', true);
                 this.$.confirmButton._setLoading(true);
-                this.fire('kassa-backend-action', {action: 'doLogin', username: this.username, password: this.password, onError: this._loginError.bind(this)});
+                this.$.authenticationPost.set('body', {username: this.username, password: this.password, csrfToken: this.csrfToken});
+                this.$.authenticationPost.generateRequest().completes.then(this._loginSuccess.bind(this), this._loginError);
             },
-            _loginError: function() {
-                this.cleanUp();
-                this.$.usernameInput.focus();
+            _loginSuccess: function (result) {
+                if(result.xhr.response.status === 'success') {
+                    this.$.loginForm.submit();
+                    window.location = 'index.html';
+                } else {
+                    console.error('Vigane vastus serverilt.', result);
+                }
+            },
+            _loginError: function () {
+                //ignore
+            },
+            _cleanUp: function () {
+                this.set('username', '');
+                this.set('password', '');
+                this.$.confirmButton.reset();
+            },
+            _onRequestError: function(event) {
+                event.stopPropagation();
+                this.$.toast.error(event.detail.request.xhr.response.data);
+                this._cleanUp();
             }
         })
     </script>

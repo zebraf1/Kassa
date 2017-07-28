@@ -6,9 +6,7 @@
 <dom-module id="kassa-backend">
     <template>
         <!-- Authentication -->
-        <iron-ajax id="authenticationDelete" handle-as="json" url='[[_computeURL("authentication")]]' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <iron-ajax id="authenticationGet" handle-as="json" url='[[_computeURL("authentication")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
         <!-- Settings -->
         <iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <!-- Members -->
@@ -89,22 +87,6 @@
                 this.doAuthenticationGet();
             },
             /* Authentication */
-            doLogin: function(username, password) {
-                this.$.authenticationPost.set('body', {username: username, password: password, csrfToken: this.csrfToken});
-                return this.$.authenticationPost.generateRequest().completes.then(function(result) {
-                        this.fire('kassa-message-success', this._checkSuccess(result));
-                        this.doAuthenticationGet();
-                        return result
-                    }.bind(this))
-            },
-            doLogout: function() {
-                if(this.isTrue(this.member)) {
-                    this.$.authenticationDelete.generateRequest().completes.then(function(result) {
-                        this.fire('kassa-message-success', this._checkSuccess(result));
-                        this.doAuthenticationGet();
-                    }.bind(this));
-                }
-            },
             doAuthenticationGet: function() {
                 return this.$.authenticationGet.generateRequest().completes.then(function(result) {
                         var data = this._checkSuccess(result);
@@ -234,13 +216,6 @@
             doAction: function(data) {
                 var promise;
                 switch(data.action) {
-                    /* Authentication */
-                    case 'doLogin':
-                        promise = this.doLogin(data.username, data.password);
-                        break;
-                    case 'doLogout':
-                        this.doLogout(); 
-                        break;
                     /* Members */
                     case 'doMembersGet':
                         promise = this.doMembersGet();

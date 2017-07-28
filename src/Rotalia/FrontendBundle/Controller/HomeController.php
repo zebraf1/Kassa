@@ -17,7 +17,7 @@ class HomeController extends Controller
     {
 
 
-        return $this->render('RotaliaFrontendBundle:Default:index.html.twig', []);
+        return $this->render('RotaliaFrontendBundle:Default:index.html', []);
     }
 
 }

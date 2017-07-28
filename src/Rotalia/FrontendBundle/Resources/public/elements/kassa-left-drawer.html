@@ -116,12 +116,14 @@
 
             <paper-menu selected="{{page}}" attr-for-selected="data-page" hidden$="[[!isTrue(member)]]">
                 <template is="dom-repeat" items="[[navigation]]" as="site">
-                    <a data-page="[[site.page]]" href="#/[[site.page]]">[[site.name]]</a>
+                    <template is="dom-if" if="{{_hasRights(member, site.role)}}">
+                        <a data-page="[[site.page]]" href="#/[[site.page]]">[[site.name]]</a>
+                    </template>
                 </template>
             </paper-menu>
         </main>
         <kassa-rotating-selector hidden$="[[!isTrue(member)]]" class="bottom-button" member="{{member}}" active-convents="[[activeConvents]]"><iron-icon icon="kassa:room"></iron-icon></kassa-rotating-selector>
-        <a href="#/login" hidden$="[[!isTrue(member)]]" class="bottom-button"><iron-icon icon="kassa:exit-to-app"></iron-icon>Logi välja</a>
+        <a href="#" hidden$="[[!isTrue(member)]]" class="bottom-button" on-tap="_logOut"><iron-icon icon="kassa:exit-to-app"></iron-icon>Logi välja</a>
     </template>
     <script>
         Polymer({
@@ -141,7 +143,16 @@
                     type: Array
                 }
             },
-            behaviors: [KassaBehavior]
+            behaviors: [KassaBehavior],
+            _hasRights: function (member, role) {
+                if(this.isTrue(member)) {
+                    return member.roles.indexOf(role) >= 0;
+                }
+                return false;
+            },
+            _logOut: function () {
+                window.location = 'login.html';
+            }
         })
     </script>
 </dom-module>

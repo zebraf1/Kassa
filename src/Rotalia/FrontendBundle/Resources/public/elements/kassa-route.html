@@ -32,32 +32,20 @@
             },
             observers: ['_computePage(routeData, member, navigation)'],
             behaviors: [KassaBehavior],
-            _computePage: function(routeData, member, navigation) {                
+            _computePage: function(routeData, member, navigation) {
                 var _default = navigation[0].page;
                 
                 //Pole sisse logitud?
                 if(!this.isTrue(member)) {
-                    this.set('routeData.page', 'login');
-                    this._setPage('login');
+                    window.location = 'login.html';
                     return null 
                 }
-                
-                // Suuname kasutaja ümber pärast sisse logimist
-                if (this.page === 'login' && this.isTrue(member)) {
-                    this.set('routeData.page', _default);
-                    this._setPage(_default);
-                    return null
-                }
-                
+
                 if (this.isTrue(routeData) && routeData.page) {
-                    if (routeData.page === 'login') {
-                        this._setPage('login');
-                        return null 
-                    }
                     //Kas on sobivate õigustega??
                     for(var i=0; i<navigation.length; i++) {
                         if(routeData.page === navigation[i].page && member.roles.indexOf(navigation[i].role) >= 0) {
-                            this._setPage(navigation[i].page);
+                            this._setPage(routeData.page);
                             return null
                         }
                     }
@@ -66,8 +54,6 @@
                 //Kui muud ei leia
                 this._setPage(_default);
                 return null
-                
-                
             }
         })
     </script>
