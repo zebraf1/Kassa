@@ -3,6 +3,8 @@
 <link rel="import" href="../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
 
 <link rel="import" href="kassa-icons.html">
+<link rel="import" href="kassa-behavior.html">
+
 
 <dom-module id="kassa-fab">
     <template>
@@ -28,7 +30,7 @@
     <script>
         Polymer({
             is: "kassa-fab",
-            behaviors: [Polymer.IronScrollTargetBehavior],
+            behaviors: [Polymer.IronScrollTargetBehavior, KassaBehavior],
             _scrollHandler: function() {
                 this.$.fab.classList.add('on-scroll');
                 this.debounce('fab-scroll', function() {

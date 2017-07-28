@@ -4,15 +4,24 @@
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 
 <link rel="import" href="kassa-loading-page.html">
+<link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-pages">
     <template>
         <style>
             main {
+                height: 100%;
+                width: 100%;
+                display: block;
                 padding: 1em;
                 overflow: auto;
-                height: 100%;
+                box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                -ms-box-sizing: border-box;
+                -o-box-sizing: border-box;
             }
+
         </style>
 
         <main>
@@ -41,8 +50,13 @@
                 selectedItem: {
                     type: Object,
                     observer: '_onPageChange'
+                },
+                height: {
+                    type: Number,
+                    observer: '_changeHeight'
                 }
             },
+            behaviors: [KassaBehavior],
             _onSelectedChange: function (newPage, oldPage) {
                 this._setShown('loading');
                 this.importHref(this.resolveUrl('kassa-' + newPage + '.html'), function(){
@@ -60,7 +74,9 @@
                 if(oldPage && oldPage.sharedCleanUp){
                     oldPage.sharedCleanUp();
                 }
-
+            },
+            _changeHeight: function (newHeight) {
+                this.$$('main').style.height = newHeight + 'px';
             }
         })
     </script>

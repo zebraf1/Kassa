@@ -1,3 +1,4 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 
@@ -35,7 +36,7 @@
         <paper-spinner active hidden$="[[!loading]]"></paper-spinner>
         Ostude summa: [[_computeOstudSumma(filteredItems.*)]]
 
-        <kassa-table items="[[pageData.ostud]]" filtered-items="{{filteredItems}}" kassa-scroll-target>
+        <kassa-table items="[[pageData.ostud]]" filtered-items="{{filteredItems}}">
             <data-table-column name="Id" width="2em" align-right flex="0">
                 <template>
                     [[item.id]]

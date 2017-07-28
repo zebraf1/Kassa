@@ -1,5 +1,7 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
@@ -16,7 +18,7 @@
                 color: #888;
             }
         </style>
-        <kassa-table items="[[products]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]" convent-id="[[conventId]]" has-row-details kassa-scroll-target>
+        <kassa-table items="[[products]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]" convent-id="[[conventId]]" has-row-details>
             <vaadin-grid-column flex-grow="0">
                 <template class="header">Id</template>
                 <template>
@@ -24,6 +26,11 @@
                 </template>
             </vaadin-grid-column>
             <vaadin-grid-column flex-grow="10">
+                <template class="header">
+                    <vaadin-grid-filter path="name" value="{{_nameFilter}}">
+                        <paper-input label="Nimi" value="{{_nameFilter}}"></paper-input>
+                    </vaadin-grid-filter>
+                </template>
                 <template>
                     <span class$="[[item.status]]">[[item.name]]</span>
                 </template>

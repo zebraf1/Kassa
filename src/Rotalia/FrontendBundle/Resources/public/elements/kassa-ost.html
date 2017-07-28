@@ -144,6 +144,8 @@
             _confirmOst: function () {
                 // Tasuja väli peab olema täidetud
                 this._onFocusoutTasuja();
+                // scroll to top
+                this.fire('kassa-scroll-to-pos', {pos: this.$.mainContent.getBoundingClientRect().top});
             },
             _selectToode: function () {
                 var productGroups = this.$.mainContent.querySelectorAll('kassa-ost-tootegrupp');
@@ -198,6 +200,16 @@
             },
             _selectFilterInput: function () {
                 this.$.filterInput.inputElement.select();
+                return null;
+                //Scrollime õige koha peale (las jääb välja hetkel)
+                var valitudTootedElements = this.$.mainContent.querySelectorAll('kassa-ost-valitud-toode');
+                var scrollToElement;
+                if (valitudTootedElements.length > 0) {
+                    scrollToElement = valitudTootedElements[valitudTootedElements.length - 1];
+                } else {
+                    scrollToElement = this.$.filterInput;
+                }
+                this.fire('kassa-scroll-to-pos', {pos: scrollToElement.getBoundingClientRect().top});
             },
             _removeChosenProduct: function (event) {
                 if (!this.ostFixed && (Polymer.dom(event).rootTarget.id == "icon" || Polymer.dom(event).rootTarget.localName === "paper-icon-button")) {

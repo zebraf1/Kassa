@@ -1,3 +1,4 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animatable-behavior.html">
 
 <script>
@@ -26,11 +27,6 @@
         },
 
         attached: function () {
-            var target = this.$$('[kassa-scroll-target]');
-            if(target) {
-                target.$.table.$.scroller.$.outerscroller.scrollTarget.addEventListener('scroll', this._setTableHeight.bind(target.$.table));
-            }
-
              //Väike fix, dialoogid ja toast jäävad muidu varju
             var body = document.querySelector('body');
             var elements = Polymer.dom(this.root).querySelectorAll('paper-dialog');
@@ -40,16 +36,6 @@
         },
         sharedSetUp: function () {
             this._setPageActive(true);
-            
-            //kassa-scroll-target
-            var target = this.$$('[kassa-scroll-target]');
-            if (target) {
-                this.fire('kassa-set-scroll-target', {target: target.$.table.$.scroller.$.outerscroller.scrollTarget});
-                this._setTableHeight.bind(target.$.table)();
-            } else {
-                this.fire('kassa-set-scroll-target', {target: null});
-            }
-            //Private set up
             this.setUp();
         },
         sharedCleanUp: function () {
@@ -59,12 +45,6 @@
         //Methods to be overridden by implementing elements
         setUp: function () {},
         cleanUp: function () {},
-
-        //Utility functions
-        _setTableHeight: function() {
-            var rect = this.getBoundingClientRect();
-            this.style.height = rect.height + window.innerHeight - rect.bottom - 10 + 'px';
-        }
     };
 
     /**

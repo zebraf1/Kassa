@@ -21,6 +21,7 @@
         <style>
             :host {
                 display: block;
+                height: 100%;
             }
             app-header {
                 background-color: var(--kassa-primary-color);
@@ -44,7 +45,7 @@
                 bottom: 0.15em;
 
             }
-            
+
             #leftDrawer {
                 --app-drawer-width: 256px;
             }
@@ -86,7 +87,7 @@
                     </app-toolbar>
                 </app-header>
 
-                 <kassa-pages selected="[[page]]">
+                 <kassa-pages selected="[[page]]" height="[[contentHeight]]">
                      <kassa-login data-page="login" csrf-token="[[csrfToken]]"></kassa-login>
                      <kassa-ost data-page="ost" member="[[member]]" members="[[members]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
                      <kassa-aruanne data-page="aruanne"></kassa-aruanne>
@@ -112,8 +113,8 @@
                     value: function() {
                         return  [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
-                            {page: 'aruanne', name: 'Koosta aruanne', role: 'ROLE_USER'},
-                            {page: 'ylevaade', name: 'Kasutaja ülevaade', role: 'ROLE_USER'},
+                            //{page: 'aruanne', name: 'Koosta aruanne', role: 'ROLE_USER'},
+                            //{page: 'ylevaade', name: 'Kasutaja ülevaade', role: 'ROLE_USER'},
                             {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'}
@@ -136,6 +137,9 @@
             ready: function () {
                 //Shortcuts to use in kassa-app
                 this._appHeader = this.$$('app-header');
+                this._appHeader.scrollTarget = this.$$('kassa-pages').$$('main');
+                this.listen(this.$$('kassa-pages').$$('main'), 'scroll', '_onScroll');
+                this._onScroll();
             },
             attached: function() {
                 this.fire('kassa-app-loaded');
@@ -143,30 +147,13 @@
                 this.listen(this, 'kassa-page-loaded', '_openDrawer');
             },
             _scrollHandler: function(event) {
-                this._appHeader._updateScrollState(event.detail.pos);
+                this._appHeader.scrollTarget.scrollTop += event.detail.pos - (this._appHeader._height - this._appHeader._top) - 10;
+                this._appHeader.resetLayout();
                 this._onScroll();
-            },
-            _setScrollTarget: function(event) {
-                //Scroll to top on page change
-                this._appHeader._updateScrollState(0);
-                this._onScroll();
-
-                if(this._appHeader.scrollTarget) {
-                    this.unlisten(this._appHeader.scrollTarget, 'scroll', '_onScroll');
-                }
-
-                var scrolltarget;
-                if (event.detail.target === null) {
-                    scrolltarget = this.$$('kassa-pages').$$('main');
-                } else {
-                    scrolltarget = event.detail.target;
-                }
-                this._appHeader.scrollTarget = scrolltarget;
-                this.listen(this._appHeader.scrollTarget, 'scroll', '_onScroll');
-
             },
             _onScroll: function() {
-                this._appHeader.style.marginBottom = -Math.max(this._appHeader._top, 0) + 'px';
+                this._appHeader.style.marginBottom = -this._appHeader._top + 'px';
+                this.set('contentHeight', window.innerHeight - (this._appHeader._height - this._appHeader._top) - 10);
             },
             _onMessage: function(e) {
                 if (e.type == 'kassa-message-success') {

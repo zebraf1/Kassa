@@ -43,4 +43,4 @@
 			console.error('SW: Error during service worker registration:', e);
 		});
 	}
-})()
+})();

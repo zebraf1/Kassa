@@ -1,3 +1,4 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
@@ -5,6 +6,7 @@
 <link rel="import" href="kassa-page-behavior.html">
 <link rel="import" href="kassa-date-picker.html">
 <link rel="import" href="kassa-icons.html">
+<link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-ylevaade">
     <template>
@@ -137,7 +139,7 @@
             properties: {
                 startDate: Object
             },
-            behaviors: [PageBehavior],
+            behaviors: [PageBehavior, KassaBehavior],
             _computeTooteSumma: function (hind, kogus) {
                 return this._eur2str(hind*kogus)
             },

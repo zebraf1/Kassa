@@ -1,5 +1,8 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-date-picker">
     <template>
@@ -75,6 +78,7 @@
                 //date in datepicker object
                 date: Date
             },
+            behaviors: [KassaBehavior],
             format: function (date, format) {
                 return moment(date).format(format)
             },

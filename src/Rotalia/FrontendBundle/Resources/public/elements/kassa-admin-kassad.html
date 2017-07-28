@@ -1,18 +1,18 @@
-<!--suppress ALL -->
-<link rel="import" href="kassa-page-behavior.html">
-<link rel="import" href="kassa-behavior.html">
-<link rel="import" href="kassa-table.html">
-<link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-table.html">
+<link rel="import" href="kassa-confirm-button.html">
 
 <dom-module id="kassa-admin-kassad">
     <template>
         <style>
         </style>
-        <kassa-table items="[[pointOfSales]]" dialog="[[dialog]]" convent-id="[[conventId]]" kassa-scroll-target
+        <kassa-table items="[[pointOfSales]]" dialog="[[dialog]]" convent-id="[[conventId]]"
                      add-func="doPointOfSalesPost" edit-func="doPointOfSalesPatch"  delete-func="doPointOfSalesDelete">
             <vaadin-grid-column flex-grow="0">
                 <template class="header">Id</template>
