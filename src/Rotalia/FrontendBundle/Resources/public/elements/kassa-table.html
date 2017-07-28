@@ -101,7 +101,7 @@
                 </template>
             </vaadin-grid-column>
             <template class="row-details">
-                <div class="detail">
+                <div class="detail" hidden$="[[!hasRowDetails]]">
                     <div>
                         <span>Kogus laos:</span><span class="detail-number">[[item.inventoryAmounts.warehouse]]</span>
                     </div>
@@ -144,6 +144,10 @@
                 },
                 conventId: {
                     type: Number
+                },
+                hasRowDetails: {
+                    type: Boolean,
+                    value: false
                 },
                 _activeItemId: {
                     type: Number,

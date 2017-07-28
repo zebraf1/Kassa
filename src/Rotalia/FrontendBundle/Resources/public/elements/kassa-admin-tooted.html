@@ -16,7 +16,7 @@
                 color: #888;
             }
         </style>
-        <kassa-table items="[[products]]" kassa-scroll-target edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]" convent-id="[[conventId]]">
+        <kassa-table items="[[products]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]" convent-id="[[conventId]]" has-row-details kassa-scroll-target>
             <vaadin-grid-column flex-grow="0">
                 <template class="header">Id</template>
                 <template>
