@@ -6,7 +6,9 @@
 <dom-module id="kassa-backend">
     <template>
         <!-- Authentication -->
+        <iron-ajax id="authenticationDelete" handle-as="json" url='[[_computeURL("authentication")]]' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <iron-ajax id="authenticationGet" handle-as="json" url='[[_computeURL("authentication")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
         <!-- Settings -->
         <iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <!-- Members -->
@@ -87,19 +89,31 @@
                 this.doAuthenticationGet();
             },
             /* Authentication */
+            doLogin: function(username, password) {
+                this.$.authenticationPost.set('body', {username: username, password: password, csrfToken: this.csrfToken});
+                return this.$.authenticationPost.generateRequest().completes.then(function(result) {
+                    this.fire('kassa-message-success', this._checkSuccess(result));
+                    this.doAuthenticationGet();
+                }.bind(this))
+            },
+            doLogout: function() {
+                return this.$.authenticationDelete.generateRequest().completes.then(function(result) {
+                    this.fire('kassa-message-success', this._checkSuccess(result));
+                    this.doAuthenticationGet();
+                }.bind(this));
+            },
             doAuthenticationGet: function() {
                 return this.$.authenticationGet.generateRequest().completes.then(function(result) {
-                        var data = this._checkSuccess(result);
-                
-                        if(data.csrfToken) {
-                            this._setCsrfToken(data.csrfToken);
-                            this._setMember(null);
-                        } else {
-                            this._setCsrfToken(null);
-                            this._setMember(data.member);
-                            this.doSettingsGet();
-                        }
-                    }.bind(this))
+                    var data = this._checkSuccess(result);
+                    if(data.csrfToken) {
+                        this._setCsrfToken(data.csrfToken);
+                        this._setMember(null);
+                    } else {
+                        this._setCsrfToken(null);
+                        this._setMember(data.member);
+                        this.doSettingsGet();
+                    }
+                }.bind(this))
             },
             /* Settings */
             doSettingsGet: function() {
@@ -139,7 +153,6 @@
                         this._checkSuccess(result);
                         this.doProductsGetAll(conventId);
                         this.fire('kassa-message-success', 'Toode edukalt lisatud');
-                        return result
                     }.bind(this))
             },
             doProductsPatch: function(conventId, productId, ProductType) {
@@ -149,7 +162,6 @@
                         this._checkSuccess(result);
                         this.doProductsGetAll(conventId);
                         this.fire('kassa-message-success', 'Toode edukalt muudetud');
-                        return result
                     }.bind(this))
             },
             /* ProductGroups */
@@ -165,7 +177,6 @@
                         this._checkSuccess(result);
                         this.doProductGroupsGet();
                         this.fire('kassa-message-success', 'Tootegrupp edukalt lisatud');
-                        return result
                     }.bind(this))
             },
             doProductGroupsPatch: function(productGroupId, ProductGroupType) {
@@ -175,7 +186,6 @@
                         this._checkSuccess(result);
                         this.doProductGroupsGet();
                         this.fire('kassa-message-success', 'Tootegrupp edukalt muudetud');
-                        return result
                     }.bind(this))
             },
             /* PointOfSales */
@@ -191,7 +201,6 @@
                     this._checkSuccess(result);
                     this.doPointOfSalesGet();
                     this.fire('kassa-message-success', 'Müügipunkt edukalt lisatud');
-                    return result
                 }.bind(this))
             },
             doPointOfSalesPatch: function(pointOfSaleId, PointOfSaleType) {
@@ -201,7 +210,6 @@
                     this._checkSuccess(result);
                     this.doPointOfSalesGet();
                     this.fire('kassa-message-success', 'Müügipunkt edukalt muudetud');
-                    return result
                 }.bind(this))
             },
             doPointOfSalesDelete: function (pointOfSaleId) {
@@ -216,6 +224,16 @@
             doAction: function(data) {
                 var promise;
                 switch(data.action) {
+                    /* Authentication */
+                    case 'doLogin':
+                        promise = this.doLogin(data.username, data.password);
+                        break;
+                    case 'doLogout':
+                        promise = this.doLogout();
+                        break;
+                    case 'doAuthenticationGet':
+                        promise = this.doAuthenticationGet();
+                        break
                     /* Members */
                     case 'doMembersGet':
                         promise = this.doMembersGet();

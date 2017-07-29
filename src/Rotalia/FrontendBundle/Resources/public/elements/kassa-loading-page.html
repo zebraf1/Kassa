@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-page-behavior.html">
 
 <dom-module id="kassa-loading-page">
     <template>
@@ -23,7 +24,7 @@
     <script>
         Polymer({
             is: "kassa-loading-page",
-            behaviors: [KassaBehavior]
+            behaviors: [KassaBehavior, PageBehavior]
         })
     </script>
 </dom-module>

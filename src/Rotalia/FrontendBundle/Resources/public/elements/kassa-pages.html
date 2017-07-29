@@ -2,11 +2,18 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/lazy-imports/lazy-imports-behavior.html">
 
 <link rel="import" href="kassa-loading-page.html">
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-pages">
+    <link rel="lazy-import" group="login" href="kassa-login.html">
+    <link rel="lazy-import" group="logout" href="kassa-logout.html">
+    <link rel="lazy-import" group="ost" href="kassa-ost.html">
+    <link rel="lazy-import" group="admin-tooted" href="kassa-admin-tooted.html">
+    <link rel="lazy-import" group="admin-tootegrupid" href="kassa-admin-tootegrupid.html">
+    <link rel="lazy-import" group="admin-kassad" href="kassa-admin-kassad.html">
     <template>
         <style>
             main {
@@ -54,16 +61,23 @@
                 height: {
                     type: Number,
                     observer: '_changeHeight'
+                },
+                scrollTarget: {
+                    type: HTMLElement,
+                    notify: true,
+                    readOnly: true
+                },
+                _scrollTargetContainer: {
+                    type: HTMLElement
                 }
             },
-            behaviors: [KassaBehavior],
+            behaviors: [KassaBehavior, Polymer.LazyImportsBehavior],
             _onSelectedChange: function (newPage, oldPage) {
                 this._setShown('loading');
-                this.importHref(this.resolveUrl('kassa-' + newPage + '.html'), function(){
+                this.importLazyGroup(newPage).then(function() {
                     this._setShown(newPage);
                     this.fire('kassa-page-loaded');
-                }, null, true);
-
+                }.bind(this));
             },
             _onPageChange: function (newPage, oldPage) {
                 //kassa-page-behavior
@@ -74,9 +88,26 @@
                 if(oldPage && oldPage.sharedCleanUp){
                     oldPage.sharedCleanUp();
                 }
+
+                if (this.isTrue(this.selectedItem)) {
+                    var scrollTargetContainer = this.selectedItem.getScrollTarget();
+                    if (scrollTargetContainer) {
+                        this._setScrollTarget(scrollTargetContainer.$.scroller.scrollTarget);
+                        this.set('_scrollTargetContainer', scrollTargetContainer);
+                    } else {
+                        this._setScrollTarget(this.$$('main'));
+                        this.set('_scrollTargetContainer', null);
+                    }
+                }
             },
             _changeHeight: function (newHeight) {
                 this.$$('main').style.height = newHeight + 'px';
+                if (this.isTrue(this._scrollTargetContainer)) {
+                    var style = this.$$('main').currentStyle || window.getComputedStyle(this.$$('main'));
+                    var padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) ;
+                    // Kahega korrutatud, et saada lahti topelt scrollbarist. Kuskilt hiilivad lisapikslid sisse.
+                    this._scrollTargetContainer.style.height = this.$$('main').clientHeight - 2*padding + 'px';
+                }
             }
         })
     </script>

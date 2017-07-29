@@ -1,6 +1,6 @@
 rotalia_frontend:
     resource: "@RotaliaFrontendBundle/Resources/config/routing.yml"
-    prefix:   /fe
+    prefix:   /fe/
 
 #rotalia_user:
 #    resource: "@RotaliaUserBundle/Resources/config/routing.yml"

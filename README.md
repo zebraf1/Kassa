@@ -27,6 +27,11 @@ Note: if you install composer to a runnable directory (ie --install-dir=/usr/bin
 
 At the end of the installation fill in parameters (saved to app/config/parameters.yml)
 
+Install nodejs packages
+```bash
+> npm install -g bower polymer-cli
+```
+
 
 Building
 --------
@@ -49,6 +54,11 @@ Build database if needed (use --force if needed) or run sql manually from app/pr
 Run migrations
 ```bash
 > php app/console propel:mig:mig
+```
+
+Build frontend
+```bash
+> sh build_front.sh
 ```
 
 Testing

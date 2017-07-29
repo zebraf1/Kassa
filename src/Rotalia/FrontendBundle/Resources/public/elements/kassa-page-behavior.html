@@ -42,9 +42,16 @@
             this.cleanUp();
             this._setPageActive(false);
         },
+        getScrollTarget: function () {
+            var scrollTargetContainer = this.$$('[kassa-scroll-target]');
+            if (scrollTargetContainer) {
+                return scrollTargetContainer.scrollTarget;
+            }
+            return null;
+        },
         //Methods to be overridden by implementing elements
         setUp: function () {},
-        cleanUp: function () {},
+        cleanUp: function () {}
     };
 
     /**

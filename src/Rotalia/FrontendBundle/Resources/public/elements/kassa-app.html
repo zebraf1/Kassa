@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
 
 <link rel="import" href="kassa-left-drawer.html">
 <link rel="import" href="kassa-right-drawer.html">
@@ -75,7 +76,7 @@
                 <app-drawer id="rightDrawer" align="right">
                     <kassa-right-drawer page="[[page]]"></kassa-right-drawer>
                 </app-drawer>
-                <app-header condenses reveals effects="material">
+                <app-header  scroll-target="[[scrollTarget]]" condenses reveals effects="material">
                     <app-toolbar>
                         <paper-icon-button icon="kassa:menu" hidden$="[[!leftNarrow]]" on-tap="_toggleLeftDrawer"></paper-icon-button>
                         <div condensed-title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
@@ -87,11 +88,10 @@
                     </app-toolbar>
                 </app-header>
 
-                 <kassa-pages selected="[[page]]" height="[[contentHeight]]">
-                     <kassa-login data-page="login" csrf-token="[[csrfToken]]"></kassa-login>
+                 <kassa-pages selected="[[page]]" height="[[_contentHeight]]" scroll-target="{{scrollTarget}}">
+                     <kassa-login data-page="login"></kassa-login>
+                     <kassa-logout data-page="logout"></kassa-logout>
                      <kassa-ost data-page="ost" member="[[member]]" members="[[members]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
-                     <kassa-aruanne data-page="aruanne"></kassa-aruanne>
-                     <kassa-ylevaade data-page="ylevaade"></kassa-ylevaade>
                      <kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]"
                                          active-products="[[activeProducts]]" inactive-products="[[inactiveProducts]]" product-groups="[[productGroups]]"></kassa-admin-tooted>
                      <kassa-admin-tootegrupid data-page="admin-tootegrupid" product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
@@ -113,8 +113,6 @@
                     value: function() {
                         return  [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
-                            //{page: 'aruanne', name: 'Koosta aruanne', role: 'ROLE_USER'},
-                            //{page: 'ylevaade', name: 'Kasutaja ülevaade', role: 'ROLE_USER'},
                             {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'}
@@ -124,36 +122,31 @@
                 page: {
                     type: String,
                     observer: '_observePageChange'
+                },
+                scrollTarget: {
+                    type: HTMLElement,
+                    observer: '_scrollHandler'
+                },
+                _contentHeight: {
+                    type: Number,
+                    readOnly: true
                 }
             },
-            behaviors: [KassaBehavior],
+            behaviors: [KassaBehavior, Polymer.IronScrollTargetBehavior],
             listeners: {
-                'kassa-scroll-to-pos': '_scrollHandler',
-                'kassa-set-scroll-target': '_setScrollTarget',
                 'kassa-message-success': '_onMessage',
                 'kassa-message-error': '_onMessage',
-                'kassa-backend-action': '_onBackendAction',
-            },
-            ready: function () {
-                //Shortcuts to use in kassa-app
-                this._appHeader = this.$$('app-header');
-                this._appHeader.scrollTarget = this.$$('kassa-pages').$$('main');
-                this.listen(this.$$('kassa-pages').$$('main'), 'scroll', '_onScroll');
-                this._onScroll();
+                'kassa-backend-action': '_onBackendAction'
             },
             attached: function() {
                 this.fire('kassa-app-loaded');
                 // On some smartphones the drawer will close on load.
                 this.listen(this, 'kassa-page-loaded', '_openDrawer');
             },
-            _scrollHandler: function(event) {
-                this._appHeader.scrollTarget.scrollTop += event.detail.pos - (this._appHeader._height - this._appHeader._top) - 10;
-                this._appHeader.resetLayout();
-                this._onScroll();
-            },
-            _onScroll: function() {
-                this._appHeader.style.marginBottom = -this._appHeader._top + 'px';
-                this.set('contentHeight', window.innerHeight - (this._appHeader._height - this._appHeader._top) - 10);
+            _scrollHandler: function() {
+                var _appHeader = this.$$('app-header');
+                _appHeader.style.marginBottom = -_appHeader._top + 'px';
+                this._set_contentHeight(window.innerHeight - (_appHeader._height - _appHeader._top));
             },
             _onMessage: function(e) {
                 if (e.type == 'kassa-message-success') {

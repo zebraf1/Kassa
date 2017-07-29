@@ -149,6 +149,9 @@
                     type: Boolean,
                     value: false
                 },
+                scrollTarget: {
+                    type: Node
+                },
                 _activeItemId: {
                     type: Number,
                     readOnly: true
@@ -157,7 +160,8 @@
             observers: ['_computeFilteredItems(dataSource, filter.*)'],
             behaviors: [KassaBehavior],
             attached: function() {
-                this.$$('kassa-fab').scrollTarget = this.$.table.$.scroller.$.outerscroller.scrollTarget;
+                this.scrollTarget = this.$.table;
+                this.$$('kassa-fab').scrollTarget = this.$.table.$.scroller.scrollTarget;
             },
             computeCell: function (pattern, data) {
                 var matchFunc = pattern.match(/^([\w\d]+)\((.+)\)$/);

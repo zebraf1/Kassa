@@ -37,8 +37,8 @@
         "sizes": "512x512",
         "type": "image/png"
       }],
-    "scope": "/",
-    "start_url": "/bundles/rotaliafrontend/build/es5-bundled/index.html",
+    "scope": "/fe/",
+    "start_url": "/fe/",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#0077c8",

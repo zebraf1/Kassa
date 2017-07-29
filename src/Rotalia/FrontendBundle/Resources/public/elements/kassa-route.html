@@ -37,7 +37,8 @@
                 
                 //Pole sisse logitud?
                 if(!this.isTrue(member)) {
-                    window.location = 'login.html';
+                    this._setPage('login');
+                    this.set('routeData.page', 'login');
                     return null 
                 }
 
@@ -48,6 +49,12 @@
                             this._setPage(routeData.page);
                             return null
                         }
+                    }
+
+                    //Logout pole osa navigationist (login ka mitte)
+                    if (routeData.page === 'logout') {
+                        this._setPage('logout');
+                        return null
                     }
                 }
                 

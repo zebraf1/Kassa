@@ -123,7 +123,7 @@
             </paper-menu>
         </main>
         <kassa-rotating-selector hidden$="[[!isTrue(member)]]" class="bottom-button" member="{{member}}" active-convents="[[activeConvents]]"><iron-icon icon="kassa:room"></iron-icon></kassa-rotating-selector>
-        <a href="#" hidden$="[[!isTrue(member)]]" class="bottom-button" on-tap="_logOut"><iron-icon icon="kassa:exit-to-app"></iron-icon>Logi välja</a>
+        <a href="#/logout" hidden$="[[!isTrue(member)]]" class="bottom-button"><iron-icon icon="kassa:exit-to-app"></iron-icon>Logi välja</a>
     </template>
     <script>
         Polymer({
@@ -149,9 +149,6 @@
                     return member.roles.indexOf(role) >= 0;
                 }
                 return false;
-            },
-            _logOut: function () {
-                window.location = 'login.html';
             }
         })
     </script>

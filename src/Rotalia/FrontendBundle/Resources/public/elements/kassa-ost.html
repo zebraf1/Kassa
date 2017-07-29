@@ -1,3 +1,5 @@
+<!--suppress ALL -->
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
@@ -34,10 +36,10 @@
 
         </style>
 
-        <iron-a11y-keys target="[[tasujaComboBox]]" keys="enter" on-keys-pressed="_selectFilterInput"></iron-a11y-keys>
-        <iron-a11y-keys target="[[filterInput]]" keys="enter" on-keys-pressed="_selectToode"></iron-a11y-keys>
-        <iron-a11y-keys target="[[tooteKogusInput]]" keys="esc" on-keys-pressed="_dismissTooteKogusDialog"></iron-a11y-keys>
-        <iron-a11y-keys target="[[tooteKogusInput]]" keys="enter" on-keys-pressed="_confirmTooteKogusDialog"></iron-a11y-keys>
+        <iron-a11y-keys target="[[_tasujaComboBox]]" keys="enter" on-keys-pressed="_selectFilterInput"></iron-a11y-keys>
+        <iron-a11y-keys target="[[_filterInput]]" keys="enter" on-keys-pressed="_selectToode"></iron-a11y-keys>
+        <iron-a11y-keys target="[[_tooteKogusInput]]" keys="esc" on-keys-pressed="_dismissTooteKogusDialog"></iron-a11y-keys>
+        <iron-a11y-keys target="[[_tooteKogusInput]]" keys="enter" on-keys-pressed="_confirmTooteKogusDialog"></iron-a11y-keys>
 
 
         <main id="mainContent">
@@ -46,17 +48,17 @@
                                   disabled="[[ostFixed]]" on-focusin="_selectTasujaComboBox" on-focusout="_onFocusoutTasuja"
                                   item-label-path="name" item-value-path="id" items="[[members]]"></vaadin-combo-box>
 
-                <span style="font-size: 1.8em">Summa: [[_computeOstSumma(chosenProducts.*)]]</span>
+                <span style="font-size: 1.8em">Summa: [[_computeOstSumma(_chosenProducts.*)]]</span>
             </paper-material>
 
-            <template is="dom-repeat" items="[[chosenProducts]]" as="product">
+            <template is="dom-repeat" items="[[_chosenProducts]]" as="product">
                 <kassa-ost-valitud-toode product="[[product]]" on-tap="_removeChosenProduct" fixed="[[ostFixed]]"></kassa-ost-valitud-toode>
             </template>
 
 
             <paper-material class="split-h">
                 <paper-input id="filterInput" disabled="[[ostFixed]]" label="Otsi Toodet" value="{{filterVal}}" on-focusin="_selectFilterInput"></paper-input>
-                <kassa-confirm-button disabled$="[[!chosenProducts.length]]" confirmed="{{ostFixed}}" double-confirm
+                <kassa-confirm-button disabled$="[[!_chosenProducts.length]]" confirmed="{{ostFixed}}" double-confirm
                                       on-kassa-confirm="_confirmOst" on-kassa-double-confirm="_doubleConfirmOst">Osta</kassa-confirm-button>
             </paper-material>
 
@@ -107,18 +109,34 @@
                     type: Number,
                     value: 0,
                     readOnly: true
+                },
+                _tasujaComboBox: {
+                    type: HTMLElement,
+                    readOnly: true
+                },
+                _filterInput: {
+                    type: HTMLElement,
+                    readOnly: true
+                },
+                _tooteKogusInput: {
+                    type: HTMLElement,
+                    readOnly: true
+                },
+                _chosenProducts: {
+                    type: Array,
+                    readOnly: true
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
             observers: ['_loadProducts(pageActive, member.selectedConventId)'],
             ready: function () {
                 // Key bindingute jaoks (a11y-keys)
-                this.tasujaComboBox = this.$.tasujaComboBox;
-                this.filterInput = this.$.filterInput;
-                this.tooteKogusInput = this.$.tooteKogusInput;
+                this._set_tasujaComboBox(this.$.tasujaComboBox);
+                this._set_filterInput(this.$.filterInput);
+                this._set_tooteKogusInput(this.$.tooteKogusInput);
             },
             setUp: function () {
-                this.chosenProducts = [];
+                this._set_chosenProducts([]);
                 this.fire('kassa-backend-action', {action: 'doMembersGet'});
             },
             cleanUp: function () {
@@ -138,14 +156,11 @@
                 return this.cent2str(summa)
             },
             _computeHind: function (kogus, hind) {
-                //Valitud toote hind
-                return this.eur2str(Math.floor(kogus)*hind)
+                return this.eur2str(kogus*hind);
             },
             _confirmOst: function () {
                 // Tasuja väli peab olema täidetud
                 this._onFocusoutTasuja();
-                // scroll to top
-                this.fire('kassa-scroll-to-pos', {pos: this.$.mainContent.getBoundingClientRect().top});
             },
             _selectToode: function () {
                 var productGroups = this.$.mainContent.querySelectorAll('kassa-ost-tootegrupp');
@@ -178,8 +193,9 @@
 
                 //Puutetundlikul ekraanil on vaja väikest delayd.
                 this._set_nextAllowedTime(Date.now() + 200);
+
                 //Teeme nö deep-copy
-                this.push('chosenProducts',
+                this.push('_chosenProducts',
                         {id: this.valitudToode.id, name: this.valitudToode.name,
                          size: this.formatAmount(this.valitudToode.amount, this.valitudToode.amountType), 
                          valitudKogus: Math.floor(this.valitudToode.valitudKogus),
@@ -200,20 +216,10 @@
             },
             _selectFilterInput: function () {
                 this.$.filterInput.inputElement.select();
-                return null;
-                //Scrollime õige koha peale (las jääb välja hetkel)
-                var valitudTootedElements = this.$.mainContent.querySelectorAll('kassa-ost-valitud-toode');
-                var scrollToElement;
-                if (valitudTootedElements.length > 0) {
-                    scrollToElement = valitudTootedElements[valitudTootedElements.length - 1];
-                } else {
-                    scrollToElement = this.$.filterInput;
-                }
-                this.fire('kassa-scroll-to-pos', {pos: scrollToElement.getBoundingClientRect().top});
             },
             _removeChosenProduct: function (event) {
                 if (!this.ostFixed && (Polymer.dom(event).rootTarget.id == "icon" || Polymer.dom(event).rootTarget.localName === "paper-icon-button")) {
-                    this.splice('chosenProducts', event.model.__data__.index, 1);
+                    this.splice('_chosenProducts', event.model.__data__.index, 1);
                 }
             },
             _loadProducts: function(pageActive, conventId) {
