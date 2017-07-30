@@ -312,7 +312,7 @@
                 return newBody
             },
             _checkSuccess: function(result) {
-                if(result.xhr.response.status === 'success') {
+                if(result.xhr.response && result.xhr.response.status === 'success') {
                     return result.xhr.response.data;
                 } else {
                     console.error('Vigane vastus serverilt.', result);

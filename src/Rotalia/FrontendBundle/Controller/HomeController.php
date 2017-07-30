@@ -3,18 +3,18 @@
 namespace Rotalia\FrontendBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class HomeController extends Controller
 {
 
-    private $feSource = "./bundles/rotaliafrontend/build/es5-unbundled";
+    private $feSource = "./bundles/rotaliafrontend/build/default";
 
     /**
      * Frontend bundle landing page.
      *
-     * @return Response
+     * @return BinaryFileResponse
      */
     public function indexAction()
     {
@@ -22,7 +22,7 @@ class HomeController extends Controller
         $file = "{$this->feSource}/index.html";
 
         if (file_exists($file)) {
-            return new Response(file_get_contents($file));
+            return new BinaryFileResponse($file);
         } else {
             throw new NotFoundHttpException("{$file}");
         }
@@ -33,7 +33,7 @@ class HomeController extends Controller
      *
      * @param $path
      * @param $extencion
-     * @return Response
+     * @return BinaryFileResponse
      */
     public function commonAction($path, $extencion)
     {
@@ -41,9 +41,12 @@ class HomeController extends Controller
         $file = "{$this->feSource}/{$path}.{$extencion}";
 
         if (file_exists($file)) {
-            $response = new Response(file_get_contents($file));
+            $response = new BinaryFileResponse($file);
 
             switch ($extencion) {
+                case 'html':
+                    $response->headers->set('Content-Type', 'text/html');
+                    break;
                 case 'css':
                     $response->headers->set('Content-Type', 'text/css');
                     break;

@@ -61,7 +61,7 @@
         </style>
 
 
-        <kassa-backend id="backend" member="{{member}}" csrf-token="{{csrfToken}}" settings="{{settings}}" members="{{members}}"
+        <kassa-backend id="backend" member="{{member}}" settings="{{settings}}" members="{{members}}"
                        active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}"
                        product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"></kassa-backend>
         <kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]"></kassa-route>
@@ -138,10 +138,11 @@
                 'kassa-message-error': '_onMessage',
                 'kassa-backend-action': '_onBackendAction'
             },
-            attached: function() {
+            ready: function() {
                 this.fire('kassa-app-loaded');
                 // On some smartphones the drawer will close on load.
                 this.listen(this, 'kassa-page-loaded', '_openDrawer');
+                this._openDrawer();
             },
             _scrollHandler: function() {
                 var _appHeader = this.$$('app-header');
