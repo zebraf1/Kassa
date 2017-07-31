@@ -8,6 +8,7 @@ use Rotalia\InventoryBundle\Model\ProductQuery;
 use Rotalia\InventoryBundle\Model\SettingQuery;
 use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\InventoryBundle\Model\TransactionPeer;
+use Rotalia\UserBundle\Model\MemberQuery;
 use Rotalia\UserBundle\Model\User;
 use Rotalia\UserBundle\Model\UserQuery;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,8 +46,7 @@ class PurchaseController extends DefaultController
      *     {"name"="payment","requirement"="cash|credit|refund","description"="Payment type"}
      *   },
      *   parameters={
-     *      {"name"="username","dataType"="string","required"=false,"description"="Temporary login username"},
-     *      {"name"="password","dataType"="string","required"=false,"description"="Temporary login password"},
+     *      {"name"="memberId","dataType"="integer","required"=false,"description"="Member ID of the buyer"},
      *      {"name"="basket","dataType"="Object","required"=false,"description"="Not required for refund payment"},
      *      {"name"="basket[0][id]","dataType"="int","required"=true,"description"="Product ID"},
      *      {"name"="basket[0][amount]","dataType"="float","required"=true,"description"="Amount purchased"},
@@ -60,11 +60,10 @@ class PurchaseController extends DefaultController
      * )
      * @param Request $request
      * @param $payment
-     * @param null $username
-     * @param null $password
+     * @param null $memberId
      * @return JSendResponse
      */
-    public function paymentAction(Request $request, $payment, $username = null, $password = null)
+    public function paymentAction(Request $request, $payment, $memberId = null)
     {
         switch (strtolower($payment)) {
             case 'cash':
@@ -113,24 +112,11 @@ class PurchaseController extends DefaultController
         }
 
         // Temporarily authenticated user via PoS
-        if ($username) {
-            $user = UserQuery::create()->findOneByUsername($username);
-            if ($user === null) {
+        if ($memberId) {
+            $member = MemberQuery::create()->findPk($memberId);
+            if ($member === null) {
                 return JSendResponse::createFail('Kasutajat ei leitud', 400);
             }
-
-            // Get the encoder for the users password
-            /** @var EncoderFactoryInterface $encoderService */
-            $encoderService = $this->get('security.encoder_factory');
-            $encoder = $encoderService->getEncoder($user);
-
-            // Note the difference
-            if (!$encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-                // Get profile list
-                return JSendResponse::createFail('Vale parool', 400);
-            }
-
-            $member = $user->getMember();
         }
 
         if ($member === null && $pos === null) {
