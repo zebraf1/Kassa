@@ -1,9 +1,9 @@
 rotalia_frontend_homepage:
     path:     /
-    defaults: { _controller: RotaliaFrontendBundle:Home:index}
+    defaults: { _controller: RotaliaFrontendBundle:Home:index, fname:"index", extension:"html"}
 
 rotalia_frontend_common:
-    path:     /{path}.{extencion}
-    defaults: { _controller: RotaliaFrontendBundle:Home:common}
+    path:     /{fname}.{extension}
+    defaults: { _controller: RotaliaFrontendBundle:Home:index}
     requirements:
-            path: .+
+            fname: .+

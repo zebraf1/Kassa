@@ -8,42 +8,34 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class HomeController extends Controller
 {
-
-    private $feSource = "./bundles/rotaliafrontend/build/default";
-
-    /**
-     * Frontend bundle landing page.
-     *
-     * @return BinaryFileResponse
-     */
-    public function indexAction()
-    {
-
-        $file = "{$this->feSource}/index.html";
-
-        if (file_exists($file)) {
-            return new BinaryFileResponse($file);
-        } else {
-            throw new NotFoundHttpException("{$file}");
-        }
-    }
-
     /**
      * Frontend bundle all files
      *
-     * @param $path
-     * @param $extencion
+     * @param $fname
+     * @param $extension
      * @return BinaryFileResponse
      */
-    public function commonAction($path, $extencion)
+    public function indexAction($fname, $extension)
     {
 
-        $file = "{$this->feSource}/{$path}.{$extencion}";
+        // Create a response.
+        $path = $this->getPath($fname, $extension);
 
-        if (file_exists($file)) {
-            $response = new BinaryFileResponse($file);
+        if (file_exists($path)) {
 
-            switch ($extencion) {
+            // Check privileges.
+            if (preg_match("/elements\/kassa-ost/i", $path)) {
+                $this->denyAccessUnlessGranted('ROLE_USER');
+            }
+
+            if (preg_match("/elements\/kassa-admin/i", $path)) {
+                $this->denyAccessUnlessGranted('ROLE_ADMIN');
+            }
+
+
+            $response = new BinaryFileResponse($path);
+
+            switch ($extension) {
                 case 'html':
                     $response->headers->set('Content-Type', 'text/html');
                     break;
@@ -64,8 +56,14 @@ class HomeController extends Controller
             return $response;
 
         } else {
-            throw new NotFoundHttpException("{$file}");
+            throw new NotFoundHttpException("{$path}.$extension");
         }
+    }
+
+    private function getPath($fname, $extension) {
+
+        $rootDir = $this->get('kernel')->getBundle('RotaliaFrontendBundle')->getPath();
+        return "{$rootDir}/Resources/source/build/default/{$fname}.$extension";
     }
 
 }

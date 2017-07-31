@@ -9,16 +9,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="64"
-   height="64"
+   width="68.26667"
+   height="68.26667"
    id="svg3371"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.1 r"
    viewBox="0 0 64 64"
    sodipodi:docname="logo.svg"
-   inkscape:export-filename="/home/kasutaja/Dropbox/kassa/logo.svg.png"
-   inkscape:export-xdpi="360"
-   inkscape:export-ydpi="360">
+   inkscape:export-filename="/home/kasutaja/kassa/logo.png"
+   inkscape:export-xdpi="719.99994"
+   inkscape:export-ydpi="719.99994">
   <defs
      id="defs3373">
     <clipPath
@@ -66,10 +66,10 @@
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1080"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-width="1902"
+     inkscape:window-height="1035"
+     inkscape:window-x="4"
+     inkscape:window-y="31"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata3376">
@@ -79,7 +79,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -120,11 +120,10 @@
        ry="31.470776" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:69.34814453px;line-height:125%;font-family:Amaranth;-inkscape-font-specification:'Amaranth, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.73368943px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Amaranth;-inkscape-font-specification:'Amaranth, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.73368943px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="32.020046"
        y="55.439674"
-       id="text4261"
-       sodipodi:linespacing="125%"><tspan
+       id="text4261"><tspan
          sodipodi:role="line"
          id="tspan4269"
          x="32.020046"
