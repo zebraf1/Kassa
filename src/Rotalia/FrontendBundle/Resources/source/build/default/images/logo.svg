@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="68.26667"
+   height="68.26667"
+   id="svg3371"
+   version="1.1"
+   inkscape:version="0.92.1 r"
+   viewBox="0 0 64 64"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="/home/kasutaja/kassa/logo.png"
+   inkscape:export-xdpi="719.99994"
+   inkscape:export-ydpi="719.99994">
+  <defs
+     id="defs3373">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4247">
+      <circle
+         style="fill:#000000;fill-opacity:0;fill-rule:evenodd;stroke:#000000;stroke-width:1.34708691px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="circle4249"
+         cx="32"
+         cy="32"
+         r="31.326456" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4251">
+      <circle
+         style="fill:#000000;fill-opacity:0;fill-rule:evenodd;stroke:#000000;stroke-width:1.34708691px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="circle4253"
+         cx="32"
+         cy="32"
+         r="31.326456" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4255">
+      <circle
+         style="fill:#000000;fill-opacity:0;fill-rule:evenodd;stroke:#000000;stroke-width:1.34708691px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="circle4257"
+         cx="32"
+         cy="32"
+         r="31.326456" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.75"
+     inkscape:cx="135.24832"
+     inkscape:cy="54.468776"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="1902"
+     inkscape:window-height="1035"
+     inkscape:window-x="4"
+     inkscape:window-y="31"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3376">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <rect
+       style="fill:#000000;fill-opacity:1"
+       id="rect4200"
+       width="64"
+       height="21.333"
+       x="0"
+       y="21.334"
+       clip-path="url(#clipPath4255)" />
+    <rect
+       style="fill:#0077c8;fill-opacity:1"
+       id="rect4200-6"
+       width="64"
+       height="21.333"
+       x="0"
+       y="0.00099981693"
+       clip-path="url(#clipPath4251)" />
+    <rect
+       style="fill:#84bd00;fill-opacity:1"
+       id="rect4200-6-6"
+       width="64"
+       height="21.333"
+       x="0"
+       y="42.667"
+       clip-path="url(#clipPath4247)" />
+    <ellipse
+       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.05844998;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path4259"
+       cx="32"
+       cy="32"
+       rx="31.470774"
+       ry="31.470776" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Amaranth;-inkscape-font-specification:'Amaranth, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.73368943px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="32.020046"
+       y="55.439674"
+       id="text4261"><tspan
+         sodipodi:role="line"
+         id="tspan4269"
+         x="32.020046"
+         y="55.439674"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:69.34814453px;line-height:125%;font-family:Amaranth;-inkscape-font-specification:'Amaranth, Normal';text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:1.73368943px">õ</tspan></text>
+  </g>
+</svg>

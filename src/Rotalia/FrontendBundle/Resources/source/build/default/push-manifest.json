@@ -1,0 +1,9 @@
+{
+  "elements/kassa-app.html": {},
+  "elements/kassa-login.html": {},
+  "elements/kassa-logout.html": {},
+  "elements/kassa-ost.html": {},
+  "elements/kassa-admin-tooted.html": {},
+  "elements/kassa-admin-tootegrupid.html": {},
+  "elements/kassa-admin-kassad.html": {}
+}

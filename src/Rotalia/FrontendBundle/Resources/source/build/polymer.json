@@ -1,0 +1,54 @@
+{
+  "entrypoint": "index.html",
+  "shell": "elements/kassa-app.html",
+  "fragments": [
+    "elements/kassa-login.html",
+    "elements/kassa-logout.html",
+    "elements/kassa-ost.html",
+    "elements/kassa-admin-tooted.html",
+    "elements/kassa-admin-tootegrupid.html",
+    "elements/kassa-admin-kassad.html"
+  ],
+  "sources": [
+    "elements/*",
+    "js/*",
+    "images/**/*",
+    "index.html",
+    "elements/kassa-app.html",
+    "elements/kassa-login.html",
+    "elements/kassa-logout.html",
+    "elements/kassa-ost.html",
+    "elements/kassa-admin-tooted.html",
+    "elements/kassa-admin-tootegrupid.html",
+    "elements/kassa-admin-kassad.html"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.js",
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "builds": [
+    {
+      "name": "default",
+      "js": {
+        "minify": true,
+        "compile": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": true,
+      "addServiceWorker": true,
+      "addPushManifest": true,
+      "preset": "es5-bundled"
+    }
+  ],
+  "lint": {
+    "rules": [
+      "polymer-1"
+    ]
+  }
+}
