@@ -26,6 +26,8 @@
         <iron-ajax id="pointOfSalesPost" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <iron-ajax id="pointOfSalesPatch" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Purchase -->
+        <iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
     </template>
     <script>
         Polymer({
@@ -220,6 +222,14 @@
                     this.fire('kassa-message-success', 'Müügipunkt edukalt kustutatud');
                 }.bind(this))
             },
+            /* Purchase */
+            doPurchasePost: function(memberId, basket) {
+                this.$.purchasePost.set('body', this.formatBody({conventId: memberId, basket: basket}));
+                return this.$.purchasePost.generateRequest().completes.then(function(result) {
+                    this._checkSuccess(result);
+                    this.fire('kassa-message-success', 'Ost edukalt sooritatud');
+                }.bind(this))
+            },
             /* General */
             doAction: function(data) {
                 var promise;
@@ -273,6 +283,10 @@
                         break;
                     case 'doPointOfSalesDelete':
                         promise = this.doPointOfSalesDelete(data.id);
+                        break;
+                    /* Purchase */
+                    case 'doPurchasePost':
+                        promise = this.doPurchasePost(data.memberId, data.basket);
                         break;
                     /* General */    
                     default:

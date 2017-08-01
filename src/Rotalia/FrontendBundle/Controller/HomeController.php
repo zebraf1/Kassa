@@ -56,7 +56,7 @@ class HomeController extends Controller
             return $response;
 
         } else {
-            throw new NotFoundHttpException("{$path}.$extension");
+            throw new NotFoundHttpException("{$path}");
         }
     }
 

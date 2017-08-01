@@ -156,13 +156,19 @@
                 return this.cent2str(summa)
             },
             _computeHind: function (kogus, hind) {
+                // Üksiku toote hind
                 return this.eur2str(kogus*hind);
             },
             _confirmOst: function () {
                 // Tasuja väli peab olema täidetud
                 this._onFocusoutTasuja();
             },
+            _doubleConfirmOst: function () {
+                this.fire('kassa-backend-action', {action: 'doPurchasePost'});
+
+            },
             _selectToode: function () {
+                // Enteri vajutamisel vali esimene toode
                 var productGroups = this.$.mainContent.querySelectorAll('kassa-ost-tootegrupp');
                 for(var i=0; i<productGroups.length; i++) {
                     if(productGroups[i].selectFirst()) {
@@ -196,10 +202,11 @@
 
                 //Teeme nö deep-copy
                 this.push('_chosenProducts',
-                        {id: this.valitudToode.id, name: this.valitudToode.name,
-                         size: this.formatAmount(this.valitudToode.amount, this.valitudToode.amountType), 
-                         valitudKogus: Math.floor(this.valitudToode.valitudKogus),
-                         summa: this.valitudToode.price*Math.floor(this.valitudToode.valitudKogus)});
+                    {id: this.valitudToode.id,
+                        name: this.valitudToode.name,
+                        size: this.formatAmount(this.valitudToode.amount, this.valitudToode.amountType),
+                        amount: this.valitudToode.valitudKogus,
+                        summa: this.valitudToode.price*this.valitudToode.valitudKogus});
                 
                 this.async(function() {
                     this._selectFilterInput();
