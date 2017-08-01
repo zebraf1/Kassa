@@ -32,6 +32,11 @@ Install nodejs packages
 > npm install -g bower polymer-cli
 ```
 
+Create app.php from desired environment (dev, prod)
+```bash
+> cd web
+> ln -s app_dev.php app.php
+```
 
 Building
 --------
