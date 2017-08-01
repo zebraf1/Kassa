@@ -34,7 +34,8 @@ Install nodejs packages
 
 Create app.php from desired environment (dev, prod)
 ```bash
-> ln -s web/app_dev.php web/app.php
+> cd web
+> ln -s app_dev.php app.php
 ```
 
 Building
