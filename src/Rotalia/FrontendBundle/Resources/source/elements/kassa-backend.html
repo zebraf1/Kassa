@@ -8,24 +8,24 @@
         <!-- Authentication -->
         <iron-ajax id="authenticationDelete" handle-as="json" url='[[_computeURL("authentication")]]' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <iron-ajax id="authenticationGet" handle-as="json" url='[[_computeURL("authentication")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <!-- Settings -->
         <iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <!-- Members -->
         <iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <!-- Products -->
         <iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
-        <iron-ajax id="productsPatch" handle-as="json" url='[[_computeURL("products", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST" content-type="application/x-www-form-urlencoded" ></iron-ajax>
+        <iron-ajax id="productsPatch" handle-as="json" url='[[_computeURL("products", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <!-- ProductGroups -->
         <iron-ajax id="productGroupsGet" handle-as="json" url='[[_computeURL("productGroups")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="productGroupsPost" handle-as="json" url='[[_computeURL("productGroups")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
-        <iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <iron-ajax id="productGroupsPost" handle-as="json" url='[[_computeURL("productGroups")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"></iron-ajax>
         <!-- PointOfSales -->
         <iron-ajax id="pointOfSalesGet" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="pointOfSalesPost" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="POST" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
-        <iron-ajax id="pointOfSalesPatch" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
-        <iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE" content-type="application/x-www-form-urlencoded"  bubbles="true"></iron-ajax>
+        <iron-ajax id="pointOfSalesPost" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="pointOfSalesPatch" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
     </template>
     <script>
         Polymer({

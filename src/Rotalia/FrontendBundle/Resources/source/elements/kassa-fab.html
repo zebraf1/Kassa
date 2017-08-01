@@ -30,6 +30,11 @@
     <script>
         Polymer({
             is: "kassa-fab",
+            properties: {
+                scrollTarget: {
+                    type: HTMLElement
+                }
+            },
             behaviors: [Polymer.IronScrollTargetBehavior, KassaBehavior],
             _scrollHandler: function() {
                 this.$.fab.classList.add('on-scroll');

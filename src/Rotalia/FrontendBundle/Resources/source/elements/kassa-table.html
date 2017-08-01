@@ -44,9 +44,9 @@
             }
             
             kassa-fab {
-                position: absolute;
-                right: 1.5em;
-                bottom: 1.5em;
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
             }
 
             /* Grid material styling*/
@@ -54,6 +54,7 @@
 
                 font-family: Roboto, sans-serif;
                 --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+                height: auto;
 
                 --vaadin-grid-cell: {
                     padding-left: 20px;
@@ -112,7 +113,7 @@
             </template>
         </vaadin-grid>
         
-        <kassa-fab hidden$="[[!isTrue(addFunc)]]" on-tap="_addItem"></kassa-fab>
+        <kassa-fab hidden$="[[!isTrue(addFunc)]]" on-tap="_addItem" scroll-target="[[scrollTarget]]"></kassa-fab>
 
     </template>
     <script>
@@ -139,7 +140,7 @@
                     value: ''
                 },
                 dialog: {
-                    type: Node,
+                    type: HTMLElement,
                     observer: '_attachDialogListener'
                 },
                 conventId: {
@@ -149,19 +150,19 @@
                     type: Boolean,
                     value: false
                 },
-                scrollTarget: {
-                    type: Node
-                },
                 _activeItemId: {
                     type: Number,
                     readOnly: true
+                },
+                scrollTarget: {
+                    type: HTMLElement,
+                    observer: '_setFabLocation'
                 }
             },
             observers: ['_computeFilteredItems(dataSource, filter.*)'],
             behaviors: [KassaBehavior],
-            attached: function() {
-                this.scrollTarget = this.$.table;
-                this.$$('kassa-fab').scrollTarget = this.$.table.$.scroller.scrollTarget;
+            ready: function () {
+                window.addEventListener('resize', this._setFabLocation.bind(this));
             },
             computeCell: function (pattern, data) {
                 var matchFunc = pattern.match(/^([\w\d]+)\((.+)\)$/);
@@ -245,6 +246,9 @@
             },
             _onActiveItemChanged: function(e) {
                 this.$.table.expandedItems = [e.detail.value];
+            },
+            _setFabLocation: function () {
+                this.$$('kassa-fab').style.left = this.scrollTarget.getBoundingClientRect().right - 76 + 'px';
             }
         })
     </script>

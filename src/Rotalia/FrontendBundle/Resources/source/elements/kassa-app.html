@@ -88,7 +88,7 @@
                     </app-toolbar>
                 </app-header>
 
-                 <kassa-pages selected="[[page]]" height="[[_contentHeight]]" scroll-target="{{scrollTarget}}">
+                 <kassa-pages selected="[[page]]" scroll-target="{{scrollTarget}}">
                      <kassa-login data-page="login"></kassa-login>
                      <kassa-logout data-page="logout"></kassa-logout>
                      <kassa-ost data-page="ost" member="[[member]]" members="[[members]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
@@ -121,50 +121,33 @@
                 },
                 page: {
                     type: String,
-                    observer: '_observePageChange'
+                    observer: '_onPageChange'
                 },
                 scrollTarget: {
-                    type: HTMLElement,
-                    observer: '_scrollHandler'
-                },
-                _contentHeight: {
-                    type: Number,
-                    readOnly: true
+                    type: HTMLElement
                 }
             },
             behaviors: [KassaBehavior, Polymer.IronScrollTargetBehavior],
             listeners: {
-                'kassa-message-success': '_onMessage',
-                'kassa-message-error': '_onMessage',
+                'kassa-message-success': '_onSuccessMessage',
+                'kassa-message-error': '_onErrorMessage',
                 'kassa-backend-action': '_onBackendAction'
             },
             ready: function() {
                 this.fire('kassa-app-loaded');
-                // On some smartphones the drawer will close on load.
-                this.listen(this, 'kassa-page-loaded', '_openDrawer');
-                this._openDrawer();
             },
             _scrollHandler: function() {
                 var _appHeader = this.$$('app-header');
                 _appHeader.style.marginBottom = -_appHeader._top + 'px';
-                this._set_contentHeight(window.innerHeight - (_appHeader._height - _appHeader._top));
             },
-            _onMessage: function(e) {
-                if (e.type == 'kassa-message-success') {
-                    this.$.toast.success(e.detail);
-                } else if (e.type == 'kassa-message-error') {
-                    this.$.toast.error(e.detail);
-                }
+            _onSuccessMessage: function(event) {
+                this.$.toast.success(event.detail);
+            },
+            _onErrorMessage: function (event) {
+                this.$.toast.error(event.detail);
             },
             _onBackendAction: function(event) {
                 this.$.backend.doAction(event.detail);
-            },
-            _observePageChange: function(newValue, oldValue) {
-                if((typeof oldValue === 'undefined' && newValue !== 'login') || oldValue === 'login') {
-                    this.$.leftDrawer.open();           
-                } else if(this.leftNarrow) {
-                    this.$.leftDrawer.close();
-                }
             },
             _toggleLeftDrawer: function() {
                 this.$.leftDrawer.toggle();
@@ -172,12 +155,14 @@
             _toggleRightDrawer: function() {
                 this.$.rightDrawer.toggle();
             },
-            _openDrawer: function() {
-                if (this.page !== 'login') {
-                    this.$.leftDrawer.open();
+            _onPageChange: function (newPage, oldPage) {
+                if (this.leftNarrow) {
+                    if (((typeof oldPage === 'undefined') && (newPage !== 'login')) || oldPage === 'login') {
+                        this.$.leftDrawer.open();
+                    } else {
+                        this.$.leftDrawer.close();
+                    }
                 }
-                //Unlisten this event
-                this.unlisten(this, 'kassa-page-loaded', '_openDrawer');
             }
         })
     </script>

@@ -23,9 +23,11 @@
                         {label: 'Kg', value: 'KG'}
                     ]
                 }
+            },
+            scrollTarget: {
+                type: HTMLElement
             }
         },
-
         attached: function () {
              //Väike fix, dialoogid ja toast jäävad muidu varju
             var body = document.querySelector('body');
@@ -42,12 +44,8 @@
             this.cleanUp();
             this._setPageActive(false);
         },
-        getScrollTarget: function () {
-            var scrollTargetContainer = this.$$('[kassa-scroll-target]');
-            if (scrollTargetContainer) {
-                return scrollTargetContainer.scrollTarget;
-            }
-            return null;
+        setScrollTarget: function (scrollTarget) {
+            this.set('scrollTarget', scrollTarget);
         },
         //Methods to be overridden by implementing elements
         setUp: function () {},

@@ -55,58 +55,35 @@
                     readOnly: true
                 },
                 selectedItem: {
-                    type: Object,
+                    type: HTMLElement,
                     observer: '_onPageChange'
-                },
-                height: {
-                    type: Number,
-                    observer: '_changeHeight'
                 },
                 scrollTarget: {
                     type: HTMLElement,
                     notify: true,
                     readOnly: true
-                },
-                _scrollTargetContainer: {
-                    type: HTMLElement
                 }
             },
             behaviors: [KassaBehavior, Polymer.LazyImportsBehavior],
+            ready: function () {
+                this._setScrollTarget(this.$$('main'));
+            },
             _onSelectedChange: function (newPage, oldPage) {
                 this._setShown('loading');
+                this.$$('main').scrollTop = 0;
                 this.importLazyGroup(newPage).then(function() {
                     this._setShown(newPage);
-                    this.fire('kassa-page-loaded');
                 }.bind(this));
             },
             _onPageChange: function (newPage, oldPage) {
                 //kassa-page-behavior
                 if(newPage && newPage.sharedSetUp){
                     newPage.sharedSetUp();
+                    newPage.setScrollTarget(this.scrollTarget);
                 }
 
                 if(oldPage && oldPage.sharedCleanUp){
                     oldPage.sharedCleanUp();
-                }
-
-                if (this.isTrue(this.selectedItem)) {
-                    var scrollTargetContainer = this.selectedItem.getScrollTarget();
-                    if (scrollTargetContainer) {
-                        this._setScrollTarget(scrollTargetContainer.$.scroller.scrollTarget);
-                        this.set('_scrollTargetContainer', scrollTargetContainer);
-                    } else {
-                        this._setScrollTarget(this.$$('main'));
-                        this.set('_scrollTargetContainer', null);
-                    }
-                }
-            },
-            _changeHeight: function (newHeight) {
-                this.$$('main').style.height = newHeight + 'px';
-                if (this.isTrue(this._scrollTargetContainer)) {
-                    var style = this.$$('main').currentStyle || window.getComputedStyle(this.$$('main'));
-                    var padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) ;
-                    // Kahega korrutatud, et saada lahti topelt scrollbarist. Kuskilt hiilivad lisapikslid sisse.
-                    this._scrollTargetContainer.style.height = this.$$('main').clientHeight - 2*padding + 'px';
                 }
             }
         })

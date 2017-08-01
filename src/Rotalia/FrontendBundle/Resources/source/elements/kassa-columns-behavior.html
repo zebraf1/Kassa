@@ -10,7 +10,7 @@
             window.addEventListener('resize', this.setColumnWidths.bind(this));
         },
 
-        setColumnWidths: function (event) {
+        setColumnWidths: function () {
             this.debounce('columnWidth', function() {
                 var children = this.querySelectorAll('[kassa-columns-item]');
                 if (children.length > 0) {

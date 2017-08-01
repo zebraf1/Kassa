@@ -11,7 +11,8 @@
 <dom-module id="kassa-admin-tootegrupid">
     <template>
 
-        <kassa-table items="[[productGroups]]" edit-func="doProductGroupsPatch" add-func="doProductGroupsPost" dialog="[[dialog]]" kassa-scroll-target="">
+        <kassa-table items="[[productGroups]]" edit-func="doProductGroupsPatch" add-func="doProductGroupsPost" dialog="[[dialog]]"
+                     scroll-target="[[scrollTarget]]">
             <vaadin-grid-column flex-grow="0">
                 <template class="header">Id</template>
                 <template>
