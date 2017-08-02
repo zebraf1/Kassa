@@ -16,7 +16,7 @@
             productAmountTypeNames: {
                 type: Array,
                 readOnly: true,
-                value: function() {
+                value: function () {
                     return [
                         {label: 'Tükk', value: 'PIECE'},
                         {label: 'Liiter', value: 'LITRE'},
@@ -29,7 +29,7 @@
             }
         },
         attached: function () {
-             //Väike fix, dialoogid ja toast jäävad muidu varju
+            //Väike fix, dialoogid ja toast jäävad muidu varju
             var body = document.querySelector('body');
             var elements = Polymer.dom(this.root).querySelectorAll('paper-dialog');
             for (var i = 0; i < elements.length; i++) {
@@ -48,8 +48,10 @@
             this.set('scrollTarget', scrollTarget);
         },
         //Methods to be overridden by implementing elements
-        setUp: function () {},
-        cleanUp: function () {}
+        setUp: function () {
+        },
+        cleanUp: function () {
+        }
     };
 
     /**

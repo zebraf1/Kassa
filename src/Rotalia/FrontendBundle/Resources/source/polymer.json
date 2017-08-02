@@ -2,7 +2,7 @@
   "entrypoint": "index.html",
   "shell": "elements/kassa-app.html",
   "fragments": [
-	"elements/kassa-login.html",
+    "elements/kassa-login.html",
     "elements/kassa-logout.html",
     "elements/kassa-ost.html",
     "elements/kassa-admin-tooted.html",
@@ -18,11 +18,15 @@
     "manifest.json",
     "bower_components/webcomponentsjs/webcomponents-lite.js"
   ],
-  "builds": [{
-    "preset": "es5-bundled",
-    "name": "default"
-  }],
+  "builds": [
+    {
+      "preset": "es5-bundled",
+      "name": "default"
+    }
+  ],
   "lint": {
-    "rules": ["polymer-1"]
+    "rules": [
+      "polymer-1"
+    ]
   }
 }

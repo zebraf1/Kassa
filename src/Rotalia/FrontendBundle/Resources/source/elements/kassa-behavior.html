@@ -10,22 +10,22 @@
                 return eur.toFixed(2) + '€'
             } else {
                 return '0.00€'
-            }                        
+            }
         },
 
-        eur2cent: function(eur) {
+        eur2cent: function (eur) {
             if (eur) {
-                return Math.round(100*eur)
+                return Math.round(100 * eur)
             } else {
                 return 0
             }
         },
 
-        cent2eur: function(cent) {
-            return cent/100
+        cent2eur: function (cent) {
+            return cent / 100
         },
 
-        cent2str: function(cent) {
+        cent2str: function (cent) {
             return this.eur2str(this.cent2eur(cent))
         },
         isTrue: function (thing) {
@@ -39,30 +39,40 @@
                 return !!thing
             }
         },
-        formatAmount: function(amount, amountType) {
-            switch(amountType) {
+        formatAmount: function (amount, amountType) {
+            switch (amountType) {
                 case 'PIECE':
-                    return amount + ' tk'
+                    return amount + ' tk';
                     break;
                 case 'LITRE':
-                    return amount + ' l'
+                    return amount + ' l';
                     break;
                 case 'KG':
-                    if(amount < 1) {
-                        return amount*1000 + ' g'
+                    if (amount < 1) {
+                        return amount * 1000 + ' g'
                     } else {
                         return amount + ' kg'
                     }
+                    break;
+                default:
+                    return '';
             }
         },
-        mapIdToValue: function(id, items, key) {
-            for(var i=0; i<items.length; i++) {
-                if(items[i].id === id) {
+        mapIdToValue: function (id, items, key) {
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].id === id) {
                     return items[i][key]
                 }
             }
-            
+
             return ''
+        },
+        pickProperties: function (object, keys) {
+            let newObject = {};
+            for (let i = 0; i < keys.length; i++) {
+                newObject[keys[i]] = object[keys[i]];
+            }
+            return newObject;
         }
     };
 </script>

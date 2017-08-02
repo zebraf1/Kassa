@@ -5,32 +5,33 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-date-picker">
-    <template>
-        <style>
-            .date-button {
-                color: #000;
-                background-color: #FFF;
-                border: 1px solid #aaaaaa;
-            }
+	<template>
+		<style>
+			.date-button {
+				color: #000;
+				background-color: #FFF;
+				border: 1px solid #aaaaaa;
+			}
 
-        </style>
+		</style>
 
-        <paper-button class="date-button" on-tap="_showStartDate">[[format(selectedStartDate, 'DD-MM-YYYY')]]</paper-button>
-        <span>-</span>
-        <paper-button class="date-button" on-tap="_showEndDate">[[format(selectedEndDate, 'DD-MM-YYYY')]]</paper-button>
+		<paper-button class="date-button" on-tap="_showStartDate">[[format(selectedStartDate, 'DD-MM-YYYY')]]
+		</paper-button>
+		<span>-</span>
+		<paper-button class="date-button" on-tap="_showEndDate">[[format(selectedEndDate, 'DD-MM-YYYY')]]</paper-button>
 
-        <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="_dismissDialog">
-            <!--
-            <paper-date-picker id="picker" date="{{date}}" min-date="[[minDate]]" max-date="[[maxDate]]"></paper-date-picker>
-            -->
-            <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm>OK</paper-button>
-            </div>
-        </paper-dialog>
+		<paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="_dismissDialog">
+			<!--
+			<paper-date-picker id="picker" date="{{date}}" min-date="[[minDate]]" max-date="[[maxDate]]"></paper-date-picker>
+			-->
+			<div class="buttons">
+				<paper-button dialog-dismiss>Cancel</paper-button>
+				<paper-button dialog-confirm>OK</paper-button>
+			</div>
+		</paper-dialog>
 
-    </template>
-    <script>
+	</template>
+	<script>
         Polymer({
             //['Jaanuar', 'Veebruar', 'Märts', 'Aprill', 'Mai', 'Juuni','Juuli', 'August', 'September', 'Oktoober', 'November', 'Detsember'];
             is: "kassa-date-picker",
@@ -40,7 +41,7 @@
                     type: Object,
                     observer: '_onStartDateChange',
                     value: function () {
-                        return {year: 1913, month: 10, day:10}
+                        return {year: 1913, month: 10, day: 10}
                     }
                 },
                 endDate: {
@@ -85,9 +86,17 @@
             _dismissDialog: function (e) {
                 if (e.detail.confirmed) {
                     if (this.settingStart) {
-                        this._setSelectedStartDate({year: this.date.getFullYear(), month: this.date.getMonth(), day: this.date.getDate()});
+                        this._setSelectedStartDate({
+                            year: this.date.getFullYear(),
+                            month: this.date.getMonth(),
+                            day: this.date.getDate()
+                        });
                     } else {
-                        this._setSelectedEndDate({year: this.date.getFullYear(), month: this.date.getMonth(), day: this.date.getDate()});
+                        this._setSelectedEndDate({
+                            year: this.date.getFullYear(),
+                            month: this.date.getMonth(),
+                            day: this.date.getDate()
+                        });
                     }
                 }
             },
@@ -122,5 +131,5 @@
                 this._setSelectedEndDate(newValue);
             }
         })
-    </script>
+	</script>
 </dom-module>

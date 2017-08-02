@@ -4,10 +4,11 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-rotating-selector">
-    <template>
-        <content></content><span>[[_selectedName]]</span>
-    </template>
-    <script>
+	<template>
+		<content></content>
+		<span>[[_selectedName]]</span>
+	</template>
+	<script>
         Polymer({
             is: "kassa-rotating-selector",
             properties: {
@@ -26,7 +27,7 @@
                 }
             },
             hostAttributes: {
-                tabIndex: 0    
+                tabIndex: 0
             },
             listeners: {
                 'tap': '_rotate'
@@ -37,9 +38,9 @@
                 'enter': '_rotate',
                 'space': '_rotate'
             },
-            _initiateSelect: function(member, els) {
-                if(this.isTrue(member)) {
-                    for(i=0; i<els.length; i++) {
+            _initiateSelect: function (member, els) {
+                if (this.isTrue(member)) {
+                    for (i = 0; i < els.length; i++) {
                         if (member.conventId === els[i].id) {
                             this.set('_selectedConventNr', i);
                             this.set('_selectedName', els[i].name);
@@ -47,13 +48,13 @@
                             break;
                         }
                     }
-                }    
+                }
             },
-            _rotate: function() {
+            _rotate: function () {
                 this.set('_selectedConventNr', (this._selectedConventNr + 1) % this.activeConvents.length);
                 this.set('_selectedName', this.activeConvents[this._selectedConventNr].name);
                 this.set('member.selectedConventId', this.activeConvents[this._selectedConventNr].id);
             }
         })
-    </script>
+	</script>
 </dom-module>

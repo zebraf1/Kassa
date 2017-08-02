@@ -7,27 +7,30 @@
 <link rel="import" href="kassa-confirm-button.html">
 
 <dom-module id="kassa-login">
-    <template>
-        <style>
-            main {
-                display: flex;
-                flex-flow: column nowrap;
-                max-width: 20em;
-                padding-bottom: 300px;
-            }
+	<template>
+		<style>
+			main {
+				display: flex;
+				flex-flow: column nowrap;
+				max-width: 20em;
+				padding-bottom: 300px;
+			}
 
-        </style>
+		</style>
 
-        <main hidden$="[[_hideForm]]">
-            <form name="loginForm" id="loginForm" action="">
-                <paper-input name="username" label="Kasutajanimi" type="text" disabled="[[confirmed]]" value="{{_username}}" required></paper-input>
-                <paper-input name="password" label="Parool" type="password" disabled="[[confirmed]]" value="{{_password}}" required></paper-input>
-                <kassa-confirm-button id="confirmButton" confirmed="{{confirmed}}" on-kassa-confirm="_doLogin">Sisene</kassa-confirm-button>            
-            </form>
-        </main>
+		<main hidden$="[[_hideForm]]">
+			<form name="loginForm" id="loginForm" action="">
+				<paper-input name="username" label="Kasutajanimi" type="text" disabled="[[confirmed]]"
+				             value="{{_username}}" required></paper-input>
+				<paper-input name="password" label="Parool" type="password" disabled="[[confirmed]]"
+				             value="{{_password}}" required></paper-input>
+				<kassa-confirm-button id="confirmButton" confirmed="{{confirmed}}" on-kassa-confirm="_doLogin">Sisene
+				</kassa-confirm-button>
+			</form>
+		</main>
 
-    </template>
-    <script>
+	</template>
+	<script>
         Polymer({
             is: "kassa-login",
             properties: {
@@ -48,9 +51,11 @@
                 'enter': '_doLogin'
             },
             setUp: function () {
-                this.fire('kassa-backend-action', {action: 'doAuthenticationGet', onSuccess: function () {
-                    this._set_hideForm(false);
-                }.bind(this)})
+                this.fire('kassa-backend-action', {
+                    action: 'doAuthenticationGet', onSuccess: function () {
+                        this._set_hideForm(false);
+                    }.bind(this)
+                })
             },
             cleanUp: function () {
                 this.$.confirmButton.reset();
@@ -69,9 +74,11 @@
                 this.$.confirmButton._setLoading(true);
 
                 this.fire('kassa-backend-action',
-                    {action: 'doLogin', username: this._username, password: this._password, 
-                        onError: this.cleanUp.bind(this)})
+                    {
+                        action: 'doLogin', username: this._username, password: this._password,
+                        onError: this.cleanUp.bind(this)
+                    })
             }
         })
-    </script>
+	</script>
 </dom-module>

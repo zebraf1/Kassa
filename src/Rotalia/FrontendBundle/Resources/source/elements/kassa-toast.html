@@ -6,51 +6,56 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-toast">
-    <template>
-        <style>
-            .error {
-                --iron-icon-fill-color: var(--kassa-error-color);
-            }
+	<template>
+		<style>
+			.error {
+				--iron-icon-fill-color: var(--kassa-error-color);
+			}
 
-            .success {
-                --iron-icon-fill-color: var(--kassa-success-color);
-            }
+			.success {
+				--iron-icon-fill-color: var(--kassa-success-color);
+			}
 
-            span {
-                margin: 0 1.5em;
-            }
+			span {
+				margin: 0 1.5em;
+			}
 
-            paper-button {
-                background: #323232;
-                color: #fff;
-                margin-left: auto;
-            }
-            
-            div {
-                margin: 0;
-                padding: 0;
-                display: flex;
-                flex-flow: row wrap;
-                align-items: center;
-            }
-            
-            div * {
-                flex: 0 0 auto;
-            }
-                        
-            [hidden] {
-                display: none;
-            }
-        </style>
+			paper-button {
+				background: #323232;
+				color: #fff;
+				margin-left: auto;
+			}
 
-        <paper-toast id="toast" duration="[[duration]]">
-            <div>
-                <iron-icon class="error" icon="kassa:error-outline" hidden$="[[!_error]]"></iron-icon><iron-icon class="success" icon="kassa:done" hidden$="[[_error]]"></iron-icon><span>[[text]]</span><paper-button on-tap="close"><content></content></paper-button>
-            </div>
-        </paper-toast>
+			div {
+				margin: 0;
+				padding: 0;
+				display: flex;
+				flex-flow: row wrap;
+				align-items: center;
+			}
 
-    </template>
-    <script>
+			div * {
+				flex: 0 0 auto;
+			}
+
+			[hidden] {
+				display: none;
+			}
+		</style>
+
+		<paper-toast id="toast" duration="[[duration]]">
+			<div>
+				<iron-icon class="error" icon="kassa:error-outline" hidden$="[[!_error]]"></iron-icon>
+				<iron-icon class="success" icon="kassa:done" hidden$="[[_error]]"></iron-icon>
+				<span>[[text]]</span>
+				<paper-button on-tap="close">
+					<content></content>
+				</paper-button>
+			</div>
+		</paper-toast>
+
+	</template>
+	<script>
         Polymer({
             is: "kassa-toast",
             properties: {
@@ -68,14 +73,14 @@
                 }
             },
             behaviors: [KassaBehavior],
-            success: function(message) {
-				this.close();
+            success: function (message) {
+                this.close();
                 this.set('_error', false);
                 this.set('text', message);
                 this.open();
             },
-            error: function(message) {
-				this.close();
+            error: function (message) {
+                this.close();
                 this.set('_error', true);
                 this.set('text', message);
                 this.open();
@@ -87,6 +92,6 @@
                 return this.$.toast.close();
             }
         })
-    </script>
+	</script>
 </dom-module>
  

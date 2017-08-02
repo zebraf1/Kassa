@@ -13,6 +13,7 @@
 /intra/
 /src/Rotalia/*Bundle/Model/map/
 /src/Rotalia/*Bundle/Model/om/
+/src/Rotalia/FrontendBundle/Resources/source/bower_components/
 /composer.phar
 .idea/
 app/propel/generated-schemas/

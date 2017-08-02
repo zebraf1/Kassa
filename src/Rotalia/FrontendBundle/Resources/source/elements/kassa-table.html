@@ -8,115 +8,117 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-table">
-    <template>
-        <style>
-            :host {
-                display: block;
-                position: relative;
-            }
+	<template>
+		<style>
+			:host {
+				display: block;
+				position: relative;
+			}
 
-            .detail {
-                margin-left: calc(48px + 2em);
-            }
+			.detail {
+				margin-left: calc(48px + 2em);
+			}
 
-            .detail div {
-                padding: 0.1em 0;
-                display: flex;
-                flex-flow: row nowrap;
-            }
-            
-            .detail div span:first-child {
-                flex: 0 0 8em;
-            }
-            .detail-number {
-                text-align: right;
-                flex: 0 0 2em;
-            }
+			.detail div {
+				padding: 0.1em 0;
+				display: flex;
+				flex-flow: row nowrap;
+			}
 
-            span.DISABLED {
-                color: #888;
-            }
-            
-            paper-icon-button {
-                padding: 0;
-                width: 24px;
-                height: 24px;
-            }
-            
-            kassa-fab {
-                position: fixed;
-                right: 20px;
-                bottom: 20px;
-            }
+			.detail div span:first-child {
+				flex: 0 0 8em;
+			}
 
-            /* Grid material styling*/
-            vaadin-grid#table {
+			.detail-number {
+				text-align: right;
+				flex: 0 0 2em;
+			}
 
-                font-family: Roboto, sans-serif;
-                --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
-                height: auto;
+			span.DISABLED {
+				color: #888;
+			}
 
-                --vaadin-grid-cell: {
-                    padding-left: 20px;
-                    padding-right: 4px;
-                };
+			paper-icon-button {
+				padding: 0;
+				width: 24px;
+				height: 24px;
+			}
 
-                --vaadin-grid-header-cell: {
-                    height: 64px;
-                    color: rgba(0, 0, 0, var(--dark-secondary-opacity));
-                    font-size: 12px;
-                };
+			kassa-fab {
+				position: fixed;
+				right: 20px;
+				bottom: 20px;
+			}
 
-                --vaadin-grid-body-cell: {
-                    height: 48px;
-                    color: rgba(0, 0, 0, var(--dark-primary-opacity));
-                    font-size: 13px;
-                };
+			/* Grid material styling*/
+			vaadin-grid#table {
 
-                --vaadin-grid-body-row-hover-cell: {
-                    background-color: var(--paper-grey-200);
-                };
+				font-family: Roboto, sans-serif;
+				--divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+				height: auto;
 
-                --vaadin-grid-body-row-selected-cell: {
-                    background-color: var(--paper-grey-100);
-                };
+				--vaadin-grid-cell: {
+					padding-left: 20px;
+					padding-right: 4px;
+				};
 
-                --vaadin-grid-focused-cell: {
-                    box-shadow: none;
-                    font-weight: bold;
-                };
+				--vaadin-grid-header-cell: {
+					height: 64px;
+					color: rgba(0, 0, 0, var(--dark-secondary-opacity));
+					font-size: 12px;
+				};
 
-            }
-        </style>
+				--vaadin-grid-body-cell: {
+					height: 48px;
+					color: rgba(0, 0, 0, var(--dark-primary-opacity));
+					font-size: 13px;
+				};
 
-        <vaadin-grid id="table" items="[[items]]" on-active-item-changed="_onActiveItemChanged">
-            <slot></slot>
-            <vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(editFunc)]]">
-                <template>
-                    <span class="DISABLED"><paper-icon-button icon="kassa:edit" on-tap="_editItem"></paper-icon-button></span>
-                </template>
-            </vaadin-grid-column>
-            <vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(deleteFunc)]]">
-                <template>
-                    <span class="DISABLED"><paper-icon-button icon="kassa:trash" on-tap="_deleteItem"></paper-icon-button></span>
-                </template>
-            </vaadin-grid-column>
-            <template class="row-details">
-                <div class="detail" hidden$="[[!hasRowDetails]]">
-                    <div>
-                        <span>Kogus laos:</span><span class="detail-number">[[item.inventoryAmounts.warehouse]]</span>
-                    </div>
-                    <div>
-                        <span>Kogus müügil:</span><span class="detail-number">[[item.inventoryAmounts.storage]]</span>
-                    </div>
-                </div>
-            </template>
-        </vaadin-grid>
-        
-        <kassa-fab hidden$="[[!isTrue(addFunc)]]" on-tap="_addItem" scroll-target="[[scrollTarget]]"></kassa-fab>
+				--vaadin-grid-body-row-hover-cell: {
+					background-color: var(--paper-grey-200);
+				};
 
-    </template>
-    <script>
+				--vaadin-grid-body-row-selected-cell: {
+					background-color: var(--paper-grey-100);
+				};
+
+				--vaadin-grid-focused-cell: {
+					box-shadow: none;
+					font-weight: bold;
+				};
+
+			}
+		</style>
+
+		<vaadin-grid id="table" items="[[items]]" on-active-item-changed="_onActiveItemChanged">
+			<slot></slot>
+			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(editFunc)]]">
+				<template>
+					<span class="DISABLED"><paper-icon-button icon="kassa:edit" on-tap="_editItem"></paper-icon-button></span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(deleteFunc)]]">
+				<template>
+                    <span class="DISABLED"><paper-icon-button icon="kassa:trash"
+                                                              on-tap="_deleteItem"></paper-icon-button></span>
+				</template>
+			</vaadin-grid-column>
+			<template class="row-details">
+				<div class="detail" hidden$="[[!hasRowDetails]]">
+					<div>
+						<span>Kogus laos:</span><span class="detail-number">[[item.inventoryAmounts.warehouse]]</span>
+					</div>
+					<div>
+						<span>Kogus müügil:</span><span class="detail-number">[[item.inventoryAmounts.storage]]</span>
+					</div>
+				</div>
+			</template>
+		</vaadin-grid>
+
+		<kassa-fab hidden$="[[!isTrue(addFunc)]]" on-tap="_addItem" scroll-target="[[scrollTarget]]"></kassa-fab>
+
+	</template>
+	<script>
         Polymer({
             is: "kassa-table",
             properties: {
@@ -167,12 +169,12 @@
             computeCell: function (pattern, data) {
                 var matchFunc = pattern.match(/^([\w\d]+)\((.+)\)$/);
                 if (matchFunc) {
-                    switch(matchFunc[1]){
+                    switch (matchFunc[1]) {
                         case 'eur':
                             return this.eur2str(this.computeCell(matchFunc[2], data));
                         case 'sum':
                             var summa = 0;
-                            for (var i=0; i<data.length; i++) {
+                            for (var i = 0; i < data.length; i++) {
                                 summa += this.computeCell(matchFunc[2], data[i]);
                             }
                             return summa
@@ -180,78 +182,80 @@
                             return
                     }
                 } else {
-                   return eval(pattern.replace(/([\w\d]+)/g, function (property) {
+                    return eval(pattern.replace(/([\w\d]+)/g, function (property) {
                         return data[property]
                     }))
                 }
             },
-            _attachDialogListener: function(newVal) {
+            _attachDialogListener: function (newVal) {
                 this.listen(newVal, 'kassa-confirm', '_onDialogSubbmit');
             },
-            _addItem: function() {
+            _addItem: function () {
                 var fields = this.dialog.querySelectorAll('[data-field]');
-                
-                for(var i=0; i<fields.length; i++){
+
+                for (var i = 0; i < fields.length; i++) {
                     this._setElementValue(fields[i], '');
                 }
                 this._set_activeItemId(null);
                 this.dialog.open();
             },
-            _editItem: function(event) {
+            _editItem: function (event) {
                 var fields = this.dialog.querySelectorAll('[data-field]');
-                
-                for(var i=0; i<fields.length; i++){
+
+                for (var i = 0; i < fields.length; i++) {
                     this._setElementValue(fields[i], event.model.item[fields[i].getAttribute('data-field')]);
                 }
                 this._set_activeItemId(event.model.item.id);
                 this.dialog.open();
             },
-            _deleteItem: function(event) {
+            _deleteItem: function (event) {
                 this.fire('kassa-backend-action', {action: this.deleteFunc, id: event.model.item.id})
             },
-            _onDialogSubbmit: function(event) {
-                var data = {action: this._activeItemId ? this.editFunc : this.addFunc,
-                            id: this._activeItemId, 
-                            conventId: this.conventId, 
-                            itemType: {},
-                           onSuccess: this._onDialogSuccess.bind(this),
-                           onError: this._onDialogError.bind(this)}
+            _onDialogSubbmit: function (event) {
+                var data = {
+                    action: this._activeItemId ? this.editFunc : this.addFunc,
+                    id: this._activeItemId,
+                    conventId: this.conventId,
+                    itemType: {},
+                    onSuccess: this._onDialogSuccess.bind(this),
+                    onError: this._onDialogError.bind(this)
+                }
                 var fields = this.dialog.querySelectorAll('[data-field]')
 
-                for(var i=0; i<fields.length; i++){
+                for (var i = 0; i < fields.length; i++) {
                     data.itemType[fields[i].getAttribute('data-field')] = this._getElementvalue(fields[i]);
                 }
                 this.fire('kassa-backend-action', data);
             },
-            _onDialogSuccess: function() {
+            _onDialogSuccess: function () {
                 this.dialog.close();
                 this.dialog.querySelector('kassa-confirm-button').reset();
             },
-            _onDialogError: function() {
+            _onDialogError: function () {
                 this.dialog.querySelector('kassa-confirm-button').reset();
             },
-            _setElementValue: function(element, value) {
-                if(element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
+            _setElementValue: function (element, value) {
+                if (element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
                     element.checked = value === 'ACTIVE';
                 } else {
                     element.value = value;
                 }
             },
-            _getElementvalue: function(element) {
-                if(element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
+            _getElementvalue: function (element) {
+                if (element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
                     return element.checked ? "ACTIVE" : "DISABLED"
                 } else {
                     return element.value
                 }
             },
-            _onActiveItemChanged: function(e) {
+            _onActiveItemChanged: function (e) {
                 this.$.table.expandedItems = [e.detail.value];
             },
             _setFabLocation: function () {
                 this.$$('kassa-fab').style.left = this.scrollTarget.getBoundingClientRect().right - 76 + 'px';
             }
         })
-    </script>
+	</script>
 </dom-module>
 
 

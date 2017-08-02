@@ -4,32 +4,48 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-backend">
-    <template>
-        <!-- Authentication -->
-        <iron-ajax id="authenticationDelete" handle-as="json" url='[[_computeURL("authentication")]]' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="authenticationGet" handle-as="json" url='[[_computeURL("authentication")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <!-- Settings -->
-        <iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <!-- Members -->
-        <iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <!-- Products -->
-        <iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST" content-type="application/x-www-form-urlencoded" ></iron-ajax>
-        <iron-ajax id="productsPatch" handle-as="json" url='[[_computeURL("products", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <!-- ProductGroups -->
-        <iron-ajax id="productGroupsGet" handle-as="json" url='[[_computeURL("productGroups")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="productGroupsPost" handle-as="json" url='[[_computeURL("productGroups")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <!-- PointOfSales -->
-        <iron-ajax id="pointOfSalesGet" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="GET" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="pointOfSalesPost" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="pointOfSalesPatch" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="PATCH" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE" content-type="application/x-www-form-urlencoded"></iron-ajax>
-        <!-- Purchase -->
-        <iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST" content-type="application/x-www-form-urlencoded"></iron-ajax>
-    </template>
-    <script>
+	<template>
+		<!-- Authentication -->
+		<iron-ajax id="authenticationDelete" handle-as="json" url='[[_computeURL("authentication")]]' method="DELETE"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="authenticationGet" handle-as="json" url='[[_computeURL("authentication")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- Settings -->
+		<iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- Members -->
+		<iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- Products -->
+		<iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="productsPatch" handle-as="json" url='[[_computeURL("products", _id)]]' method="PATCH"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- ProductGroups -->
+		<iron-ajax id="productGroupsGet" handle-as="json" url='[[_computeURL("productGroups")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="productGroupsPost" handle-as="json" url='[[_computeURL("productGroups")]]' method="POST"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- PointOfSales -->
+		<iron-ajax id="pointOfSalesGet" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="pointOfSalesPost" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="POST"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="pointOfSalesPatch" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="PATCH"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- Purchase -->
+		<iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+	</template>
+	<script>
         Polymer({
             is: 'kassa-backend',
             properties: {
@@ -87,27 +103,31 @@
                 'error': '_onRequestError'
             },
             behaviors: [KassaBehavior],
-            attached: function() {
+            attached: function () {
                 this.doAuthenticationGet();
             },
             /* Authentication */
-            doLogin: function(username, password) {
-                this.$.authenticationPost.set('body', {username: username, password: password, csrfToken: this.csrfToken});
-                return this.$.authenticationPost.generateRequest().completes.then(function(result) {
+            doLogin: function (username, password) {
+                this.$.authenticationPost.set('body', {
+                    username: username,
+                    password: password,
+                    csrfToken: this.csrfToken
+                });
+                return this.$.authenticationPost.generateRequest().completes.then(function (result) {
                     this.fire('kassa-message-success', this._checkSuccess(result));
                     this.doAuthenticationGet();
                 }.bind(this))
             },
-            doLogout: function() {
-                return this.$.authenticationDelete.generateRequest().completes.then(function(result) {
+            doLogout: function () {
+                return this.$.authenticationDelete.generateRequest().completes.then(function (result) {
                     this.fire('kassa-message-success', this._checkSuccess(result));
                     this.doAuthenticationGet();
                 }.bind(this));
             },
-            doAuthenticationGet: function() {
-                return this.$.authenticationGet.generateRequest().completes.then(function(result) {
+            doAuthenticationGet: function () {
+                return this.$.authenticationGet.generateRequest().completes.then(function (result) {
                     var data = this._checkSuccess(result);
-                    if(data.csrfToken) {
+                    if (data.csrfToken) {
                         this._setCsrfToken(data.csrfToken);
                         this._setMember(null);
                     } else {
@@ -118,11 +138,11 @@
                 }.bind(this))
             },
             /* Settings */
-            doSettingsGet: function() {
-                return this.$.settingsGet.generateRequest().completes.then(function(result) {
-                        var data = this._checkSuccess(result);
-                        this._setSettings(data);
-                    }.bind(this))
+            doSettingsGet: function () {
+                return this.$.settingsGet.generateRequest().completes.then(function (result) {
+                    var data = this._checkSuccess(result);
+                    this._setSettings(data);
+                }.bind(this))
             },
             /* Members */
             doMembersGet: function () {
@@ -132,83 +152,86 @@
                 }.bind(this))
             },
             /* Products */
-            doProductsGetAll: function(conventId) {
+            doProductsGetAll: function (conventId) {
                 return Promise.all([this.doProductsGetActive(conventId), this.doProductsGetInactive(conventId)])
             },
-            doProductsGetActive: function(conventId) {
+            doProductsGetActive: function (conventId) {
                 this.$.productsGet.set('params', {conventId: conventId, active: true});
-                return this.$.productsGet.generateRequest().completes.then(function(result) {
+                return this.$.productsGet.generateRequest().completes.then(function (result) {
                     var data = this._checkSuccess(result);
                     this._setActiveProducts(data.products);
                 }.bind(this))
             },
-            doProductsGetInactive: function(conventId) {
+            doProductsGetInactive: function (conventId) {
                 this.$.productsGet.set('params', {conventId: conventId, active: false});
-                return this.$.productsGet.generateRequest().completes.then(function(result) {
+                return this.$.productsGet.generateRequest().completes.then(function (result) {
                     var data = this._checkSuccess(result);
                     this._setInactiveProducts(data.products);
                 }.bind(this))
             },
-            doProductsPost: function(conventId, ProductType) {
+            doProductsPost: function (conventId, ProductType) {
                 this.$.productsPost.set('body', this.formatBody({conventId: conventId, ProductType: ProductType}));
-                return this.$.productsPost.generateRequest().completes.then(function(result) {
-                        this._checkSuccess(result);
-                        this.doProductsGetAll(conventId);
-                        this.fire('kassa-message-success', 'Toode edukalt lisatud');
-                    }.bind(this))
+                return this.$.productsPost.generateRequest().completes.then(function (result) {
+                    this._checkSuccess(result);
+                    this.doProductsGetAll(conventId);
+                    this.fire('kassa-message-success', 'Toode edukalt lisatud');
+                }.bind(this))
             },
-            doProductsPatch: function(conventId, productId, ProductType) {
+            doProductsPatch: function (conventId, productId, ProductType) {
                 this.$.productsPatch.set('body', this.formatBody({conventId: conventId, ProductType: ProductType}));
                 this.set('_id', productId);
-                return this.$.productsPatch.generateRequest().completes.then(function(result) {
-                        this._checkSuccess(result);
-                        this.doProductsGetAll(conventId);
-                        this.fire('kassa-message-success', 'Toode edukalt muudetud');
-                    }.bind(this))
+                return this.$.productsPatch.generateRequest().completes.then(function (result) {
+                    this._checkSuccess(result);
+                    this.doProductsGetAll(conventId);
+                    this.fire('kassa-message-success', 'Toode edukalt muudetud');
+                }.bind(this))
             },
             /* ProductGroups */
-            doProductGroupsGet: function() {
-                return this.$.productGroupsGet.generateRequest().completes.then(function(result) {
+            doProductGroupsGet: function () {
+                return this.$.productGroupsGet.generateRequest().completes.then(function (result) {
                     var data = this._checkSuccess(result);
                     this._setProductGroups(data.productGroups);
                 }.bind(this))
             },
-            doProductGroupsPost: function(ProductGroupType) {
+            doProductGroupsPost: function (ProductGroupType) {
                 this.$.productGroupsPost.set('body', this.formatBody({ProductGroupType: ProductGroupType}));
-                return this.$.productGroupsPost.generateRequest().completes.then(function(result) {
-                        this._checkSuccess(result);
-                        this.doProductGroupsGet();
-                        this.fire('kassa-message-success', 'Tootegrupp edukalt lisatud');
-                    }.bind(this))
+                return this.$.productGroupsPost.generateRequest().completes.then(function (result) {
+                    this._checkSuccess(result);
+                    this.doProductGroupsGet();
+                    this.fire('kassa-message-success', 'Tootegrupp edukalt lisatud');
+                }.bind(this))
             },
-            doProductGroupsPatch: function(productGroupId, ProductGroupType) {
+            doProductGroupsPatch: function (productGroupId, ProductGroupType) {
                 this.$.productGroupsPatch.set('body', this.formatBody({ProductGroupType: ProductGroupType}));
                 this.set('_id', productGroupId);
-                return this.$.productGroupsPatch.generateRequest().completes.then(function(result) {
-                        this._checkSuccess(result);
-                        this.doProductGroupsGet();
-                        this.fire('kassa-message-success', 'Tootegrupp edukalt muudetud');
-                    }.bind(this))
+                return this.$.productGroupsPatch.generateRequest().completes.then(function (result) {
+                    this._checkSuccess(result);
+                    this.doProductGroupsGet();
+                    this.fire('kassa-message-success', 'Tootegrupp edukalt muudetud');
+                }.bind(this))
             },
             /* PointOfSales */
-            doPointOfSalesGet: function() {
-                return this.$.pointOfSalesGet.generateRequest().completes.then(function(result) {
+            doPointOfSalesGet: function () {
+                return this.$.pointOfSalesGet.generateRequest().completes.then(function (result) {
                     var data = this._checkSuccess(result);
                     this._setPointOfSales(data.pointOfSales);
                 }.bind(this))
             },
-            doPointOfSalesPost: function(conventId, PointOfSaleType) {
-                this.$.pointOfSalesPost.set('body', this.formatBody({conventId: conventId, PointOfSaleType: PointOfSaleType}));
-                return this.$.pointOfSalesPost.generateRequest().completes.then(function(result) {
+            doPointOfSalesPost: function (conventId, PointOfSaleType) {
+                this.$.pointOfSalesPost.set('body', this.formatBody({
+                    conventId: conventId,
+                    PointOfSaleType: PointOfSaleType
+                }));
+                return this.$.pointOfSalesPost.generateRequest().completes.then(function (result) {
                     this._checkSuccess(result);
                     this.doPointOfSalesGet();
                     this.fire('kassa-message-success', 'Müügipunkt edukalt lisatud');
                 }.bind(this))
             },
-            doPointOfSalesPatch: function(pointOfSaleId, PointOfSaleType) {
+            doPointOfSalesPatch: function (pointOfSaleId, PointOfSaleType) {
                 this.$.pointOfSalesPatch.set('body', this.formatBody({PointOfSaleType: PointOfSaleType}));
                 this.set('_id', pointOfSaleId);
-                return this.$.pointOfSalesPatch.generateRequest().completes.then(function(result) {
+                return this.$.pointOfSalesPatch.generateRequest().completes.then(function (result) {
                     this._checkSuccess(result);
                     this.doPointOfSalesGet();
                     this.fire('kassa-message-success', 'Müügipunkt edukalt muudetud');
@@ -216,24 +239,24 @@
             },
             doPointOfSalesDelete: function (pointOfSaleId) {
                 this.set('_id', pointOfSaleId);
-                return this.$.pointOfSalesDelete.generateRequest().completes.then(function(result) {
+                return this.$.pointOfSalesDelete.generateRequest().completes.then(function (result) {
                     this._checkSuccess(result);
                     this.doPointOfSalesGet();
                     this.fire('kassa-message-success', 'Müügipunkt edukalt kustutatud');
                 }.bind(this))
             },
             /* Purchase */
-            doPurchasePost: function(memberId, basket) {
-                this.$.purchasePost.set('body', this.formatBody({conventId: memberId, basket: basket}));
-                return this.$.purchasePost.generateRequest().completes.then(function(result) {
+            doPurchasePost: function (conventId, memberId, basket) {
+                this.$.purchasePost.set('body', this.formatBody({conventId: conventId, memberId: memberId, basket: basket}));
+                return this.$.purchasePost.generateRequest().completes.then(function (result) {
                     this._checkSuccess(result);
                     this.fire('kassa-message-success', 'Ost edukalt sooritatud');
                 }.bind(this))
             },
             /* General */
-            doAction: function(data) {
+            doAction: function (data) {
                 var promise;
-                switch(data.action) {
+                switch (data.action) {
                     /* Authentication */
                     case 'doLogin':
                         promise = this.doLogin(data.username, data.password);
@@ -254,10 +277,10 @@
                         break;
                     case 'doProductsGetActive':
                         promise = this.doProductsGetActive(data.conventId);
-                        break;    
+                        break;
                     case 'doProductsPost':
                         promise = this.doProductsPost(data.conventId, data.itemType);
-                        break; 
+                        break;
                     case 'doProductsPatch':
                         promise = this.doProductsPatch(data.conventId, data.id, data.itemType);
                         break;
@@ -267,10 +290,10 @@
                         break;
                     case 'doProductGroupsPost':
                         promise = this.doProductGroupsPost(data.itemType);
-                        break; 
+                        break;
                     case 'doProductGroupsPatch':
                         promise = this.doProductGroupsPatch(data.id, data.itemType);
-                        break;    
+                        break;
                     /* PointOfSales */
                     case 'doPointOfSalesGet':
                         promise = this.doPointOfSalesGet();
@@ -286,20 +309,20 @@
                         break;
                     /* Purchase */
                     case 'doPurchasePost':
-                        promise = this.doPurchasePost(data.memberId, data.basket);
+                        promise = this.doPurchasePost(data.conventId, data.memberId, data.basket);
                         break;
-                    /* General */    
+                    /* General */
                     default:
                         console.error('Vale action.', data);
                 }
-                
-                if(promise) {
-                    promise.then(function(){
-                        if(data.onSuccess) {
+
+                if (promise) {
+                    promise.then(function () {
+                        if (data.onSuccess) {
                             data.onSuccess.call();
                         }
-                    }, function(error){
-                        if(data.onError) {
+                    }, function (error) {
+                        if (data.onError) {
                             data.onError.call();
                         } else {
                             console.error(error);
@@ -307,57 +330,65 @@
                     });
                 }
             },
-            formatBody: function(body) {
+            formatBody: function (body) {
                 var newBody = {};
                 for (var key in body) {
-                    if(body.hasOwnProperty(key) && this.isTrue(body[key])) {
-                        if(body[key].constructor === Object) {
+                    if (body.hasOwnProperty(key) && this.isTrue(body[key])) {
+                        if (body[key].constructor === Object) {
                             for (var key2 in body[key]) {
-                                if(body[key].hasOwnProperty(key2)) {
-                                    newBody[key+'['+key2+']'] = body[key][key2];
+                                if (body[key].hasOwnProperty(key2)) {
+                                    newBody[key + '[' + key2 + ']'] = body[key][key2];
                                 }
                             }
+                        } else if (Array.isArray(body[key])) {
+							for(let i = 0; i<body[key].length; i++) {
+                                for (var key2 in body[key][i]) {
+                                    if (body[key][i].hasOwnProperty(key2)) {
+                                        newBody[key + '[' + i + ']' + '[' + key2 + ']'] = body[key][i][key2];
+                                    }
+                                }
+							}
                         } else {
                             newBody[key] = body[key];
                         }
                     }
                 }
-                
                 return newBody
             },
-            _checkSuccess: function(result) {
-                if(result.xhr.response && result.xhr.response.status === 'success') {
+            _checkSuccess: function (result) {
+                if (result.xhr.response && result.xhr.response.status === 'success') {
                     return result.xhr.response.data;
                 } else {
                     console.error('Vigane vastus serverilt.', result);
                 }
             },
-            _checkError: function(event) {
-                if(event.detail.request.xhr.response) {
+            _checkError: function (event) {
+                if (event.detail.request.xhr.response) {
+                    console.log(event.detail.request.xhr.response);
                     if (event.detail.request.xhr.response.status === 'fail' || event.detail.request.xhr.response.status === 'error') {
                         return event.detail.request.xhr.response.data.message ? event.detail.request.xhr.response.data.message : event.detail.request.xhr.response.data
                     } else {
                         console.error('Vigane vastus serverilt.', event);
-                    }      
+                    }
                 } else {
                     console.error('Ei saanud vastust serverilt.', event);
-                } 
-                
+                }
+
                 return 'Tekkis tundmatu viga.'
             },
-            _computeURL: function(endpoint, id) {
+            _computeURL: function (endpoint, id) {
                 if (typeof id === 'undefined') {
-                    return '/api/'+endpoint+'/'
+                    return '/api/' + endpoint + '/'
                 } else {
-                    return '/api/'+endpoint+'/'+id+'/'
+                    return '/api/' + endpoint + '/' + id + '/'
                 }
-                
+
             },
-            _onRequestError: function(event) {
+            _onRequestError: function (event) {
                 event.stopPropagation();
                 this.fire('kassa-message-error', this._checkError(event));
             }
         })
-    
-    </script>
+
+	</script>
 </dom-module>

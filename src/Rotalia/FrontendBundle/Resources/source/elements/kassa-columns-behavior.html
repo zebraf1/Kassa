@@ -11,7 +11,7 @@
         },
 
         setColumnWidths: function () {
-            this.debounce('columnWidth', function() {
+            this.debounce('columnWidth', function () {
                 var children = this.querySelectorAll('[kassa-columns-item]');
                 if (children.length > 0) {
                     var parent = children[0].parentElement;

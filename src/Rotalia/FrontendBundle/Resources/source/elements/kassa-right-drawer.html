@@ -3,27 +3,27 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-right-drawer">
-    <template>
-        <style>
-            :host {
-                display: block;
-                background-color: #f1f1f1;
-                height: 100%;
-                box-shadow: -4px 0 4px rgba(0, 0, 0, 0.3);
-                padding: 1em;
-            }
+	<template>
+		<style>
+			:host {
+				display: block;
+				background-color: #f1f1f1;
+				height: 100%;
+				box-shadow: -4px 0 4px rgba(0, 0, 0, 0.3);
+				padding: 1em;
+			}
 
-        </style>
+		</style>
 
-        <template is="dom-repeat" items="{{faqs}}" as="faq">
-            <div>
-                <b>[[faq.title]]</b>
-                <p>[[faq.content]]</p>
-            </div>
-        </template>
+		<template is="dom-repeat" items="{{faqs}}" as="faq">
+			<div>
+				<b>[[faq.title]]</b>
+				<p>[[faq.content]]</p>
+			</div>
+		</template>
 
-    </template>
-    <script>
+	</template>
+	<script>
         Polymer({
             is: "kassa-right-drawer",
             properties: {
@@ -36,5 +36,5 @@
             },
             behaviors: [KassaBehavior],
         })
-    </script>
+	</script>
 </dom-module>

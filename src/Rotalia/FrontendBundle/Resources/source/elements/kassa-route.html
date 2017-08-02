@@ -4,13 +4,13 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-route">
-    <template>
-        <app-location route="{{route}}" use-hash-as-path></app-location>
-        <app-route route="{{route}}"
-                   pattern="/:page"
-                   data="{{routeData}}"></app-route>
-    </template>
-    <script>
+	<template>
+		<app-location route="{{route}}" use-hash-as-path></app-location>
+		<app-route route="{{route}}"
+		           pattern="/:page"
+		           data="{{routeData}}"></app-route>
+	</template>
+	<script>
         Polymer({
             is: "kassa-route",
             properties: {
@@ -32,20 +32,20 @@
             },
             observers: ['_computePage(routeData, member, navigation)'],
             behaviors: [KassaBehavior],
-            _computePage: function(routeData, member, navigation) {
+            _computePage: function (routeData, member, navigation) {
                 var _default = navigation[0].page;
-                
+
                 //Pole sisse logitud?
-                if(!this.isTrue(member)) {
+                if (!this.isTrue(member)) {
                     this._setPage('login');
                     this.set('routeData.page', 'login');
-                    return null 
+                    return null
                 }
 
                 if (this.isTrue(routeData) && routeData.page) {
                     //Kas on sobivate õigustega??
-                    for(var i=0; i<navigation.length; i++) {
-                        if(routeData.page === navigation[i].page && member.roles.indexOf(navigation[i].role) >= 0) {
+                    for (var i = 0; i < navigation.length; i++) {
+                        if (routeData.page === navigation[i].page && member.roles.indexOf(navigation[i].role) >= 0) {
                             this._setPage(routeData.page);
                             return null
                         }
@@ -57,11 +57,11 @@
                         return null
                     }
                 }
-                
+
                 //Kui muud ei leia
                 this._setPage(_default);
                 return null
             }
         })
-    </script>
+	</script>
 </dom-module>

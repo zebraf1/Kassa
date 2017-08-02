@@ -6,59 +6,58 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-ost-valitud-toode">
-    <template>
-        <style>
-            paper-material {
-                display: flex;
-                flex-flow: row wrap;
-                justify-content: flex-start;
-                align-items: center;
-                padding: 1em;
-            }
+	<template>
+		<style>
+			paper-material {
+				display: flex;
+				flex-flow: row wrap;
+				justify-content: flex-start;
+				align-items: center;
+				padding: 1em;
+			}
 
-            span {
-                display: block;
-                flex: 0 0 auto;
-                text-align: right;
-                padding-left: 0.8em;
-                margin-left: auto;
-            }
+			span {
+				display: block;
+				flex: 0 0 auto;
+				text-align: right;
+				padding-left: 0.8em;
+				margin-left: auto;
+			}
 
-            span.name {
-                flex: 1 1 auto;
-                text-align: left;
-                padding: 0;
-            }
-            
-            div {
-                display: flex;
-                flex: 0 0 auto;
-                margin-left: auto;
-            }
-            
-            paper-icon-button {
-                flex: 0 0 3em;
-            }
+			span.name {
+				flex: 1 1 auto;
+				text-align: left;
+				padding: 0;
+			}
 
-            [data-invisible] {
-                visibility: hidden;
-            }
+			div {
+				display: flex;
+				flex: 0 0 auto;
+				margin-left: auto;
+			}
 
-        </style>
+			paper-icon-button {
+				flex: 0 0 3em;
+			}
 
-        <paper-material elevation="1">
-            <paper-icon-button icon="kassa:clear" data-invisible$="[[fixed]]"></paper-icon-button>
-            <span class="name">[[product.name]]</span>
-            <div>
-                <span>[[product.amount]] &times; [[product.size]]</span>
-                <span>[[eur2str(product.summa)]]</span>
-            </div>
-        </paper-material>
+			[data-invisible] {
+				visibility: hidden;
+			}
+
+		</style>
+
+		<paper-material elevation="1">
+			<paper-icon-button icon="kassa:clear" data-invisible$="[[fixed]]"></paper-icon-button>
+			<span class="name">[[product.name]]</span>
+			<div>
+				<span>[[product.count]] &times; [[product.amount]]</span>
+				<span>[[eur2str(product.price)]]</span>
+			</div>
+		</paper-material>
 
 
-
-    </template>
-    <script>
+	</template>
+	<script>
         Polymer({
             is: "kassa-ost-valitud-toode",
             properties: {
@@ -72,5 +71,5 @@
             },
             behaviors: [KassaBehavior]
         })
-    </script>
+	</script>
 </dom-module>

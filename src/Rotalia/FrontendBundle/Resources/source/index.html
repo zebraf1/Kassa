@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="et">
 <head>
-    <title>ÕKassa</title>
+	<title>ÕKassa</title>
 
-    <meta charset="utf-8">
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="shortcut icon" href="images/icons/favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+	<link rel="shortcut icon" href="images/icons/favicon.ico">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
 
-    <!-- Chrome for Android theme color -->
+	<!-- Chrome for Android theme color -->
 	<meta name="theme-color" content="#84bd00">
 
 	<!-- Web Application Manifest -->
@@ -25,15 +25,15 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="apple-mobile-web-app-title" content="ÕKassa">
-    <link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-icon.png">
-    <link rel="mask-icon" href="images/icons/safari-pinned-tab.svg" color="#0077c8">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-icon.png">
+	<link rel="mask-icon" href="images/icons/safari-pinned-tab.svg" color="#0077c8">
 
-    <!-- Tile icon for Win -->
-    <meta name="msapplication-TileImage" content="mages/icons/mstile-150x150.png">
-    <meta name="msapplication-TileColor" content="#0077c8">
+	<!-- Tile icon for Win -->
+	<meta name="msapplication-TileImage" content="mages/icons/mstile-150x150.png">
+	<meta name="msapplication-TileColor" content="#0077c8">
 
-    <script src="js/main.js"></script>
-    <link rel="import" href="elements/kassa-app.html" async>
+	<script src="js/main.js"></script>
+	<link rel="import" href="elements/kassa-app.html" async>
 
 	<style is="custom-style">
 		:root {
@@ -98,86 +98,86 @@
 			flex-grow: 1;
 		}
 
-        /*Skeleton for fast first paint*/
-        html, body {
-            padding: 0;
-            margin: 0;
-            height: 100%;
-        }
+		/*Skeleton for fast first paint*/
+		html, body {
+			padding: 0;
+			margin: 0;
+			height: 100%;
+		}
 
-        #skeleton {
-            display: none;
-        }
+		#skeleton {
+			display: none;
+		}
 
-        .loading #skeleton {
-            display: flex;
-            flex-flow: row nowrap;
-            height: 100%;
-        }
+		.loading #skeleton {
+			display: flex;
+			flex-flow: row nowrap;
+			height: 100%;
+		}
 
-        #left {
-            flex: 0 0 256px;
-            background-color: #1A1A1A;
-            height: 100%;
-            box-shadow: 4px 0 4px rgba(0, 0, 0, 0.3);
-            z-index: 1;
-        }
+		#left {
+			flex: 0 0 256px;
+			background-color: #1A1A1A;
+			height: 100%;
+			box-shadow: 4px 0 4px rgba(0, 0, 0, 0.3);
+			z-index: 1;
+		}
 
-        #main {
-            flex: 1 1 100%;
-            display: flex;
-            flex-flow: column nowrap;
-        }
+		#main {
+			flex: 1 1 100%;
+			display: flex;
+			flex-flow: column nowrap;
+		}
 
-        #head {
-            background-color: #84bd00;
-            flex: 0 0 192px;
-            color: #fff;
-            position: relative;
-            z-index: 0;
-        }
+		#head {
+			background-color: #84bd00;
+			flex: 0 0 192px;
+			color: #fff;
+			position: relative;
+			z-index: 0;
+		}
 
-        #content {
-            flex: 1 1 auto;
-            padding: 1em;
-        }
+		#content {
+			flex: 1 1 auto;
+			padding: 1em;
+		}
 
-        #right {
-            flex: 0 0 320px;
-            background-color: #f1f1f1;
-            height: 100%;
-            box-shadow: -4px 0 4px rgba(0, 0, 0, 0.3);
-            z-index: 1;
-        }
+		#right {
+			flex: 0 0 320px;
+			background-color: #f1f1f1;
+			height: 100%;
+			box-shadow: -4px 0 4px rgba(0, 0, 0, 0.3);
+			z-index: 1;
+		}
 
-        #title {
-            font-size: 50px;
-            position: absolute;
-            bottom: 0;
-            left: 10%;
-        }
+		#title {
+			font-size: 50px;
+			position: absolute;
+			bottom: 0;
+			left: 10%;
+		}
 
-        #title img {
-            height: 1.2em;
-            width: 1.2em;
-        }
+		#title img {
+			height: 1.2em;
+			width: 1.2em;
+		}
 
-        #title span {
-            position: absolute;
-            bottom: 0.15em;
-        }
+		#title span {
+			position: absolute;
+			bottom: 0.15em;
+		}
 
-        @media screen and (max-width: 800px) {
-            #left {
-                display: none;
-            }
-        }
+		@media screen and (max-width: 800px) {
+			#left {
+				display: none;
+			}
+		}
 
-        @media screen and (max-width: 1120px) {
-            #right {
-                display: none;
-            }
-        }
+		@media screen and (max-width: 1120px) {
+			#right {
+				display: none;
+			}
+		}
 	</style>
 
 </head>
@@ -185,17 +185,17 @@
 
 <!-- Skeleton for fast first paint -->
 <div id="skeleton">
-    <div id="left"></div>
-    <div id="main">
-        <div id="head">
-            <div id="title">
-                <img src="images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span>
-            </div>
-        </div>
-        <div id="content">
-        </div>
-    </div>
-    <div id="right"></div>
+	<div id="left"></div>
+	<div id="main">
+		<div id="head">
+			<div id="title">
+				<img src="images/icons/icon-96x96.png" alt="õkassa logo"/><span>KASSA</span>
+			</div>
+		</div>
+		<div id="content">
+		</div>
+	</div>
+	<div id="right"></div>
 </div>
 
 <kassa-app></kassa-app>

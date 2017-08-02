@@ -18,91 +18,100 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-app">
-    <template>
-        <style>
-            :host {
-                display: block;
-                height: 100%;
-            }
-            app-header {
-                background-color: var(--kassa-primary-color);
-                color: #FFFFFF;
-            }
+	<template>
+		<style>
+			:host {
+				display: block;
+				height: 100%;
+			}
 
-            div[title] {
-                font-size: 50px;
-                position: absolute;
-                bottom: 0;
-                left: 10%;
-            }
+			app-header {
+				background-color: var(--kassa-primary-color);
+				color: #FFFFFF;
+			}
 
-            app-toolbar img {
-                height: 1.2em;
-                width: 1.2em;
-            }
+			div[title] {
+				font-size: 50px;
+				position: absolute;
+				bottom: 0;
+				left: 10%;
+			}
 
-            app-toolbar span {
-                position: absolute;
-                bottom: 0.15em;
+			app-toolbar img {
+				height: 1.2em;
+				width: 1.2em;
+			}
 
-            }
+			app-toolbar span {
+				position: absolute;
+				bottom: 0.15em;
 
-            #leftDrawer {
-                --app-drawer-width: 256px;
-            }
-            
-            #rightDrawer {
-                --app-drawer-width: 320px;
-            }
-            
-            [hidden] {
-                display: none;
-            }
-        </style>
+			}
+
+			#leftDrawer {
+				--app-drawer-width: 256px;
+			}
+
+			#rightDrawer {
+				--app-drawer-width: 320px;
+			}
+
+			[hidden] {
+				display: none;
+			}
+		</style>
 
 
-        <kassa-backend id="backend" member="{{member}}" settings="{{settings}}" members="{{members}}"
-                       active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}"
-                       product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"></kassa-backend>
-        <kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]"></kassa-route>
-        
-        <kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
+		<kassa-backend id="backend" member="{{member}}" settings="{{settings}}" members="{{members}}"
+		               active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}"
+		               product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"></kassa-backend>
+		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]"></kassa-route>
 
-        <app-drawer-layout fullbleed responsive-width="800px" narrow="{{leftNarrow}}">
-            <app-drawer id="leftDrawer" align="left">
-                <kassa-left-drawer page="[[page]]" member="{{member}}" active-convents="[[settings.activeConvents]]"  navigation="[[navigation]]"></kassa-left-drawer>
-            </app-drawer>
-            <app-drawer-layout fullbleed responsive-width="1120px" narrow="{{rightNarrow}}">
-                <app-drawer id="rightDrawer" align="right">
-                    <kassa-right-drawer page="[[page]]"></kassa-right-drawer>
-                </app-drawer>
-                <app-header  scroll-target="[[scrollTarget]]" condenses reveals effects="material">
-                    <app-toolbar>
-                        <paper-icon-button icon="kassa:menu" hidden$="[[!leftNarrow]]" on-tap="_toggleLeftDrawer"></paper-icon-button>
-                        <div condensed-title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
-                        <paper-icon-button icon="kassa:help" hidden$="[[!rightNarrow]]" on-tap="_toggleRightDrawer"></paper-icon-button>
-                    </app-toolbar>
-                    <app-toolbar></app-toolbar>
-                    <app-toolbar class="tall">
-                        <div title><img src="../images/icons/icon-96x96.png" alt="õkassa logo" /><span>KASSA</span></div>
-                    </app-toolbar>
-                </app-header>
+		<kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
 
-                 <kassa-pages selected="[[page]]" scroll-target="{{scrollTarget}}">
-                     <kassa-login data-page="login"></kassa-login>
-                     <kassa-logout data-page="logout"></kassa-logout>
-                     <kassa-ost data-page="ost" member="[[member]]" members="[[members]]" products="[[activeProducts]]" product-groups="[[productGroups]]"></kassa-ost>
-                     <kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]"
-                                         active-products="[[activeProducts]]" inactive-products="[[inactiveProducts]]" product-groups="[[productGroups]]"></kassa-admin-tooted>
-                     <kassa-admin-tootegrupid data-page="admin-tootegrupid" product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
-                     <kassa-admin-kassad data-page="admin-kassad" point-of-sales="[[pointOfSales]]" active-convents="[[settings.activeConvents]]"></kassa-admin-kassad>
-                 </kassa-pages>
+		<app-drawer-layout fullbleed responsive-width="800px" narrow="{{leftNarrow}}">
+			<app-drawer id="leftDrawer" align="left">
+				<kassa-left-drawer page="[[page]]" member="{{member}}" active-convents="[[settings.activeConvents]]"
+				                   navigation="[[navigation]]"></kassa-left-drawer>
+			</app-drawer>
+			<app-drawer-layout fullbleed responsive-width="1120px" narrow="{{rightNarrow}}">
+				<app-drawer id="rightDrawer" align="right">
+					<kassa-right-drawer page="[[page]]"></kassa-right-drawer>
+				</app-drawer>
+				<app-header scroll-target="[[scrollTarget]]" condenses reveals effects="material">
+					<app-toolbar>
+						<paper-icon-button icon="kassa:menu" hidden$="[[!leftNarrow]]"
+						                   on-tap="_toggleLeftDrawer"></paper-icon-button>
+						<div condensed-title><img src="../images/icons/icon-96x96.png"
+						                          alt="õkassa logo"/><span>KASSA</span></div>
+						<paper-icon-button icon="kassa:help" hidden$="[[!rightNarrow]]"
+						                   on-tap="_toggleRightDrawer"></paper-icon-button>
+					</app-toolbar>
+					<app-toolbar></app-toolbar>
+					<app-toolbar class="tall">
+						<div title><img src="../images/icons/icon-96x96.png" alt="õkassa logo"/><span>KASSA</span></div>
+					</app-toolbar>
+				</app-header>
 
-            </app-drawer-layout>
-        </app-drawer-layout>
+				<kassa-pages selected="[[page]]" scroll-target="{{scrollTarget}}">
+					<kassa-login data-page="login"></kassa-login>
+					<kassa-logout data-page="logout"></kassa-logout>
+					<kassa-ost data-page="ost" member="[[member]]" members="[[members]]" products="[[activeProducts]]"
+					           product-groups="[[productGroups]]"></kassa-ost>
+					<kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]"
+					                    active-products="[[activeProducts]]" inactive-products="[[inactiveProducts]]"
+					                    product-groups="[[productGroups]]"></kassa-admin-tooted>
+					<kassa-admin-tootegrupid data-page="admin-tootegrupid"
+					                         product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
+					<kassa-admin-kassad data-page="admin-kassad" point-of-sales="[[pointOfSales]]"
+					                    active-convents="[[settings.activeConvents]]"></kassa-admin-kassad>
+				</kassa-pages>
 
-    </template>
-    <script>
+			</app-drawer-layout>
+		</app-drawer-layout>
+
+	</template>
+	<script>
         Polymer({
             is: "kassa-app",
             properties: {
@@ -110,8 +119,8 @@
                 navigation: {
                     type: Array,
                     readOnly: true,
-                    value: function() {
-                        return  [
+                    value: function () {
+                        return [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
                             {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},
@@ -133,26 +142,26 @@
                 'kassa-message-error': '_onErrorMessage',
                 'kassa-backend-action': '_onBackendAction'
             },
-            ready: function() {
+            ready: function () {
                 this.fire('kassa-app-loaded');
             },
-            _scrollHandler: function() {
+            _scrollHandler: function () {
                 var _appHeader = this.$$('app-header');
                 _appHeader.style.marginBottom = -_appHeader._top + 'px';
             },
-            _onSuccessMessage: function(event) {
+            _onSuccessMessage: function (event) {
                 this.$.toast.success(event.detail);
             },
             _onErrorMessage: function (event) {
                 this.$.toast.error(event.detail);
             },
-            _onBackendAction: function(event) {
+            _onBackendAction: function (event) {
                 this.$.backend.doAction(event.detail);
             },
-            _toggleLeftDrawer: function() {
+            _toggleLeftDrawer: function () {
                 this.$.leftDrawer.toggle();
             },
-            _toggleRightDrawer: function() {
+            _toggleRightDrawer: function () {
                 this.$.rightDrawer.toggle();
             },
             _onPageChange: function (newPage, oldPage) {
@@ -165,5 +174,5 @@
                 }
             }
         })
-    </script>
+	</script>
 </dom-module>

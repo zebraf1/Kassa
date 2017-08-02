@@ -4,12 +4,12 @@
 <link rel="import" href="kassa-page-behavior.html">
 
 <dom-module id="kassa-logout">
-    <template>
-        <style>
-        </style>
+	<template>
+		<style>
+		</style>
 
-    </template>
-    <script>
+	</template>
+	<script>
         Polymer({
             is: "kassa-logout",
             behaviors: [KassaBehavior, PageBehavior],
@@ -17,5 +17,5 @@
                 this.fire('kassa-backend-action', {action: 'doLogout'});
             }
         })
-    </script>
+	</script>
 </dom-module>

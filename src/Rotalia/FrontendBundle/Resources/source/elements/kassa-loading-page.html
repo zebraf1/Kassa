@@ -5,27 +5,27 @@
 <link rel="import" href="kassa-page-behavior.html">
 
 <dom-module id="kassa-loading-page">
-    <template>
-        <style>
-            :host {
-                position: absolute;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-        </style>
-        <paper-spinner active></paper-spinner>
-    </template>
-    <script>
+	<template>
+		<style>
+			:host {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+			}
+		</style>
+		<paper-spinner active></paper-spinner>
+	</template>
+	<script>
         Polymer({
             is: "kassa-loading-page",
             behaviors: [KassaBehavior, PageBehavior]
         })
-    </script>
+	</script>
 </dom-module>
 

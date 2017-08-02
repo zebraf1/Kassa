@@ -8,59 +8,64 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-confirm-button">
-    <template>
-        <style>
-            :host {
-                display: flex;
-                flex-flow: column nowrap;
-                min-width: 8em;
-            }
+	<template>
+		<style>
+			:host {
+				display: flex;
+				flex-flow: column nowrap;
+				min-width: 8em;
+			}
 
-            div {
-                display: flex;
-                align-items: center;
-            }
+			div {
+				display: flex;
+				align-items: center;
+			}
 
-            paper-button {
-                margin: 0;
-            }
+			paper-button {
+				margin: 0;
+			}
 
-            #backButton {
-                min-width: 2.5em;
-                margin-right: 0.1em;
-                border-top-right-radius: 0px;
-                border-bottom-right-radius: 0px;
-            }
+			#backButton {
+				min-width: 2.5em;
+				margin-right: 0.1em;
+				border-top-right-radius: 0px;
+				border-bottom-right-radius: 0px;
+			}
 
-            #doubleConfirmButton {
-                border-top-left-radius: 0px;
-                border-bottom-left-radius: 0px;
-                flex: 1 1 auto;
-            }
+			#doubleConfirmButton {
+				border-top-left-radius: 0px;
+				border-bottom-left-radius: 0px;
+				flex: 1 1 auto;
+			}
 
-            paper-spinner {
-                align-self: center;
-                height: 2.1em;
-                width: 2.1em;
-                margin: 0.2em;
-            }
-            
-            [hidden] {
-                display: none;
-            }
+			paper-spinner {
+				align-self: center;
+				height: 2.1em;
+				width: 2.1em;
+				margin: 0.2em;
+			}
+
+			[hidden] {
+				display: none;
+			}
 
 
-        </style>
+		</style>
 
-        <paper-button id="confirmButton" disabled="[[disabled]]" on-tap="_onConfirm" hidden$="{{confirmed}}" raised><content></content></paper-button>
-        <div hidden$="[[_computeContainerHidden(confirmed, loading)]]">
-            <paper-button id="backButton" on-tap="_onCancel"  disabled="[[disabled]]" raised><iron-icon icon="kassa:arrow-back"></iron-icon></paper-button>
-            <paper-button id="doubleConfirmButton" on-tap="_onDoubleConfirm"  disabled="[[disabled]]" raised>Kinnita</paper-button>
-        </div>
-        <paper-spinner hidden$="[[_computeLoadingHidden(confirmed, loading)]]" active></paper-spinner>
+		<paper-button id="confirmButton" disabled="[[disabled]]" on-tap="_onConfirm" hidden$="{{confirmed}}" raised>
+			<content></content>
+		</paper-button>
+		<div hidden$="[[_computeContainerHidden(confirmed, loading)]]">
+			<paper-button id="backButton" on-tap="_onCancel" disabled="[[disabled]]" raised>
+				<iron-icon icon="kassa:arrow-back"></iron-icon>
+			</paper-button>
+			<paper-button id="doubleConfirmButton" on-tap="_onDoubleConfirm" disabled="[[disabled]]" raised>Kinnita
+			</paper-button>
+		</div>
+		<paper-spinner hidden$="[[_computeLoadingHidden(confirmed, loading)]]" active></paper-spinner>
 
-    </template>
-    <script>
+	</template>
+	<script>
         Polymer({
             is: "kassa-confirm-button",
             properties: {
@@ -84,7 +89,7 @@
                 }
             },
             hostAttributes: {
-                tabIndex: 0    
+                tabIndex: 0
             },
             behaviors: [Polymer.IronA11yKeysBehavior, KassaBehavior],
             listeners: {
@@ -95,9 +100,9 @@
                 'space': '_onKeyPress',
                 'enter': '_onKeyPress'
             },
-            reset: function() {
-                this.set('confirmed', false);    
-                this._setLoading(false);   
+            reset: function () {
+                this.set('confirmed', false);
+                this._setLoading(false);
             },
             _computeContainerHidden: function (confirmed, loading) {
                 return !confirmed || loading
@@ -122,23 +127,23 @@
                 this.fire('kassa-double-confirm');
                 this._setLoading(true);
             },
-            _onKeyPress: function() {
-                if(!this.loading && !this.disabled) {
-                    if(!this.confirmed) {
+            _onKeyPress: function () {
+                if (!this.loading && !this.disabled) {
+                    if (!this.confirmed) {
                         this._onConfirm();
                     } else {
                         this._onDoubleConfirm();
                     }
                 }
             },
-            _onFocus: function() {
+            _onFocus: function () {
                 this.$.confirmButton.toggleClass('keyboard-focus', true);
                 this.$.doubleConfirmButton.toggleClass('keyboard-focus', true);
             },
-            _onBlur: function() {
+            _onBlur: function () {
                 this.$.confirmButton.toggleClass('keyboard-focus', false);
                 this.$.doubleConfirmButton.toggleClass('keyboard-focus', false);
             }
         })
-    </script>
+	</script>
 </dom-module>
