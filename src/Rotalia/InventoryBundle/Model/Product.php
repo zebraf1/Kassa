@@ -193,7 +193,7 @@ class Product extends BaseProduct
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getAjaxData()
     {
@@ -202,7 +202,7 @@ class Product extends BaseProduct
         return [
             'id' => $this->getId(),
             'name' => $this->getAjaxName(),
-            'productCode' => $this->getProductCode(),
+            'productCodes' => explode(',', $this->getProductCode()),
             'price' => $productInfo ? doubleval($productInfo->getPrice()) : null,
             'amount' => doubleval($this->getAmount()),
             'amountType' => $this->getAmountType(),
