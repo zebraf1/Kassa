@@ -47,6 +47,7 @@ class PurchaseController extends DefaultController
      *   },
      *   parameters={
      *      {"name"="memberId","dataType"="integer","required"=false,"description"="Member ID of the buyer"},
+     *      {"name"="conventId","dataType"="integer","required"=false,"description"="Convent ID where to reduce inventory. PointOfSale convent is always used if available. Default member convent ID"},
      *      {"name"="basket","dataType"="Object","required"=false,"description"="Not required for refund payment"},
      *      {"name"="basket[0][id]","dataType"="int","required"=true,"description"="Product ID"},
      *      {"name"="basket[0][amount]","dataType"="float","required"=true,"description"="Amount purchased"},
@@ -141,7 +142,7 @@ class PurchaseController extends DefaultController
         if ($pos !== null) {
             $conventId = $pos->getConventId();
         } else {
-            $conventId = $member->getKoondisedId();
+            $conventId = $request->get('conventId', $member->getKoondisedId());
         }
 
         try {
