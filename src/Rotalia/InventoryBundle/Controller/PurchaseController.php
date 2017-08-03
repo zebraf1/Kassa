@@ -50,10 +50,11 @@ class PurchaseController extends DefaultController
      *      {"name"="basket","dataType"="Object","required"=false,"description"="Not required for refund payment"},
      *      {"name"="basket[0][id]","dataType"="int","required"=true,"description"="Product ID"},
      *      {"name"="basket[0][amount]","dataType"="float","required"=true,"description"="Amount purchased"},
+     *      {"name"="basket[0][price]","dataType"="float","required"=true,"description"="Price of the product when added to cart"},
      *   },
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     400 = "Returned when input data has errors",
+     *     400 = "Returned when input data has errors. If basket item price changes, basket must be synced",
      *     403 = "Returned when user is not logged in and browser is not point of sale",
      *     500 = "Returned when the transaction fails, all actions are reverted. Try again or report a problem",
      *   }
