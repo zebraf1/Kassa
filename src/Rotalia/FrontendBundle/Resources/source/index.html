@@ -4,7 +4,7 @@
 	<title>ÕKassa</title>
 
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
 	<link rel="shortcut icon" href="images/icons/favicon.ico">
 	<link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
@@ -33,10 +33,13 @@
 	<meta name="msapplication-TileColor" content="#0077c8">
 
 	<script src="js/main.js"></script>
+	<script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 	<link rel="import" href="elements/kassa-app.html" async>
 
+
+	<custom-style>
 	<style is="custom-style">
-		:root {
+		html {
 			font-family: 'Roboto', sans-serif;
 
 			--kassa-primary-color: #84bd00; /* green */
@@ -55,47 +58,6 @@
 		body {
 			overflow: hidden;
 			height: 100%;
-		}
-
-		paper-dialog {
-			min-width: 300px;
-		}
-
-		paper-dialog paper-material {
-			margin: 1em 1em 0 1em;
-		}
-
-		paper-dialog .split-h {
-			display: flex;
-			flex-flow: row wrap;
-			justify-content: space-between;
-			align-items: center;
-			min-height: 60px;
-		}
-
-		paper-dialog .split-h * {
-			margin: 0.5em;
-			margin-left: auto;
-			flex-grow: 0;
-		}
-
-		paper-dialog .split-h *:first-child {
-			margin-left: 0;
-		}
-
-		paper-dialog .split-v {
-			display: flex;
-			flex-flow: column nowrap;
-			justify-content: flex-start;
-			align-items: stretch;
-		}
-
-		paper-dialog .split-h * {
-			flex: 0 0 auto;
-		}
-
-		paper-dialog .split-h .expanding {
-			flex-grow: 1;
 		}
 
 		/*Skeleton for fast first paint*/
@@ -179,6 +141,7 @@
 			}
 		}
 	</style>
+	</custom-style>
 
 </head>
 <body class="loading">

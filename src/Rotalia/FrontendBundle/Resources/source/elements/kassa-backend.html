@@ -146,6 +146,7 @@
             },
             /* Members */
             doMembersGet: function () {
+                this.$.membersGet.set('params', {limit: 0});
                 this.$.membersGet.generateRequest().completes.then(function (result) {
                     var data = this._checkSuccess(result);
                     this._setMembers(data.members);
@@ -247,10 +248,15 @@
             },
             /* Purchase */
             doPurchasePost: function (conventId, memberId, basket) {
-                this.$.purchasePost.set('body', this.formatBody({conventId: conventId, memberId: memberId, basket: basket}));
+                this.$.purchasePost.set('body', this.formatBody({
+                    conventId: conventId,
+                    memberId: memberId,
+                    basket: basket
+                }));
                 return this.$.purchasePost.generateRequest().completes.then(function (result) {
                     this._checkSuccess(result);
                     this.fire('kassa-message-success', 'Ost edukalt sooritatud');
+                    this.doAuthenticationGet();
                 }.bind(this))
             },
             /* General */
@@ -341,13 +347,13 @@
                                 }
                             }
                         } else if (Array.isArray(body[key])) {
-							for(let i = 0; i<body[key].length; i++) {
+                            for (let i = 0; i < body[key].length; i++) {
                                 for (var key2 in body[key][i]) {
                                     if (body[key][i].hasOwnProperty(key2)) {
                                         newBody[key + '[' + i + ']' + '[' + key2 + ']'] = body[key][i][key2];
                                     }
                                 }
-							}
+                            }
                         } else {
                             newBody[key] = body[key];
                         }
@@ -366,7 +372,8 @@
                 if (event.detail.request.xhr.response) {
                     console.log(event.detail.request.xhr.response);
                     if (event.detail.request.xhr.response.status === 'fail' || event.detail.request.xhr.response.status === 'error') {
-                        return event.detail.request.xhr.response.data.message ? event.detail.request.xhr.response.data.message : event.detail.request.xhr.response.data
+                        return event.detail.request.xhr.response.message;
+                        console.log(event.detail.request.xhr.response)
                     } else {
                         console.error('Vigane vastus serverilt.', event);
                     }

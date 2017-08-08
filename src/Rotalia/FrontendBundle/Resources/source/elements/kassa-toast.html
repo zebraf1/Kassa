@@ -49,7 +49,7 @@
 				<iron-icon class="success" icon="kassa:done" hidden$="[[_error]]"></iron-icon>
 				<span>[[text]]</span>
 				<paper-button on-tap="close">
-					<content></content>
+					<slot></slot>
 				</paper-button>
 			</div>
 		</paper-toast>

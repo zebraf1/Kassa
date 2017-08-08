@@ -1,9 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="kassa-icons.html">
 <link rel="import" href="kassa-rotating-selector.html">
@@ -20,6 +17,8 @@
 				flex-flow: column nowrap;
 				padding-bottom: 0.5em;
 				box-sizing: border-box;
+				align-items: stretch;
+				text-align: left;
 			}
 
 			#leftHead {
@@ -35,17 +34,13 @@
 				margin: 0.3em 0;
 			}
 
-			paper-menu {
+			paper-listbox {
 				width: 100%;
 				background-color: var(--kassa-dark-color);
 				padding: 0;
-
-				--paper-menu-selected-item: {
-					background-color: #023356;
-				}
 			}
 
-			paper-menu a {
+			paper-listbox a {
 				display: block;
 				color: #FFF;
 				box-sizing: border-box;
@@ -57,15 +52,15 @@
 				border-bottom: 1px solid var(--kassa-secondary-color);
 			}
 
-			paper-menu a:hover {
+			paper-listbox a:hover {
 				background-color: #01233B;
 			}
 
-			paper-menu a:first-child {
+			paper-listbox a:first-child {
 				border-top: 2px solid var(--kassa-secondary-color);
 			}
 
-			paper-menu a:last-child {
+			paper-listbox a:last-child {
 				border-bottom: 2px solid var(--kassa-secondary-color);
 			}
 
@@ -73,6 +68,7 @@
 				overflow-y: auto;
 				height: 100%;
 				flex: 1 1 100%;
+				width: 100%;
 			}
 
 			.bottom-button {
@@ -83,9 +79,6 @@
 				font-weight: bold;
 				width: 100%;
 				height: 2.2em;
-			}
-
-			.bottom-button {
 				color: var(--kassa-primary-color);
 				text-decoration: none;
 				cursor: pointer;
@@ -108,19 +101,19 @@
 
 
 		</style>
-		<main>
+		<main hidden$="[[!isTrue(member)]]">
 			<div id="leftHead">
 				<h2>{{member.name}}</h2>
-				<h3 hidden$="[[!isTrue(member)]]">Saldo: {{eur2str(member.creditBalance)}}</h3>
+				<h3>Saldo: {{eur2str(member.creditBalance)}}</h3>
 			</div>
 
-			<paper-menu selected="{{page}}" attr-for-selected="data-page" hidden$="[[!isTrue(member)]]">
+			<paper-listbox selected="{{page}}" attr-for-selected="data-page">
 				<template is="dom-repeat" items="[[navigation]]" as="site">
 					<template is="dom-if" if="{{_hasRights(member, site.role)}}">
 						<a data-page="[[site.page]]" href="#/[[site.page]]">[[site.name]]</a>
 					</template>
 				</template>
-			</paper-menu>
+			</paper-listbox>
 		</main>
 		<kassa-rotating-selector hidden$="[[!isTrue(member)]]" class="bottom-button" member="{{member}}"
 		                         active-convents="[[activeConvents]]">

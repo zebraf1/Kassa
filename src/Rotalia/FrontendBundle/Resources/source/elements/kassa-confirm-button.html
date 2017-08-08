@@ -53,7 +53,7 @@
 		</style>
 
 		<paper-button id="confirmButton" disabled="[[disabled]]" on-tap="_onConfirm" hidden$="{{confirmed}}" raised>
-			<content></content>
+			<slot></slot>
 		</paper-button>
 		<div hidden$="[[_computeContainerHidden(confirmed, loading)]]">
 			<paper-button id="backButton" on-tap="_onCancel" disabled="[[disabled]]" raised>

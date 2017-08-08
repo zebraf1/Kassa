@@ -2,15 +2,29 @@
   "name": "kassa",
   "main": "index.html",
   "dependencies": {
-    "polymer": "^1.0.0",
-    "paper-elements": "^1.0.0",
-    "iron-elements": "^1.0.0",
-    "app-elements": "^0.9.0",
-    "vaadin-combo-box": "^1.0.0",
-    "vaadin-grid": "^2.0.0",
-    "lazy-imports": "Polymer/lazy-imports#^2.0.0"
-  },
-  "resolutions": {
-    "webcomponentsjs": "^0.7.0"
+    "lazy-imports": "Polymer/lazy-imports#^2.0.0",
+    "app-layout": "PolymerElements/app-layout#^2.0.1",
+    "app-route": "PolymerElements/app-route#^2.0.1",
+    "iron-a11y-keys": "PolymerElements/iron-a11y-keys#^2.0.0",
+    "iron-a11y-keys-behavior": "PolymerElements/iron-a11y-keys-behavior#^2.0.1",
+    "iron-ajax": "PolymerElements/iron-ajax#^2.0.4",
+    "iron-scroll-target-behavior": "PolymerElements/iron-scroll-target-behavior#^2.0.0",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.0.1",
+    "iron-icon": "PolymerElements/iron-icon#^2.0.1",
+    "paper-button": "PolymerElements/paper-button#^2.0.0",
+    "paper-dialog": "PolymerElements/paper-dialog#^2.0.0",
+    "paper-fab": "PolymerElements/paper-fab#^2.0.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.0",
+    "paper-material": "PolymerElements/paper-material#^2.0.0",
+    "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
+    "paper-toast": "PolymerElements/paper-toast#^2.0.0",
+    "paper-toggle-button": "PolymerElements/paper-toggle-button#^2.0.0",
+    "polymer": "Polymer/polymer#^2.0.0",
+    "vaadin-grid": "vaadin/vaadin-grid#^3.0.0",
+    "vaadin-combo-box": "vaadin/vaadin-combo-box#^2.0.0",
+    "paper-listbox": "PolymerElements/paper-listbox#^2.0.0",
+    "paper-item": "PolymerElements/paper-item#^2.0.0",
+    "iron-pages": "PolymerElements/iron-pages#^2.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.6"
   }
 }

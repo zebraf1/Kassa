@@ -52,9 +52,11 @@
 				--app-drawer-width: 256px;
 			}
 
+			/* Mingi bug on app-draweriga, ootab lahendust
 			#rightDrawer {
 				--app-drawer-width: 320px;
 			}
+			*/
 
 			[hidden] {
 				display: none;
@@ -70,26 +72,24 @@
 		<kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
 
 		<app-drawer-layout fullbleed responsive-width="800px" narrow="{{leftNarrow}}">
-			<app-drawer id="leftDrawer" align="left">
+			<app-drawer id="leftDrawer" align="left" slot="drawer">
 				<kassa-left-drawer page="[[page]]" member="{{member}}" active-convents="[[settings.activeConvents]]"
 				                   navigation="[[navigation]]"></kassa-left-drawer>
 			</app-drawer>
-			<app-drawer-layout fullbleed responsive-width="1120px" narrow="{{rightNarrow}}">
-				<app-drawer id="rightDrawer" align="right">
-					<kassa-right-drawer page="[[page]]"></kassa-right-drawer>
-				</app-drawer>
+			<app-drawer-layout fullbleed responsive-width="1120px" narrow="{{rightNarrow}}" id="rightDrawerLayout">
 				<app-header scroll-target="[[scrollTarget]]" condenses reveals effects="material">
 					<app-toolbar>
 						<paper-icon-button icon="kassa:menu" hidden$="[[!leftNarrow]]"
 						                   on-tap="_toggleLeftDrawer"></paper-icon-button>
-						<div condensed-title><img src="../images/icons/icon-96x96.png"
+						<div condensed-title><img src$="[[importPath]]../images/icons/icon-96x96.png"
 						                          alt="õkassa logo"/><span>KASSA</span></div>
 						<paper-icon-button icon="kassa:help" hidden$="[[!rightNarrow]]"
 						                   on-tap="_toggleRightDrawer"></paper-icon-button>
 					</app-toolbar>
 					<app-toolbar></app-toolbar>
-					<app-toolbar class="tall">
-						<div title><img src="../images/icons/icon-96x96.png" alt="õkassa logo"/><span>KASSA</span></div>
+					<app-toolbar main-title>
+						<div title><img src$="[[importPath]]../images/icons/icon-96x96.png" alt="õkassa logo"/><span>KASSA</span>
+						</div>
 					</app-toolbar>
 				</app-header>
 
@@ -106,6 +106,10 @@
 					<kassa-admin-kassad data-page="admin-kassad" point-of-sales="[[pointOfSales]]"
 					                    active-convents="[[settings.activeConvents]]"></kassa-admin-kassad>
 				</kassa-pages>
+
+				<app-drawer id="rightDrawer" align="end" slot="drawer">
+					<kassa-right-drawer page="[[page]]"></kassa-right-drawer>
+				</app-drawer>
 
 			</app-drawer-layout>
 		</app-drawer-layout>

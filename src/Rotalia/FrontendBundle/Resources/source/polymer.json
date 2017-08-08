@@ -21,12 +21,13 @@
   "builds": [
     {
       "preset": "es5-bundled",
-      "name": "default"
+      "name": "default",
+      "addServiceWorker": false
     }
   ],
   "lint": {
     "rules": [
-      "polymer-1"
+      "polymer-2-hybrid"
     ]
   }
 }

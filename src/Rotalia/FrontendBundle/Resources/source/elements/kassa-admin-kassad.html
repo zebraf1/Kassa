@@ -1,12 +1,13 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="kassa-page-behavior.html">
 <link rel="import" href="kassa-behavior.html">
 <link rel="import" href="kassa-table.html">
 <link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-material.html">
+
 
 <dom-module id="kassa-admin-kassad">
 	<template>
@@ -24,7 +25,7 @@
 			<vaadin-grid-column flex-grow="10" filter-by="name">
 				<template class="header">
 					<vaadin-grid-filter path="name" value="{{_nameFilter}}">
-						<paper-input label="Nimi" value="{{_nameFilter}}"></paper-input>
+						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter"></paper-input>
 					</vaadin-grid-filter>
 				</template>
 				<template>
@@ -52,11 +53,9 @@
 		</kassa-table>
 
 		<paper-dialog id="dialog" modal style="max-width: 350px">
-			<paper-material class="spilt-v">
-				<div class="split-h">
-					<paper-input data-field="name" label="Nimi" type="text"></paper-input>
-				</div>
-			</paper-material>
+			<kassa-material direction="vertical">
+				<paper-input data-field="name" label="Nimi" type="text"></paper-input>
+			</kassa-material>
 			<div class="buttons">
 				<paper-button dialog-dismiss raised>Sulge</paper-button>
 				<kassa-confirm-button>Salvesta</kassa-confirm-button>
@@ -76,16 +75,16 @@
                     type: Array
                 },
                 dialog: {
-                    type: Node,
-                    value: function () {
-                        return this.$.dialog
-                    }
+                    type: Node
                 },
                 conventId: {
                     type: Number
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
+            ready: function () {
+                this.set('dialog', this.$.dialog);
+            },
             setUp: function () {
                 this.fire('kassa-backend-action', {action: 'doPointOfSalesGet'});
             }

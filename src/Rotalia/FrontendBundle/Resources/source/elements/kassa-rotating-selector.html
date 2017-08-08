@@ -5,7 +5,7 @@
 
 <dom-module id="kassa-rotating-selector">
 	<template>
-		<content></content>
+		<slot></slot>
 		<span>[[_selectedName]]</span>
 	</template>
 	<script>
@@ -17,7 +17,8 @@
                     notify: true
                 },
                 activeConvents: {
-                    type: Array
+                    type: Array,
+                    value: []
                 },
                 _selectedName: {
                     type: String

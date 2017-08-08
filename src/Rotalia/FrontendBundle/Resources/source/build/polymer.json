@@ -41,14 +41,14 @@
         "minify": true
       },
       "bundle": true,
-      "addServiceWorker": true,
+      "addServiceWorker": false,
       "addPushManifest": true,
       "preset": "es5-bundled"
     }
   ],
   "lint": {
     "rules": [
-      "polymer-1"
+      "polymer-2-hybrid"
     ]
   }
 }

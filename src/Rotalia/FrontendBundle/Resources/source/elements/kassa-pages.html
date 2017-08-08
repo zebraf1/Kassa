@@ -1,7 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/lazy-imports/lazy-imports-behavior.html">
 
 <link rel="import" href="kassa-loading-page.html">
@@ -32,11 +30,10 @@
 		</style>
 
 		<main>
-			<neon-animated-pages selected="[[shown]]" attr-for-selected="data-page" selected-item="{{selectedItem}}"
-			                     entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+			<iron-pages selected="[[shown]]" attr-for-selected="data-page" selected-item="{{selectedItem}}">
 				<kassa-loading-page data-page="loading"></kassa-loading-page>
-				<content></content>
-			</neon-animated-pages>
+				<slot></slot>
+			</iron-pages>
 		</main>
 
 	</template>

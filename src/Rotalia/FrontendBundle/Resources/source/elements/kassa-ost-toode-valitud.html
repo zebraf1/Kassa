@@ -1,59 +1,47 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="kassa-icons.html">
 <link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-material.html">
 
 <dom-module id="kassa-ost-valitud-toode">
 	<template>
 		<style>
-			paper-material {
-				display: flex;
-				flex-flow: row wrap;
-				justify-content: flex-start;
-				align-items: center;
-				padding: 1em;
+			[data-invisible] {
+				visibility: hidden;
 			}
 
 			span {
 				display: block;
 				flex: 0 0 auto;
 				text-align: right;
-				padding-left: 0.8em;
-				margin-left: auto;
 			}
 
-			span.name {
-				flex: 1 1 auto;
+			span:first-child {
+				flex: 1 0 auto;
 				text-align: left;
-				padding: 0;
 			}
 
 			div {
-				display: flex;
 				flex: 0 0 auto;
-				margin-left: auto;
+				display: flex;
 			}
 
-			paper-icon-button {
-				flex: 0 0 3em;
-			}
-
-			[data-invisible] {
-				visibility: hidden;
+			div span:last-child {
+				padding-left: 0.8em;
 			}
 
 		</style>
 
-		<paper-material elevation="1">
+		<kassa-material direction="horizontal">
 			<paper-icon-button icon="kassa:clear" data-invisible$="[[fixed]]"></paper-icon-button>
 			<span class="name">[[product.name]]</span>
-			<div>
-				<span>[[product.count]] &times; [[product.amount]]</span>
-				<span>[[eur2str(product.price)]]</span>
+			<div class="row-break">
+				<span>[[product.amount]] &times; [[product._amount]]</span>
+				<span>[[_computePrice(product.amount, product.price)]]</span>
 			</div>
-		</paper-material>
+		</kassa-material>
 
 
 	</template>
@@ -69,7 +57,11 @@
                     value: false
                 }
             },
-            behaviors: [KassaBehavior]
+            behaviors: [KassaBehavior],
+            _computePrice: function (kogus, hind) {
+                // Üksiku toote hind
+                return this.eur2str(kogus * hind);
+            }
         })
 	</script>
 </dom-module>

@@ -1,15 +1,15 @@
-<!--suppress ALL -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
-<link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
 
 <link rel="import" href="kassa-ost-tootegrupp.html">
 <link rel="import" href="kassa-ost-toode-valitud.html">
 <link rel="import" href="kassa-confirm-button.html">
-
+<link rel="import" href="kassa-material.html">
 <link rel="import" href="kassa-page-behavior.html">
 <link rel="import" href="kassa-behavior.html">
 
@@ -20,18 +20,6 @@
 				display: flex;
 				flex-flow: column nowrap;
 				padding-bottom: 300px;
-			}
-
-			.split-h {
-				display: flex;
-				flex-flow: row wrap;
-				justify-content: space-between;
-				align-items: center;
-				padding: 1em;
-			}
-
-			.split-h span, kassa-confirm-button {
-				margin-left: auto;
 			}
 
 		</style>
@@ -45,14 +33,14 @@
 
 
 		<main id="mainContent">
-			<paper-material class="split-h">
+			<kassa-material direction="horizontal">
 				<vaadin-combo-box id="tasujaComboBox" label="Tasuja" value="[[member.id]]"
 				                  disabled="[[ostFixed]]" on-focusin="_selectTasujaComboBox"
 				                  on-focusout="_onFocusoutTasuja"
 				                  item-label-path="name" item-value-path="id" items="[[members]]"></vaadin-combo-box>
 
-				<span style="font-size: 1.8em">Summa: [[_computeOstTotal(_chosenProducts.*)]]</span>
-			</paper-material>
+				<span class="row-break" style="font-size: 1.8em">Summa: [[_computeOstTotal(_chosenProducts.*)]]</span>
+			</kassa-material>
 
 			<template is="dom-repeat" items="[[_chosenProducts]]" as="product">
 				<kassa-ost-valitud-toode product="[[product]]" on-tap="_removeChosenProduct"
@@ -60,13 +48,14 @@
 			</template>
 
 
-			<paper-material class="split-h">
+			<kassa-material direction="horizontal">
 				<paper-input id="filterInput" disabled="[[ostFixed]]" label="Otsi Toodet" value="{{filterVal}}"
 				             on-focusin="_selectFilterInput"></paper-input>
-				<kassa-confirm-button disabled$="[[!_chosenProducts.length]]" confirmed="{{ostFixed}}" double-confirm
-				                      on-kassa-confirm="_confirmOst" on-kassa-double-confirm="_doubleConfirmOst">Osta
+				<kassa-confirm-button class="row-break" disabled$="[[!_chosenProducts.length]]" confirmed="{{ostFixed}}"
+				                      double-confirm on-kassa-confirm="_confirmOst"
+				                      on-kassa-double-confirm="_doubleConfirmOst">Osta
 				</kassa-confirm-button>
-			</paper-material>
+			</kassa-material>
 
 			<template is="dom-repeat" items="[[_computeProductGroups(productGroups, products)]]" as="productGroup">
 				<kassa-ost-tootegrupp products="[[productGroup.products]]" filter-val="[[filterVal]]"
@@ -77,13 +66,13 @@
 
 
 		<paper-dialog id="productCountDialog" modal>
-			<paper-material class="split-h">
-				<span class="expanding">[[activeProduct.name]]</span>
+			<kassa-material direction="horizontal">
+				<span style="flex: 1 0 auto">[[activeProduct.name]]</span>
 				<paper-input id="productCountInput" type="number" min="1" step="1" no-label-float style="flex: 0 1 3em"
-				             value="{{activeProduct.count}}" autofocus></paper-input>
-				<span style="text-align:right"> &times; [[formatAmount(activeProduct.amount, activeProduct.amountType)]]</span>
-				<span style="text-align:right">[[_computePrice(activeProduct.count, activeProduct.price)]]</span>
-			</paper-material>
+				             value="{{activeProduct.count}}" autofocus class="row-break"></paper-input>
+				<span> &times; [[formatAmount(activeProduct.amount, activeProduct.amountType)]]</span>
+				<span class="row-break">[[_computePrice(activeProduct.count, activeProduct.price)]]</span>
+			</kassa-material>
 
 			<div class="buttons">
 				<paper-button dialog-dismiss>Katkesta</paper-button>
@@ -106,11 +95,13 @@
                 },
                 // Kõik tooted, mida saab osta
                 products: {
-                    type: Array
+                    type: Array,
+                    value: []
                 },
                 // Kõik tootegrupid */
                 productGroups: {
-                    type: Array
+                    type: Array,
+                    value: []
                 },
                 // Kasutaja poolt ostmiseks valitud tooted
                 _chosenProducts: {
@@ -139,7 +130,7 @@
             behaviors: [PageBehavior, KassaBehavior],
             observers: [
                 '_loadProducts(pageActive, member.selectedConventId)',
-	            'cleanUp(member.selectedConventId)'
+                'cleanUp(member.selectedConventId)'
             ],
             ready: function () {
                 // Key bindingute jaoks (a11y-keys)
@@ -159,12 +150,13 @@
                 this._set_chosenProducts([]);
             },
             _loadProducts: function (pageActive, conventId) {
-                if (pageActive) {
+                if (pageActive && (conventId !== undefined)) {
                     this.fire('kassa-backend-action', {action: 'doProductsGetActive', conventId: conventId});
                     this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
                 }
             },
             _computeProductGroups: function (productGroups, products) {
+
                 var groups = {};
 
                 for (var i = 0; i < products.length; i++) {
@@ -202,14 +194,15 @@
             },
             _selectFilterInput: function () {
                 // Highligthime teksti, et oleks mugavam kirjutada
-                this.$.filterInput.inputElement.select();
+                // paper input -> iron input -> naitive input element
+                this.$.filterInput.inputElement.inputElement.select();
             },
             _computeOstTotal: function (chosenProducts) {
                 //Arvutab kuvamiseks ostu summa
                 var total = 0;
 
                 for (var i = 0; i < chosenProducts.base.length; i++) {
-                    total += this.eur2cent(chosenProducts.base[i].price);
+                    total += this.eur2cent(chosenProducts.base[i].amount * chosenProducts.base[i].price);
                 }
 
                 return this.cent2str(total)
@@ -256,9 +249,9 @@
                     {
                         id: this.activeProduct.id,
                         name: this.activeProduct.name,
-                        amount: this.formatAmount(this.activeProduct.amount, this.activeProduct.amountType),
-                        count: this.activeProduct.count,
-                        price: this.activeProduct.price * this.activeProduct.count
+                        _amount: this.formatAmount(this.activeProduct.amount, this.activeProduct.amountType),
+                        amount: this.activeProduct.count,
+                        price: this.activeProduct.price
                     });
 
                 this.async(function () {
@@ -267,7 +260,7 @@
             },
             _removeChosenProduct: function (event) {
                 if (!this.ostFixed && (Polymer.dom(event).rootTarget.id == "icon" || Polymer.dom(event).rootTarget.localName === "paper-icon-button")) {
-                    this.splice('_chosenProducts', event.model.__data__.index, 1);
+                    this.splice('_chosenProducts', event.model.__data.index, 1);
                 }
             },
             _confirmOst: function () {
@@ -277,13 +270,13 @@
             _doubleConfirmOst: function () {
                 this.fire('kassa-backend-action', {
                     action: 'doPurchasePost',
-	                conventId: this.member.selectedConventId,
-	                memberId: this._tasujaComboBox.value,
-                    basket: this._chosenProducts.map(product => this.pickProperties(product, ['id', 'count'])),
-	                onSuccess: function () {
-		                this.cleanUp();
+                    conventId: this.member.selectedConventId,
+                    memberId: this._tasujaComboBox.value,
+                    basket: this._chosenProducts.map(product => this.pickProperties(product, ['id', 'amount', 'price'])),
+                    onSuccess: function () {
+                        this.cleanUp();
                     }.bind(this),
-	                onError: function () {
+                    onError: function () {
                         this.set('ostFixed', false);
                     }.bind(this)
                 });

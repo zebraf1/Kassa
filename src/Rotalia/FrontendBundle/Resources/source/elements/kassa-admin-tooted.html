@@ -10,6 +10,8 @@
 <link rel="import" href="kassa-behavior.html">
 <link rel="import" href="kassa-confirm-button.html">
 <link rel="import" href="kassa-table.html">
+<link rel="import" href="kassa-material.html">
+
 
 <dom-module id="kassa-admin-tooted">
 	<template>
@@ -29,7 +31,7 @@
 			<vaadin-grid-column flex-grow="10">
 				<template class="header">
 					<vaadin-grid-filter path="name" value="{{_nameFilter}}">
-						<paper-input label="Nimi" value="{{_nameFilter}}"></paper-input>
+						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter"></paper-input>
 					</vaadin-grid-filter>
 				</template>
 				<template>
@@ -57,26 +59,20 @@
 		</kassa-table>
 
 		<paper-dialog id="dialog" modal style="max-width: 350px">
-			<paper-material class="spilt-v">
-				<div class="split-h">
-					<paper-input data-field="name" label="Nimi" type="text"></paper-input>
-				</div>
-				<div class="split-h" style="flex-wrap:nowrap">
+			<kassa-material direction="vertical">
+				<paper-input data-field="name" label="Nimi" type="text"></paper-input>
+				<div style="display: flex; flex-flow: row nowrap; align-items: flex-end">
 					<paper-input data-field="amount" label="Suurus" type="number" min="0"
-					             style="flex: 1 1 60%"></paper-input>
+					             style="flex: 1 1 50%"></paper-input>
 					<vaadin-combo-box data-field="amountType" label="Ühik" item-label-path="label"
 					                  item-value-path="value" items="[[productAmountTypeNames]]"
-					                  style="flex: 1 1 30%"></vaadin-combo-box>
+					                  style="flex: 1 1 40%; padding-left: 0.8em"></vaadin-combo-box>
 				</div>
 				<vaadin-combo-box data-field="productGroupId" label="Grupp" item-label-path="name" item-value-path="id"
 				                  items="[[productGroups]]"></vaadin-combo-box>
-				<div class="split-h">
-					<paper-input data-field="price" label="Hind (€)" type="number" min="0"></paper-input>
-				</div>
-				<div class="split-h">
-					<paper-toggle-button data-field="status">Käibel?</paper-toggle-button>
-				</div>
-			</paper-material>
+				<paper-input data-field="price" label="Hind (€)" type="number" min="0"></paper-input>
+				<paper-toggle-button data-field="status">Käibel?</paper-toggle-button>
+			</kassa-material>
 			<div class="buttons">
 				<paper-button dialog-dismiss raised>Sulge</paper-button>
 				<kassa-confirm-button>Salvesta</kassa-confirm-button>
@@ -105,14 +101,14 @@
                     type: Array
                 },
                 dialog: {
-                    type: Node,
-                    value: function () {
-                        return this.$.dialog
-                    }
+                    type: Node
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
             observers: ['_loadProducts(pageActive, conventId)'],
+            ready: function () {
+                this.set('dialog', this.$.dialog);
+            },
             _loadProducts: function (pageActive, conventId) {
                 if (pageActive) {
                     this.fire('kassa-backend-action', {action: 'doProductsGetAll', conventId: conventId});
