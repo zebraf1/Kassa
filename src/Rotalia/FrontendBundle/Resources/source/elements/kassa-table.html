@@ -2,12 +2,15 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../bower_components/lazy-imports/lazy-imports-behavior.html">
 
 <link rel="import" href="kassa-fab.html">
 <link rel="import" href="kassa-icons.html">
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-table">
+	<link rel="lazy-import" group="kassa-admin-tooted" href="kassa-admin-tooted-row-details.html">
+
 	<template>
 		<style>
 			:host {
@@ -15,33 +18,11 @@
 				position: relative;
 			}
 
-			.detail {
-				margin-left: calc(48px + 2em);
-			}
-
-			.detail div {
-				padding: 0.1em 0;
-				display: flex;
-				flex-flow: row nowrap;
-			}
-
-			.detail div span:first-child {
-				flex: 0 0 8em;
-			}
-
-			.detail-number {
-				text-align: right;
-				flex: 0 0 2em;
-			}
-
-			span.DISABLED {
-				color: #888;
-			}
-
 			paper-icon-button {
 				padding: 0;
 				width: 24px;
 				height: 24px;
+				color: #888;
 			}
 
 			kassa-fab {
@@ -91,28 +72,20 @@
 		</style>
 
 		<vaadin-grid id="table" items="[[items]]" on-active-item-changed="_onActiveItemChanged">
+			<template class="row-details">
+				<kassa-admin-tooted-row-details item="[[item]]" row-details-name="[[rowDetails]]"></kassa-admin-tooted-row-details>
+			</template>
 			<slot></slot>
 			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(editFunc)]]">
 				<template>
-					<span class="DISABLED"><paper-icon-button icon="kassa:edit" on-tap="_editItem"></paper-icon-button></span>
+					<span><paper-icon-button icon="kassa:edit" on-tap="_editItem"></paper-icon-button></span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(deleteFunc)]]">
 				<template>
-                    <span class="DISABLED"><paper-icon-button icon="kassa:trash"
-                                                              on-tap="_deleteItem"></paper-icon-button></span>
+                    <span><paper-icon-button icon="kassa:trash" on-tap="_deleteItem"></paper-icon-button></span>
 				</template>
 			</vaadin-grid-column>
-			<template class="row-details">
-				<div class="detail" hidden$="[[!hasRowDetails]]">
-					<div>
-						<span>Kogus laos:</span><span class="detail-number">[[item.inventoryAmounts.warehouse]]</span>
-					</div>
-					<div>
-						<span>Kogus müügil:</span><span class="detail-number">[[item.inventoryAmounts.storage]]</span>
-					</div>
-				</div>
-			</template>
 		</vaadin-grid>
 
 		<kassa-fab hidden$="[[!isTrue(addFunc)]]" on-tap="_addItem" scroll-target="[[scrollTarget]]"></kassa-fab>
@@ -148,9 +121,10 @@
                 conventId: {
                     type: Number
                 },
-                hasRowDetails: {
-                    type: Boolean,
-                    value: false
+                rowDetails: {
+                    type: String,
+	                value: '',
+	                observer: '_loadRowDetails'
                 },
                 _activeItemId: {
                     type: Number,
@@ -162,30 +136,14 @@
                 }
             },
             observers: ['_computeFilteredItems(dataSource, filter.*)'],
-            behaviors: [KassaBehavior],
+            behaviors: [KassaBehavior, Polymer.LazyImportsBehavior],
             ready: function () {
                 window.addEventListener('resize', this._setFabLocation.bind(this));
             },
-            computeCell: function (pattern, data) {
-                var matchFunc = pattern.match(/^([\w\d]+)\((.+)\)$/);
-                if (matchFunc) {
-                    switch (matchFunc[1]) {
-                        case 'eur':
-                            return this.eur2str(this.computeCell(matchFunc[2], data));
-                        case 'sum':
-                            var summa = 0;
-                            for (var i = 0; i < data.length; i++) {
-                                summa += this.computeCell(matchFunc[2], data[i]);
-                            }
-                            return summa
-                        default:
-                            return
-                    }
-                } else {
-                    return eval(pattern.replace(/([\w\d]+)/g, function (property) {
-                        return data[property]
-                    }))
-                }
+            _loadRowDetails: function (rowDetails) {
+				if (rowDetails !== undefined) {
+                    this.importLazyGroup(rowDetails);
+				}
             },
             _attachDialogListener: function (newVal) {
                 this.listen(newVal, 'kassa-confirm', '_onDialogSubbmit');

@@ -21,11 +21,11 @@
 			}
 		</style>
 		<kassa-table items="[[products]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
-		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" has-row-details>
+		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details="kassa-admin-tooted">
 			<vaadin-grid-column flex-grow="0">
 				<template class="header">Id</template>
 				<template>
-					<span class$="[[item.status]]">[[item.id]]</span>
+					<span class$="[[item.status]]" style="text-align: right;">[[item.id]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="10">
@@ -41,10 +41,10 @@
 			<vaadin-grid-column flex-grow="0">
 				<template class="header">Suurus</template>
 				<template>
-					<span class$="[[item.status]]">[[formatAmount(item.amount, item.amountType)]]</span>
+					<span class$="[[item.status]]" style="text-align: right;">[[formatAmount(item.amount, item.amountType)]]</span>
 				</template>
 			</vaadin-grid-column>
-			<vaadin-grid-column flex-grow="1">
+			<vaadin-grid-column flex-grow="0">
 				<template class="header">Grupp</template>
 				<template>
 					<span class$="[[item.status]]">[[_computeProductGroup(item.productGroupId, productGroups)]]</span>
@@ -53,7 +53,7 @@
 			<vaadin-grid-column flex-grow="0">
 				<template class="header">Hind</template>
 				<template>
-					<span class$="[[item.status]]">[[eur2str(item.price)]]</span>
+					<span class$="[[item.status]]" style="text-align: right;">[[eur2str(item.price)]]</span>
 				</template>
 			</vaadin-grid-column>
 		</kassa-table>
@@ -116,12 +116,19 @@
                 }
             },
             _merge: function (array1, array2) {
-                return array1.base.concat(array2.base)
+                if ((array1.base !== undefined) && (array2.base !== undefined)) {
+                    return array1.base.concat(array2.base)
+                } else {
+                    return [];
+                }
+
             },
             _computeProductGroup: function (productGroupId, productGroups) {
-                for (var i = 0; i < productGroups.length; i++) {
-                    if (productGroups[i].id === productGroupId) {
-                        return productGroups[i].name
+                if ((productGroupId !== undefined) && (productGroups !== undefined)) {
+                    for (var i = 0; i < productGroups.length; i++) {
+                        if (productGroups[i].id === productGroupId) {
+                            return productGroups[i].name
+                        }
                     }
                 }
                 return ''
