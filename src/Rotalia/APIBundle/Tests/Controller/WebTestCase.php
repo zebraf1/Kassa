@@ -91,7 +91,7 @@ class WebTestCase extends BaseWebTestCase
             $response = $client->getResponse();
             $postResult = json_decode($response->getContent());
 
-            $this->assertEquals(200, $response->getStatusCode(), 'Failed: '.$postResult->data);
+            $this->assertEquals(200, $response->getStatusCode(), 'Failed: '.json_encode($postResult));
             $this->assertEquals('Autoriseerimine õnnestus', $postResult->data);
         }
     }

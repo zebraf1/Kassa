@@ -81,7 +81,7 @@ class ProductGroupsControllerTest extends WebTestCase
         $this->assertEquals(403, $response->getStatusCode());
 
         $result = json_decode($response->getContent());
-        $this->assertEquals('Tegevus vajab admin õiguseid', $result->data);
+        $this->assertEquals('Tegevus vajab admin õiguseid', $result->message);
     }
 
     /**
@@ -134,7 +134,7 @@ class ProductGroupsControllerTest extends WebTestCase
         $this->assertEquals(403, $response->getStatusCode());
 
         $result = json_decode($response->getContent());
-        $this->assertEquals('Tegevus vajab admin õiguseid', $result->data);
+        $this->assertEquals('Tegevus vajab admin õiguseid', $result->message);
     }
 
     /**
@@ -156,6 +156,6 @@ class ProductGroupsControllerTest extends WebTestCase
         $this->assertEquals(404, $response->getStatusCode());
 
         $result = json_decode($response->getContent());
-        $this->assertEquals('Tootegruppi ei leitud', $result->data);
+        $this->assertEquals('Tootegruppi ei leitud', $result->message);
     }
 }

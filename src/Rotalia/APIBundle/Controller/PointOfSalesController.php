@@ -88,7 +88,7 @@ class PointOfSalesController extends DefaultController
         ;
 
         if ($pointOfSale === null) {
-            return JSendResponse::createFail(['id' => 'Müügikohta ei leitud'], 404);
+            return JSendResponse::createFail('Müügikohta ei leitud', 404);
         }
 
         return JSendResponse::createSuccess(['pointOfSale' => $pointOfSale->getAjaxData()]);
@@ -119,14 +119,14 @@ class PointOfSalesController extends DefaultController
         $hash = $request->cookies->get('pos_hash');
 
         if ($hash && $pos = PointOfSaleQuery::create()->findOneByHash($hash)) {
-             return JSendResponse::createFail(['message' => 'See brauser on juba müügipunkt'], 400);
+             return JSendResponse::createFail('See brauser on juba müügipunkt', 400);
         }
 
         $conventId = $request->get('conventId', null);
         $memberConventId = $this->getMember()->getKoondisedId();
 
         if ($this->isGranted(User::ROLE_SUPER_ADMIN) === false && $conventId != $memberConventId) {
-            return JSendResponse::createFail(['message' => 'Õigused puuduvad, vajab super admin õigusi'], 403);
+            return JSendResponse::createFail('Õigused puuduvad, vajab super admin õigusi', 403);
         }
 
         $hash = md5($request->getClientIp() . time());
@@ -164,17 +164,17 @@ class PointOfSalesController extends DefaultController
     {
         $pos = PointOfSaleQuery::create()->findPk($id);
         if ($pos === null) {
-            return JSendResponse::createFail(['message' => 'Müügipunkti ei leitud'], 404);
+            return JSendResponse::createFail('Müügipunkti ei leitud', 404);
         }
 
         if ($this->isGranted(User::ROLE_ADMIN) === false) {
-            return JSendResponse::createFail(['message' => 'Õigused puuduvad, vajab admin õigusi'], 403);
+            return JSendResponse::createFail('Õigused puuduvad, vajab admin õigusi', 403);
         }
 
         $memberConventId = $this->getMember()->getKoondisedId();
 
         if ($this->isGranted(User::ROLE_SUPER_ADMIN) === false && $pos->getConventId() != $memberConventId) {
-            return JSendResponse::createFail(['message' => 'Õigused puuduvad, vajab super admin õigusi'], 403);
+            return JSendResponse::createFail('Õigused puuduvad, vajab super admin õigusi', 403);
         }
 
         return $this->handleSubmit($pos, $request);
@@ -200,17 +200,17 @@ class PointOfSalesController extends DefaultController
     {
         $pos = PointOfSaleQuery::create()->findPk($id);
         if ($pos === null) {
-            return JSendResponse::createFail(['message' => 'Müügipunkti ei leitud'], 404);
+            return JSendResponse::createFail('Müügipunkti ei leitud', 404);
         }
 
         if ($this->isGranted(User::ROLE_ADMIN) === false) {
-            return JSendResponse::createFail(['message' => 'Õigused puuduvad, vajab admin õigusi'], 403);
+            return JSendResponse::createFail('Õigused puuduvad, vajab admin õigusi', 403);
         }
 
         $memberConventId = $this->getMember()->getKoondisedId();
 
         if ($this->isGranted(User::ROLE_SUPER_ADMIN) === false && $pos->getConventId() != $memberConventId) {
-            return JSendResponse::createFail(['message' => 'Õigused puuduvad, vajab super admin õigusi'], 403);
+            return JSendResponse::createFail('Õigused puuduvad, vajab super admin õigusi', 403);
         }
 
         // TODO: remove point_of_sale_id from transaction, use convent_id instead. Solves FK constraint issue
@@ -227,7 +227,7 @@ class PointOfSalesController extends DefaultController
     private function handleSubmit(PointOfSale $pos, Request $request)
     {
         if (!$this->isGranted(User::ROLE_ADMIN)) {
-            return JSendResponse::createFail(['message' => 'Tegevus vajab admin õiguseid'], 403);
+            return JSendResponse::createFail('Tegevus vajab admin õiguseid', 403);
         }
 
         $conventId = $request->get('conventId', null);
@@ -238,7 +238,7 @@ class PointOfSalesController extends DefaultController
         }
 
         if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            return JSendResponse::createFail(['message' => 'Teise konvendi müügikohtasid saab hallata ainult super admin'], 403);
+            return JSendResponse::createFail('Teise konvendi müügikohtasid saab hallata ainult super admin', 403);
         }
 
         $pos->setConventId($conventId);
@@ -262,10 +262,7 @@ class PointOfSalesController extends DefaultController
         } else {
             $errors = FormErrorHelper::getErrors($form);
 
-            return JSendResponse::createFail([
-                'message' => 'Müügikoha salvestamine ebaõnnestus',
-                'errors' => $errors
-            ], 400);
+            return JSendResponse::createFail('Müügikoha salvestamine ebaõnnestus', 400, $errors);
         }
     }
 }

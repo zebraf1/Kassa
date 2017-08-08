@@ -63,7 +63,7 @@ class ReportsController extends DefaultController
         }
 
         if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            return JSendResponse::createFail(['message' => 'Teise konvendi raporteid saab näha ainult super admin'], 403);
+            return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
         }
 
 
@@ -72,7 +72,7 @@ class ReportsController extends DefaultController
                 $from = new DateTime($dateFrom);
                 $reportQuery->filterByCreatedAt(['min' => $from]);
             } catch (\Exception $e) {
-                return JSendResponse::createFail(['dateFrom' => $e->getMessage()], 400);
+                return JSendResponse::createFail('Vigane alguskuupäev', 400, ['dateFrom' => $e->getMessage()]);
             }
         }
 
@@ -81,14 +81,14 @@ class ReportsController extends DefaultController
                 $until = new DateTime($dateUntil);
                 $reportQuery->filterByCreatedAt(['max' => $until]);
             } catch (\Exception $e) {
-                return JSendResponse::createFail(['dateUntil' => $e->getMessage()], 400);
+                return JSendResponse::createFail('Vigane lõppkuupäev', 400, ['dateUntil' => $e->getMessage()]);
             }
         }
 
 
         if (!empty($reportType)) {
             if (!in_array($reportType, Report::$types)) {
-                return JSendResponse::createFail(['reportType' => 'Vigane raporti tüüp: '.$reportType], 400);
+                return JSendResponse::createFail('Vigane raporti tüüp', 400, ['reportType' => 'Vigane raporti tüüp: '.$reportType]);
             }
 
             $reportQuery->filterByType($reportType);
@@ -143,17 +143,17 @@ class ReportsController extends DefaultController
         }
 
         if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            return JSendResponse::createFail(['message' => 'Tegevuseks pead olema super admin'], 403);
+            return JSendResponse::createFail('Tegevuseks pead olema super admin', 403);
         }
 
         $type = $request->get('type', Report::TYPE_VERIFICATION);
 
         if (!in_array($type, Report::$types)) {
-            return JSendResponse::createFail(['type' => 'Vigane raporti tüüp'], 400);
+            return JSendResponse::createFail('Vigased parameetrid', 400, ['type' => 'Vigane raporti tüüp']);
         }
 
         if ($type === Report::TYPE_UPDATE && $this->isGranted(User::ROLE_ADMIN) === false) {
-            return JSendResponse::createFail(['type' => 'Sellist tüüpi raportit saab tekitada admin'], 403);
+            return JSendResponse::createFail('Vigased parameetrid', 403, ['type' => 'Sellist tüüpi raportit saab tekitada admin']);
         }
 
         $report = new Report();
@@ -188,22 +188,22 @@ class ReportsController extends DefaultController
         $report = ReportQuery::create()->findPk($id);
 
         if ($report === null) {
-            return JSendResponse::createFail(['message' => 'Aruannet ei leitud'], 404);
+            return JSendResponse::createFail('Aruannet ei leitud', 404);
         }
 
         if ($report->isUpdate()) {
-            return JSendResponse::createFail(['message' => 'Majanduseestseisja aruannet ei saa muuta, lisa uus aruanne'], 400);
+            return JSendResponse::createFail('Majanduseestseisja aruannet ei saa muuta, lisa uus aruanne', 400);
         }
 
         $conventId = $report->getConventId();
         $memberConventId = $this->getMember()->getKoondisedId();
 
         if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            return JSendResponse::createFail(['message' => 'Tegevuseks pead olema super admin'], 403);
+            return JSendResponse::createFail('Tegevuseks pead olema super admin', 403);
         }
 
         if ($report->getMemberId() != $this->getMember()->getId() && !$this->isGranted(User::ROLE_ADMIN)) {
-            return JSendResponse::createFail(['message' => 'Tegevuseks pead olema admin või raporti looja'], 403);
+            return JSendResponse::createFail('Tegevuseks pead olema admin või raporti looja', 403);
         }
 
         return $this->handleSubmit($request, $report);
@@ -218,7 +218,7 @@ class ReportsController extends DefaultController
     protected function handleSubmit(Request $request, Report $report)
     {
         if (!$this->isGranted(User::ROLE_USER)) {
-            return JSendResponse::createFail(['message' => 'Tegevuseks pead olema sisse logitud'], 403);
+            return JSendResponse::createFail('Tegevuseks pead olema sisse logitud', 401);
         }
 
         $form = $this->createForm(new ReportType(), $report, [
@@ -259,10 +259,7 @@ class ReportsController extends DefaultController
         } else {
             $errors = FormErrorHelper::getErrors($form);
 
-            return JSendResponse::createFail([
-                'message' => 'Aruande salvestamine ebaõnnestus',
-                'errors' => $errors
-            ], 400);
+            return JSendResponse::createFail('Aruande salvestamine ebaõnnestus', 400, $errors);
         }
     }
 }

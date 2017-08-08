@@ -127,10 +127,7 @@ class ProductGroupsController extends DefaultController
         } else {
             $errors = FormErrorHelper::getErrors($form);
 
-            return JSendResponse::createFail([
-                'message' => 'Tootegrupi salvestamine ebaõnnestus',
-                'errors' => $errors
-            ], 400);
+            return JSendResponse::createFail('Tootegrupi salvestamine ebaõnnestus', 400, $errors);
         }
     }
 }
