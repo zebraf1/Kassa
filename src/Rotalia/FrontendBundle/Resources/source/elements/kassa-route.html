@@ -38,7 +38,9 @@
                 //Pole sisse logitud?
                 if (!this.isTrue(member)) {
                     this._setPage('login');
-                    this.set('routeData.page', 'login');
+                    if (routeData.page === 'logout') {
+                        this.set('routeData.page', 'login');
+                    }
                     return null
                 }
 
