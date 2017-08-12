@@ -71,7 +71,7 @@ class ProductsControllerTest extends WebTestCase
         $this->assertCount(1, $result->data->products);
 
         $product = reset($result->data->products);
-        $this->assertEquals('12345678', $product->productCode);
+        $this->assertEquals(['12345678'], $product->productCodes);
     }
 
     public function testGetListFilterProductGroupId()

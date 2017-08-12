@@ -51,7 +51,7 @@ class AuthenticationControllerTest extends WebTestCase
         $response = $client->getResponse();
         $postResult = json_decode($response->getContent());
 
-        $this->assertEquals(200, $response->getStatusCode(), 'Failed: '.$postResult->data);
+        $this->assertEquals(200, $response->getStatusCode(), 'Failed: '.json_encode($postResult));
         $this->assertEquals('Autoriseerimine õnnestus', $postResult->data);
 
         $postResult = json_decode($response->getContent());
@@ -132,8 +132,8 @@ class AuthenticationControllerTest extends WebTestCase
         $response = $client->getResponse();
         $postResult = json_decode($response->getContent());
 
-        $this->assertEquals(400, $response->getStatusCode(), 'Failed: '.$postResult->data);
-        $this->assertEquals('Login token puudub', $postResult->data);
+        $this->assertEquals(400, $response->getStatusCode(), 'Failed: '.json_encode($postResult));
+        $this->assertEquals('Login token puudub', $postResult->message);
     }
 
     public function testAuthenticationWrongUsername()
@@ -166,8 +166,8 @@ class AuthenticationControllerTest extends WebTestCase
         $response = $client->getResponse();
         $postResult = json_decode($response->getContent());
 
-        $this->assertEquals(401, $response->getStatusCode(), 'Failed: '.$postResult->data);
-        $this->assertEquals('Kasutajat ei leitud', $postResult->data);
+        $this->assertEquals(401, $response->getStatusCode(), 'Failed: '.json_encode($postResult));
+        $this->assertEquals('Kasutajat ei leitud', $postResult->message);
     }
 
     public function testAuthenticationWrongPassword()
@@ -200,7 +200,7 @@ class AuthenticationControllerTest extends WebTestCase
         $response = $client->getResponse();
         $postResult = json_decode($response->getContent());
 
-        $this->assertEquals(401, $response->getStatusCode(), 'Failed: '.$postResult->data);
-        $this->assertEquals('Vale parool', $postResult->data);
+        $this->assertEquals(401, $response->getStatusCode(), 'Failed: '.json_encode($postResult));
+        $this->assertEquals('Vale parool', $postResult->message);
     }
 }

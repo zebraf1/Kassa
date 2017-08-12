@@ -75,14 +75,15 @@ class JSendResponse extends JsonResponse
      * Creates a JSend fail response.
      * There was a problem with the data submitted, or some pre-condition of the API call wasn't satisfied
      *
-     * @param mixed $jSendData      required parameter data
-     * @param int $httpStatus       HTTP response code
-     * @param array $httpHeaders    optional HTTP headers
+     * @param $jSendMessage
+     * @param mixed $jSendData required parameter data
+     * @param int $httpStatus HTTP response code
+     * @param array $httpHeaders optional HTTP headers
      * @return JSendResponse
      */
-    public static function createFail($jSendData, $httpStatus, $httpHeaders = array())
+    public static function createFail($jSendMessage, $httpStatus, $jSendData = [], $httpHeaders = [])
     {
-        return new static(self::JSEND_STATUS_FAIL, $jSendData, null, null, $httpStatus, $httpHeaders);
+        return new static(self::JSEND_STATUS_FAIL, $jSendData, $jSendMessage, null, $httpStatus, $httpHeaders);
     }
 
     /**
@@ -142,6 +143,8 @@ class JSendResponse extends JsonResponse
     protected function updateJSendData()
     {
         $this->setJSendContent($this->jSendStatus, $this->jSendData, $this->jSendMessage, $this->jSendCode);
+
+        return $this;
     }
 
     /**
