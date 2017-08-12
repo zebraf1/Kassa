@@ -7,6 +7,8 @@
 
 
 {% block body %}
+    {% block flash %}{{ parent() }}{% endblock %}
+
     Mitme tootekoodi puhul eralda need komadega<br />
     <br/>
     {{ form_start(form) }}
@@ -19,6 +21,8 @@
                     </td>
                     <td>
                         {{ form_widget(formRow) }}
+                    </td>
+                    <td class="msg-error">
                         {{ form_errors(formRow) }}
                     </td>
                 </tr>

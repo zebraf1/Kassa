@@ -47,10 +47,11 @@ class ProductType extends AbstractType
                 'label' => 'Tootekood',
                 'required' => false,
             ))
-            ->add('productGroupId', 'text', array(
+            ->add('productGroupId', 'model', [
                 'label' => 'Toote grupp',
+                'class' => 'Rotalia\InventoryBundle\Model\ProductGroup',
                 'required' => false,
-            ))
+            ])
         ;
     }
 

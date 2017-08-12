@@ -4,9 +4,18 @@ Rotalia\InventoryBundle\Model\Product:
             - NotBlank: ~
         price:
             - NotBlank: ~
+            - Type:
+                type: numeric
+                message: Väärtus peab olema number.
             - GreaterThanOrEqual: 0
         amount_type:
             - NotBlank: ~
+        amount:
+            - NotBlank: ~
+            - Type:
+                type: numeric
+                message: Väärtus peab olema number.
+            - GreaterThanOrEqual: 0
         status:
             - NotBlank: ~
     getters:

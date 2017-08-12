@@ -93,6 +93,8 @@ class InventoryController extends DefaultController
                 $product->ensureProductInfos();
                 $product->save();
                 return $this->redirect($this->generateUrl('RotaliaInventory_list'));
+            } else {
+                $this->setFlashError($request, 'Vormil esines vigu');
             }
         }
 

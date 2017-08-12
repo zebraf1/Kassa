@@ -25,4 +25,9 @@ class ProductGroup extends BaseProductGroup
             'seq' => $this->getSeq(),
         ];
     }
+
+    public function __toString()
+    {
+        return $this->getAjaxName();
+    }
 }
