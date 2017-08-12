@@ -16,9 +16,6 @@
 <dom-module id="kassa-admin-tooted">
 	<template>
 		<style>
-			span.DISABLED {
-				color: #888;
-			}
 		</style>
 		<kassa-table items="[[products]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
 		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details="kassa-admin-tooted">
@@ -70,12 +67,12 @@
 				</div>
 				<vaadin-combo-box data-field="productGroupId" label="Grupp" item-label-path="name" item-value-path="id"
 				                  items="[[productGroups]]"></vaadin-combo-box>
-				<paper-input data-field="price" label="Hind (€)" type="number" min="0"></paper-input>
+				<paper-input data-field="price" label="Hind (€)" type="number" min="0" step="0.1"></paper-input>
 				<paper-toggle-button data-field="status">Käibel?</paper-toggle-button>
 			</kassa-material>
 			<div class="buttons">
 				<paper-button dialog-dismiss raised>Sulge</paper-button>
-				<kassa-confirm-button>Salvesta</kassa-confirm-button>
+				<kassa-confirm-button style="margin-right: 16px">Salvesta</kassa-confirm-button>
 			</div>
 		</paper-dialog>
 
@@ -109,10 +106,17 @@
             ready: function () {
                 this.set('dialog', this.$.dialog);
             },
+	        setUp: function () {
+                this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
+            },
+	        cleanUp: function() {
+                this.set('activeProducts', []);
+                this.set('inactiveProducts', []);
+	        },
             _loadProducts: function (pageActive, conventId) {
                 if (pageActive) {
+                    this.cleanUp();
                     this.fire('kassa-backend-action', {action: 'doProductsGetAll', conventId: conventId});
-                    this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
                 }
             },
             _merge: function (array1, array2) {

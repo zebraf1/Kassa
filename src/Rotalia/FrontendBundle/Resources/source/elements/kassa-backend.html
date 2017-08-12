@@ -44,6 +44,14 @@
 		<!-- Purchase -->
 		<iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- Report -->
+		<iron-ajax id="reportGet" handle-as="json" url='[[_computeURL("reports")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<! -- Transactions -->
+		<iron-ajax id="transactionsGet" handle-as="json" url='[[_computeURL("purchase", "refund")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="transactionsPost" handle-as="json" url='[[_computeURL("purchase", "refund")]]' method="POST"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 	</template>
 	<script>
         Polymer({
@@ -97,7 +105,19 @@
                     type: Array,
                     notify: true,
                     readOnly: true
-                }
+                },
+                /* Reports */
+                lastReport: {
+                    type: Object,
+                    notify: true,
+                    readOnly: true
+                },
+	            /* Transactions */
+	            transactions: {
+                    type: Array,
+                    notify: true,
+                    readOnly: true
+	            }
             },
             listeners: {
                 'error': '_onRequestError'
@@ -113,20 +133,19 @@
                     password: password,
                     csrfToken: this.csrfToken
                 });
-                return this.$.authenticationPost.generateRequest().completes.then(function (result) {
-                    this.fire('kassa-message-success', this._checkSuccess(result));
-                    this.doAuthenticationGet();
+                return this.$.authenticationPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this.fire('kassa-message-success', data);
+                    return this.doAuthenticationGet();
                 }.bind(this))
             },
             doLogout: function () {
-                return this.$.authenticationDelete.generateRequest().completes.then(function (result) {
-                    this.fire('kassa-message-success', this._checkSuccess(result));
-                    this.doAuthenticationGet();
+                return this.$.authenticationDelete.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this.fire('kassa-message-success', data);
+                    return this.doAuthenticationGet();
                 }.bind(this));
             },
             doAuthenticationGet: function () {
-                return this.$.authenticationGet.generateRequest().completes.then(function (result) {
-                    var data = this._checkSuccess(result);
+                return this.$.authenticationGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     if (data.csrfToken) {
                         this._setCsrfToken(data.csrfToken);
                         this._setMember(null);
@@ -139,16 +158,14 @@
             },
             /* Settings */
             doSettingsGet: function () {
-                return this.$.settingsGet.generateRequest().completes.then(function (result) {
-                    var data = this._checkSuccess(result);
+                return this.$.settingsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setSettings(data);
                 }.bind(this))
             },
             /* Members */
             doMembersGet: function () {
                 this.$.membersGet.set('params', {limit: 0});
-                this.$.membersGet.generateRequest().completes.then(function (result) {
-                    var data = this._checkSuccess(result);
+                this.$.membersGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setMembers(data.members);
                 }.bind(this))
             },
@@ -158,105 +175,121 @@
             },
             doProductsGetActive: function (conventId) {
                 this.$.productsGet.set('params', {conventId: conventId, active: true});
-                return this.$.productsGet.generateRequest().completes.then(function (result) {
-                    var data = this._checkSuccess(result);
+                return this.$.productsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setActiveProducts(data.products);
                 }.bind(this))
             },
             doProductsGetInactive: function (conventId) {
                 this.$.productsGet.set('params', {conventId: conventId, active: false});
-                return this.$.productsGet.generateRequest().completes.then(function (result) {
-                    var data = this._checkSuccess(result);
+                return this.$.productsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setInactiveProducts(data.products);
                 }.bind(this))
             },
-            doProductsPost: function (conventId, ProductType) {
-                this.$.productsPost.set('body', this.formatBody({conventId: conventId, ProductType: ProductType}));
-                return this.$.productsPost.generateRequest().completes.then(function (result) {
-                    this._checkSuccess(result);
-                    this.doProductsGetAll(conventId);
+            doProductsPost: function (conventId, productType) {
+                this.$.productsPost.set('body', this._formatBody({conventId: conventId, ProductType: productType}));
+                return this.$.productsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    if (data['status'] === 'ACTIVE') {
+                        this.push('activeProducts', data.product);
+                    } else {
+                        this.push('inactiveProducts', data.product);
+                    }
                     this.fire('kassa-message-success', 'Toode edukalt lisatud');
                 }.bind(this))
             },
-            doProductsPatch: function (conventId, productId, ProductType) {
-                this.$.productsPatch.set('body', this.formatBody({conventId: conventId, ProductType: ProductType}));
+            doProductsPatch: function (conventId, productId, productType) {
+                this.$.productsPatch.set('body', this._formatBody({conventId: conventId, ProductType: productType}));
                 this.set('_id', productId);
-                return this.$.productsPatch.generateRequest().completes.then(function (result) {
-                    this._checkSuccess(result);
-                    this.doProductsGetAll(conventId);
-                    this.fire('kassa-message-success', 'Toode edukalt muudetud');
+                return this.$.productsPatch.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    if (this._updateItems('activeProducts', this.activeProducts, data.product) || this._updateItems('inactiveProducts', this.inactiveProducts, data.product)) {
+                        this.fire('kassa-message-success', 'Toode edukalt muudetud');
+                    }
                 }.bind(this))
             },
             /* ProductGroups */
             doProductGroupsGet: function () {
-                return this.$.productGroupsGet.generateRequest().completes.then(function (result) {
-                    var data = this._checkSuccess(result);
+                return this.$.productGroupsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setProductGroups(data.productGroups);
                 }.bind(this))
             },
             doProductGroupsPost: function (ProductGroupType) {
-                this.$.productGroupsPost.set('body', this.formatBody({ProductGroupType: ProductGroupType}));
-                return this.$.productGroupsPost.generateRequest().completes.then(function (result) {
-                    this._checkSuccess(result);
-                    this.doProductGroupsGet();
+                this.$.productGroupsPost.set('body', this._formatBody({ProductGroupType: ProductGroupType}));
+                return this.$.productGroupsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this.push('productGroups', data.productGroup);
                     this.fire('kassa-message-success', 'Tootegrupp edukalt lisatud');
                 }.bind(this))
             },
             doProductGroupsPatch: function (productGroupId, ProductGroupType) {
-                this.$.productGroupsPatch.set('body', this.formatBody({ProductGroupType: ProductGroupType}));
+                this.$.productGroupsPatch.set('body', this._formatBody({ProductGroupType: ProductGroupType}));
                 this.set('_id', productGroupId);
-                return this.$.productGroupsPatch.generateRequest().completes.then(function (result) {
-                    this._checkSuccess(result);
-                    this.doProductGroupsGet();
+                return this.$.productGroupsPatch.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._updateItems('productGroups', this.productGroups, data.productGroup);
                     this.fire('kassa-message-success', 'Tootegrupp edukalt muudetud');
                 }.bind(this))
             },
             /* PointOfSales */
             doPointOfSalesGet: function () {
-                return this.$.pointOfSalesGet.generateRequest().completes.then(function (result) {
-                    var data = this._checkSuccess(result);
+                return this.$.pointOfSalesGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setPointOfSales(data.pointOfSales);
                 }.bind(this))
             },
             doPointOfSalesPost: function (conventId, PointOfSaleType) {
-                this.$.pointOfSalesPost.set('body', this.formatBody({
+                this.$.pointOfSalesPost.set('body', this._formatBody({
                     conventId: conventId,
                     PointOfSaleType: PointOfSaleType
                 }));
-                return this.$.pointOfSalesPost.generateRequest().completes.then(function (result) {
-                    this._checkSuccess(result);
-                    this.doPointOfSalesGet();
+                return this.$.pointOfSalesPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this.push('pointOfSales', data.pointOfSale);
                     this.fire('kassa-message-success', 'Müügipunkt edukalt lisatud');
                 }.bind(this))
             },
             doPointOfSalesPatch: function (pointOfSaleId, PointOfSaleType) {
-                this.$.pointOfSalesPatch.set('body', this.formatBody({PointOfSaleType: PointOfSaleType}));
+                this.$.pointOfSalesPatch.set('body', this._formatBody({PointOfSaleType: PointOfSaleType}));
                 this.set('_id', pointOfSaleId);
-                return this.$.pointOfSalesPatch.generateRequest().completes.then(function (result) {
-                    this._checkSuccess(result);
-                    this.doPointOfSalesGet();
+                return this.$.pointOfSalesPatch.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._updateItems('pointOfSales', this.pointOfSales, data.pointOfSale);
                     this.fire('kassa-message-success', 'Müügipunkt edukalt muudetud');
                 }.bind(this))
             },
             doPointOfSalesDelete: function (pointOfSaleId) {
                 this.set('_id', pointOfSaleId);
-                return this.$.pointOfSalesDelete.generateRequest().completes.then(function (result) {
-                    this._checkSuccess(result);
-                    this.doPointOfSalesGet();
+                return this.$.pointOfSalesDelete.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    console.log('TODO', data);
                     this.fire('kassa-message-success', 'Müügipunkt edukalt kustutatud');
                 }.bind(this))
             },
             /* Purchase */
             doPurchasePost: function (conventId, memberId, basket) {
-                this.$.purchasePost.set('body', this.formatBody({
+                this.$.purchasePost.set('body', this._formatBody({
                     conventId: conventId,
                     memberId: memberId,
                     basket: basket
                 }));
-                return this.$.purchasePost.generateRequest().completes.then(function (result) {
-                    this._checkSuccess(result);
+                return this.$.purchasePost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.fire('kassa-message-success', 'Ost edukalt sooritatud');
-                    this.doAuthenticationGet();
+                    //Laeme kasutaja krediidi uuesti (vb pole vaja, kui bug parandatud)
+                    return this.doAuthenticationGet();
+                }.bind(this))
+            },
+	        /* Reports */
+            doLastReportGet: function (conventId) {
+                this.$.reportGet.set('body', this._formatBody({
+                    conventId: conventId,
+                    reportType: 'VERIFICATION',
+                    limit: 1
+                }));
+                return this.$.reportGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    if (data.length === 1) {
+                        this.set('lastReport', data[0]);
+                    } else {
+                        this.set('lastReport', null);
+                    }
+                }.bind(this))
+            },
+	        /* Transactions */
+            doTransactionsGet: function (conventId) {
+                this.$.transactionsGet.set('params', {conventId: conventId});
+                return this.$.transactionsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._setTransactions(data.purchases);
                 }.bind(this))
             },
             /* General */
@@ -313,9 +346,17 @@
                     case 'doPointOfSalesDelete':
                         promise = this.doPointOfSalesDelete(data.id);
                         break;
-                    /* Purchase */
+                    /* Purchases */
                     case 'doPurchasePost':
                         promise = this.doPurchasePost(data.conventId, data.memberId, data.basket);
+                        break;
+                    /* Reports */
+                    case 'doLastReportGet':
+                        promise = this.doLastReportGet(data.conventId);
+                        break;
+	                /* Transactions */
+	                case 'doTransactionsGet':
+                        promise = this.doTransactionsGet(data.conventId);
                         break;
                     /* General */
                     default:
@@ -336,7 +377,7 @@
                     });
                 }
             },
-            formatBody: function (body) {
+            _formatBody: function (body) {
                 var newBody = {};
                 for (var key in body) {
                     if (body.hasOwnProperty(key) && this.isTrue(body[key])) {
@@ -370,10 +411,8 @@
             },
             _checkError: function (event) {
                 if (event.detail.request.xhr.response) {
-                    console.log(event.detail.request.xhr.response);
                     if (event.detail.request.xhr.response.status === 'fail' || event.detail.request.xhr.response.status === 'error') {
                         return event.detail.request.xhr.response.message;
-                        console.log(event.detail.request.xhr.response)
                     } else {
                         console.error('Vigane vastus serverilt.', event);
                     }
@@ -394,6 +433,15 @@
             _onRequestError: function (event) {
                 event.stopPropagation();
                 this.fire('kassa-message-error', this._checkError(event));
+            },
+            _updateItems: function (itemsPath, items, newItem) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i]['id'] === newItem['id']) {
+                        this.set(itemsPath + '.' + i, newItem);
+                        return true
+                    }
+                }
+                return false
             }
         })
 

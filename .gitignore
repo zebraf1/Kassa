@@ -19,3 +19,5 @@
 app/propel/generated-schemas/
 components/
 .directory
+
+package-lock\.json
