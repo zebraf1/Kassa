@@ -31,6 +31,10 @@
 				bottom: 20px;
 			}
 
+			.DISABLED {
+				color: #888;
+			}
+
 			/* Grid material styling*/
 			vaadin-grid#table {
 
@@ -73,7 +77,8 @@
 
 		<vaadin-grid id="table" items="[[items]]" on-active-item-changed="_onActiveItemChanged">
 			<template class="row-details">
-				<kassa-admin-tooted-row-details item="[[item]]" row-details-name="[[rowDetails]]"></kassa-admin-tooted-row-details>
+				<kassa-admin-tooted-row-details item="[[item]]"
+				                                row-details-name="[[rowDetails]]"></kassa-admin-tooted-row-details>
 			</template>
 			<slot></slot>
 			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(editFunc)]]">
@@ -83,7 +88,7 @@
 			</vaadin-grid-column>
 			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(deleteFunc)]]">
 				<template>
-                    <span><paper-icon-button icon="kassa:trash" on-tap="_deleteItem"></paper-icon-button></span>
+					<span><paper-icon-button icon="kassa:trash" on-tap="_deleteItem"></paper-icon-button></span>
 				</template>
 			</vaadin-grid-column>
 		</vaadin-grid>
@@ -123,8 +128,8 @@
                 },
                 rowDetails: {
                     type: String,
-	                value: '',
-	                observer: '_loadRowDetails'
+                    value: '',
+                    observer: '_loadRowDetails'
                 },
                 _activeItemId: {
                     type: Number,
@@ -141,9 +146,9 @@
                 window.addEventListener('resize', this._setFabLocation.bind(this));
             },
             _loadRowDetails: function (rowDetails) {
-				if (rowDetails !== undefined) {
+                if (rowDetails !== undefined) {
                     this.importLazyGroup(rowDetails);
-				}
+                }
             },
             _attachDialogListener: function (newVal) {
                 this.listen(newVal, 'kassa-confirm', '_onDialogSubbmit');

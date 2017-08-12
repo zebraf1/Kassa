@@ -36,13 +36,13 @@
                 item: {
                     type: Object
                 },
-	            rowDetailsName: {
+                rowDetailsName: {
                     type: String
-	            }
+                }
             },
             behaviors: [KassaBehavior],
-	        _isHidden: function (rowDetailsName) {
-		        return (rowDetailsName !== 'kassa-admin-tooted')
+            _isHidden: function (rowDetailsName) {
+                return (rowDetailsName !== 'kassa-admin-tooted')
             }
         })
 	</script>
