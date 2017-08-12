@@ -43,7 +43,7 @@ class PurchaseController extends DefaultController
      *   section="Purchase",
      *   description = "Creates transactions, reduces member credit and product storage amount",
      *   requirements={
-     *     {"name"="payment","requirement"="cash|credit|refund","description"="Payment type"}
+     *     {"name"="payment","requirement"="cash|credit","description"="Payment type"}
      *   },
      *   parameters={
      *      {"name"="memberId","dataType"="integer","required"=false,"description"="Member ID of the buyer"},
@@ -78,11 +78,6 @@ class PurchaseController extends DefaultController
                 $transactionType = Transaction::TYPE_CREDIT_PURCHASE;
                 $paymentType = 'Krediidimakse';
                 break;
-            case 'refund':
-                // Put money into cash register to receive credit
-                $transactionType = Transaction::TYPE_CASH_PAYMENT;
-                $paymentType = 'Krediidi lisamine';
-                break;
             default:
                 return JSendResponse::createError('Vigane makseviis: '.$payment, 400);
                 break;
@@ -93,13 +88,11 @@ class PurchaseController extends DefaultController
 
         $basket = $request->get('basket');
 
-        if ($payment !== 'refund') {
-            if ($basket === null) {
-                return JSendResponse::createFail('Ostukorv puudub', 400);
-            }
-            if (!is_array($basket) && $payment !== 'refund') {
-                return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
-            }
+        if ($basket === null) {
+            return JSendResponse::createFail('Ostukorv puudub', 400);
+        }
+        if (!is_array($basket)) {
+            return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
         }
 
 
@@ -146,45 +139,27 @@ class PurchaseController extends DefaultController
         }
 
         try {
-            if ($payment === 'refund') {
-                // If sum is positive then cash was put in, otherwise cash was taken out
-                $sum = doubleval($request->get('sum'));
-                if ($sum == 0) {
-                    return JSendResponse::createError('Sisesta summa', 400);
+            // Create transactions for all purchases
+            foreach ($basket as $item) {
+                if (!$this->validateBasketItem($item)) {
+                    return JSendResponse::createError('Ostukorvis on vigane toode: '.json_encode($item), 400);
                 }
 
                 $transaction = new Transaction();
-                $transaction->setSum($sum);
+                $product = ProductQuery::create()->findPk($item['id']);
+                $product->setConventId($conventId);
+                $transaction->setAmount($item['amount']);
+                $transaction->setProduct($product);
+                $transaction->setCurrentPrice($product->getPrice());
                 $transaction->setMemberRelatedByCreatedBy($currentMember);
                 $transaction->setMemberRelatedByMemberId($member);
                 $transaction->setPointOfSale($pos);
+                $totalSumCents += (int)(100 * $transaction->calculateSum());
                 $transaction->setType($transactionType);
                 $transaction->save($connection);
-                // credit balance changes the same way (positive cash = positive credit). This sum is deducted from balance
-                $totalSumCents = (int)(100 * -$sum);
-            } else {
-                // Create transactions for all purchases
-                foreach ($basket as $item) {
-                    if (!$this->validateBasketItem($item)) {
-                        return JSendResponse::createError('Ostukorvis on vigane toode: '.json_encode($item), 400);
-                    }
 
-                    $transaction = new Transaction();
-                    $product = ProductQuery::create()->findPk($item['id']);
-                    $product->setConventId($conventId);
-                    $transaction->setAmount($item['amount']);
-                    $transaction->setProduct($product);
-                    $transaction->setCurrentPrice($product->getPrice());
-                    $transaction->setMemberRelatedByCreatedBy($currentMember);
-                    $transaction->setMemberRelatedByMemberId($member);
-                    $transaction->setPointOfSale($pos);
-                    $totalSumCents += (int)(100 * $transaction->calculateSum());
-                    $transaction->setType($transactionType);
-                    $transaction->save($connection);
-
-                    $product->getProductInfo()->reduceStorageAmount($item['amount']);
-                    $product->save();
-                }
+                $product->getProductInfo()->reduceStorageAmount($item['amount']);
+                $product->save();
             }
 
             // Reduce member credit

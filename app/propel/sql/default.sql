@@ -13,9 +13,9 @@ CREATE TABLE `fos_user`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(255),
-    `username_canonical` VARCHAR(191),
+    `username_canonical` VARCHAR(255),
     `email` VARCHAR(255),
-    `email_canonical` VARCHAR(191),
+    `email_canonical` VARCHAR(255),
     `enabled` TINYINT(1) DEFAULT 0,
     `salt` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
@@ -204,7 +204,6 @@ CREATE TABLE `ollekassa_transaction`
     `pos_id` INTEGER,
     `amount` DECIMAL(10,1),
     `current_price` DECIMAL(10,2),
-    `sum` DECIMAL(10,2) NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `created_by` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
@@ -239,6 +238,27 @@ CREATE TABLE `ollekassa_point_of_sale`
     INDEX `hash` (`hash`),
     INDEX `FI__created_by_fk` (`created_by`),
     INDEX `FI_ndised_fk` (`convent_id`)
+) ENGINE=InnoDB CHARACTER SET='utf8';
+
+-- ---------------------------------------------------------------------
+-- ollekassa_transfer
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_transfer`;
+
+CREATE TABLE `ollekassa_transfer`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `member_id` INTEGER NOT NULL,
+    `convent_id` INTEGER NOT NULL,
+    `sum` DECIMAL(10,2) NOT NULL,
+    `comment` VARCHAR(255),
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `member_id` (`member_id`),
+    INDEX `FI_nsfer_convent_fk` (`convent_id`),
+    INDEX `FI_nsfer_created_by_fk` (`created_by`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
