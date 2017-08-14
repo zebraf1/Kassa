@@ -1,5 +1,4 @@
 <?php
-
 namespace Rotalia\InventoryBundle\Controller;
 use Exception;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
 /**
  * Class PurchaseController
  * @package Rotalia\InventoryBundle\Controller
@@ -27,14 +25,12 @@ class PurchaseController extends DefaultController
         if (!$this->isGranted(User::ROLE_USER) && $this->getPos($request) === null) {
             throw new AccessDeniedException();
         }
-
         return $this->render('RotaliaInventoryBundle:Purchase:home.html.twig', [
             'pos' => $this->getPos($request),
             'form' => $this->createForm(new ProductFilterType(true))->createView(),
             'member' => $this->getMember()
         ]);
     }
-
     /**
      * Purchase products with credit or cash, add credit by paying cash to point of sale
      *
@@ -43,7 +39,7 @@ class PurchaseController extends DefaultController
      *   section="Purchase",
      *   description = "Creates transactions, reduces member credit and product storage amount",
      *   requirements={
-     *     {"name"="payment","requirement"="cash|credit","description"="Payment type"}
+     *     {"name"="payment","requirement"="cash|credit|refund","description"="Payment type"}
      *   },
      *   parameters={
      *      {"name"="memberId","dataType"="integer","required"=false,"description"="Member ID of the buyer"},
@@ -78,34 +74,34 @@ class PurchaseController extends DefaultController
                 $transactionType = Transaction::TYPE_CREDIT_PURCHASE;
                 $paymentType = 'Krediidimakse';
                 break;
+            case 'refund':
+                // Put money into cash register to receive credit
+                $transactionType = Transaction::TYPE_CASH_PAYMENT;
+                $paymentType = 'Krediidi lisamine';
+                break;
             default:
                 return JSendResponse::createError('Vigane makseviis: '.$payment, 400);
                 break;
         }
-
         $currentMember = $this->getMember();
         $member = null;
-
         $basket = $request->get('basket');
-
-        if ($basket === null) {
-            return JSendResponse::createFail('Ostukorv puudub', 400);
+        if ($payment !== 'refund') {
+            if ($basket === null) {
+                return JSendResponse::createFail('Ostukorv puudub', 400);
+            }
+            if (!is_array($basket) && $payment !== 'refund') {
+                return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
+            }
         }
-        if (!is_array($basket)) {
-            return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
-        }
-
-
         // Get Point of Sale
         $pos = $this->getPos($request);
-
         // User must be logged in or using a point of sale to proceed
         if ($currentMember) {
             $member = $currentMember;
         } elseif ($pos === null) {
             return JSendResponse::createFail('Ostmiseks peab olema sisse logitud', 403);
         }
-
         // Temporarily authenticated user via PoS
         if ($memberId) {
             $member = MemberQuery::create()->findPk($memberId);
@@ -113,62 +109,68 @@ class PurchaseController extends DefaultController
                 return JSendResponse::createFail('Kasutajat ei leitud', 400);
             }
         }
-
         if ($member === null && $pos === null) {
             return JSendResponse::createError('Tehing ei ole lubatud, logi sisse', 403);
         }
-
         if ($member === null && $payment !== 'cash') {
             return JSendResponse::createError($paymentType.' nõuab sisse logimist', 403);
         }
-
         if ($pos === null && $payment !== 'credit') {
             return JSendResponse::createError($paymentType.' nõuab kassat (näiteks konvendi arvuti)', 403);
         }
-
         // Use integer for summarizing double values (see: programming floating point issue)
         $totalSumCents = 0;
-
         $connection = \Propel::getConnection(TransactionPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
-
         if ($pos !== null) {
             $conventId = $pos->getConventId();
         } else {
             $conventId = $request->get('conventId', $member->getKoondisedId());
         }
-
         try {
-            // Create transactions for all purchases
-            foreach ($basket as $item) {
-                if (!$this->validateBasketItem($item)) {
-                    return JSendResponse::createError('Ostukorvis on vigane toode: '.json_encode($item), 400);
+            if ($payment === 'refund') {
+                // If sum is positive then cash was put in, otherwise cash was taken out
+                $sum = doubleval($request->get('sum'));
+                if ($sum == 0) {
+                    return JSendResponse::createError('Sisesta summa', 400);
                 }
-
                 $transaction = new Transaction();
-                $product = ProductQuery::create()->findPk($item['id']);
-                $product->setConventId($conventId);
-                $transaction->setAmount($item['amount']);
-                $transaction->setProduct($product);
-                $transaction->setCurrentPrice($product->getPrice());
+                $transaction->setSum($sum);
                 $transaction->setMemberRelatedByCreatedBy($currentMember);
                 $transaction->setMemberRelatedByMemberId($member);
                 $transaction->setPointOfSale($pos);
-                $totalSumCents += (int)(100 * $transaction->calculateSum());
                 $transaction->setType($transactionType);
                 $transaction->save($connection);
-
-                $product->getProductInfo()->reduceStorageAmount($item['amount']);
-                $product->save();
+                // credit balance changes the same way (positive cash = positive credit). This sum is deducted from balance
+                $totalSumCents = (int)(100 * -$sum);
+            } else {
+                // Create transactions for all purchases
+                foreach ($basket as $item) {
+                    if (!$this->validateBasketItem($item)) {
+                        return JSendResponse::createError('Ostukorvis on vigane toode: '.json_encode($item), 400);
+                    }
+                    $transaction = new Transaction();
+                    $product = ProductQuery::create()->findPk($item['id']);
+                    $product->setConventId($conventId);
+                    $transaction->setAmount($item['amount']);
+                    $transaction->setProduct($product);
+                    $transaction->setCurrentPrice($product->getPrice());
+                    $transaction->setMemberRelatedByCreatedBy($currentMember);
+                    $transaction->setMemberRelatedByMemberId($member);
+                    $transaction->setPointOfSale($pos);
+                    $totalSumCents += (int)(100 * $transaction->calculateSum());
+                    $transaction->setType($transactionType);
+                    $transaction->save($connection);
+                    $product->getProductInfo()->reduceStorageAmount($item['amount']);
+                    $product->save();
+                }
             }
-
             // Reduce member credit
             if ($payment !== 'cash') {
                 $memberCredit = $member->getCredit();
                 $memberCredit->adjustCredit(-$totalSumCents / 100);
                 $memberCredit->save($connection);
             }
-
             // Add convent cash
             if ($payment !== 'credit') {
                 $setting = SettingQuery::getCurrentCashSetting($conventId);
@@ -177,9 +179,7 @@ class PurchaseController extends DefaultController
                 $setting->setValue($currentCash / 100);
                 $setting->save();
             }
-
             $connection->commit();
-
             return JSendResponse::createSuccess([
                 'totalSumCents' => $totalSumCents,
                 'newCredit' => !empty($memberCredit) ? $memberCredit->getCredit() : null
@@ -189,7 +189,6 @@ class PurchaseController extends DefaultController
             return JSendResponse::createError($e->getMessage(), 500);
         }
     }
-
     /**
      * @param array $item
      * @return bool
@@ -200,17 +199,14 @@ class PurchaseController extends DefaultController
             $this->getLogger()->warning('Invalid id for basket item: '.json_encode($item));
             return false;
         }
-
         if (!isset($item['amount']) || !ctype_digit($item['amount'])) {
             $this->getLogger()->warning('Invalid amount for basket item: '.json_encode($item));
             return false;
         }
-
         if (!isset($item['price'])) {
             $this->getLogger()->warning('Invalid price for basket item: '.json_encode($item));
             return false;
         }
-
         return true;
     }
 }

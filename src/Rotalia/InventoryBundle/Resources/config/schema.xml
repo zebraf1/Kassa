@@ -110,6 +110,7 @@
         <column name="pos_id" type="INTEGER" required="false" />
         <column name="amount" type="DECIMAL" size="10" scale="1" required="false" />
         <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
+        <column name="sum" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="created_at" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
         <column name="created_by" type="INTEGER" required="true" />
         <index name="member_id">

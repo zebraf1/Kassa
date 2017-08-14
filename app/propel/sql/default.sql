@@ -204,6 +204,7 @@ CREATE TABLE `ollekassa_transaction`
     `pos_id` INTEGER,
     `amount` DECIMAL(10,1),
     `current_price` DECIMAL(10,2),
+    `sum` DECIMAL(10,2) NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `created_by` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
