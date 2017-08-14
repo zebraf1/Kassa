@@ -101,6 +101,8 @@ class TransfersController extends DefaultController
         if (!empty($dateUntil)) {
             try {
                 $until = new DateTime($dateUntil);
+                //Makes sure that the end date is included in the filter.
+                $until->modify('+1 day');
                 $transferQuery->filterByCreatedAt(['max' => $until]);
             } catch (\Exception $e) {
                 return JSendResponse::createFail(['dateUntil' => $e->getMessage()], 400);
@@ -132,7 +134,6 @@ class TransfersController extends DefaultController
      *   description = "Creates a new transfer with the given attributes",
      *   input = "Rotalia\APIBundle\Form\TransferType",
      *   filters={
-     *      {"name"="memberId","type"="int","description"="Save transfer for selected member"},
      *      {"name"="conventId","type"="int","description"="Save transfer for selected convent instead of member home convent"}
      *   },
      *   statusCodes = {
@@ -152,7 +153,6 @@ class TransfersController extends DefaultController
         }
 
         $conventId = $request->get('conventId', null);
-        $memberId = $request->get('memberId', null);
 
         $memberConventId = $this->getMember()->getKoondisedId();
 
@@ -164,15 +164,6 @@ class TransfersController extends DefaultController
             return JSendResponse::createFail(['Teise konnventi ülekande lisamiseks peab olema super admin'], 403);
         }
 
-        if ($memberId) {
-            $member = MemberQuery::create()->findPk($memberId);
-            if ($member === null) {
-                return JSendResponse::createFail('Kasutajat ei leitud', 400);
-            }
-        } else {
-            return JSendResponse::createFail('Kasutajat ei sisestatud', 400);
-        }
-
         $connection = \Propel::getConnection(TransferPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
 
@@ -180,7 +171,6 @@ class TransfersController extends DefaultController
 
             $transfer = new Transfer();
             $transfer->setConventId($conventId);
-            $transfer->setMemberId($memberId);
             $transfer->setCreatedAt(new \DateTime());
             $transfer->setCreatedBy($this->getMember()->getId());
 
@@ -193,11 +183,27 @@ class TransfersController extends DefaultController
 
             if ($form->isValid()) {
                 $transfer = $form->getData();
-                $transfer->save($connection);
             } else {
                 $errors = FormErrorHelper::getErrors($form);
                 return JSendResponse::createFail('Ülekande salvestamine ebaõnnestus', 400, $errors);
             }
+
+            $memberId = $transfer->getMemberId();
+
+            if ($memberId) {
+                $member = MemberQuery::create()->findPk($memberId);
+                if ($member === null) {
+                    return JSendResponse::createFail('Kasutajat ei leitud', 400);
+                }
+            } else {
+                return JSendResponse::createFail('Kasutajat ei sisestatud', 400);
+            }
+
+            if ($transfer->getSum() == 0) {
+                return JSendResponse::createFail('Summa peab olema nullist erinev', 400);
+            }
+
+            $transfer->save($connection);
 
             $memberCredit = $member->getCredit();
             $memberCredit->adjustCredit($transfer->getSum());

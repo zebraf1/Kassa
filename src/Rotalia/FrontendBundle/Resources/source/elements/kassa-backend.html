@@ -47,10 +47,10 @@
 		<!-- Report -->
 		<iron-ajax id="reportGet" handle-as="json" url='[[_computeURL("reports")]]' method="GET"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<! -- Transactions -->
-		<iron-ajax id="transactionsGet" handle-as="json" url='[[_computeURL("purchase", "refund")]]' method="GET"
+		<!-- Transfers -->
+		<iron-ajax id="transfersGet" handle-as="json" url='[[_computeURL("transfers")]]' method="GET"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="transactionsPost" handle-as="json" url='[[_computeURL("purchase", "refund")]]' method="POST"
+		<iron-ajax id="transfersPost" handle-as="json" url='[[_computeURL("transfers")]]' method="POST"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 	</template>
 	<script>
@@ -113,7 +113,7 @@
                     readOnly: true
                 },
 	            /* Transactions */
-	            transactions: {
+                transfers: {
                     type: Array,
                     notify: true,
                     readOnly: true
@@ -285,11 +285,22 @@
                     }
                 }.bind(this))
             },
-	        /* Transactions */
-            doTransactionsGet: function (conventId) {
-                this.$.transactionsGet.set('params', {conventId: conventId});
-                return this.$.transactionsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
-                    this._setTransactions(data.purchases);
+	        /* Transfers */
+            doTransfersGet: function (conventId, dateFrom, dateUntil) {
+                this.$.transfersGet.set('params', {conventId: conventId, limit: 0, dateFrom: dateFrom, dateUntil: dateUntil});
+                return this.$.transfersGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._setTransfers(data.transfers);
+                }.bind(this))
+            },
+            doTransfersPost: function (conventId, TransferType) {
+                this.$.transfersPost.set('body', this._formatBody({
+                    conventId: conventId,
+                    TransferType: TransferType
+                }));
+                return this.$.transfersPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this.unshift('transfers', data.transfer);
+                    this.fire('kassa-message-success', 'Ülekanne edukalt lisatud');
+                    return this.doAuthenticationGet();
                 }.bind(this))
             },
             /* General */
@@ -354,10 +365,13 @@
                     case 'doLastReportGet':
                         promise = this.doLastReportGet(data.conventId);
                         break;
-	                /* Transactions */
-	                case 'doTransactionsGet':
-                        promise = this.doTransactionsGet(data.conventId);
+	                /* Transfers */
+	                case 'doTransfersGet':
+                        promise = this.doTransfersGet(data.conventId, data.dateFrom, data.dateUntil);
                         break;
+	                case 'doTransfersPost':
+	                    promise = this.doTransfersPost(data.conventId, data.itemType);
+	                    break;
                     /* General */
                     default:
                         console.error('Vale action.', data);

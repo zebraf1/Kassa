@@ -65,15 +65,15 @@
 		<kassa-backend id="backend" member="{{member}}" settings="{{settings}}" members="{{members}}"
 		               active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}"
 		               product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"
-		               last-report="{{lastReport}}" transactions="{{transactions}}"></kassa-backend>
+		               last-report="{{lastReport}}" transfers="{{transfers}}"></kassa-backend>
 		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]"></kassa-route>
 
 		<kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
 
 		<app-drawer-layout fullbleed responsive-width="800px" narrow="{{leftNarrow}}">
 			<app-drawer id="leftDrawer" align="left" slot="drawer">
-				<kassa-left-drawer page="[[page]]" member="{{member}}" active-convents="[[settings.activeConvents]]"
-				                   navigation="[[navigation]]"></kassa-left-drawer>
+				<kassa-left-drawer page="[[page]]" member="[[member]]" active-convents="[[settings.activeConvents]]"
+				                   navigation="[[navigation]]" configuration="{{configuration}}"></kassa-left-drawer>
 			</app-drawer>
 			<app-drawer-layout fullbleed responsive-width="1120px" narrow="{{rightNarrow}}" id="rightDrawerLayout">
 				<app-header scroll-target="[[scrollTarget]]" condenses reveals effects="material">
@@ -100,14 +100,16 @@
 					<kassa-login data-page="login"></kassa-login>
 					<kassa-logout data-page="logout"></kassa-logout>
 					<kassa-ost data-page="ost" member="[[member]]" members="[[members]]" products="[[activeProducts]]"
-					           product-groups="[[productGroups]]"></kassa-ost>
-					<kassa-admin-tooted data-page="admin-tooted" convent-id="[[member.selectedConventId]]"
+					           product-groups="[[productGroups]]" convent-id="[[configuration.selectedConventId]]"></kassa-ost>
+					<kassa-admin-tooted data-page="admin-tooted" convent-id="[[configuration.selectedConventId]]"
 					                    active-products="[[activeProducts]]" inactive-products="[[inactiveProducts]]"
 					                    product-groups="[[productGroups]]"></kassa-admin-tooted>
 					<kassa-admin-tootegrupid data-page="admin-tootegrupid"
 					                         product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
 					<kassa-admin-kassad data-page="admin-kassad" point-of-sales="[[pointOfSales]]"
 					                    active-convents="[[settings.activeConvents]]"></kassa-admin-kassad>
+					<kassa-admin-ylekanded data-page="admin-ylekanded" convent-id="[[configuration.selectedConventId]]"
+					                       transfers="[[transfers]]" members="[[members]]"></kassa-admin-ylekanded>
 				</kassa-pages>
 
 				<app-drawer id="rightDrawer" align="end" slot="drawer">
@@ -129,6 +131,7 @@
                     value: function () {
                         return [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
+                            {page: 'admin-ylekanded', name: 'Ülekanded', role: 'ROLE_ADMIN'},
                             {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'}
@@ -141,7 +144,11 @@
                 },
                 scrollTarget: {
                     type: HTMLElement
-                }
+                },
+	            configuration: {
+                    type: Object,
+		            value: {}
+	            }
             },
             behaviors: [KassaBehavior, Polymer.IronScrollTargetBehavior],
             listeners: {

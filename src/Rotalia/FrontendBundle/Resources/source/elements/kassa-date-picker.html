@@ -1,34 +1,41 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="kassa-vaadin-button-style.html">
+<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-date-picker">
 	<template>
 		<style>
-			.date-button {
-				color: #000;
-				background-color: #FFF;
-				border: 1px solid #aaaaaa;
+			:host {
+				width: 100%;
+			}
+
+			main {
+				width: 100%;
+
+				display: flex;
+				flex-flow: row wrap;
+				justify-content: space-between;
+				align-items: flex-end;
+			}
+
+			paper-button {
+				margin-left: auto;
 			}
 
 		</style>
 
-		<paper-button class="date-button" on-tap="_showStartDate">[[format(selectedStartDate, 'DD-MM-YYYY')]]
-		</paper-button>
-		<span>-</span>
-		<paper-button class="date-button" on-tap="_showEndDate">[[format(selectedEndDate, 'DD-MM-YYYY')]]</paper-button>
-
-		<paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="_dismissDialog">
-			<!--
-			<paper-date-picker id="picker" date="{{date}}" min-date="[[minDate]]" max-date="[[maxDate]]"></paper-date-picker>
-			-->
-			<div class="buttons">
-				<paper-button dialog-dismiss>Cancel</paper-button>
-				<paper-button dialog-confirm>OK</paper-button>
+		<main>
+			<div>
+				<vaadin-date-picker id="startDatePicker" value="{{startDate}}" max="[[endDate]]" label="Algus"></vaadin-date-picker> <br />
+				<vaadin-date-picker id="endDatePicker" value="{{endDate}}" min="[[startDate]]" label="Lõpp"></vaadin-date-picker>
 			</div>
-		</paper-dialog>
+			<paper-button on-tap="_onCOnfirm">Lae uuesti</paper-button>
+		</main>
+
 
 	</template>
 	<script>
@@ -38,97 +45,87 @@
             properties: {
                 //Min and max value of datepicker
                 startDate: {
-                    type: Object,
-                    observer: '_onStartDateChange',
-                    value: function () {
-                        return {year: 1913, month: 10, day: 10}
-                    }
+                    type: String,
+                    notify: true
                 },
                 endDate: {
-                    type: Object,
-                    observer: '_onEndDateChange',
-                    value: function () {
-                        return {year: new Date().getFullYear(), month: new Date().getMonth(), day: new Date().getDate()}
-                    }
-                },
-                minDate: {
-                    type: Date,
-                    computed: '_computeMinDate(startDate, selectedStartDate, settingStart)'
-                },
-                maxDate: {
-                    type: Date,
-                    computed: '_computeMaxDate(endDate, selectedEndDate, settingStart)'
-                },
-                //Is start date being currently set?
-                settingStart: {
-                    type: Boolean,
-                    value: true,
-                    readOnly: true
-                },
-                //Start and end of selected range
-                selectedStartDate: {
-                    type: Object,
-                    readOnly: true,
+                    type: String,
                     notify: true
                 },
-                selectedEndDate: {
+	            _i18n: {
                     type: Object,
-                    readOnly: true,
-                    notify: true
-                },
-                //date in datepicker object
-                date: Date
+		            value: {
+                        monthNames: [
+                            'Jaanuar', 'Veebruar', 'Märts', 'Aprill',
+	                        'Mai', 'Juuni','Juuli', 'August',
+	                        'September', 'Oktoober', 'November', 'Detsember'
+                        ],
+                        weekdays: [
+                            'Pühapäev', 'Esmaspäev', 'Teisipäev', 'Kolmapäev',
+                            'Neljapäev', 'Reede', 'Laupäev'
+                        ],
+                        weekdaysShort: [
+                            'P', 'E', 'T', 'K', 'N', 'R', 'L'
+                        ],
+                        firstDayOfWeek: 1,
+			            week: 'Nädal',
+			            calendar: 'Kalender',
+			            clear: 'Tühjenda',
+			            today: 'Täna',
+			            cancel: 'Katkesta',
+                        formatDate: function(d) {
+                            var year = d.getFullYear();
+                            var yearString = year.toString();
+                            if (yearString.length < 3 && year >= 0) {
+                                yearString = (year < 10 ? '000' : '00') + year;
+                            }
+                            var month = d.getMonth() + 1;
+                            var monthString = month.toString();
+                            if (monthString.length < 2) {
+                                monthString = '0' + month;
+                            }
+                            var day = d.getDate();
+                            var dayString = day.toString();
+                            if (dayString.length < 2) {
+                                dayString = '0' + day;
+                            }
+
+                            return dayString + '.' + monthString + '.' + yearString;
+
+                        },
+                        parseDate: function (text) {
+                            var parts = text.split('.');
+
+                            var day = parseInt(parts[0]);
+                            var month = parseInt(parts[1]) - 1;
+                            var year = parseInt(parts[2]);
+
+
+                            var result = new Date(0, 0);
+                            result.setFullYear(year);
+                            result.setMonth(month);
+                            result.setDate(day);
+                            return result;
+                        },
+                        formatTitle: function(monthName, fullYear) {
+                            return monthName + ' ' + fullYear;
+                        }
+		            }
+	            }
             },
             behaviors: [KassaBehavior],
-            format: function (date, format) {
-                return moment(date).format(format)
+	        ready: function () {
+                this.$.startDatePicker.set('i18n', this._i18n);
+                this.$.endDatePicker.set('i18n', this._i18n);
+
+                var today = new Date();
+		        this.set('endDate', today.toISOString().slice(0, 10));
+                today.setDate(today.getDate() - 7);
+                this.set('startDate', today.toISOString().slice(0, 10));
+
             },
-            _dismissDialog: function (e) {
-                if (e.detail.confirmed) {
-                    if (this.settingStart) {
-                        this._setSelectedStartDate({
-                            year: this.date.getFullYear(),
-                            month: this.date.getMonth(),
-                            day: this.date.getDate()
-                        });
-                    } else {
-                        this._setSelectedEndDate({
-                            year: this.date.getFullYear(),
-                            month: this.date.getMonth(),
-                            day: this.date.getDate()
-                        });
-                    }
-                }
-            },
-            _showStartDate: function (e) {
-                this._setSettingStart(true);
-                this.set('date', moment(this.selectedStartDate).toDate());
-                this.$.dialog.toggle();
-            },
-            _showEndDate: function (e) {
-                this._setSettingStart(false);
-                this.set('date', moment(this.selectedEndDate).toDate());
-                this.$.dialog.toggle();
-            },
-            _computeMinDate: function (startDate, selectedStartDate, settingStart) {
-                var date = startDate;
-                if (!settingStart) {
-                    date = selectedStartDate;
-                }
-                return new Date(date.year, date.month, date.day)
-            },
-            _computeMaxDate: function (endDate, selectedEndDate, settingStart) {
-                var date = endDate;
-                if (settingStart) {
-                    date = selectedEndDate;
-                }
-                return new Date(date.year, date.month, date.day)
-            },
-            _onStartDateChange: function (newValue, oldValue) {
-                this._setSelectedStartDate(newValue);
-            },
-            _onEndDateChange: function (newValue, oldValue) {
-                this._setSelectedEndDate(newValue);
+            _onCOnfirm: function () {
+	            this.fire('kassa-confirm');
             }
         })
 	</script>

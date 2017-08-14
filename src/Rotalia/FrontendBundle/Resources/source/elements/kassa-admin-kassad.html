@@ -13,7 +13,7 @@
 	<template>
 		<style>
 		</style>
-		<kassa-table items="[[pointOfSales]]" dialog="[[dialog]]" convent-id="[[conventId]]"
+		<kassa-table items="[[_mapIdsToValues(pointOfSales, activeConvents)]]" dialog="[[dialog]]" convent-id="[[conventId]]"
 		             scroll-target="[[scrollTarget]]"
 		             add-func="doPointOfSalesPost" edit-func="doPointOfSalesPatch" delete-func="doPointOfSalesDelete">
 			<vaadin-grid-column flex-grow="0">
@@ -35,7 +35,7 @@
 			<vaadin-grid-column>
 				<template class="header">Konvent</template>
 				<template>
-					<span>[[mapIdToValue(item.conventId, activeConvents, 'name')]]</span>
+					<span>[[item.conventId]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column>
@@ -87,6 +87,15 @@
             },
             setUp: function () {
                 this.fire('kassa-backend-action', {action: 'doPointOfSalesGet'});
+            },
+            _mapIdsToValues: function(pointOfSales, activeConvents) {
+                if ((pointOfSales !== undefined) && (activeConvents !== undefined)) {
+                    return this.mapIdsToValues(pointOfSales, {
+                        'conventId': [activeConvents, 'name']
+                    })
+                }
+
+                return []
             }
         })
 	</script>

@@ -14,7 +14,7 @@ class Transfer extends BaseTransfer
             'memberId' => $this->getMemberId(),
             'conventId' => $this->getConventId(),
             'sum' => doubleval($this->getSum()),
-            'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'createdAt' => $this->getCreatedAt()->format('H:i d.m.Y'),
             'createdBy' => $this->getCreatedBy(),
             'comment' => $this->getComment()
         ];

@@ -14,6 +14,9 @@ class TransferType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('memberId', 'integer', [
+                'label' => 'Kasutaja'
+            ])
             ->add('sum', 'number', [
                 'label' => 'Summa (€)'
             ])

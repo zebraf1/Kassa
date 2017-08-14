@@ -13,13 +13,16 @@
             is: "kassa-rotating-selector",
             properties: {
                 member: {
-                    type: Object,
-                    notify: true
+                    type: Object
                 },
                 activeConvents: {
                     type: Array,
                     value: []
                 },
+	            conventId: {
+                    type: Number,
+		            notify: true
+	            },
                 _selectedName: {
                     type: String
                 },
@@ -40,12 +43,12 @@
                 'space': '_rotate'
             },
             _initiateSelect: function (member, els) {
-                if (this.isTrue(member)) {
+                if (this.isTrue(member) && this.conventId === undefined) {
                     for (i = 0; i < els.length; i++) {
                         if (member.conventId === els[i].id) {
                             this.set('_selectedConventNr', i);
                             this.set('_selectedName', els[i].name);
-                            this.set('member.selectedConventId', els[i].id);
+                            this.set('conventId', els[i].id);
                             break;
                         }
                     }
@@ -54,7 +57,9 @@
             _rotate: function () {
                 this.set('_selectedConventNr', (this._selectedConventNr + 1) % this.activeConvents.length);
                 this.set('_selectedName', this.activeConvents[this._selectedConventNr].name);
-                this.set('member.selectedConventId', this.activeConvents[this._selectedConventNr].id);
+                this.async(function () {
+                    this.set('conventId', this.activeConvents[this._selectedConventNr].id);
+                }.bind(this), 1);
             }
         })
 	</script>

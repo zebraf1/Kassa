@@ -104,6 +104,9 @@
                     type: Array,
                     value: []
                 },
+                conventId: {
+                    type: Number
+                },
                 // Kasutaja poolt ostmiseks valitud tooted
                 _chosenProducts: {
                     type: Array,
@@ -131,7 +134,7 @@
             },
             behaviors: [PageBehavior, KassaBehavior],
             observers: [
-                '_loadProducts(pageActive, member.selectedConventId)'
+                '_loadProducts(pageActive, conventId)'
             ],
             ready: function () {
                 // Key bindingute jaoks (a11y-keys)
@@ -276,11 +279,12 @@
             _doubleConfirmOst: function () {
                 this.fire('kassa-backend-action', {
                     action: 'doPurchasePost',
-                    conventId: this.member.selectedConventId,
+                    conventId: this.conventId,
                     memberId: this._tasujaComboBox.value,
                     basket: this._chosenProducts.map(product => this.pickProperties(product, ['id', 'amount', 'price'])),
                     onSuccess: function () {
-                        this.cleanUp();
+                        this.set('ostFixed', false);
+                        this._set_chosenProducts([]);
                     }.bind(this),
                     onError: function () {
                         this.set('ostFixed', false);

@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="kassa-behavior.html">
 
-<dom-module id="kassa-admin-tooted-row-details">
+<dom-module id="kassa-admin-ylekanded-row-details">
 	<template>
 		<style>
 			main {
@@ -9,30 +9,16 @@
 				font-size: 13px;
 			}
 
-			main div {
-				display: flex;
-				flex-flow: row nowrap;
-			}
-
-			main div span:first-child {
-				flex: 0 0 7em;
-			}
-
-			main div span:last-child {
-				flex: 0 0 2em;
-				text-align: right;
-			}
 		</style>
 
 		<main hidden$='[[_isHidden(rowDetailsName)]]'>
-			<div><span>Kogus kapis:</span><span>[[item.inventoryAmounts.storage]]</span></div>
-			<div><span>Kogus laos:</span><span>[[item.inventoryAmounts.warehouse]]</span></div>
+			[[item.comment]]
 		</main>
 
 	</template>
 	<script>
         Polymer({
-            is: "kassa-admin-tooted-row-details",
+            is: "kassa-admin-ylekanded-row-details",
             properties: {
                 item: {
                     type: Object
@@ -43,7 +29,7 @@
             },
             behaviors: [KassaBehavior],
             _isHidden: function (rowDetailsName) {
-                return (rowDetailsName !== 'kassa-admin-tooted')
+                return (rowDetailsName !== 'kassa-admin-ylekanded')
             }
         })
 	</script>

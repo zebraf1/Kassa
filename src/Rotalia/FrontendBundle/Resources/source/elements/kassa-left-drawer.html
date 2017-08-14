@@ -116,8 +116,9 @@
 				</template>
 			</paper-listbox>
 		</main>
-		<kassa-rotating-selector hidden$="[[!isTrue(member)]]" class="bottom-button" member="{{member}}"
-		                         active-convents="[[activeConvents]]">
+		<kassa-rotating-selector hidden$="[[!isTrue(member)]]" class="bottom-button"
+		                         convent-id="{{configuration.selectedConventId}}"
+		                         active-convents="[[activeConvents]]" member="[[member]]">
 			<iron-icon icon="kassa:room"></iron-icon>
 		</kassa-rotating-selector>
 		<a href="#/logout" hidden$="[[!isTrue(member)]]" class="bottom-button">
@@ -129,8 +130,7 @@
             is: "kassa-left-drawer",
             properties: {
                 member: {
-                    type: Object,
-                    notify: true
+                    type: Object
                 },
                 page: {
                     type: String
@@ -140,7 +140,11 @@
                 },
                 navigation: {
                     type: Array
-                }
+                },
+	            configuration: {
+                    type: Object,
+		            notify: true
+	            }
             },
             behaviors: [KassaBehavior],
             _hasRights: function (member, role) {

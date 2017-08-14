@@ -17,7 +17,7 @@
 	<template>
 		<style>
 		</style>
-		<kassa-table items="[[products]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
+		<kassa-table items="[[_mapIdsToValues(products, productGroups)]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
 		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details="kassa-admin-tooted">
 			<vaadin-grid-column flex-grow="0">
 				<template class="header">Id</template>
@@ -44,7 +44,7 @@
 			<vaadin-grid-column flex-grow="0">
 				<template class="header">Grupp</template>
 				<template>
-					<span class$="[[item.status]]">[[_computeProductGroup(item.productGroupId, productGroups)]]</span>
+					<span class$="[[item.status]]">[[item.productGroupId]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="0">
@@ -127,15 +127,14 @@
                 }
 
             },
-            _computeProductGroup: function (productGroupId, productGroups) {
-                if ((productGroupId !== undefined) && (productGroups !== undefined)) {
-                    for (var i = 0; i < productGroups.length; i++) {
-                        if (productGroups[i].id === productGroupId) {
-                            return productGroups[i].name
-                        }
-                    }
+            _mapIdsToValues: function(products, productGroups) {
+                if ((products !== undefined) && (productGroups !== undefined)) {
+                    return this.mapIdsToValues(products, {
+                        'productGroupId': [productGroups, 'name']
+                    })
                 }
-                return ''
+
+                return []
             }
         })
 	</script>
