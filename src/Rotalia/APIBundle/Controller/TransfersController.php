@@ -32,7 +32,7 @@ class TransfersController extends DefaultController
      *     description="Fetch transfers list",
      *     section="Transfers",
      *     filters={
-     *          {"name"="conventId","type"="int","description"="Fetch reports for another convent than member home convent"},
+     *          {"name"="conventId","type"="int","description"="Fetch transfers for another convent than member home convent"},
      *          {"name"="memberId","dataType"="integer","description"="Member ID of user in interest"},
      *          {"name"="dateFrom","type"="string","description":"datetime string"},
      *          {"name"="dateUntil","type"="string","description":"datetime string"},
@@ -57,36 +57,38 @@ class TransfersController extends DefaultController
 
         $memberConventId = $this->getMember()->getKoondisedId();
 
-        if ($conventId === null && $memberId === null && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            return JSendResponse::createFail(['Täpsustada konvent või kasutaja'], 400);
-        }
 
-        if ($memberId !== null) {
+        if ($memberId == $this->getMember()->getId()) {
+            // User requests its own transfers
+            $transferQuery->filterByMemberId($memberId);
 
-            if ($memberId == $this->getMember()->getId()) {
-                // User requests its own transfers
-                $transferQuery->filterByMemberId($memberId);
+            if ($conventId !== null) {
+                $transferQuery->filterByConventId($conventId);
+            }
+        } elseif ($conventId == $memberConventId) {
+            if ($this->isGranted(User::ROLE_ADMIN)) {
+                $transferQuery->filterByConventId($conventId);
+
+                if ($memberId !== null) {
+                    $transferQuery->filterByMemberId($memberId);
+                }
+            } else {
+                return JSendResponse::createFail('Ainult admin saab pärida teiste ülekandeid', 403);
+            }
+        } else {
+            if ($this->isGranted(User::ROLE_SUPER_ADMIN)) {
+
+                if ($conventId !== null) {
+                    $transferQuery->filterByConventId($conventId);
+                }
+
+                if ($memberId !== null) {
+                    $transferQuery->filterByMemberId($memberId);
+                }
 
             } else {
-                return JSendResponse::createFail(['Pärida saab ainult enda ülekandeid'], 400);
-
+                return JSendResponse::createFail('Ainult super admin saab pärida teiste ülekandeid teistes konventides', 403);
             }
-
-        }
-
-
-        if ($conventId !== null) {
-
-            if (($conventId == $memberConventId) && !$this->isGranted(User::ROLE_ADMIN)) {
-                return JSendResponse::createFail(['Ainult admin saab vaadata kõiki konvendi ülekandeid'], 400);
-            }
-
-            if (($conventId != $memberConventId) && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-                return JSendResponse::createFail(['Teiste konventide ülekandeid saab vaadata ainult super admin'], 400);
-            }
-
-            $transferQuery->filterByConventId($conventId);
-
         }
 
         if (!empty($dateFrom)) {
@@ -94,7 +96,7 @@ class TransfersController extends DefaultController
                 $from = new DateTime($dateFrom);
                 $transferQuery->filterByCreatedAt(['min' => $from]);
             } catch (\Exception $e) {
-                return JSendResponse::createFail(['dateFrom' => $e->getMessage()], 400);
+                return JSendResponse::createFail('Vigane alguskuupäev', 403, ['dateFrom' => $e->getMessage()]);
             }
         }
 
@@ -105,7 +107,7 @@ class TransfersController extends DefaultController
                 $until->modify('+1 day');
                 $transferQuery->filterByCreatedAt(['max' => $until]);
             } catch (\Exception $e) {
-                return JSendResponse::createFail(['dateUntil' => $e->getMessage()], 400);
+                return JSendResponse::createFail('Vigane lõppkuupäev', 400, ['dateFrom' => $e->getMessage()]);
             }
         }
 
@@ -149,7 +151,7 @@ class TransfersController extends DefaultController
     {
 
         if (!$this->isGranted(User::ROLE_ADMIN)) {
-            return JSendResponse::createFail(['Ülekandeid saab lisada ainult admin'], 403);
+            return JSendResponse::createFail('Ülekandeid saab lisada ainult admin', 403);
         }
 
         $conventId = $request->get('conventId', null);
@@ -161,48 +163,48 @@ class TransfersController extends DefaultController
         }
 
         if ($conventId !== $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            return JSendResponse::createFail(['Teise konnventi ülekande lisamiseks peab olema super admin'], 403);
+            return JSendResponse::createFail('Teise konventi ülekande lisamiseks peab olema super admin', 403);
+        }
+
+
+        $transfer = new Transfer();
+        $transfer->setConventId($conventId);
+        $transfer->setCreatedAt(new \DateTime());
+        $transfer->setCreatedBy($this->getMember()->getId());
+
+        $form = $this->createForm(new TransferType(), $transfer, [
+            'csrf_protection' => false, // Disable for REST api
+            'method' => $request->getMethod(),
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $transfer = $form->getData();
+        } else {
+            $errors = FormErrorHelper::getErrors($form);
+            return JSendResponse::createFail('Ülekande salvestamine ebaõnnestus', 400, $errors);
+        }
+
+        $memberId = $transfer->getMemberId();
+
+        if ($memberId) {
+            $member = MemberQuery::create()->findPk($memberId);
+            if ($member === null) {
+                return JSendResponse::createFail('Kasutajat ei leitud', 400);
+            }
+        } else {
+            return JSendResponse::createFail('Kasutajat ei sisestatud', 400);
+        }
+
+        if ($transfer->getSum() == 0) {
+            return JSendResponse::createFail('Summa peab olema nullist erinev', 400);
         }
 
         $connection = \Propel::getConnection(TransferPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
 
         try {
-
-            $transfer = new Transfer();
-            $transfer->setConventId($conventId);
-            $transfer->setCreatedAt(new \DateTime());
-            $transfer->setCreatedBy($this->getMember()->getId());
-
-            $form = $this->createForm(new TransferType(), $transfer, [
-                'csrf_protection' => false, // Disable for REST api
-                'method' => $request->getMethod(),
-            ]);
-
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                $transfer = $form->getData();
-            } else {
-                $errors = FormErrorHelper::getErrors($form);
-                return JSendResponse::createFail('Ülekande salvestamine ebaõnnestus', 400, $errors);
-            }
-
-            $memberId = $transfer->getMemberId();
-
-            if ($memberId) {
-                $member = MemberQuery::create()->findPk($memberId);
-                if ($member === null) {
-                    return JSendResponse::createFail('Kasutajat ei leitud', 400);
-                }
-            } else {
-                return JSendResponse::createFail('Kasutajat ei sisestatud', 400);
-            }
-
-            if ($transfer->getSum() == 0) {
-                return JSendResponse::createFail('Summa peab olema nullist erinev', 400);
-            }
-
             $transfer->save($connection);
 
             $memberCredit = $member->getCredit();
@@ -212,8 +214,6 @@ class TransfersController extends DefaultController
             $connection->commit();
 
             return JSendResponse::createSuccess(['transfer' => $transfer->getAjaxData()]);
-
-
         } catch (Exception $e) {
             $connection->rollBack();
             return JSendResponse::createError($e->getMessage(), 500);

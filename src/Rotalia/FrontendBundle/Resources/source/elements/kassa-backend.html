@@ -253,7 +253,7 @@
             doPointOfSalesDelete: function (pointOfSaleId) {
                 this.set('_id', pointOfSaleId);
                 return this.$.pointOfSalesDelete.generateRequest().completes.then(this._checkSuccess).then(function (data) {
-                    console.log('TODO', data);
+                    this._deleteItems('pointOfSales', this.pointOfSales, pointOfSaleId);
                     this.fire('kassa-message-success', 'Müügipunkt edukalt kustutatud');
                 }.bind(this))
             },
@@ -452,6 +452,15 @@
                 for (var i = 0; i < items.length; i++) {
                     if (items[i]['id'] === newItem['id']) {
                         this.set(itemsPath + '.' + i, newItem);
+                        return true
+                    }
+                }
+                return false
+            },
+	        _deleteItems: function (itemsPath, items, id) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i]['id'] === id) {
+                        this.splice(itemsPath, i, 1);
                         return true
                     }
                 }

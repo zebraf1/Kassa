@@ -13,7 +13,7 @@
 	<template>
 		<style>
 		</style>
-		<kassa-table items="[[_mapIdsToValues(pointOfSales, activeConvents)]]" dialog="[[dialog]]" convent-id="[[conventId]]"
+		<kassa-table items="[[_mapIdsToValues(pointOfSales.*, activeConvents)]]" dialog="[[dialog]]" convent-id="[[conventId]]"
 		             scroll-target="[[scrollTarget]]"
 		             add-func="doPointOfSalesPost" edit-func="doPointOfSalesPatch" delete-func="doPointOfSalesDelete">
 			<vaadin-grid-column flex-grow="0" width="3em">
@@ -91,6 +91,7 @@
                 }.bind(this)});
             },
             _mapIdsToValues: function(pointOfSales, activeConvents) {
+                pointOfSales = pointOfSales.base;
                 if ((pointOfSales !== undefined) && (activeConvents !== undefined)) {
                     return this.mapIdsToValues(pointOfSales, {
                         'conventId': [activeConvents, 'name']
