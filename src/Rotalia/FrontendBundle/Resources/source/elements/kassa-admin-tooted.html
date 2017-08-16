@@ -19,16 +19,16 @@
 		</style>
 		<kassa-table items="[[_mapIdsToValues(products, productGroups)]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
 		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details="kassa-admin-tooted">
-			<vaadin-grid-column flex-grow="0">
-				<template class="header">Id</template>
+			<vaadin-grid-column flex-grow="0" width="3em">
+				<template class="header"><span style="text-align: right;">Id</span></template>
 				<template>
-					<span class$="[[item.status]]" style="text-align: right;">[[item.id]]</span>
+					<span style="text-align: right;">[[item.id]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="10">
 				<template class="header">
 					<vaadin-grid-filter path="name" value="{{_nameFilter}}">
-						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter"></paper-input>
+						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter" no-label-float></paper-input>
 					</vaadin-grid-filter>
 				</template>
 				<template>
@@ -36,7 +36,7 @@
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="0">
-				<template class="header">Suurus</template>
+				<template class="header"><span style="text-align: right;">Suurus</span></template>
 				<template>
 					<span class$="[[item.status]]" style="text-align: right;">[[formatAmount(item.amount, item.amountType)]]</span>
 				</template>
@@ -48,7 +48,7 @@
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="0">
-				<template class="header">Hind</template>
+				<template class="header"><span style="text-align: right;">Hind</span></template>
 				<template>
 					<span class$="[[item.status]]" style="text-align: right;">[[eur2str(item.price)]]</span>
 				</template>
@@ -71,8 +71,8 @@
 				<paper-toggle-button data-field="status">Käibel?</paper-toggle-button>
 			</kassa-material>
 			<div class="buttons">
-				<paper-button dialog-dismiss raised>Sulge</paper-button>
-				<kassa-confirm-button style="margin-right: 16px">Salvesta</kassa-confirm-button>
+				<paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]">Sulge</paper-button>
+				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}">Salvesta</kassa-confirm-button>
 			</div>
 		</paper-dialog>
 
@@ -115,8 +115,15 @@
 	        },
             _loadProducts: function (pageActive, conventId) {
                 if (pageActive) {
+                    this.fire('kassa-page-loading');
                     this.cleanUp();
-                    this.fire('kassa-backend-action', {action: 'doProductsGetAll', conventId: conventId});
+                    this.fire('kassa-backend-action', {
+                        action: 'doProductsGetAll',
+	                    conventId: conventId,
+	                    onSuccess: function () {
+                            this.fire('kassa-page-ready', {page: this})
+                        }.bind(this)
+                    });
                 }
             },
             _merge: function (array1, array2) {

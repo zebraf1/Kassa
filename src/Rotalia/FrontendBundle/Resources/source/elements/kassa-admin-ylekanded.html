@@ -26,16 +26,16 @@
 
 		<kassa-table items="[[_mapIdsToValues(transfers.*, members)]]" add-func="doTransfersPost"
 		             dialog="[[dialog]]" scroll-target="[[scrollTarget]]" convent-id="[[conventId]]" row-details="kassa-admin-ylekanded">
-			<vaadin-grid-column flex-grow="0">
-				<template class="header">Id</template>
+			<vaadin-grid-column flex-grow="0" width="3em">
+				<template class="header"><span style="text-align: right;">Id</span></template>
 				<template>
-					<span>[[item.id]]</span>
+					<span style="text-align: right;">[[item.id]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="1">
 				<template class="header">
 					<vaadin-grid-filter path="memberId" value="{{_nameFilter}}">
-						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter"></paper-input>
+						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter" no-label-float></paper-input>
 					</vaadin-grid-filter>
 				</template>
 				<template>
@@ -43,7 +43,7 @@
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="0">
-				<template class="header">Summa</template>
+				<template class="header"><span style="text-align: right;">Summa</span></template>
 				<template>
 					<span style="text-align: right;">[[eur2str(item.sum)]]</span>
 				</template>
@@ -57,7 +57,7 @@
 			<vaadin-grid-column  flex-grow="0" width="150px">
 				<template class="header">Aeg</template>
 				<template>
-					<span style="text-align: right;">[[item.createdAt]]</span>
+					<span>[[item.createdAt]]</span>
 				</template>
 			</vaadin-grid-column>
 		</kassa-table>
@@ -71,8 +71,8 @@
 
 			</kassa-material>
 			<div class="buttons">
-				<paper-button dialog-dismiss raised>Sulge</paper-button>
-				<kassa-confirm-button style="margin-right: 16px">Salvesta</kassa-confirm-button>
+				<paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]">Sulge</paper-button>
+				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}">Salvesta</kassa-confirm-button>
 			</div>
 		</paper-dialog>
 
@@ -113,10 +113,14 @@
             },
             _loadTransfers: function () {
 	            if (this.pageActive) {
+                    this.fire('kassa-page-loading');
 	                this.cleanUp();
 	                this.fire('kassa-backend-action', {
 	                    action: 'doTransfersGet', conventId: this.conventId,
-		                dateFrom: this._startDate, dateUntil: this._endDate
+		                dateFrom: this._startDate, dateUntil: this._endDate,
+		                onSuccess: function () {
+                            this.fire('kassa-page-ready', {page: this})
+                        }.bind(this)
 	                });
 	            }
             },

@@ -54,6 +54,7 @@
                 this.fire('kassa-backend-action', {
                     action: 'doAuthenticationGet', onSuccess: function () {
                         this._set_hideForm(false);
+                        this.fire('kassa-page-ready', {page: this});
                     }.bind(this)
                 })
             },

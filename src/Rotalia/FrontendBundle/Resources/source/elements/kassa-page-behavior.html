@@ -36,12 +36,16 @@
             }
         },
         sharedSetUp: function () {
-            this._setPageActive(true);
-            this.setUp();
+            this.async(function() {
+                this._setPageActive(true);
+                this.setUp();
+            }.bind(this), 1);
         },
         sharedCleanUp: function () {
-            this.cleanUp();
-            this._setPageActive(false);
+            this.async(function() {
+                this.cleanUp();
+                this._setPageActive(false);
+            }.bind(this), 1);
         },
         setScrollTarget: function (scrollTarget) {
             this.set('scrollTarget', scrollTarget);
