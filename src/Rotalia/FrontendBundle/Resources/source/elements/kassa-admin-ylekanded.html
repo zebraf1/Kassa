@@ -1,0 +1,143 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-table.html">
+<link rel="import" href="kassa-material.html">
+<link rel="import" href="kassa-date-picker.html">
+
+
+<dom-module id="kassa-admin-ylekanded">
+	<template>
+		<style>
+			kassa-material {
+				margin-bottom: 1em;
+			}
+		</style>
+
+		<kassa-material direction="horizontal">
+			<kassa-date-picker on-kassa-confirm="_loadTransfers" start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
+		</kassa-material>
+
+		<kassa-table items="[[_mapIdsToValues(transfers.*, members)]]" add-func="doTransfersPost"
+		             dialog="[[dialog]]" scroll-target="[[scrollTarget]]" convent-id="[[conventId]]" row-details="kassa-admin-ylekanded">
+			<vaadin-grid-column flex-grow="0" width="3em">
+				<template class="header"><span style="text-align: right;">Id</span></template>
+				<template>
+					<span style="text-align: right;">[[item.id]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column flex-grow="1">
+				<template class="header">
+					<vaadin-grid-filter path="memberId" value="{{_nameFilter}}">
+						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter" no-label-float></paper-input>
+					</vaadin-grid-filter>
+				</template>
+				<template>
+					<span>[[item.memberId]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column flex-grow="0">
+				<template class="header"><span style="text-align: right;">Summa</span></template>
+				<template>
+					<span style="text-align: right;">[[eur2str(item.sum)]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column flex-grow="0">
+				<template class="header">Lisaja</template>
+				<template>
+					<span>[[item.createdBy]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column  flex-grow="0" width="150px">
+				<template class="header">Aeg</template>
+				<template>
+					<span>[[item.createdAt]]</span>
+				</template>
+			</vaadin-grid-column>
+		</kassa-table>
+
+		<paper-dialog id="transfersDialog" modal style="max-width: 350px">
+			<kassa-material direction="vertical">
+				<vaadin-combo-box data-field="memberId" label="Kasutaja" item-label-path="name" item-value-path="id"
+				                  items="[[members]]"></vaadin-combo-box>
+				<paper-input data-field="sum" label="Summa (€)" type="number" step="0.1"></paper-input>
+				<paper-textarea data-field="comment" label="Kommentaar" style="width:100%;"></paper-textarea>
+
+			</kassa-material>
+			<div class="buttons">
+				<paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]">Sulge</paper-button>
+				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}">Salvesta</kassa-confirm-button>
+			</div>
+		</paper-dialog>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-admin-ylekanded",
+            properties: {
+                conventId: {
+                    type: Number
+                },
+                transfers: {
+                    type: Array,
+                },
+                members: {
+                    type: Array,
+                },
+                dialog: {
+                    type: Node
+                },
+	            _startDate: {
+                    type: String
+	            },
+                _endDate: {
+                    type: String
+                }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            observers: ['_loadTransfers(pageActive, conventId)'],
+            ready: function () {
+                this.set('dialog', this.$.transfersDialog);
+            },
+            setUp: function () {
+                this.fire('kassa-backend-action', {action: 'doMembersGet'});
+            },
+            cleanUp: function() {
+                this.set('transfers', []);
+            },
+            _loadTransfers: function () {
+	            if (this.pageActive) {
+                    this.fire('kassa-page-loading');
+	                this.cleanUp();
+	                this.fire('kassa-backend-action', {
+	                    action: 'doTransfersGet', conventId: this.conventId,
+		                dateFrom: this._startDate, dateUntil: this._endDate,
+		                onSuccess: function () {
+                            this.fire('kassa-page-ready', {page: this})
+                        }.bind(this)
+	                });
+	            }
+            },
+	        _mapIdsToValues: function(transfers, members) {
+                transfers = transfers.base;
+                if ((transfers !== undefined) && (members !== undefined)) {
+                    return this.mapIdsToValues(transfers, {
+                        'memberId': [members, 'name'],
+                        'createdBy': [members, 'name']
+                    })
+                }
+
+                return [];
+            }
+        })
+	</script>
+</dom-module>
+
+
+

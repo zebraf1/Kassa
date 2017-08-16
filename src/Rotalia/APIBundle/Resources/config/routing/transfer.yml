@@ -1,0 +1,9 @@
+RotaliaAPI_reports_list:
+    pattern:  /transfers/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:Transfers:List }
+
+RotaliaAPI_reports_create:
+    pattern:  /transfers/
+    methods: [POST]
+    defaults: { _controller: RotaliaAPIBundle:Transfers:Create }

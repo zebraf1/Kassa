@@ -19,6 +19,8 @@ setting:
 member:
     resource: "@RotaliaAPIBundle/Resources/config/routing/member.yml"
 
+transfer:
+    resource: "@RotaliaAPIBundle/Resources/config/routing/transfer.yml"
 
 RotaliaAPI_purchasePayment:
     pattern:  /purchase/{payment}/

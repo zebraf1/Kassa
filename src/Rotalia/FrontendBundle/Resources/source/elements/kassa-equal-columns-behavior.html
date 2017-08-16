@@ -10,7 +10,7 @@
             window.addEventListener('resize', this.setColumnWidths.bind(this));
         },
 
-        setColumnWidths: function (event) {
+        setColumnWidths: function () {
             this.async(function () {
                 var children = this.$.items.querySelectorAll('[kassa-columns-item]');
                 if (children.length > 0) {
@@ -31,7 +31,7 @@
                         children[i].style.maxWidth = maxWidth + 'px';
                     }
                 }
-            });
+            }.bind(this), 10);
         }
     }
 </script>

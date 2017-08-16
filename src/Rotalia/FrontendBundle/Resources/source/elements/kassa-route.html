@@ -28,12 +28,15 @@
                 routeData: {
                     type: Object,
                     notify: false
-                }
+                },
+	            conventId: {
+                    type: Number
+	            }
             },
-            observers: ['_computePage(routeData, member, navigation)'],
+            observers: ['_computePage(routeData, member, navigation, conventId)'],
             behaviors: [KassaBehavior],
-            _computePage: function (routeData, member, navigation) {
-                var _default = navigation[0].page;
+            _computePage: function (routeData, member, navigation, conventId) {
+                var _default = 'ost';
 
                 //Pole sisse logitud?
                 if (!this.isTrue(member)) {
@@ -45,18 +48,28 @@
                 }
 
                 if (this.isTrue(routeData) && routeData.page) {
-                    //Kas on sobivate õigustega??
-                    for (var i = 0; i < navigation.length; i++) {
-                        if (routeData.page === navigation[i].page && member.roles.indexOf(navigation[i].role) >= 0) {
-                            this._setPage(routeData.page);
-                            return null
-                        }
-                    }
-
                     //Logout pole osa navigationist (login ka mitte)
                     if (routeData.page === 'logout') {
                         this._setPage('logout');
                         return null
+                    }
+
+                    for (var i = 0; i < navigation.length; i++) {
+                        if (routeData.page === navigation[i].page) {
+
+                            //Has correct rights?
+	                        if (member.roles.indexOf(navigation[i].role) < 0) {
+	                            break;
+	                        }
+
+	                        //Has to be admin of this convent
+                            if ((navigation[i].role === 'ROLE_ADMIN') && (member.conventId !== conventId) && (member.roles.indexOf('ROLE_SUPER_ADMIN') < 0)) {
+                                break;
+                            }
+
+                            this._setPage(routeData.page);
+                            return null
+                        }
                     }
                 }
 

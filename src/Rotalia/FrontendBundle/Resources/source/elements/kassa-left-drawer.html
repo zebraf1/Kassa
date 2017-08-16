@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="kassa-icons.html">
 <link rel="import" href="kassa-rotating-selector.html">
@@ -34,16 +33,17 @@
 				margin: 0.3em 0;
 			}
 
-			paper-listbox {
+			ul {
+				list-style-type: none;
+				padding: 0;
+				margin: 0;
 				width: 100%;
 				background-color: var(--kassa-dark-color);
-				padding: 0;
 			}
 
-			paper-listbox a {
-				display: block;
+			li a {
 				color: #FFF;
-				box-sizing: border-box;
+				display: block;
 				padding: 0.5em 1em;
 				font-size: 1.2em;
 				font-weight: bold;
@@ -53,16 +53,20 @@
 				border-bottom: 1px solid var(--kassa-secondary-color);
 			}
 
-			paper-listbox a:hover {
+			li a:hover {
 				background-color: #01233B;
 			}
 
-			paper-listbox a:first-child {
+			li:first-of-type a {
 				border-top: 2px solid var(--kassa-secondary-color);
 			}
 
-			paper-listbox a:last-child {
+			li:last-of-type a {
 				border-bottom: 2px solid var(--kassa-secondary-color);
+			}
+
+			li a.active {
+				background-color: #012F4E;
 			}
 
 			main {
@@ -100,37 +104,37 @@
 				display: none;
 			}
 
-
 		</style>
 		<main hidden$="[[!isTrue(member)]]">
 			<div id="leftHead">
-				<h2>{{member.name}}</h2>
-				<h3>Saldo: {{eur2str(member.creditBalance)}}</h3>
+				<h2>[[member.name]]</h2>
+				<h3>Saldo: [[eur2str(member.creditBalance)]]</h3>
 			</div>
 
-			<paper-listbox selected="{{page}}" attr-for-selected="data-page">
+			<ul>
 				<template is="dom-repeat" items="[[navigation]]" as="site">
-					<template is="dom-if" if="{{_hasRights(member, site.role)}}">
-						<a data-page="[[site.page]]" href="#/[[site.page]]">[[site.name]]</a>
+					<template is="dom-if" if="[[_hasRights(member, site.role, configuration.selectedConventId)]]">
+						<li><a href="#/[[site.page]]" class$="[[_classForSelected(site.page, page)]]">[[site.name]]</a></li>
 					</template>
 				</template>
-			</paper-listbox>
+			</ul>
 		</main>
-		<kassa-rotating-selector hidden$="[[!isTrue(member)]]" class="bottom-button" member="{{member}}"
-		                         active-convents="[[activeConvents]]">
+		<kassa-rotating-selector hidden$="[[!isTrue(member)]]" class="bottom-button"
+		                         convent-id="{{configuration.selectedConventId}}"
+		                         active-convents="[[activeConvents]]" member="[[member]]">
 			<iron-icon icon="kassa:room"></iron-icon>
 		</kassa-rotating-selector>
 		<a href="#/logout" hidden$="[[!isTrue(member)]]" class="bottom-button">
 			<iron-icon icon="kassa:exit-to-app"></iron-icon>
-			Logi välja</a>
+			Logi välja
+		</a>
 	</template>
 	<script>
         Polymer({
             is: "kassa-left-drawer",
             properties: {
                 member: {
-                    type: Object,
-                    notify: true
+                    type: Object
                 },
                 page: {
                     type: String
@@ -140,14 +144,29 @@
                 },
                 navigation: {
                     type: Array
-                }
+                },
+	            configuration: {
+                    type: Object,
+		            notify: true
+	            }
             },
             behaviors: [KassaBehavior],
-            _hasRights: function (member, role) {
-                if (this.isTrue(member)) {
+            _hasRights: function (member, role, conventId) {
+                if (this.isTrue(member) && this.isTrue(conventId)) {
+
+                    if ((role === 'ROLE_ADMIN') && (member.conventId !== conventId) && (member.roles.indexOf('ROLE_SUPER_ADMIN') < 0)) {
+                        return false;
+                    }
                     return member.roles.indexOf(role) >= 0;
                 }
                 return false;
+            },
+            _classForSelected: function (page, selectedPage) {
+	            if (page === selectedPage) {
+	                return 'active';
+	            } else {
+	                return ''
+	            }
             }
         })
 	</script>

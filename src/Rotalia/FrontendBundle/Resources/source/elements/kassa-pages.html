@@ -12,6 +12,7 @@
 	<link rel="lazy-import" group="admin-tooted" href="kassa-admin-tooted.html">
 	<link rel="lazy-import" group="admin-tootegrupid" href="kassa-admin-tootegrupid.html">
 	<link rel="lazy-import" group="admin-kassad" href="kassa-admin-kassad.html">
+	<link rel="lazy-import" group="admin-ylekanded" href="kassa-admin-ylekanded.html">
 	<template>
 		<style>
 			main {
@@ -30,7 +31,7 @@
 		</style>
 
 		<main>
-			<iron-pages selected="[[shown]]" attr-for-selected="data-page" selected-item="{{selectedItem}}">
+			<iron-pages selected="[[shown]]" attr-for-selected="data-page">
 				<kassa-loading-page data-page="loading"></kassa-loading-page>
 				<slot></slot>
 			</iron-pages>
@@ -51,9 +52,9 @@
                     value: 'loading',
                     readOnly: true
                 },
-                selectedItem: {
+                selectedPage: {
                     type: HTMLElement,
-                    observer: '_onPageChange'
+	                readOnly: true
                 },
                 scrollTarget: {
                     type: HTMLElement,
@@ -62,25 +63,35 @@
                 }
             },
             behaviors: [KassaBehavior, Polymer.LazyImportsBehavior],
+            listeners: {
+                'kassa-page-loading': '_onPageLoading',
+	            'kassa-page-ready': '_onPageReady'
+            },
             ready: function () {
                 this._setScrollTarget(this.$$('main'));
             },
-            _onSelectedChange: function (newPage, oldPage) {
+            _onSelectedChange: function (newPage) {
                 this._setShown('loading');
                 this.$$('main').scrollTop = 0;
-                this.importLazyGroup(newPage).then(function () {
-                    this._setShown(newPage);
-                }.bind(this));
-            },
-            _onPageChange: function (newPage, oldPage) {
-                //kassa-page-behavior
-                if (newPage && newPage.sharedSetUp) {
-                    newPage.sharedSetUp();
-                    newPage.setScrollTarget(this.scrollTarget);
+
+                if (this.selectedPage) {
+                    this.selectedPage.sharedCleanUp();
                 }
 
-                if (oldPage && oldPage.sharedCleanUp) {
-                    oldPage.sharedCleanUp();
+                this.importLazyGroup(newPage).then(function () {
+                    //Tells the new page to do its setup.
+                    var newPageItem = this.$$('iron-pages')._valueToItem(newPage);
+	                newPageItem.sharedSetUp();
+                    newPageItem.setScrollTarget(this.scrollTarget);
+                }.bind(this));
+            },
+            _onPageLoading: function () {
+                this._setShown('loading');
+            },
+	        _onPageReady: function (event) {
+                if (this.selected === event.detail.page.getAttribute('data-page')) {
+                    this._setSelectedPage(event.detail.page);
+                    this._setShown(this.selected);
                 }
             }
         })

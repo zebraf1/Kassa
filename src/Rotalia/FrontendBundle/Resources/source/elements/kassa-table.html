@@ -10,6 +10,7 @@
 
 <dom-module id="kassa-table">
 	<link rel="lazy-import" group="kassa-admin-tooted" href="kassa-admin-tooted-row-details.html">
+	<link rel="lazy-import" group="kassa-admin-ylekanded" href="kassa-admin-ylekanded-row-details.html">
 
 	<template>
 		<style>
@@ -63,13 +64,12 @@
 					background-color: var(--paper-grey-200);
 				};
 
-				--vaadin-grid-body-row-selected-cell: {
-					background-color: var(--paper-grey-100);
+				--vaadin-grid-body-row-active-cell: {
+					border-bottom: none;
 				};
 
-				--vaadin-grid-focused-cell: {
-					box-shadow: none;
-					font-weight: bold;
+				--vaadin-grid-body-row-details-cell: {
+					padding-bottom: 16px;
 				};
 
 			}
@@ -79,6 +79,8 @@
 			<template class="row-details">
 				<kassa-admin-tooted-row-details item="[[item]]"
 				                                row-details-name="[[rowDetails]]"></kassa-admin-tooted-row-details>
+				<kassa-admin-ylekanded-row-details item="[[item]]"
+				                                row-details-name="[[rowDetails]]"></kassa-admin-ylekanded-row-details>
 			</template>
 			<slot></slot>
 			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(editFunc)]]">

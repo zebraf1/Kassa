@@ -207,3 +207,17 @@ Rotalia\InventoryBundle\Model\Setting:
         object: 'convent'
         object_id: Convent_7
         value: 0
+
+Rotalia\InventoryBundle\Model\Transfer:
+    Transfer_1:
+        member_id: Member_2123
+        convent_id: Convent_6
+        sum: 20
+    Transfer_2:
+        member_id: Member_2123
+        convent_id: Convent_7
+        sum: -10
+    Transfer_3:
+        member_id: Member_2122
+        convent_id: Convent_6
+        sum: 30

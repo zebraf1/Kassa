@@ -58,13 +58,40 @@
                     return '';
             }
         },
-        mapIdToValue: function (id, items, key) {
+        /***
+         *
+         * @param items - array of items
+         * @param mapping - {key: [items, field]}
+         */
+        mapIdsToValues: function (items, mapping) {
+
+            var newItems = [];
+
+            for (var i = 0; i < items.length; i++) {
+	            var item = items[i];
+                var newItem = {};
+
+                for (var key in item) {
+                    if (item.hasOwnProperty(key)) {
+                        if (mapping.hasOwnProperty(key)) {
+                            newItem[key] = this._mapIdToValue(item[key], mapping[key][0], mapping[key][1])
+                        } else {
+                            newItem[key] = item[key];
+                        }
+                    }
+                }
+
+                newItems.push(newItem)
+            }
+
+            return newItems
+        },
+        _mapIdToValue: function (id, items, key) {
             for (let i = 0; i < items.length; i++) {
                 if (items[i].id === id) {
                     return items[i][key]
                 }
             }
-
             return ''
         },
         pickProperties: function (object, keys) {

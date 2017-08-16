@@ -156,4 +156,31 @@
             <parameter name="Charset" value="utf8"/>
         </vendor>
     </table>
+
+    <table name="ollekassa_transfer" phpName="Transfer">
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="member_id" type="INTEGER" required="true" />
+        <column name="convent_id" type="INTEGER" required="true" />
+        <column name="sum" type="DECIMAL" size="10" scale="2" required="true" />
+        <column name="comment" type="" required="false" />
+        <column name="created_at" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+        <column name="created_by" type="INTEGER" required="true" />
+        <index name="member_id">
+            <index-column name="member_id"/>
+        </index>
+        <foreign-key foreignTable="liikmed" name="transfer_member_fk" skipSql="true">
+            <reference local="member_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="koondised" name="transfer_convent_fk" skipSql="true">
+            <reference local="convent_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="liikmed" name="transfer_created_by_fk" skipSql="true">
+            <reference local="created_by" foreign="id" />
+        </foreign-key>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+    </table>
+
 </database>
