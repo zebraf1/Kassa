@@ -9,6 +9,10 @@
 {% block body %}
     {% block flash %}{{ parent() }}{% endblock %}
 
+    {% if form_errors(form) %}
+        <div class="msg-error">{{ form_errors(form) }}</div>
+    {% endif %}
+
     Mitme tootekoodi puhul eralda need komadega<br />
     <br/>
     {{ form_start(form) }}

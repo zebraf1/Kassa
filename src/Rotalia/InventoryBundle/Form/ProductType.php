@@ -4,9 +4,10 @@ namespace Rotalia\InventoryBundle\Form;
 
 
 use Rotalia\InventoryBundle\Classes\XClassifier;
+use Rotalia\InventoryBundle\Model\ProductGroupQuery;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductType extends AbstractType
 {
@@ -47,9 +48,10 @@ class ProductType extends AbstractType
                 'label' => 'Tootekood',
                 'required' => false,
             ))
-            ->add('productGroupId', 'model', [
+            ->add('productGroup', 'model', [
                 'label' => 'Toote grupp',
                 'class' => 'Rotalia\InventoryBundle\Model\ProductGroup',
+                'query' => ProductGroupQuery::create()->orderBySeq(),
                 'required' => false,
             ])
         ;
@@ -61,9 +63,11 @@ class ProductType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * Configures the options for this type.
+     *
+     * @param OptionsResolver $resolver The resolver for the options
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Rotalia\InventoryBundle\Model\Product',
