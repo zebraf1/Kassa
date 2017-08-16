@@ -107,7 +107,7 @@ class TransfersController extends DefaultController
                 $until->modify('+1 day');
                 $transferQuery->filterByCreatedAt(['max' => $until]);
             } catch (\Exception $e) {
-                return JSendResponse::createFail('Vigane lõppkuupäev', 400, ['dateFrom' => $e->getMessage()]);
+                return JSendResponse::createFail('Vigane lõppkuupäev', 400, ['dateUntil' => $e->getMessage()]);
             }
         }
 
