@@ -2,9 +2,9 @@
 
 namespace Rotalia\APIBundle\Controller;
 
+use Rotalia\APIBundle\Form\ProductType;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
-use Rotalia\InventoryBundle\Form\ProductType;
 use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 use Rotalia\UserBundle\Model\User;
@@ -161,7 +161,7 @@ class ProductsController extends DefaultController
      *   resource = true,
      *   section="Products",
      *   description = "Creates a new product from the submitted data.",
-     *   input = "Rotalia\InventoryBundle\Form\ProductType",
+     *   input = "Rotalia\APIBundle\Form\ProductType",
      *   filters={
      *      {"name"="conventId","type"="int","description"="Set price and status for selected convent instead of member home convent"},
      *   },
@@ -186,7 +186,7 @@ class ProductsController extends DefaultController
      *   resource = true,
      *   section="Products",
      *   description = "Applies given attributes to the Product with the selected ID",
-     *   input = "Rotalia\InventoryBundle\Form\ProductType",
+     *   input = "Rotalia\APIBundle\Form\ProductType",
      *   filters={
      *      {"name"="conventId","type"="int","description"="Set price and status for selected convent instead of member home convent"},
      *   },
@@ -239,6 +239,9 @@ class ProductsController extends DefaultController
         $form = $this->createForm(new ProductType(), $product, [
             'csrf_protection' => false, // Disable for REST api
             'method' => $request->getMethod(),
+        ])->add('productGroupId', 'text', [
+            'label' => 'Toote grupp',
+            'required' => false,
         ]);
 
         $form->handleRequest($request);
