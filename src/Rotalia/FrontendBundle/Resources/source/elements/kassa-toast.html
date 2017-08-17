@@ -17,7 +17,11 @@
 			}
 
 			span {
-				margin: 0 1.5em;
+				margin: 0 18px;
+			}
+
+			span:first-child {
+				font-size: 1.3em;
 			}
 
 			paper-button {
@@ -26,15 +30,16 @@
 				margin-left: auto;
 			}
 
-			div {
+			main {
 				margin: 0;
 				padding: 0;
 				display: flex;
 				flex-flow: row wrap;
 				align-items: center;
+				justify-items: flex-start;
 			}
 
-			div * {
+			main > * {
 				flex: 0 0 auto;
 			}
 
@@ -44,14 +49,19 @@
 		</style>
 
 		<paper-toast id="toast" duration="[[duration]]">
-			<div>
+			<main>
 				<iron-icon class="error" icon="kassa:error-outline" hidden$="[[!_error]]"></iron-icon>
 				<iron-icon class="success" icon="kassa:done" hidden$="[[_error]]"></iron-icon>
-				<span>[[text]]</span>
+				<div id="text">
+					<span>[[text]]</span><br />
+					<template is="dom-repeat" items="[[details]]">
+						<span>[[item.key]]: [[item.value]]</span><br />
+					</template>
+				</div>
 				<paper-button on-tap="close">
 					<slot></slot>
 				</paper-button>
-			</div>
+			</main>
 		</paper-toast>
 
 	</template>
@@ -70,6 +80,10 @@
                 text: {
                     type: String,
                     value: ""
+                },
+                details: {
+                    type: Array,
+	                value: []
                 }
             },
             behaviors: [KassaBehavior],
@@ -77,12 +91,22 @@
                 this.close();
                 this.set('_error', false);
                 this.set('text', message);
+                this.set('details', []);
                 this.open();
             },
-            error: function (message) {
+            error: function (errorMessage) {
                 this.close();
                 this.set('_error', true);
-                this.set('text', message);
+                this.set('text', errorMessage.message);
+
+                var details = []
+                for (var key in errorMessage.data) {
+                    if (errorMessage.data.hasOwnProperty(key)) {
+                        details.push({key: key, value: errorMessage.data[key]})
+                    }
+                }
+                this.set('details', details);
+
                 this.open();
             },
             open: function () {

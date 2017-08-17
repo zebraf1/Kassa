@@ -426,7 +426,7 @@
             _checkError: function (event) {
                 if (event.detail.request.xhr.response) {
                     if (event.detail.request.xhr.response.status === 'fail' || event.detail.request.xhr.response.status === 'error') {
-                        return event.detail.request.xhr.response.message;
+                        return event.detail.request.xhr.response;
                     } else {
                         console.error('Vigane vastus serverilt.', event);
                     }
@@ -446,7 +446,9 @@
             },
             _onRequestError: function (event) {
                 event.stopPropagation();
-                this.fire('kassa-message-error', this._checkError(event));
+
+                var response = this._checkError(event);
+                this.fire('kassa-message-error', {message: response.message, data: response.data});
             },
             _updateItems: function (itemsPath, items, newItem) {
                 for (var i = 0; i < items.length; i++) {

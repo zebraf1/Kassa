@@ -73,10 +73,9 @@
 
                 for (var key in item) {
                     if (item.hasOwnProperty(key)) {
+                        newItem[key] = item[key];
                         if (mapping.hasOwnProperty(key)) {
-                            newItem[key] = this._mapIdToValue(item[key], mapping[key][0], mapping[key][1])
-                        } else {
-                            newItem[key] = item[key];
+                            newItem[key.slice(0, -2)] = this._mapIdToValue(item[key], mapping[key][0], mapping[key][1])
                         }
                     }
                 }

@@ -26,7 +26,7 @@ class TransfersController extends DefaultController
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
-     *          400 = "Returned when dateFrom or dateUntil are not in valid date format or both conventId and memberId filters are null",
+     *          400 = "Returned when dateFrom or dateUntil are not in valid date format",
      *          403 = "Returned when user has insufficient privileges",
      *     },
      *     description="Fetch transfers list",
