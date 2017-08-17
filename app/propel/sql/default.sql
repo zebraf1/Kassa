@@ -263,6 +263,37 @@ CREATE TABLE `ollekassa_transfer`
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
+-- ollekassa_credit_netting
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_credit_netting`;
+
+CREATE TABLE `ollekassa_credit_netting`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=MyISAM;
+
+-- ---------------------------------------------------------------------
+-- ollekassa_credit_netting_row
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ollekassa_credit_netting_row`;
+
+CREATE TABLE `ollekassa_credit_netting_row`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `credit_netting_id` INTEGER NOT NULL,
+    `convent_id` INTEGER NOT NULL,
+    `sum` DECIMAL(10,2) NOT NULL,
+    `netting_done` INTEGER(1) DEFAULT 0,
+    PRIMARY KEY (`id`),
+    INDEX `FI_dit_netting_row_credit_netting_fk` (`credit_netting_id`),
+    INDEX `FI_dit_netting_row_convent_fk` (`convent_id`)
+) ENGINE=MyISAM;
+
+-- ---------------------------------------------------------------------
 -- koondised
 -- ---------------------------------------------------------------------
 
@@ -452,10 +483,12 @@ CREATE TABLE `ollekassa_member_credit`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `member_id` INTEGER NOT NULL,
+    `convent_id` INTEGER NOT NULL,
     `credit` DECIMAL(10,2) DEFAULT 0 NOT NULL,
     `comment` VARCHAR(225) DEFAULT '',
     PRIMARY KEY (`id`),
-    INDEX `member_id` (`member_id`)
+    INDEX `member_id` (`member_id`),
+    INDEX `FI_ber_credit_koondised_fk` (`convent_id`)
 ) ENGINE=InnoDB CHARACTER SET='utf8';
 
 # This restores the fkey checks, after having unset them earlier

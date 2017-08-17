@@ -207,7 +207,7 @@ class TransfersController extends DefaultController
         try {
             $transfer->save($connection);
 
-            $memberCredit = $member->getCredit();
+            $memberCredit = $member->getCredit($conventId);
             $memberCredit->adjustCredit($transfer->getSum());
             $memberCredit->save($connection);
 

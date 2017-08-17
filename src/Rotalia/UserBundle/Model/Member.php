@@ -6,31 +6,41 @@ use Rotalia\UserBundle\Model\om\BaseMember;
 
 class Member extends BaseMember
 {
-    private $credit;
-
     public function getFullName()
     {
         return $this->getEesnimi() . ' ' . $this->getPerenimi();
     }
 
     /**
+     * @param $conventId
      * @return MemberCredit
-     * @throws \PropelException
      */
-    public function getCredit()
+    public function getCredit($conventId)
     {
-        //Local cache
-        if ($this->credit !== null) {
-            return $this->credit;
-        }
-
         $credit = MemberCreditQuery::create()
             ->filterByMember($this)
+            ->filterByConventId($conventId)
             ->findOneOrCreate();
 
-        $this->credit = $credit;
-
         return $credit;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalCredit()
+    {
+        $credits = MemberCreditQuery::create()
+            ->filterByMember($this)
+            ->find();
+
+        $totalCredit = 0;
+
+        foreach ($credits as $credit) {
+            $totalCredit += $credit->getCredit();
+        }
+
+        return $totalCredit;
     }
 
     /**
@@ -54,7 +64,7 @@ class Member extends BaseMember
             'id' => $this->getId(),
             'name' => $this->getFullName(),
             'conventId' => $this->koondised_id,
-            'creditBalance' => doubleval($this->getCredit()->getCredit())
+            'creditBalance' => doubleval($this->getTotalCredit())
         ];
     }
 }

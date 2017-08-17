@@ -191,6 +191,7 @@
     <table name="ollekassa_member_credit" phpName="MemberCredit" idMethod="native">
         <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
         <column name="member_id" phpName="MemberId" type="INTEGER" required="true"/>
+        <column name="convent_id" phpName="ConventId" type="INTEGER" required="true"/>
         <column name="credit" phpName="Credit" type="DECIMAL" size="10" scale="2" required="true" defaultValue="0"/>
         <column name="comment" phpName="Comment" type="VARCHAR" size="225" required="false" defaultValue=""/>
         <index name="member_id">
@@ -198,6 +199,9 @@
         </index>
         <foreign-key foreignTable="liikmed" name="member_credit_liikmed_fk" skipSql="true">
             <reference local="member_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="koondised" name="member_credit_koondised_fk" skipSql="true">
+            <reference local="convent_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>
