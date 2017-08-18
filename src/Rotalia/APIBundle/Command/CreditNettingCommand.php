@@ -4,6 +4,7 @@ namespace Rotalia\APIBundle\Command;
 
 use Exception;
 use Rotalia\InventoryBundle\Model\CreditNetting;
+use Rotalia\InventoryBundle\Model\CreditNettingPeer;
 use Rotalia\InventoryBundle\Model\CreditNettingRow;
 use Rotalia\InventoryBundle\Model\TransferPeer;
 use Rotalia\UserBundle\Model\MemberCredit;
@@ -26,7 +27,7 @@ class CreditNettingCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $connection = \Propel::getConnection(TransferPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
+        $connection = \Propel::getConnection(CreditNettingPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
 
         try {
@@ -82,10 +83,9 @@ class CreditNettingCommand extends Command
                 $member = MemberQuery::create()->findPk($memberId);
                 $memberCredit = new MemberCredit();
                 $memberCredit->setMemberId($memberId);
-                $memberCredit ->setConventId($member->getKoondisedId());
+                $memberCredit->setConventId($member->getKoondisedId());
                 $memberCredit->setCredit($credit);
                 $memberCredit->save($connection);
-                ;
             }
 
             // Insert Credit netting

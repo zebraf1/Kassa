@@ -22,6 +22,9 @@ member:
 transfer:
     resource: "@RotaliaAPIBundle/Resources/config/routing/transfer.yml"
 
+creditNettings:
+    resource: "@RotaliaAPIBundle/Resources/config/routing/creditNettings.yml"
+
 RotaliaAPI_purchasePayment:
     pattern:  /purchase/{payment}/
     defaults: { _controller: RotaliaInventoryBundle:Purchase:Payment }
