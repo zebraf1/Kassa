@@ -24,7 +24,7 @@
 			}
 		</style>
 
-		<main hidden$='[[_isHidden(rowDetailsName)]]'>
+		<main hidden$='[[_isHidden(rowDetailsInfo)]]'>
 			<div><span>Kogus kapis:</span><span>[[item.inventoryAmounts.storage]]</span></div>
 			<div><span>Kogus laos:</span><span>[[item.inventoryAmounts.warehouse]]</span></div>
 		</main>
@@ -37,13 +37,17 @@
                 item: {
                     type: Object
                 },
-                rowDetailsName: {
-                    type: String
+                rowDetailsInfo: {
+                    type: Object
                 }
             },
             behaviors: [KassaBehavior],
-            _isHidden: function (rowDetailsName) {
-                return (rowDetailsName !== 'kassa-admin-tooted')
+            _isHidden: function (rowDetailsInfo) {
+                if (this.isTrue(rowDetailsInfo)) {
+                    return (rowDetailsInfo.name !== 'kassa-admin-tooted');
+                }
+
+                return true;
             }
         })
 	</script>

@@ -52,6 +52,11 @@
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<iron-ajax id="transfersPost" handle-as="json" url='[[_computeURL("transfers")]]' method="POST"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- Credit Nettings -->
+		<iron-ajax id="creditNettingsGet" handle-as="json" url='[[_computeURL("creditNettings")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="creditNettingsPatch" handle-as="json" url='[[_computeURL("creditNettings", _id)]]' method="PATCH"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 	</template>
 	<script>
         Polymer({
@@ -114,6 +119,12 @@
                 },
 	            /* Transactions */
                 transfers: {
+                    type: Array,
+                    notify: true,
+                    readOnly: true
+	            },
+	            /* CreditNettings */
+	            creditNettings: {
                     type: Array,
                     notify: true,
                     readOnly: true
@@ -303,6 +314,23 @@
                     return this.doAuthenticationGet();
                 }.bind(this))
             },
+	        /* CreditNettings */
+	        doCreditNettingsGet: function () {
+                return this.$.creditNettingsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._setCreditNettings(data.creditNettings);
+                }.bind(this))
+            },
+            doCreditNettingsPatch: function (conventId, creditNettingId, CreditNettingRowType) {
+                this.$.creditNettingsPatch.set('body', this._formatBody({
+		                CreditNettingRowType: CreditNettingRowType,
+	                    conventId: conventId
+                }));
+                this.set('_id', creditNettingId);
+                return this.$.creditNettingsPatch.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._updateItems('creditNettings', this.creditNettings, data.creditNetting);
+                    this.fire('kassa-message-success', 'Tasaarveldus edukalt muudetud');
+                }.bind(this))
+            },
             /* General */
             doAction: function (data) {
                 var promise;
@@ -372,6 +400,13 @@
 	                case 'doTransfersPost':
 	                    promise = this.doTransfersPost(data.conventId, data.itemType);
 	                    break;
+	                /* CreditNettings*/
+	                case 'doCreditNettingsGet':
+                        promise = this.doCreditNettingsGet();
+                        break;
+	                case 'doCreditNettingsPatch':
+	                    promise = this.doCreditNettingsPatch(data.conventId, data.creditNettingId, data.creditNettingRowType);
+	                    break;
                     /* General */
                     default:
                         console.error('Vale action.', data);
@@ -402,7 +437,7 @@
                                 }
                             }
                         } else if (Array.isArray(body[key])) {
-                            for (let i = 0; i < body[key].length; i++) {
+                            for (var i = 0; i < body[key].length; i++) {
                                 for (var key2 in body[key][i]) {
                                     if (body[key][i].hasOwnProperty(key2)) {
                                         newBody[key + '[' + i + ']' + '[' + key2 + ']'] = body[key][i][key2];

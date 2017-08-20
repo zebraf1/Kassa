@@ -11,6 +11,7 @@
 <dom-module id="kassa-table">
 	<link rel="lazy-import" group="kassa-admin-tooted" href="kassa-admin-tooted-row-details.html">
 	<link rel="lazy-import" group="kassa-admin-ylekanded" href="kassa-admin-ylekanded-row-details.html">
+	<link rel="lazy-import" group="kassa-admin-tasaarveldused" href="kassa-admin-tasaarveldused-row-details.html">
 
 	<template>
 		<style>
@@ -77,10 +78,12 @@
 
 		<vaadin-grid id="table" items="[[items]]" on-active-item-changed="_onActiveItemChanged">
 			<template class="row-details">
-				<kassa-admin-tooted-row-details item="[[item]]"
-				                                row-details-name="[[rowDetails]]"></kassa-admin-tooted-row-details>
-				<kassa-admin-ylekanded-row-details item="[[item]]"
-				                                row-details-name="[[rowDetails]]"></kassa-admin-ylekanded-row-details>
+				<kassa-admin-tooted-row-details
+						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-admin-tooted-row-details>
+				<kassa-admin-ylekanded-row-details
+						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-admin-ylekanded-row-details>
+				<kassa-admin-tasaarveldused-row-details
+						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-admin-tasaarveldused-row-details>
 			</template>
 			<slot></slot>
 			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(editFunc)]]">
@@ -128,9 +131,9 @@
                 conventId: {
                     type: Number
                 },
-                rowDetails: {
-                    type: String,
-                    value: '',
+                rowDetailsInfo: {
+                    type: Object,
+                    value: null,
                     observer: '_loadRowDetails'
                 },
                 _activeItemId: {
@@ -147,9 +150,9 @@
             ready: function () {
                 window.addEventListener('resize', this._setFabLocation.bind(this));
             },
-            _loadRowDetails: function (rowDetails) {
-                if (rowDetails !== undefined) {
-                    this.importLazyGroup(rowDetails);
+            _loadRowDetails: function (rowDetailsInfo) {
+                if (this.isTrue(rowDetailsInfo)) {
+                    this.importLazyGroup(rowDetailsInfo.name);
                 }
             },
             _attachDialogListener: function (newVal) {

@@ -59,7 +59,6 @@ class CreditNettingsController extends DefaultController
     /**
      * Update the state of CreditNettings. Only accessible by admins.
      *
-     * @return JSendResponse
      * @ApiDoc(
      *     resource = true,
      *     statusCodes = {
@@ -71,25 +70,28 @@ class CreditNettingsController extends DefaultController
      *     section="CreditNettings",
      *     input = "Rotalia\APIBundle\Form\CreditNettingRowType",
      *     filters={
-     *          {"name"="conventId","type"="int","description"="Update creditNetting for another convent than member home convent"},
-     *          {"name"="creditNettingId","type"="int","description"="CreditNetting to be updated"}
+     *          {"name"="conventId","type"="int","description"="Update creditNetting for another convent than member home convent"}
      *     }
      * )
      *
+     * @param $creditNettingId
      * @param Request $request
      * @return JSendResponse
      */
-    public function updateAction(Request $request) {
+    public function updateAction(Request $request, $creditNettingId) {
+
+        $conventId = $request->get('conventId', null);
+
+        if ($conventId === null) {
+            $conventId = $this->getMember()->getKoondisedId();
+        }
 
         if (!$this->isGranted(User::ROLE_ADMIN)) {
             return JSendResponse::createFail('Tasaarveldusi saab muuta ainult admin', 403);
         }
 
-        $conventId = $request->get('conventId', null);
-        $creditNettingId = $request->get('creditNettingId', null);
-
-        if ($conventId === null) {
-            $conventId = $this->getMember()->getKoondisedId();
+        if(!$this->isGranted(User::ROLE_SUPER_ADMIN) && $conventId != $this->getMember()->getKoondisedId()) {
+            return JSendResponse::createFail('Teise konvendi tasaarveldusi saab muuta ainult super admin', 403);
         }
 
         if ($creditNettingId === null) {
@@ -123,7 +125,7 @@ class CreditNettingsController extends DefaultController
 
         $creditNettingRow->save();
 
-        return JSendResponse::createSuccess(null);
+        return JSendResponse::createSuccess(['creditNetting' => $creditNettingRow->getCreditNetting()->getAjaxData()], [], 200);
 
     }
 

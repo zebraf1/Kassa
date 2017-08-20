@@ -11,7 +11,7 @@
 
 		</style>
 
-		<main hidden$='[[_isHidden(rowDetailsName)]]'>
+		<main hidden$='[[_isHidden(rowDetailsInfo)]]'>
 			<pre>[[item.comment]]</pre>
 		</main>
 
@@ -23,13 +23,17 @@
                 item: {
                     type: Object
                 },
-                rowDetailsName: {
-                    type: String
+                rowDetailsInfo: {
+                    type: Object
                 }
             },
             behaviors: [KassaBehavior],
-            _isHidden: function (rowDetailsName) {
-                return (rowDetailsName !== 'kassa-admin-ylekanded')
+            _isHidden: function (rowDetailsInfo) {
+                if (this.isTrue(rowDetailsInfo)) {
+                    return (rowDetailsInfo.name !== 'kassa-admin-ylekanded');
+                }
+
+                return true;
             }
         })
 	</script>

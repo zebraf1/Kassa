@@ -13,6 +13,7 @@
 	<link rel="lazy-import" group="admin-tootegrupid" href="kassa-admin-tootegrupid.html">
 	<link rel="lazy-import" group="admin-kassad" href="kassa-admin-kassad.html">
 	<link rel="lazy-import" group="admin-ylekanded" href="kassa-admin-ylekanded.html">
+	<link rel="lazy-import" group="admin-tasaarveldused" href="kassa-admin-tasaarveldused.html">
 	<template>
 		<style>
 			main {
@@ -20,12 +21,8 @@
 				width: 100%;
 				display: block;
 				padding: 1em;
-				overflow: auto;
+				overflow-y: hidden;
 				box-sizing: border-box;
-				-webkit-box-sizing: border-box;
-				-moz-box-sizing: border-box;
-				-ms-box-sizing: border-box;
-				-o-box-sizing: border-box;
 			}
 
 		</style>
@@ -56,23 +53,17 @@
                     type: HTMLElement,
 	                readOnly: true
                 },
-                scrollTarget: {
-                    type: HTMLElement,
-                    notify: true,
-                    readOnly: true
-                }
+	            scrollTarget: {
+                    type: HTMLElement
+	            }
             },
             behaviors: [KassaBehavior, Polymer.LazyImportsBehavior],
             listeners: {
                 'kassa-page-loading': '_onPageLoading',
 	            'kassa-page-ready': '_onPageReady'
             },
-            ready: function () {
-                this._setScrollTarget(this.$$('main'));
-            },
             _onSelectedChange: function (newPage) {
                 this._setShown('loading');
-                this.$$('main').scrollTop = 0;
 
                 if (this.selectedPage) {
                     this.selectedPage.sharedCleanUp();
@@ -82,7 +73,7 @@
                     //Tells the new page to do its setup.
                     var newPageItem = this.$$('iron-pages')._valueToItem(newPage);
 	                newPageItem.sharedSetUp();
-                    newPageItem.setScrollTarget(this.scrollTarget);
+	                newPageItem.setScrollTarget(this.scrollTarget);
                 }.bind(this));
             },
             _onPageLoading: function () {
