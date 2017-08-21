@@ -67,6 +67,14 @@ class CreditNettingControllerTest extends WebTestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertCount(1, $result->data->creditNettings);
 
+        foreach ($result->data->creditNettings as $creditNetting) {
+            $sum = 0;
+            foreach ($creditNetting->creditNettingRows as $creditNettingRow) {
+                $sum += $creditNettingRow->sum;
+            }
+            $this->assertEquals(0, $sum);
+        }
+
     }
 
 }

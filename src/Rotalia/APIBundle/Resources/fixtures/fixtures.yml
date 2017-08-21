@@ -231,3 +231,9 @@ Rotalia\InventoryBundle\Model\Transfer:
         member_id: Member_2122
         convent_id: Convent_6
         sum: 30
+
+Rotalia\InventoryBundle\Model\CreditNetting:
+    ~
+
+Rotalia\InventoryBundle\Model\CreditNettingRow:
+    ~
