@@ -3,6 +3,7 @@
 namespace Rotalia\APIBundle\Controller;
 
 
+use Doctrine\Common\Collections\Criteria;
 use Rotalia\APIBundle\Form\CreditNettingRowType;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
@@ -38,7 +39,10 @@ class CreditNettingsController extends DefaultController
     public function listAction(Request $request) {
 
         if ($this->isGranted(User::ROLE_ADMIN)) {
-            $creditNettings = CreditNettingQuery::create()->find();
+            $creditNettings = CreditNettingQuery::create()
+                ->orderByCreatedAt(CRITERIA::DESC)
+                ->find()
+            ;
         } else {
             throw $this->createAccessDeniedException();
         }

@@ -102,6 +102,9 @@ class CreditNettingCommand extends Command
                 $creditNettingRow->setCreditNetting($creditNetting);
                 $creditNettingRow->setConventId($conventId);
                 $creditNettingRow->setSum($creditIn - $creditOut);
+                if ($creditIn - $creditOut === 0.0) {
+                    $creditNettingRow->setNettingDone(1);
+                }
                 $creditNettingRow->save($connection);
             }
 
