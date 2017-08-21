@@ -48,8 +48,10 @@ ALTER TABLE `fos_user` CHANGE `email_canonical` `email_canonical` VARCHAR(255);
 
 ALTER TABLE `ollekassa_member_credit`
     ADD `convent_id` INTEGER NOT NULL AFTER `member_id`;
-
+    
 CREATE INDEX `FI_ber_credit_koondised_fk` ON `ollekassa_member_credit` (`convent_id`);
+
+UPDATE ollekassa_member_credit SET convent_id = 6;
 
 CREATE TABLE `ollekassa_credit_netting`
 (
