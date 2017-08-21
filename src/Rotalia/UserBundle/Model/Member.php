@@ -44,6 +44,14 @@ class Member extends BaseMember
     }
 
     /**
+     * @return int
+     */
+    public function getConventId()
+    {
+        return $this->koondised_id;
+    }
+
+    /**
      * Auto-complete representation of this object
      *
      * @return string

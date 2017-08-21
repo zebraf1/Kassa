@@ -37,8 +37,8 @@
             {% for member in members %}
                 <tr class="credit-row {{ cycle(['even', 'odd'], loop.index) }}">
                     <td>{{ member.fullName }}</td>
-                    <td class="credit credit-{{ member.credit.creditStatus }}">
-                        {{- member.credit.credit | number_format(2, '.', ',') ~ '€' -}}
+                    <td class="credit credit-{{ member.credit(member.conventId).creditStatus }}">
+                        {{- member.totalCredit | number_format(2, '.', ',') ~ '€' -}}
                     </td>
                     <td>
                         <a href="{{ path('RotaliaInventory_purchaseLogMember', {'memberId':member.id}) }}">Logi</a>

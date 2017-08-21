@@ -6,7 +6,6 @@ use Exception;
 use Rotalia\InventoryBundle\Model\CreditNetting;
 use Rotalia\InventoryBundle\Model\CreditNettingPeer;
 use Rotalia\InventoryBundle\Model\CreditNettingRow;
-use Rotalia\InventoryBundle\Model\TransferPeer;
 use Rotalia\UserBundle\Model\MemberCredit;
 use Rotalia\UserBundle\Model\MemberCreditQuery;
 use Rotalia\UserBundle\Model\MemberQuery;
@@ -44,12 +43,13 @@ class CreditNettingCommand extends Command
             }
 
             // Incoming credit for each convent
+            /** @var MemberCredit[] $memberCredits */
             $memberCredits = MemberCreditQuery::create()
                 ->joinMember()
-                ->where('ollekassa_member_credit.convent_id <> Member.koondised_id')
                 ->useMemberQuery()
                 ->groupByKoondisedId()
                 ->endUse()
+                ->where('ollekassa_member_credit.convent_id <> Member.koondised_id')
                 ->withColumn('SUM(credit)')
                 ->addAsColumn('liikmed.koondised_id', 'liikmed.koondised_id')
                 ->find($connection)
@@ -63,8 +63,8 @@ class CreditNettingCommand extends Command
             // Outgoing credit for each convent
             $memberCredits = MemberCreditQuery::create()
                 ->joinMember()
-                ->where('ollekassa_member_credit.convent_id <> Member.koondised_id')
                 ->groupByConventId()
+                ->where('ollekassa_member_credit.convent_id <> Member.koondised_id')
                 ->withColumn('SUM(credit)')
                 ->find($connection)
             ;
