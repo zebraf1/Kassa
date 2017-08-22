@@ -42,10 +42,6 @@ class PropelMigration_1502990820
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `fos_user` CHANGE `username_canonical` `username_canonical` VARCHAR(255);
-
-ALTER TABLE `fos_user` CHANGE `email_canonical` `email_canonical` VARCHAR(255);
-
 ALTER TABLE `ollekassa_member_credit`
     ADD `convent_id` INTEGER NOT NULL AFTER `member_id`;
     
@@ -95,10 +91,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `ollekassa_credit_netting`;
 
 DROP TABLE IF EXISTS `ollekassa_credit_netting_row`;
-
-ALTER TABLE `fos_user` CHANGE `username_canonical` `username_canonical` VARCHAR(191);
-
-ALTER TABLE `fos_user` CHANGE `email_canonical` `email_canonical` VARCHAR(191);
 
 DROP INDEX `FI_ber_credit_koondised_fk` ON `ollekassa_member_credit`;
 
