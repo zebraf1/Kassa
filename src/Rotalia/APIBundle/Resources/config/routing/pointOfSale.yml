@@ -6,17 +6,17 @@ RotaliaAPI_pos_list:
 RotaliaAPI_pos_view:
     pattern:  /pointOfSales/{id}/
     methods: [GET]
-    defaults: { _controller: RotaliaAPIBundle:PointOfSales:View }
+    defaults: { _controller: RotaliaAPIBundle:PointOfSales:Get }
 
 RotaliaAPI_products_create:
     pattern:  /pointOfSales/
     methods: [POST]
-    defaults: { _controller: RotaliaAPIBundle:PointOfSales:Create }
+    defaults: { _controller: RotaliaAPIBundle:PointOfSales:Post }
 
 RotaliaAPI_products_update:
     pattern:  /pointOfSales/{id}/
     methods: [PATCH]
-    defaults: { _controller: RotaliaAPIBundle:PointOfSales:Update }
+    defaults: { _controller: RotaliaAPIBundle:PointOfSales:Patch }
 
 RotaliaAPI_products_delete:
     pattern:  /pointOfSales/{id}/

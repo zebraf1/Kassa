@@ -43,7 +43,7 @@
                             <span><strong>{{ app.user.member.fullName }}</strong></span>
                             <span>
                                 <a id="userCredit" href="{{ path('RotaliaInventory_purchaseLogMember', {'memberId':app.user.member.id}) }}">
-                                    {{- app.user.member.credit.credit | number_format(2, '.', ',') ~ ' €' -}}
+                                    {{- app.user.member.totalCredit | number_format(2, '.', ',') ~ ' €' -}}
                                 </a>
                             </span>
                             <span><a href="{{ path('fos_user_security_logout') }}">Välju</a></span>

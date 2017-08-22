@@ -167,7 +167,7 @@ class PurchaseController extends DefaultController
             }
             // Reduce member credit
             if ($payment !== 'cash') {
-                $memberCredit = $member->getCredit();
+                $memberCredit = $member->getCredit($conventId);
                 $memberCredit->adjustCredit(-$totalSumCents / 100);
                 $memberCredit->save($connection);
             }
@@ -182,7 +182,7 @@ class PurchaseController extends DefaultController
             $connection->commit();
             return JSendResponse::createSuccess([
                 'totalSumCents' => $totalSumCents,
-                'newCredit' => !empty($memberCredit) ? $memberCredit->getCredit() : null
+                'newCredit' => $member->getTotalCredit()
             ]);
         } catch (Exception $e) {
             $connection->rollBack();

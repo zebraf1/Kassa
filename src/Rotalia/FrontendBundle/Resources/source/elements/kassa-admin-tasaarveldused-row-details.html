@@ -1,0 +1,143 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="kassa-behavior.html">
+
+<link rel="import" href="kassa-confirm-button.html">
+
+<dom-module id="kassa-admin-tasaarveldused-row-details">
+	<template>
+		<style>
+			main {
+				padding-left: 120px;
+				font-size: 13px;
+			}
+
+			main div {
+				display: flex;
+				flex-flow: row nowrap;
+			}
+
+			main div span:first-child {
+				flex: 0 0 7em;
+			}
+
+			main div span:last-child {
+				flex: 0 0 2em;
+				text-align: right;
+			}
+
+			td, th {
+				padding-right: 2em;
+				text-align: left;
+			}
+
+			kassa-confirm-button {
+				width: 10em;
+			}
+
+			[hidden] {
+				display: none;
+			}
+		</style>
+
+		<main hidden$='[[_isHidden(rowDetailsInfo)]]'>
+			<table>
+				<thead>
+				<tr>
+					<th>Konvent</th>
+					<th>Puudujääk</th>
+					<th>Olek</th>
+				</tr>
+				</thead>
+				<tbody>
+					<template is="dom-repeat" items="[[item.creditNettingRows]]" as="creditNettingRow">
+						<tr>
+							<td>[[mapIdToValue(creditNettingRow.conventId, rowDetailsInfo.activeConvents, "name")]]</td>
+							<td style="text-align: right;">[[eur2str(creditNettingRow.sum)]]</td>
+							<td>[[_computeStatus(creditNettingRow.sum, creditNettingRow.nettingDone)]]</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+			<kassa-confirm-button hidden$="[[_isButtonHidden(rowDetailsInfo.conventId, item.creditNettingRows)]]" on-kassa-confirm="_confirmAction">
+				[[_computeButtonText(rowDetailsInfo.conventId, item.creditNettingRows)]]
+			</kassa-confirm-button>
+		</main>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-admin-tasaarveldused-row-details",
+            properties: {
+                item: {
+                    type: Object
+                },
+                rowDetailsInfo: {
+                    type: Object
+                }
+            },
+            behaviors: [KassaBehavior],
+            _isHidden: function (rowDetailsInfo) {
+                if (this.isTrue(rowDetailsInfo)) {
+                    return (rowDetailsInfo.name !== 'kassa-admin-tasaarveldused');
+                }
+
+                return true;
+            },
+            _computeStatus: function (sum, nettingDone) {
+	            var sentences;
+	            if (sum > 0) {
+                    sentences = ['Makse saamata', 'Makse saadud'];
+	            } else if(sum < 0) {
+                    sentences = ['Makse sooritamata', 'Makse sooritatud'];
+	            } else {
+					return 'Tasaarveldus pole vajalik';
+	            }
+
+	            return sentences[nettingDone];
+            },
+	        _computeButtonText: function(selectedConventId, creditNettingRows) {
+                if (selectedConventId !== undefined && creditNettingRows !== undefined) {
+                    for (var i = 0; i < creditNettingRows.length; i++) {
+                        if (selectedConventId === creditNettingRows[i].conventId) {
+                            if (creditNettingRows[i].nettingDone) {
+                                return 'Tühista';
+                            } else {
+                                if (creditNettingRows[i].sum < 0) {
+                                    return 'Makse sooritatud';
+                                } else {
+                                    return 'Makse saabunud';
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return ''
+            },
+	        _isButtonHidden: function (selectedConventId, creditNettingRows) {
+                if (selectedConventId !== undefined && creditNettingRows !== undefined) {
+                    for (var i = 0; i < creditNettingRows.length; i++) {
+                        if (selectedConventId === creditNettingRows[i].conventId) {
+                            return creditNettingRows[i].sum === 0;
+                        }
+                    }
+                }
+
+		        return true
+            },
+            _confirmAction: function () {
+                for (var i = 0; i < this.item.creditNettingRows.length; i++) {
+                    if (this.rowDetailsInfo.conventId === this.item.creditNettingRows[i].conventId) {
+                        this.fire('kassa-backend-action', {
+                            action: 'doCreditNettingsPatch',
+	                        conventId: this.rowDetailsInfo.conventId,
+                            creditNettingId: this.item.id,
+                            creditNettingRowType: {nettingDone: 1 - this.item.creditNettingRows[i].nettingDone}
+                        });
+                        break;
+                    }
+                }
+            }
+        })
+	</script>
+</dom-module>

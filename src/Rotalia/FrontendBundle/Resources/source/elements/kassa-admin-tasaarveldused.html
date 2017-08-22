@@ -1,0 +1,90 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-table.html">
+
+<dom-module id="kassa-admin-tasaarveldused">
+	<template>
+
+		<kassa-table items="[[creditNettings]]" scroll-target="[[scrollTarget]]" row-details-info="[[rowDetailsInfo]]">
+			<vaadin-grid-column flex-grow="0" width="3em">
+				<template class="header"><span style="text-align: right;">Id</span></template>
+				<template>
+					<span style="text-align: right;">[[item.id]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column  flex-grow="1">
+				<template class="header">Olek</template>
+				<template>
+					<span>[[_computeStatus(item)]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column  flex-grow="0" width="150px">
+				<template class="header">Aeg</template>
+				<template>
+					<span>[[item.createdAt]]</span>
+				</template>
+			</vaadin-grid-column>
+		</kassa-table>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-admin-tasaarveldused",
+            properties: {
+                conventId: {
+                    type: Number
+                },
+                creditNettings: {
+                    type: Array,
+	                value: []
+                },
+                rowDetailsInfo: {
+                    type: Object
+                },
+	            activeConvents: {
+                    type: Array,
+		            value: []
+                }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+	        observers: ['_computeRowDetails(activeConvents, conventId)'],
+            setUp: function () {
+                this.fire('kassa-backend-action', {action: 'doCreditNettingsGet',
+                    onSuccess: function () {
+                        this.fire('kassa-page-ready', {page: this})
+                    }.bind(this)
+                });
+            },
+            _computeRowDetails: function (activeConvents, conventId) {
+                if (this.isTrue(this.activeConvents)) {
+                    this.set('rowDetailsInfo', {
+                        name: 'kassa-admin-tasaarveldused',
+	                    activeConvents: this.activeConvents,
+	                    conventId: this.conventId
+                    });
+                }
+            },
+	        _computeStatus: function (creditNetting) {
+                var isDone = true;
+                if (this.isTrue(creditNetting)) {
+                    for (var i=0; i<creditNetting.creditNettingRows.length; i++) {
+                        if (creditNetting.creditNettingRows[i].nettingDone === 0) {
+                            isDone = false;
+                        }
+                    }
+                }
+
+                if (isDone) {
+                    return 'Makstud';
+                } else {
+                    return 'Ootel';
+                }
+            }
+        })
+	</script>
+</dom-module>
+
+
+

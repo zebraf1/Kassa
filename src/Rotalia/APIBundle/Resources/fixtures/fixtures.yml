@@ -58,10 +58,20 @@ Rotalia\UserBundle\Model\Member:
 
 Rotalia\UserBundle\Model\MemberCredit:
     MemberCredit_1:
-        member_id: Member_1886
-        credit: '2.85'
+        member_id: Member_2123
+        convent_id: Convent_6
+        credit: 20.0
         comment: Test
-
+    MemberCredit_2:
+        member_id: Member_2123
+        convent_id: Convent_7
+        credit: -10
+        comment: Test
+    MemberCredit_3:
+        member_id: Member_2122
+        convent_id: Convent_6
+        credit: 30
+        comment: Test
 
 Rotalia\UserBundle\Model\User:
     User_SUPER:
@@ -221,3 +231,17 @@ Rotalia\InventoryBundle\Model\Transfer:
         member_id: Member_2122
         convent_id: Convent_6
         sum: 30
+
+Rotalia\InventoryBundle\Model\CreditNetting:
+    CreditNetting_1:
+        created_at: 2000-01-01
+
+Rotalia\InventoryBundle\Model\CreditNettingRow:
+    CreditNettingRow_1_1:
+        credit_netting_id: CreditNetting_1
+        convent_id: Convent_6
+        sum: 10
+    CreditNettingRow_1_2:
+        credit_netting_id: CreditNetting_1
+        convent_id: Convent_7
+        sum: -10

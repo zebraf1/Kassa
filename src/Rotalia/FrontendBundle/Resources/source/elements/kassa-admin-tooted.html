@@ -18,7 +18,7 @@
 		<style>
 		</style>
 		<kassa-table items="[[_mapIdsToValues(products, productGroups)]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
-		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details="kassa-admin-tooted">
+		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details-info="[[rowDetailsInfo]]">
 			<vaadin-grid-column flex-grow="0" width="3em">
 				<template class="header"><span style="text-align: right;">Id</span></template>
 				<template>
@@ -97,6 +97,9 @@
                 productGroups: {
                     type: Array
                 },
+                rowDetailsInfo: {
+                    type: Object
+                },
                 dialog: {
                     type: Node
                 }
@@ -105,6 +108,7 @@
             observers: ['_loadProducts(pageActive, conventId)'],
             ready: function () {
                 this.set('dialog', this.$.dialog);
+                this.set('rowDetailsInfo', {name: 'kassa-admin-tooted'});
             },
 	        setUp: function () {
                 this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});

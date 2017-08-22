@@ -25,7 +25,7 @@ class TransfersControllerTest extends WebTestCase
     /**
      * Test list without filters for admin
      */
-    public function testGetListAdmin()
+    public function testListAdmin()
     {
         $this->loginAdmin();
 
@@ -38,7 +38,7 @@ class TransfersControllerTest extends WebTestCase
     /**
      * Test list without filters for super admin
      */
-    public function testGetListSuper()
+    public function testListSuper()
     {
         $this->loginSuperAdmin();
 
@@ -54,7 +54,7 @@ class TransfersControllerTest extends WebTestCase
     /**
      * Test list with convent filter as regular user
      */
-    public function testGetListFilterConvent()
+    public function testListFilterConvent()
     {
         $this->loginSimpleUser();
 

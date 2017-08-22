@@ -7,9 +7,9 @@
     KassaBehavior = {
         eur2str: function (eur) {
             if (eur) {
-                return eur.toFixed(2) + '€'
+                return eur.toFixed(2) + ' €'
             } else {
-                return '0.00€'
+                return '0.00 €'
             }
         },
 
@@ -75,7 +75,7 @@
                     if (item.hasOwnProperty(key)) {
                         newItem[key] = item[key];
                         if (mapping.hasOwnProperty(key)) {
-                            newItem[key.slice(0, -2)] = this._mapIdToValue(item[key], mapping[key][0], mapping[key][1])
+                            newItem[key.slice(0, -2)] = this.mapIdToValue(item[key], mapping[key][0], mapping[key][1])
                         }
                     }
                 }
@@ -85,8 +85,8 @@
 
             return newItems
         },
-        _mapIdToValue: function (id, items, key) {
-            for (let i = 0; i < items.length; i++) {
+        mapIdToValue: function (id, items, key) {
+            for (var i = 0; i < items.length; i++) {
                 if (items[i].id === id) {
                     return items[i][key]
                 }
@@ -94,8 +94,8 @@
             return ''
         },
         pickProperties: function (object, keys) {
-            let newObject = {};
-            for (let i = 0; i < keys.length; i++) {
+            var newObject = {};
+            for (var i = 0; i < keys.length; i++) {
                 newObject[keys[i]] = object[keys[i]];
             }
             return newObject;

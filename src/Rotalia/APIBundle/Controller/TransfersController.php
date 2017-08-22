@@ -147,7 +147,7 @@ class TransfersController extends DefaultController
      * @param Request $request
      * @return JSendResponse
      */
-    public function createAction(Request $request)
+    public function postAction(Request $request)
     {
 
         if (!$this->isGranted(User::ROLE_ADMIN)) {
@@ -207,7 +207,7 @@ class TransfersController extends DefaultController
         try {
             $transfer->save($connection);
 
-            $memberCredit = $member->getCredit();
+            $memberCredit = $member->getCredit($conventId);
             $memberCredit->adjustCredit($transfer->getSum());
             $memberCredit->save($connection);
 
