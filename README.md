@@ -63,7 +63,16 @@ Run migrations
 
 Build frontend
 ```bash
-> sh build_front.sh
+cd src/Rotalia/FrontendBundle/Resources/source/
+bower prune
+bower install
+bower update
+polymer build
+```
+
+Deploy new version: composer install, propel build, assets install, bower install, polymer build
+```bash
+> sh build.sh
 ```
 
 Testing
