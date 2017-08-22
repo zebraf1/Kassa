@@ -4,6 +4,6 @@ RotaliaAPI_creditNettings_list:
     defaults: { _controller: RotaliaAPIBundle:CreditNettings:List }
 
 RotaliaAPI_creditNettings_update:
-    pattern:  /creditNettings/{creditNettingId}/
+    pattern:  /creditNettings/{id}/
     methods: [PATCH]
-    defaults: { _controller: RotaliaAPIBundle:CreditNettings:Update }
+    defaults: { _controller: RotaliaAPIBundle:CreditNettings:Patch }

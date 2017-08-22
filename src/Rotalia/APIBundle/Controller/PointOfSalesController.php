@@ -79,7 +79,7 @@ class PointOfSalesController extends DefaultController
      *   }
      * )
      */
-    public function viewAction($id)
+    public function getAction($id)
     {
         $pointOfSale = PointOfSaleQuery::create()
             ->leftJoinMember('member')
@@ -114,7 +114,7 @@ class PointOfSalesController extends DefaultController
      * @param Request $request
      * @return JSendResponse
      */
-    public function createAction(Request $request)
+    public function postAction(Request $request)
     {
         $hash = $request->cookies->get('pos_hash');
 
@@ -160,7 +160,7 @@ class PointOfSalesController extends DefaultController
      * @param Request $request
      * @return JSendResponse
      */
-    public function updateAction($id, Request $request)
+    public function patchAction($id, Request $request)
     {
         $pos = PointOfSaleQuery::create()->findPk($id);
         if ($pos === null) {

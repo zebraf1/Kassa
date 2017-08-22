@@ -6,4 +6,4 @@ RotaliaAPI_reports_list:
 RotaliaAPI_reports_create:
     pattern:  /transfers/
     methods: [POST]
-    defaults: { _controller: RotaliaAPIBundle:Transfers:Create }
+    defaults: { _controller: RotaliaAPIBundle:Transfers:Post }

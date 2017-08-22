@@ -2,7 +2,6 @@
 
 namespace Rotalia\APIBundle\Controller;
 
-
 use Doctrine\Common\Collections\Criteria;
 use Rotalia\APIBundle\Form\CreditNettingRowType;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
@@ -51,7 +50,7 @@ class CreditNettingsController extends DefaultController
             'creditNettings' => []
         ];
 
-        /** @var CreditNetting $pointOfSale */
+        /** @var CreditNetting $creditNetting */
         foreach ($creditNettings as $creditNetting) {
             $result['creditNettings'][] = $creditNetting->getAjaxData();
         }
@@ -69,8 +68,9 @@ class CreditNettingsController extends DefaultController
      *          200 = "Returned when successful",
      *          400 = "Returned when there are errors with the submitted data",
      *          403 = "Returned when user has insufficient privileges",
+     *          404 = "Returned when credit netting is not found"
      *     },
-     *     description="Fetch CreditNettings list",
+     *     description="Updates a CreditNetting",
      *     section="CreditNettings",
      *     input = "Rotalia\APIBundle\Form\CreditNettingRowType",
      *     filters={
@@ -78,11 +78,11 @@ class CreditNettingsController extends DefaultController
      *     }
      * )
      *
-     * @param $creditNettingId
+     * @param $id
      * @param Request $request
      * @return JSendResponse
      */
-    public function updateAction(Request $request, $creditNettingId) {
+    public function patchAction(Request $request, $id) {
 
         $conventId = $request->get('conventId', null);
 
@@ -98,19 +98,18 @@ class CreditNettingsController extends DefaultController
             return JSendResponse::createFail('Teise konvendi tasaarveldusi saab muuta ainult super admin', 403);
         }
 
-        if ($creditNettingId === null) {
+        if ($id === null) {
             return JSendResponse::createFail('Tasaarveldus peab olema määratud', 400);
         }
 
-        /** @var CreditNettingRow $creditNettingRow */
         $creditNettingRow = CreditNettingRowQuery::create()
             ->filterByConventId($conventId)
-            ->filterByCreditNettingId($creditNettingId)
+            ->filterByCreditNettingId($id)
             ->findOne()
         ;
 
         if ($creditNettingRow === null) {
-            return JSendResponse::createFail('Tasaarveldust ei leitud', 400);
+            return JSendResponse::createFail('Tasaarveldust ei leitud', 404);
         }
 
         $form = $this->createForm(new CreditNettingRowType(), $creditNettingRow, [

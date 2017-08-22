@@ -147,7 +147,7 @@ class TransfersController extends DefaultController
      * @param Request $request
      * @return JSendResponse
      */
-    public function createAction(Request $request)
+    public function postAction(Request $request)
     {
 
         if (!$this->isGranted(User::ROLE_ADMIN)) {
