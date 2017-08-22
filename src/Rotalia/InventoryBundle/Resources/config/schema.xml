@@ -186,6 +186,10 @@
     <table name="ollekassa_credit_netting" phpName="CreditNetting">
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
         <column name="created_at" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
     </table>
 
     <table name="ollekassa_credit_netting_row" phpName="CreditNettingRow">
@@ -194,12 +198,16 @@
         <column name="convent_id" type="INTEGER" required="true" />
         <column name="sum" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="netting_done" type="INTEGER" size="1" defaultValue="0"/>
-        <foreign-key foreignTable="ollekassa_credit_netting" name="credit_netting_row_credit_netting_fk" skipSql="true">
+        <foreign-key foreignTable="ollekassa_credit_netting" name="credit_netting_row_credit_netting_fk">
             <reference local="credit_netting_id" foreign="id" />
         </foreign-key>
         <foreign-key foreignTable="koondised" name="credit_netting_row_convent_fk" skipSql="true">
             <reference local="convent_id" foreign="id" />
         </foreign-key>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
     </table>
 
 </database>

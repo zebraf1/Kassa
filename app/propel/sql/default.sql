@@ -273,7 +273,7 @@ CREATE TABLE `ollekassa_credit_netting`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
 -- ollekassa_credit_netting_row
@@ -290,8 +290,11 @@ CREATE TABLE `ollekassa_credit_netting_row`
     `netting_done` INTEGER(1) DEFAULT 0,
     PRIMARY KEY (`id`),
     INDEX `FI_dit_netting_row_credit_netting_fk` (`credit_netting_id`),
-    INDEX `FI_dit_netting_row_convent_fk` (`convent_id`)
-) ENGINE=MyISAM;
+    INDEX `FI_dit_netting_row_convent_fk` (`convent_id`),
+    CONSTRAINT `credit_netting_row_credit_netting_fk`
+        FOREIGN KEY (`credit_netting_id`)
+        REFERENCES `ollekassa_credit_netting` (`id`)
+) ENGINE=InnoDB CHARACTER SET='utf8';
 
 -- ---------------------------------------------------------------------
 -- koondised
