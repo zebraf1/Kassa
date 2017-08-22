@@ -18,4 +18,4 @@ services:
         tags:
           - { name: form.type, alias: ajaxSearch }
         arguments:
-          - @router
+          - '@router'
