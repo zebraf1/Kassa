@@ -198,7 +198,7 @@
         <column name="convent_id" type="INTEGER" required="true" />
         <column name="sum" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="netting_done" type="INTEGER" size="1" defaultValue="0"/>
-        <foreign-key foreignTable="ollekassa_credit_netting" name="credit_netting_row_credit_netting_fk">
+        <foreign-key foreignTable="ollekassa_credit_netting" name="credit_netting_row_credit_netting_fk" onDelete="CASCADE" onUpdate="CASCADE">
             <reference local="credit_netting_id" foreign="id" />
         </foreign-key>
         <foreign-key foreignTable="koondised" name="credit_netting_row_convent_fk" skipSql="true">
