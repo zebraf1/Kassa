@@ -6,8 +6,7 @@
 <link rel="import" href="kassa-material.html">
 <link rel="import" href="kassa-date-picker.html">
 
-
-<dom-module id="kassa-admin-ostud">
+<dom-module id="kassa-ylevaade-ostud">
 	<template>
 		<style>
 			kassa-material {
@@ -47,6 +46,12 @@
 					<span>[[item.member]]</span>
 				</template>
 			</vaadin-grid-column>
+			<vaadin-grid-column flex-grow="0">
+				<template class="header">Konvent</template>
+				<template>
+					<span>[[item.convent]]</span>
+				</template>
+			</vaadin-grid-column>
 			<vaadin-grid-column>
 				<template class="header">Toode</template>
 				<template>
@@ -76,9 +81,12 @@
 	</template>
 	<script>
         Polymer({
-            is: "kassa-admin-ostud",
+            is: "kassa-ylevaade-ostud",
             properties: {
                 conventId: {
+                    type: Number
+                },
+                memberId: {
                     type: Number
                 },
                 purchases: {
@@ -105,9 +113,9 @@
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
-            observers: ['_loadPurchases(pageActive, conventId)'],
             setUp: function () {
                 this.fire('kassa-backend-action', {action: 'doMembersGet'});
+                this._loadPurchases();
             },
             cleanUp: function() {
                 this.set('purchases', []);
@@ -120,7 +128,7 @@
                         action: 'doProductsGetAll', conventId: this.conventId
                     });
                     this.fire('kassa-backend-action', {
-                        action: 'doPurchasesGet', conventId: this.conventId,
+                        action: 'doPurchasesGet', memberId: this.memberId,
                         dateFrom: this._startDate, dateUntil: this._endDate,
                         onSuccess: function () {
                             this.fire('kassa-page-ready', {page: this})
@@ -133,7 +141,7 @@
                 if ((purchases !== undefined) && (members !== undefined) && (products !== undefined)) {
                     return this.mapIdsToValues(purchases, {
                         'memberId': [members, 'name'],
-	                    'productId': [products, null]
+                        'productId': [products, null]
                     });
                 }
 
@@ -147,9 +155,9 @@
                 }
             },
             _computePrice: function (count, price) {
-            // Üksiku toote hind
-            return this.eur2str(count * price);
-        }
+                // Üksiku toote hind
+                return this.eur2str(count * price);
+            }
         })
 	</script>
 </dom-module>

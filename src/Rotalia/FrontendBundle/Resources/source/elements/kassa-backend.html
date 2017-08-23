@@ -289,8 +289,11 @@
                     return this.doAuthenticationGet();
                 }.bind(this))
             },
-            doPurchasesGet: function (conventId, dateFrom, dateUntil) {
-                this.$.purchasesGet.set('params', {conventId: conventId, limit: 0, dateFrom: dateFrom, dateUntil: dateUntil});
+            doPurchasesGet: function (conventId, memberId, dateFrom, dateUntil) {
+                this.$.purchasesGet.set('params', this._formatBody({
+		            conventId: conventId, memberId: memberId,
+	                limit: 0, dateFrom: dateFrom, dateUntil: dateUntil
+                }));
                 return this.$.purchasesGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setPurchases(data.purchases);
                 }.bind(this))
@@ -311,8 +314,11 @@
                 }.bind(this))
             },
 	        /* Transfers */
-            doTransfersGet: function (conventId, dateFrom, dateUntil) {
-                this.$.transfersGet.set('params', {conventId: conventId, limit: 0, dateFrom: dateFrom, dateUntil: dateUntil});
+            doTransfersGet: function (conventId, memberId, dateFrom, dateUntil) {
+                this.$.transfersGet.set('params', this._formatBody({
+                    conventId: conventId, memberId: memberId,
+	                limit: 0, dateFrom: dateFrom, dateUntil: dateUntil
+                }));
                 return this.$.transfersGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setTransfers(data.transfers);
                 }.bind(this))
@@ -401,7 +407,7 @@
                         break;
                     /* Purchases */
                     case 'doPurchasesGet':
-                        promise = this.doPurchasesGet(data.conventId, data.dateFrom, data.dateUntil);
+                        promise = this.doPurchasesGet(data.conventId, data.memberId, data.dateFrom, data.dateUntil);
                         break;
                     case 'doPurchasePost':
                         promise = this.doPurchasePost(data.conventId, data.memberId, data.basket);
@@ -412,7 +418,7 @@
                         break;
 	                /* Transfers */
 	                case 'doTransfersGet':
-                        promise = this.doTransfersGet(data.conventId, data.dateFrom, data.dateUntil);
+                        promise = this.doTransfersGet(data.conventId, data.memberId, data.dateFrom, data.dateUntil);
                         break;
 	                case 'doTransfersPost':
 	                    promise = this.doTransfersPost(data.conventId, data.itemType);
@@ -462,7 +468,9 @@
                                 }
                             }
                         } else {
-                            newBody[key] = body[key];
+                            if (body[key] !== null && body[key] !== undefined) {
+                                newBody[key] = body[key];
+                            }
                         }
                     }
                 }

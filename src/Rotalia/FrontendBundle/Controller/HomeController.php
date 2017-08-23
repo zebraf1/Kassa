@@ -24,7 +24,7 @@ class HomeController extends Controller
         if (file_exists($path)) {
 
             // Check privileges.
-            if (preg_match("/elements\/kassa-ost/i", $path)) {
+            if (preg_match("/elements\/kassa-ylevaade/i", $path)) {
                 $this->denyAccessUnlessGranted('ROLE_USER');
             }
 

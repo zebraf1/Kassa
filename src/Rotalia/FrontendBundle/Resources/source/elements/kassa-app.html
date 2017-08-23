@@ -114,6 +114,18 @@
 						           products="[[activeProducts]]"
 						           product-groups="[[productGroups]]"
 						           convent-id="[[configuration.selectedConventId]]"></kassa-ost>
+						<kassa-ylevaade-ostud data-page="ylevaade-ostud"
+						                      convent-id="[[configuration.selectedConventId]]"
+						                      member-id="[[member.id]]"
+						                      members="[[members]]"
+						                      active-products="[[activeProducts]]"
+						                      inactive-products="[[inactiveProducts]]"
+						                      purchases="[[purchases]]"></kassa-ylevaade-ostud>
+						<kassa-ylevaade-ylekanded
+								data-page="ylevaade-ylekanded"
+								member-id="[[member.id]]"
+								transfers="[[transfers]]"
+								members="[[members]]"></kassa-ylevaade-ylekanded>
 						<kassa-admin-tooted data-page="admin-tooted"
 						                    convent-id="[[configuration.selectedConventId]]"
 						                    active-products="[[activeProducts]]"
@@ -160,10 +172,12 @@
                     value: function () {
                         return [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
-                            {page: 'admin-ostud', name: 'Ostud', role: 'ROLE_ADMIN'},
-                            {page: 'admin-ylekanded', name: 'Ülekanded', role: 'ROLE_ADMIN'},
-                            {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
-                            {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},
+	                        {page: 'ylevaade-ostud', name: 'Ostud', role: 'ROLE_USER'},
+	                        {page: 'ylevaade-ylekanded', name: 'Ülekanded', role: 'ROLE_USER'},
+                            {page: 'admin-ostud', name: 'Konvendi Ostud', role: 'ROLE_ADMIN'},
+                            {page: 'admin-ylekanded', name: 'Konvendi Ülekanded', role: 'ROLE_ADMIN'},
+                            {page: 'admin-tooted', name: 'Tooted', role: 'ROLE_ADMIN'},
+                            {page: 'admin-tootegrupid', name: 'Tootegruppid', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
 	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'}
                         ];
