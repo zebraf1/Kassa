@@ -42,6 +42,8 @@
 		<iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Purchase -->
+		<iron-ajax id="purchasesGet" handle-as="json" url='[[_computeURL("purchase")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Report -->
@@ -128,6 +130,12 @@
                     type: Array,
                     notify: true,
                     readOnly: true
+	            },
+	            /* Purchases */
+	            purchases: {
+	                type: Array,
+		            notify: true,
+		            readOnly: true
 	            }
             },
             listeners: {
@@ -281,6 +289,12 @@
                     return this.doAuthenticationGet();
                 }.bind(this))
             },
+            doPurchasesGet: function (conventId, dateFrom, dateUntil) {
+                this.$.purchasesGet.set('params', {conventId: conventId, limit: 0, dateFrom: dateFrom, dateUntil: dateUntil});
+                return this.$.purchasesGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._setPurchases(data.purchases);
+                }.bind(this))
+            },
 	        /* Reports */
             doLastReportGet: function (conventId) {
                 this.$.reportGet.set('body', this._formatBody({
@@ -386,6 +400,9 @@
                         promise = this.doPointOfSalesDelete(data.id);
                         break;
                     /* Purchases */
+                    case 'doPurchasesGet':
+                        promise = this.doPurchasesGet(data.conventId, data.dateFrom, data.dateUntil);
+                        break;
                     case 'doPurchasePost':
                         promise = this.doPurchasePost(data.conventId, data.memberId, data.basket);
                         break;

@@ -34,7 +34,7 @@
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="1">
 				<template class="header">
-					<vaadin-grid-filter path="memberId" value="{{_nameFilter}}">
+					<vaadin-grid-filter path="member" value="{{_nameFilter}}">
 						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter" no-label-float></paper-input>
 					</vaadin-grid-filter>
 				</template>
@@ -132,8 +132,7 @@
                 transfers = transfers.base;
                 if ((transfers !== undefined) && (members !== undefined)) {
                     return this.mapIdsToValues(transfers, {
-                        'memberId': [members, 'name'],
-                        'createdBy': [members, 'name']
+                        'memberId': [members, 'name']
                     })
                 }
 

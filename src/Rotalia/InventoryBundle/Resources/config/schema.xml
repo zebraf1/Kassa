@@ -107,7 +107,7 @@
         <column name="type" type="VARCHAR" required="true" />
         <column name="product_id" type="INTEGER" required="false" />
         <column name="member_id" type="INTEGER" required="false" />
-        <column name="pos_id" type="INTEGER" required="false" />
+        <column name="convent_id" type="INTEGER" required="true" />
         <column name="count" type="DECIMAL" size="10" scale="1" required="false" />
         <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
         <column name="sum" type="DECIMAL" size="10" scale="2" required="true" />
@@ -125,8 +125,8 @@
         <foreign-key foreignTable="liikmed" name="transaction_created_by_fk" skipSql="true">
             <reference local="created_by" foreign="id" />
         </foreign-key>
-        <foreign-key foreignTable="ollekassa_point_of_sale" name="transaction_pos_fk">
-            <reference local="pos_id" foreign="id" />
+        <foreign-key foreignTable="koondised" name="transaction_convent_fk" skipSql="true">
+            <reference local="convent_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>

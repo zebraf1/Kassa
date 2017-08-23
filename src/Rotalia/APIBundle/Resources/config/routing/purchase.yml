@@ -1,0 +1,4 @@
+RotaliaAPI_purchases_list:
+    pattern:  /purchase/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:Purchases:List }

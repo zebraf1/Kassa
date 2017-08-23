@@ -56,4 +56,21 @@ class Transaction extends BaseTransaction
 
         return $sum;
     }
+
+    /**
+     * @return array
+     */
+    public function getAjaxData()
+    {
+        return [
+            'id' => $this->getId(),
+            'memberId' => $this->getMemberId(),
+            'createdBy' => $this->getMemberRelatedByCreatedBy() ? $this->getMemberRelatedByCreatedBy()->getAjaxName() : null,
+            'count' => intval($this->getCount()),
+            'price' => doubleval($this->getCurrentPrice()),
+            'productId' => $this->getProductId(),
+            'convent' => $this->getConvent()->getName(),
+            'createdAt' => $this->getCreatedAt()->format('H:i d.m.Y')
+        ];
+    }
 }

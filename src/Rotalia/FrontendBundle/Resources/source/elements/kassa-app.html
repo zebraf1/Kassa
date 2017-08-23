@@ -62,10 +62,18 @@
 		</style>
 
 
-		<kassa-backend id="backend" member="{{member}}" settings="{{settings}}" members="{{members}}"
-		               active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}"
-		               product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"
-		               last-report="{{lastReport}}" transfers="{{transfers}}" credit-nettings="{{creditNettings}}"></kassa-backend>
+		<kassa-backend id="backend"
+		               member="{{member}}"
+		               settings="{{settings}}"
+		               members="{{members}}"
+		               active-products="{{activeProducts}}"
+		               inactive-products="{{inactiveProducts}}"
+		               product-groups="{{productGroups}}"
+		               point-of-sales="{{pointOfSales}}"
+		               transfers="{{transfers}}"
+		               credit-nettings="{{creditNettings}}"
+		               purchases="{{purchases}}"></kassa-backend>
+
 		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]" convent-id="[[configuration.selectedConventId]]"></kassa-route>
 
 		<kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
@@ -124,6 +132,12 @@
 						                            convent-id="[[configuration.selectedConventId]]"
 						                            credit-nettings="[[creditNettings]]"
 						                            active-convents="[[settings.activeConvents]]"></kassa-admin-tasaarveldused>
+						<kassa-admin-ostud data-page="admin-ostud"
+						                   convent-id="[[configuration.selectedConventId]]"
+						                   members="[[members]]"
+						                   active-products="[[activeProducts]]"
+						                   inactive-products="[[inactiveProducts]]"
+						                   purchases="[[purchases]]"></kassa-admin-ostud>
 					</kassa-pages>
 				</app-header-layout>
 
@@ -146,6 +160,7 @@
                     value: function () {
                         return [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
+                            {page: 'admin-ostud', name: 'Ostud', role: 'ROLE_ADMIN'},
                             {page: 'admin-ylekanded', name: 'Ülekanded', role: 'ROLE_ADMIN'},
                             {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},

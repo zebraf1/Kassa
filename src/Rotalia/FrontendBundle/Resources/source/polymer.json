@@ -9,7 +9,8 @@
     "elements/kassa-admin-tootegrupid.html",
     "elements/kassa-admin-kassad.html",
     "elements/kassa-admin-ylekanded.html",
-    "elements/kassa-admin-tasaarveldused.html"
+    "elements/kassa-admin-tasaarveldused.html",
+    "elements/kassa-admin-ostud.html"
   ],
   "sources": [
     "elements/*",
