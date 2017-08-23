@@ -218,7 +218,7 @@
                 var total = 0;
 
                 for (var i = 0; i < chosenProducts.base.length; i++) {
-                    total += this.eur2cent(chosenProducts.base[i].amount * chosenProducts.base[i].price);
+                    total += this.eur2cent(chosenProducts.base[i].count * chosenProducts.base[i].price);
                 }
 
                 return this.cent2str(total)
@@ -265,8 +265,8 @@
                     {
                         id: this.activeProduct.id,
                         name: this.activeProduct.name,
-                        _amount: this.formatAmount(this.activeProduct.amount, this.activeProduct.amountType),
-                        amount: this.activeProduct.count,
+                        amount: this.formatAmount(this.activeProduct.amount, this.activeProduct.amountType),
+                        count: this.activeProduct.count,
                         price: this.activeProduct.price
                     });
 
@@ -288,7 +288,7 @@
                     action: 'doPurchasePost',
                     conventId: this.conventId,
                     memberId: this._tasujaComboBox.value,
-                    basket: this._chosenProducts.map(product => this.pickProperties(product, ['id', 'amount', 'price'])),
+                    basket: this._chosenProducts.map(product => this.pickProperties(product, ['id', 'count', 'price'])),
                     onSuccess: function () {
                         this.set('ostFixed', false);
                         this._set_chosenProducts([]);

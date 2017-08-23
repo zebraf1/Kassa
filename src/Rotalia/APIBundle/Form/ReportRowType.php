@@ -11,7 +11,7 @@ class ReportRowType extends BaseReportRowType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('amount', 'number')
+            ->add('count', 'number')
             ->add('productId', 'text')
         ;
     }

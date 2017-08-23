@@ -50,7 +50,7 @@ class Transaction extends BaseTransaction
      */
     public function calculateSum()
     {
-        $sum = doubleval($this->getAmount()) * doubleval($this->getCurrentPrice());
+        $sum = doubleval($this->getCount()) * doubleval($this->getCurrentPrice());
         $sum = round($sum, 2);
         $this->setSum($sum);
 

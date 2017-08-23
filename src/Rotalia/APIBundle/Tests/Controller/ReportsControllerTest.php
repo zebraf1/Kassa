@@ -44,7 +44,7 @@ class ReportsControllerTest extends WebTestCase
 
         foreach ($products as $product) {
             $reportRows[$product->getId()] = [
-                'amount' => 13,
+                'count' => 13,
                 'productId' => $product->getId(),
             ];
         }
@@ -73,11 +73,11 @@ class ReportsControllerTest extends WebTestCase
         $this->assertEquals(12.34, $report->getCash());
 
         foreach ($report->getReportRows() as $reportRow) {
-            $this->assertEquals(13, $reportRow->getAmount());
+            $this->assertEquals(13, $reportRow->getCount());
         }
 
-        // Update last products amount
-        $reportRows[$product->getId()]['amount'] = 11;
+        // Update last products count
+        $reportRows[$product->getId()]['count'] = 11;
 
         // Test if shuffling report rows will affect the outcome
         shuffle($reportRows);
@@ -102,9 +102,9 @@ class ReportsControllerTest extends WebTestCase
 
         foreach ($report->getReportRows() as $reportRow) {
             if ($reportRow->getProductId() == $product->getId()) {
-                $this->assertEquals(11, $reportRow->getAmount());
+                $this->assertEquals(11, $reportRow->getCount());
             } else {
-                $this->assertEquals(13, $reportRow->getAmount());
+                $this->assertEquals(13, $reportRow->getCount());
             }
         }
     }
@@ -122,23 +122,23 @@ class ReportsControllerTest extends WebTestCase
         $product->setConventId($convent->getId());
         $productInfo = $product->getProductInfo();
 
-        $addedAmount = 9;
+        $addedCount = 9;
 
-        $expectedWarehouseAmount = $productInfo->getWarehouseAmount();
-        $expectedStorageAmount = $productInfo->getStorageAmount();
+        $expectedWarehouseCount = $productInfo->getWarehouseCount();
+        $expectedStorageCount = $productInfo->getStorageCount();
 
         if ($source === Product::INVENTORY_TYPE_WAREHOUSE) {
-            $expectedWarehouseAmount -= $addedAmount;
+            $expectedWarehouseCount -= $addedCount;
         }
         if ($source === Product::INVENTORY_TYPE_STORAGE) {
-            $expectedStorageAmount -= $addedAmount;
+            $expectedStorageCount -= $addedCount;
         }
 
         if ($target === Product::INVENTORY_TYPE_STORAGE) {
-            $expectedStorageAmount += $addedAmount;
+            $expectedStorageCount += $addedCount;
         }
         if ($target === Product::INVENTORY_TYPE_WAREHOUSE) {
-            $expectedWarehouseAmount += $addedAmount;
+            $expectedWarehouseCount += $addedCount;
         }
 
         $this->loginSuperAdmin();
@@ -150,7 +150,7 @@ class ReportsControllerTest extends WebTestCase
             'inventoryTarget' => $target,
             'Report' => [
                 'reportRows' => [
-                    ['amount' => $addedAmount, 'productId' => $product->getId()]
+                    ['count' => $addedCount, 'productId' => $product->getId()]
                 ],
             ]
         ];
@@ -162,8 +162,8 @@ class ReportsControllerTest extends WebTestCase
 
         $productInfo->reload();
 
-        $this->assertEquals($expectedStorageAmount, $productInfo->getStorageAmount());
-        $this->assertEquals($expectedWarehouseAmount, $productInfo->getWarehouseAmount());
+        $this->assertEquals($expectedStorageCount, $productInfo->getStorageCount());
+        $this->assertEquals($expectedWarehouseCount, $productInfo->getWarehouseCount());
     }
 
     public function providerCreateUpdateReport()

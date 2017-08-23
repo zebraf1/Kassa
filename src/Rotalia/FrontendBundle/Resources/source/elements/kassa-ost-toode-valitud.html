@@ -38,8 +38,8 @@
 			<paper-icon-button icon="kassa:clear" data-invisible$="[[fixed]]"></paper-icon-button>
 			<span class="name">[[product.name]]</span>
 			<div class="row-break">
-				<span>[[product.amount]] &times; [[product._amount]]</span>
-				<span>[[_computePrice(product.amount, product.price)]]</span>
+				<span>[[product.count]] &times; [[product.amount]]</span>
+				<span>[[_computePrice(product.count, product.price)]]</span>
 			</div>
 		</kassa-material>
 
@@ -58,9 +58,9 @@
                 }
             },
             behaviors: [KassaBehavior],
-            _computePrice: function (kogus, hind) {
+            _computePrice: function (count, price) {
                 // Üksiku toote hind
-                return this.eur2str(kogus * hind);
+                return this.eur2str(count * price);
             }
         })
 	</script>

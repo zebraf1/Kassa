@@ -18,49 +18,49 @@ class ReportRow extends BaseReportRow
     /**
      * @return float
      */
-    public function getAmount()
+    public function getCount()
     {
-        return doubleval($this->amount);
+        return doubleval($this->count);
     }
 
     /**
      * @inheritdoc
      */
-    public function setAmount($v)
+    public function setCount($v)
     {
         //Convert empty string to 0
         if (empty($v)) {
             $v = 0;
         }
 
-        return parent::setAmount($v);
+        return parent::setCount($v);
     }
 
     /**
-     * Return ReportRow amount and old price for template
+     * Return ReportRow count and old price for template
      *
      * @param Product $product
      * @param string $template
      * @return float|mixed|string
      */
-    public function getAmountFormatted(Product $product, $template = '{amount} <span class="oldPrice">({price}€)</span>') {
-        $amount = $this->getAmount();
+    public function getCountFormatted(Product $product, $template = '{count} <span class="oldPrice">({price}€)</span>') {
+        $count = $this->getCount();
 
-        if ($amount == 0) {
+        if ($count == 0) {
             return '';
         }
 
-        if ($this->getReport()->isUpdate() && $amount > 0) {
-            return '+'.$amount;
+        if ($this->getReport()->isUpdate() && $count > 0) {
+            return '+'.$count;
         }
 
         if ($this->getCurrentPrice() != $product->getPrice()) {
-            $result = str_replace('{amount}', $amount, $template);
+            $result = str_replace('{count}', $count, $template);
             $result = str_replace('{price}', number_format($this->getCurrentPrice(), 2), $result);
             return $result;
         }
 
-        return $amount;
+        return $count;
     }
 
     /**
@@ -91,7 +91,7 @@ class ReportRow extends BaseReportRow
     {
         return [
             'productId' => $this->getProductId(),
-            'amount' => $this->getAmount(),
+            'count' => $this->getCount(),
             'currentPrice' => $this->getCurrentPrice(),
         ];
     }

@@ -16,7 +16,7 @@ class ReportRowType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('amount', 'number', array(
+            ->add('count', 'number', array(
                 'label' => ' ',
                 'required' => true,
             ))
