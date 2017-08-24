@@ -51,7 +51,7 @@
 				<tbody>
 					<template is="dom-repeat" items="[[item.creditNettingRows]]" as="creditNettingRow">
 						<tr>
-							<td>[[mapIdToValue(creditNettingRow.conventId, rowDetailsInfo.activeConvents, "name")]]</td>
+							<td>[[creditNettingRow.convent]]</td>
 							<td style="text-align: right;">[[eur2str(creditNettingRow.sum)]]</td>
 							<td>[[_computeStatus(creditNettingRow.sum, creditNettingRow.nettingDone)]]</td>
 						</tr>

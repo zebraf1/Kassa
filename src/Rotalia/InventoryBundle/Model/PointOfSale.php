@@ -12,7 +12,7 @@ class PointOfSale extends BasePointOfSale
             'id' => $this->getId(),
             'name' => $this->getName(),
             'deviceInfo' => $this->getDeviceInfo(),
-            'conventId' => $this->getConventId(),
+            'convent' => $this->getConvent()->getName(),
             'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
             'createdBy' => $this->getMember() ? $this->getMember()->getAjaxName() : null,
         ];

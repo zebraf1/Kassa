@@ -120,6 +120,7 @@ class TransfersController extends DefaultController
 
         $resultTransfers = [];
 
+        /** @var Transfer $transfer */
         foreach ($transfers as $transfer) {
             $resultTransfers[] = $transfer->getAjaxData();
         }

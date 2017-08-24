@@ -20,7 +20,7 @@
 			<kassa-date-picker on-kassa-confirm="_loadTransfers" start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
 		</kassa-material>
 
-		<kassa-table items="[[_mapIdsToValues(transfers.*, members)]]" scroll-target="[[scrollTarget]]"
+		<kassa-table items="[[transfers]]" scroll-target="[[scrollTarget]]"
 		             convent-id="[[conventId]]" row-details-info="[[rowDetailsInfo]]">
 			<vaadin-grid-column flex-grow="0" width="3em">
 				<template class="header"><span style="text-align: right;">Id</span></template>
@@ -71,9 +71,6 @@
                 transfers: {
                     type: Array
                 },
-                members: {
-                    type: Array
-                },
                 dialog: {
                     type: Node
                 },
@@ -89,10 +86,9 @@
             },
             behaviors: [PageBehavior, KassaBehavior],
 	        ready: function () {
-                this.set('rowDetailsInfo', {name: 'kassa-ylekanded'})
+                this.set('rowDetailsInfo', {name: 'kassa-ylekanded'});
             },
             setUp: function () {
-                this.fire('kassa-backend-action', {action: 'doMembersGet'});
                 this._loadTransfers();
             },
             cleanUp: function() {
@@ -111,16 +107,6 @@
                         }.bind(this)
                     });
                 }
-            },
-            _mapIdsToValues: function(transfers, members) {
-                transfers = transfers.base;
-                if ((transfers !== undefined) && (members !== undefined)) {
-                    return this.mapIdsToValues(transfers, {
-                        'memberId': [members, 'name']
-                    })
-                }
-
-                return [];
             }
         })
 	</script>

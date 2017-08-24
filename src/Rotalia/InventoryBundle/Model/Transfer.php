@@ -11,7 +11,7 @@ class Transfer extends BaseTransfer
     {
         return [
             'id' => $this->getId(),
-            'memberId' => $this->getMemberId(),
+            'member' => $this->getMemberRelatedByMemberId()->getAjaxName(),
             'convent' => $this->getConvent()->getName(),
             'sum' => doubleval($this->getSum()),
             'createdAt' => $this->getCreatedAt()->format('H:i d.m.Y'),

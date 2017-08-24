@@ -142,9 +142,6 @@
                 'error': '_onRequestError'
             },
             behaviors: [KassaBehavior],
-            attached: function () {
-                this.doAuthenticationGet();
-            },
             /* Authentication */
             doLogin: function (username, password) {
                 this.$.authenticationPost.set('body', {
@@ -160,7 +157,8 @@
             doLogout: function () {
                 return this.$.authenticationDelete.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.fire('kassa-message-success', data);
-                    return this.doAuthenticationGet();
+                    this._setCsrfToken(null);
+                    this._setMember(null);
                 }.bind(this));
             },
             doAuthenticationGet: function () {
