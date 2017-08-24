@@ -132,11 +132,11 @@
 
                         {% for report in reports %}
                             {% set reportRow = report.getReportRowForProduct(product) %}
-                            <td>{% if reportRow %}{{ reportRow.getAmountFormatted(product) | raw }}{% endif %}</td>
+                            <td>{% if reportRow %}{{ reportRow.getCountFormatted(product) | raw }}{% endif %}</td>
                         {% endfor %}
 
                         {% if activeReport.isNew() %}
-                            <td>{{ activeReport.getExpectedProductAmount(product.id) }}</td>
+                            <td>{{ activeReport.getExpectedProductCount(product.id) }}</td>
                         {% endif %}
 
                         <td>
@@ -147,7 +147,7 @@
                         </td>
 
                         {% if not activeReport.isNew() %}
-                            <td>{{ newReport.getExpectedProductAmount(product.id) }}</td>
+                            <td>{{ newReport.getExpectedProductCount(product.id) }}</td>
                         {% endif %}
                     </tr>
                 {% endif %}

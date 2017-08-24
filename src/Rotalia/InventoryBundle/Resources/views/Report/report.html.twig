@@ -49,7 +49,7 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }} €/{{ product.amountTypeName }}</td>
                     {% set reportRow = report.getReportRowForProduct(product) %}
-                    <td>{% if reportRow %}{{ reportRow.getAmountFormatted(product) | raw }}{% endif %}</td>
+                    <td>{% if reportRow %}{{ reportRow.getCountFormatted(product) | raw }}{% endif %}</td>
                 </tr>
             {% endfor %}
 

@@ -37,7 +37,7 @@ class PurchaseController extends DefaultController
      * @ApiDoc (
      *   resource = false,
      *   section="Purchase",
-     *   description = "Creates transactions, reduces member credit and product storage cpunt",
+     *   description = "Creates transactions, reduces member credit and product storage count",
      *   requirements={
      *     {"name"="payment","requirement"="cash|credit|refund","description"="Payment type"}
      *   },
