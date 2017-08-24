@@ -162,7 +162,7 @@ class TransfersController extends DefaultController
             $conventId = $memberConventId;
         }
 
-        if ($conventId !== $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+        if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
             return JSendResponse::createFail('Teise konventi ülekande lisamiseks peab olema super admin', 403);
         }
 
