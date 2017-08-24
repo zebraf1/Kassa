@@ -55,6 +55,7 @@ Rotalia\UserBundle\Model\Member:
         staatused_id: '3'
         eesnimi: Mitte
         perenimi: Keegi
+        lahk_pohjused_id: 1
 
 Rotalia\UserBundle\Model\MemberCredit:
     MemberCredit_1:

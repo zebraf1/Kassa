@@ -3,7 +3,7 @@
 if which composer; then
     composer install
 else
-    php composer.phar install
+    composer.phar install
 fi
 
 php app/console propel:build
