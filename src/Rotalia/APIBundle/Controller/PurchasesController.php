@@ -108,12 +108,16 @@ class PurchasesController extends DefaultController
             }
         }
 
-        $purchases = $purchaseQuery
-            ->orderByCreatedAt(\Criteria::DESC)
-            ->limit($limit)
-            ->offset($offset)
-            ->find()
-        ;
+        $purchaseQuery->orderByCreatedAt(\Criteria::DESC);
+
+        if ($limit) {
+            $purchaseQuery
+                ->limit($limit)
+                ->offset($offset)
+            ;
+        }
+
+        $purchases = $purchaseQuery->find();
 
         $resultPurchases = [];
 

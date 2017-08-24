@@ -450,7 +450,7 @@
             _formatBody: function (body) {
                 var newBody = {};
                 for (var key in body) {
-                    if (body.hasOwnProperty(key) && this.isTrue(body[key])) {
+                    if (body.hasOwnProperty(key) && body[key] !== null && body[key] !== undefined) {
                         if (body[key].constructor === Object) {
                             for (var key2 in body[key]) {
                                 if (body[key].hasOwnProperty(key2)) {
@@ -466,9 +466,7 @@
                                 }
                             }
                         } else {
-                            if (body[key] !== null && body[key] !== undefined) {
-                                newBody[key] = body[key];
-                            }
+	                        newBody[key] = body[key];
                         }
                     }
                 }

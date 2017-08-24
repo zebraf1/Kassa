@@ -111,12 +111,16 @@ class TransfersController extends DefaultController
             }
         }
 
-        $transfers = $transferQuery
-            ->orderByCreatedAt(\Criteria::DESC)
-            ->limit($limit)
-            ->offset($offset)
-            ->find()
-        ;
+        $transferQuery->orderByCreatedAt(\Criteria::DESC);
+
+        if ($limit) {
+            $transferQuery
+                ->limit($limit)
+                ->offset($offset)
+            ;
+        }
+
+        $transfers = $transferQuery->find();
 
         $resultTransfers = [];
 

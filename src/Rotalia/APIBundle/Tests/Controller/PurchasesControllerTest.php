@@ -62,4 +62,20 @@ class PurchasesControllerTest extends WebTestCase
 
         $this->assertEquals(403, $response->getStatusCode());
     }
+
+    /**
+     * Test if limits work correctly
+     */
+    public function testListLimit()
+    {
+        $this->loginSuperAdmin();
+
+        static::$client->request('GET', '/api/purchase/', ['limit' => 2]);
+        $response = static::$client->getResponse();
+        $result = json_decode($response->getContent());
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertNotEmpty($result->data->purchases);
+        $this->assertCount(2, $result->data->purchases);
+    }
 }

@@ -66,6 +66,26 @@ class TransfersControllerTest extends WebTestCase
     }
 
     /**
+     * Test listing with limits
+     */
+
+    /**
+     * Test list without filters for super admin
+     */
+    public function testListLimit()
+    {
+        $this->loginSuperAdmin();
+
+        static::$client->request('GET', '/api/transfers/', ['limit' => 2]);
+        $response = static::$client->getResponse();
+        $result = json_decode($response->getContent());
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertNotEmpty($result->data->transfers);
+        $this->assertCount(2, $result->data->transfers);
+    }
+
+    /**
      * Test adding a transfer as an admin
      */
     public function testPostCreate()

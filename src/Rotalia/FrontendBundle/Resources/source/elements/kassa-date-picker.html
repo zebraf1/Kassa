@@ -73,7 +73,12 @@
 			            clear: 'Tühjenda',
 			            today: 'Täna',
 			            cancel: 'Katkesta',
-                        formatDate: function(d) {
+                        formatDate: function(d, isIso) {
+
+                            if (isIso === undefined) {
+                                isIso = false;
+                            }
+
                             var year = d.getFullYear();
                             var yearString = year.toString();
                             if (yearString.length < 3 && year >= 0) {
@@ -90,7 +95,13 @@
                                 dayString = '0' + day;
                             }
 
-                            return dayString + '.' + monthString + '.' + yearString;
+                            if (isIso) {
+                                return yearString + '-' + monthString + '-' + dayString;
+                            } else {
+                                return dayString + '.' + monthString + '.' + yearString;
+                            }
+
+
 
                         },
                         parseDate: function (text) {
@@ -119,9 +130,9 @@
                 this.$.endDatePicker.set('i18n', this._i18n);
 
                 var today = new Date();
-		        this.set('endDate', today.toISOString().slice(0, 10));
+		        this.set('endDate', this._i18n.formatDate(today,  true));
                 today.setDate(today.getDate() - 7);
-                this.set('startDate', today.toISOString().slice(0, 10));
+                this.set('startDate', this._i18n.formatDate(today,  true));
 
             },
             _onCOnfirm: function () {
