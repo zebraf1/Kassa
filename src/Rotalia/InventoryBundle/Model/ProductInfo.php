@@ -30,56 +30,56 @@ class ProductInfo extends BaseProductInfo
     /**
      * @return float
      */
-    public function getStorageAmount()
+    public function getStorageCount()
     {
-        return doubleval($this->storage_amount);
+        return doubleval($this->storage_count);
     }
 
     /**
      * @return float
      */
-    public function getWarehouseAmount()
+    public function getWarehouseCount()
     {
-        return doubleval($this->warehouse_amount);
+        return doubleval($this->warehouse_count);
     }
 
     /**
      * Reduce storage amount by the given amount
-     * @param $amount
+     * @param $count
      * @return ProductInfo
      */
-    public function reduceStorageAmount($amount)
+    public function reduceStorageCount($count)
     {
-        return $this->setStorageAmount($this->getStorageAmount() - $amount);
+        return $this->setStorageCount($this->getStorageCount() - $count);
     }
 
     /**
      * Add storage amount by the given amount
-     * @param $amount
+     * @param $count
      * @return ProductInfo
      */
-    public function addStorageAmount($amount)
+    public function addStorageCount($count)
     {
-        return $this->setStorageAmount($this->getStorageAmount() + $amount);
+        return $this->setStorageCount($this->getStorageCount() + $count);
     }
 
     /**
      * Reduce warehouse amount by the given amount
-     * @param $amount
+     * @param $count
      * @return ProductInfo
      */
-    public function reduceWarehouseAmount($amount)
+    public function reduceWarehouseCount($count)
     {
-        return $this->setWarehouseAmount($this->getWarehouseAmount() - $amount);
+        return $this->setWarehouseCount($this->getWarehouseCount() - $count);
     }
 
     /**
      * Add warehouse amount by the given amount
-     * @param $amount
+     * @param $count
      * @return ProductInfo
      */
-    public function addWarehouseAmount($amount)
+    public function addWarehouseCount($count)
     {
-        return $this->setWarehouseAmount($this->getWarehouseAmount() + $amount);
+        return $this->setWarehouseCount($this->getWarehouseCount() + $count);
     }
 }

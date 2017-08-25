@@ -60,7 +60,7 @@ class StatsController extends DefaultController
 
                 if (!isset($tempTable[$productId])) {
                     $tempTable[$productId] = [
-                        'initAmount' => $reportRow->getAmount(),
+                        'initAmount' => $reportRow->getCount(),
                         'addedAmount' => 0,
                         'finalAmount' => 0,
                         'productName' => $reportRow->getProduct()->getName()
@@ -68,11 +68,11 @@ class StatsController extends DefaultController
                 }
 
                 if ($report->isUpdate()) {
-                    $tempTable[$productId]['addedAmount'] += $reportRow->getAmount();
+                    $tempTable[$productId]['addedAmount'] += $reportRow->getCount();
                     //When last report is update, set final amount as last report + added amount
-                    $tempTable[$productId]['finalAmount'] += $reportRow->getAmount();
+                    $tempTable[$productId]['finalAmount'] += $reportRow->getCount();
                 } else {
-                    $tempTable[$productId]['finalAmount'] = $reportRow->getAmount();
+                    $tempTable[$productId]['finalAmount'] = $reportRow->getCount();
                 }
             }
 

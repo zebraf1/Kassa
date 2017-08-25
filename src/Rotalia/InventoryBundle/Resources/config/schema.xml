@@ -24,8 +24,8 @@
         <column name="product_id" type="INTEGER" required="true" />
         <column name="convent_id" type="INTEGER" required="true" />
         <column name="price" type="DECIMAL" size="10" scale="2" required="true" />
-        <column name="warehouse_amount" type="DECIMAL" size="10" scale="2" defaultValue="0" />
-        <column name="storage_amount" type="DECIMAL" size="10" scale="2" defaultValue="0" />
+        <column name="warehouse_count" type="DECIMAL" size="10" scale="2" defaultValue="0" />
+        <column name="storage_count" type="DECIMAL" size="10" scale="2" defaultValue="0" />
         <column name="status" type="VARCHAR" size="50" defaultValue="DISABLED" />
         <foreign-key foreignTable="ollekassa_product" name="product_info_product_fk" onUpdate="CASCADE" onDelete="CASCADE">
             <reference local="product_id" foreign="id" />
@@ -76,7 +76,7 @@
         <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
         <column name="report_id" type="INTEGER" required="false" />
         <column name="product_id" type="INTEGER" required="false" />
-        <column name="amount" type="DECIMAL" size="10" scale="1" required="true" defaultValue="0" />
+        <column name="count" type="DECIMAL" size="10" scale="1" required="true" defaultValue="0" />
         <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
         <foreign-key foreignTable="ollekassa_product" name="report_row_product_fk" onDelete="CASCADE">
             <reference local="product_id" foreign="id" />
@@ -108,7 +108,7 @@
         <column name="product_id" type="INTEGER" required="false" />
         <column name="member_id" type="INTEGER" required="false" />
         <column name="pos_id" type="INTEGER" required="false" />
-        <column name="amount" type="DECIMAL" size="10" scale="1" required="false" />
+        <column name="count" type="DECIMAL" size="10" scale="1" required="false" />
         <column name="current_price" type="DECIMAL" size="10" scale="2" required="false" />
         <column name="sum" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="created_at" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>

@@ -28,9 +28,9 @@ class Report extends BaseReport
     protected $totalValue = null;
     /** @var null|Report */
     protected $previousVerification = null;
-    protected $productAmounts = [];
-    protected $currentAmounts = [];
-    protected $expectedAmounts = null;
+    protected $productCounts = [];
+    protected $currentCounts = [];
+    protected $expectedCounts = null;
 
     private $calculatedTotalProductValue = null;
 
@@ -149,7 +149,7 @@ class Report extends BaseReport
 
 
     /**
-     * Get report row amount for given product
+     * Get report row count for given product
      *
      * @param Product $product
      * @return ReportRow|null
@@ -196,13 +196,13 @@ class Report extends BaseReport
             return;
         }
 
-        $productAmounts = [];
+        $productCounts = [];
         $updatesBetween = ReportQuery::findUpdateReportsBetween($previousVerification, $this);
         $initialCash = doubleval($previousVerification->getCash() * 100);
 
-        //Previous report amounts
+        //Previous report counts
         foreach ($previousVerification->getReportRows() as $reportRow) {
-            $productAmounts[$reportRow->getProductId()]['start'] = $reportRow->getAmount();
+            $productCounts[$reportRow->getProductId()]['start'] = $reportRow->getCount();
         }
 
         //Add update values to initial value
@@ -210,30 +210,30 @@ class Report extends BaseReport
             $initialCash += doubleval($report->getCash() * 100);
 
             foreach ($report->getReportRows() as $reportRow) {
-                if (isset($productAmounts[$reportRow->getProductId()]['start'])) {
-                    $productAmounts[$reportRow->getProductId()]['start'] += $reportRow->getAmount();
+                if (isset($productCounts[$reportRow->getProductId()]['start'])) {
+                    $productCounts[$reportRow->getProductId()]['start'] += $reportRow->getCount();
                 } else {
-                    $productAmounts[$reportRow->getProductId()]['start'] = $reportRow->getAmount();
+                    $productCounts[$reportRow->getProductId()]['start'] = $reportRow->getCount();
                 }
             }
         }
 
         $currentCash = doubleval($this->getCash() * 100);
 
-        //Current report amounts
+        //Current report counts
         foreach ($this->getReportRows() as $reportRow) {
-            $productAmounts[$reportRow->getProductId()]['end'] = $reportRow->getAmount();
+            $productCounts[$reportRow->getProductId()]['end'] = $reportRow->getCount();
         }
 
         //Calculate expected profit
         $expectedProfit = 0;
-        foreach ($productAmounts as $productId => $productAmount) {
+        foreach ($productCounts as $productId => $productCount) {
             $product = ProductQuery::create()->findPk($productId);
-            $start = !empty($productAmount['start']) ? $productAmount['start'] : 0;
-            $end = !empty($productAmount['end']) ? $productAmount['end'] : 0;
+            $start = !empty($productCount['start']) ? $productCount['start'] : 0;
+            $end = !empty($productCount['end']) ? $productCount['end'] : 0;
             $diff = ($start - $end) * $product->getPrice() * 100;
             $expectedProfit += $diff;
-            $this->productAmounts[$productId] = $start;
+            $this->productCounts[$productId] = $start;
         }
 
         //We expect that cash must increase the same amount as product value has decreased
@@ -264,7 +264,7 @@ class Report extends BaseReport
     }
 
     /**
-     * Total value of all products sum(price * amount)
+     * Total value of all products sum(price * count)
      *
      * @return float
      */
@@ -278,8 +278,8 @@ class Report extends BaseReport
         foreach ($this->getReportRows() as $reportRow) {
             //Note: convert to integer cents to avoid PHP double sum issue
             $price = doubleval($reportRow->getCurrentPrice() * 100);
-            $amount = doubleval($reportRow->getAmount());
-            $totalValue += ($price * $amount);
+            $count = doubleval($reportRow->getCount());
+            $totalValue += ($price * $count);
         }
 
         $this->calculatedTotalProductValue = $totalValue / 100;
@@ -350,11 +350,11 @@ class Report extends BaseReport
      * @return int|mixed
      * @throws \PropelException
      */
-    public function getExpectedProductAmount($productId)
+    public function getExpectedProductCount($productId)
     {
         // Local caching
-        if ($this->expectedAmounts !== null) {
-            return isset($this->expectedAmounts[$productId]) ? $this->expectedAmounts[$productId] : 0;
+        if ($this->expectedCounts !== null) {
+            return isset($this->expectedCounts[$productId]) ? $this->expectedCounts[$productId] : 0;
         }
 
         $this->calculateProfit();
@@ -375,32 +375,32 @@ class Report extends BaseReport
 
         $transactionsQuery
             ->groupByProductId()
-            ->withColumn('SUM(ollekassa_transaction.amount)', 'consumed')
+            ->withColumn('SUM(ollekassa_transaction.count)', 'consumed')
         ;
 
         /** @var Transaction[] $result */
         $result = $transactionsQuery->find();
 
-        $this->expectedAmounts = [];
+        $this->expectedCounts = [];
 
-        // Set initial amounts to expected amounts for products that haven't been purchased
-        foreach ($this->productAmounts as $id => $amount) {
-            $this->expectedAmounts[$id] = $amount;
+        // Set initial counts to expected counts for products that haven't been purchased
+        foreach ($this->productCounts as $id => $count) {
+            $this->expectedCounts[$id] = $count;
         }
 
-        // Update amounts for products that were purchased since previous report
+        // Update counts for products that were purchased since previous report
         foreach ($result as $tx) {
             $consumed = doubleval($tx->getVirtualColumn('consumed'));
 
-            // Reduce by consumed amount
-            if (isset($this->expectedAmounts[$tx->getProductId()])) {
-                $this->expectedAmounts[$tx->getProductId()] -= $consumed;
+            // Reduce by consumed count
+            if (isset($this->expectedCounts[$tx->getProductId()])) {
+                $this->expectedCounts[$tx->getProductId()] -= $consumed;
             } else {
-                $this->expectedAmounts[$tx->getProductId()] = $consumed;
+                $this->expectedCounts[$tx->getProductId()] = $consumed;
             }
         }
 
-        return isset($this->expectedAmounts[$productId]) ? $this->expectedAmounts[$productId] : 0;
+        return isset($this->expectedCounts[$productId]) ? $this->expectedCounts[$productId] : 0;
     }
 
     /**
@@ -508,35 +508,35 @@ class Report extends BaseReport
      * @param string $action
      * @throws \HttpException
      */
-    public function saveProductAmounts($inventoryType, $action = 'set')
+    public function saveProductCounts($inventoryType, $action = 'set')
     {
         if (!in_array($action, ['set', 'add', 'reduce'])) {
-            throw new HttpException(500, 'Invalid action for saveProductAmounts:'.$action);
+            throw new HttpException(500, 'Invalid action for saveProductCounts:'.$action);
         }
 
         foreach ($this->getReportRows() as $row) {
             $product = $row->getProduct();
             $product->setConventId($this->getConventId());
             $productInfo = $product->getProductInfo();
-            $amount = $row->getAmount();
+            $count = $row->getCount();
 
             switch (strtolower($inventoryType)) {
                 case Product::INVENTORY_TYPE_WAREHOUSE:
                     if ($action === 'add') {
-                        $productInfo->addWarehouseAmount($amount);
+                        $productInfo->addWarehouseCount($count);
                     } else if ($action === 'reduce') {
-                        $productInfo->reduceWarehouseAmount($amount);
+                        $productInfo->reduceWarehouseCount($count);
                     } else {
-                        $productInfo->setWarehouseAmount($amount)->save();
+                        $productInfo->setWarehouseCount($count)->save();
                     }
                     break;
                 case Product::INVENTORY_TYPE_STORAGE:
                     if ($action === 'add') {
-                        $productInfo->addStorageAmount($amount);
+                        $productInfo->addStorageCount($count);
                     } else if ($action === 'reduce') {
-                        $productInfo->reduceStorageAmount($amount);
+                        $productInfo->reduceStorageCount($count);
                     } else {
-                        $productInfo->setStorageAmount($amount);
+                        $productInfo->setStorageCount($count);
                     }
                     break;
                 default:

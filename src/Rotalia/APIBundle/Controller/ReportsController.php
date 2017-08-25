@@ -122,7 +122,7 @@ class ReportsController extends DefaultController
      *      {"name"="conventId","type"="int","description"="Save report for selected convent instead of member home convent"},
      *      {"name"="type","type"="string","description"="Report type: VERIFICATION (default) or UPDATE"},
      *      {"name"="inventorySource","type"="string","description"="Use 'warehouse' to take products from warehouse for update report"},
-     *      {"name"="inventoryTarget","type"="string","description"="Save product amounts to selected inventory: warehouse or storage"},
+     *      {"name"="inventoryTarget","type"="string","description"="Save product counts to selected inventory: warehouse or storage"},
      *   },
      *   statusCodes = {
      *     201 = "Returned when successful",
@@ -237,20 +237,20 @@ class ReportsController extends DefaultController
             $report->save();
 
             if (!$report->isUpdate() && $report->isLatest()) {
-                // Save storage amounts
-                $report->saveProductAmounts(Product::INVENTORY_TYPE_STORAGE);
+                // Save storage counts
+                $report->saveProductCounts(Product::INVENTORY_TYPE_STORAGE);
             } else if ($report->isUpdate()) {
                 $source = $request->get('inventorySource', null);
                 $target = $request->get('inventoryTarget', Product::INVENTORY_TYPE_STORAGE);
 
                 // Remove from source inventory (warehouse and in some cases storage)
                 if (!empty($source)) {
-                    $report->saveProductAmounts($source, 'reduce');
+                    $report->saveProductCounts($source, 'reduce');
                 }
 
                 if (!empty($target)) {
                     // Add to target inventory (warehouse or storage)
-                    $report->saveProductAmounts($target, 'add');
+                    $report->saveProductCounts($target, 'add');
                 }
             }
 

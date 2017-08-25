@@ -37,7 +37,7 @@ class PurchaseController extends DefaultController
      * @ApiDoc (
      *   resource = false,
      *   section="Purchase",
-     *   description = "Creates transactions, reduces member credit and product storage amount",
+     *   description = "Creates transactions, reduces member credit and product storage count",
      *   requirements={
      *     {"name"="payment","requirement"="cash|credit|refund","description"="Payment type"}
      *   },
@@ -46,7 +46,7 @@ class PurchaseController extends DefaultController
      *      {"name"="conventId","dataType"="integer","required"=false,"description"="Convent ID where to reduce inventory. PointOfSale convent is always used if available. Default member convent ID"},
      *      {"name"="basket","dataType"="Object","required"=false,"description"="Not required for refund payment"},
      *      {"name"="basket[0][id]","dataType"="int","required"=true,"description"="Product ID"},
-     *      {"name"="basket[0][amount]","dataType"="float","required"=true,"description"="Amount purchased"},
+     *      {"name"="basket[0][count]","dataType"="float","required"=true,"description"="Count purchased"},
      *      {"name"="basket[0][price]","dataType"="float","required"=true,"description"="Price of the product when added to cart"},
      *   },
      *   statusCodes = {
@@ -152,7 +152,7 @@ class PurchaseController extends DefaultController
                     $transaction = new Transaction();
                     $product = ProductQuery::create()->findPk($item['id']);
                     $product->setConventId($conventId);
-                    $transaction->setAmount($item['amount']);
+                    $transaction->setCount($item['count']);
                     $transaction->setProduct($product);
                     $transaction->setCurrentPrice($product->getPrice());
                     $transaction->setMemberRelatedByCreatedBy($currentMember);
@@ -161,7 +161,7 @@ class PurchaseController extends DefaultController
                     $totalSumCents += (int)(100 * $transaction->calculateSum());
                     $transaction->setType($transactionType);
                     $transaction->save($connection);
-                    $product->getProductInfo()->reduceStorageAmount($item['amount']);
+                    $product->getProductInfo()->reduceStorageCount($item['count']);
                     $product->save();
                 }
             }
@@ -199,8 +199,8 @@ class PurchaseController extends DefaultController
             $this->getLogger()->warning('Invalid id for basket item: '.json_encode($item));
             return false;
         }
-        if (!isset($item['amount']) || !ctype_digit($item['amount'])) {
-            $this->getLogger()->warning('Invalid amount for basket item: '.json_encode($item));
+        if (!isset($item['count']) || !ctype_digit($item['count'])) {
+            $this->getLogger()->warning('Invalid count for basket item: '.json_encode($item));
             return false;
         }
         if (!isset($item['price'])) {
