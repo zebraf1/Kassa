@@ -3,6 +3,7 @@
 namespace Rotalia\InventoryBundle\Form;
 
 
+use Propel\Bundle\PropelBundle\Form\Type\ModelType;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\ProductGroupQuery;
 use Symfony\Component\Form\AbstractType;
@@ -48,7 +49,7 @@ class ProductType extends AbstractType
                 'label' => 'Tootekood',
                 'required' => false,
             ))
-            ->add('productGroup', 'model', [
+            ->add('productGroup', ModelType::class, [
                 'label' => 'Toote grupp',
                 'class' => 'Rotalia\InventoryBundle\Model\ProductGroup',
                 'query' => ProductGroupQuery::create()->orderBySeq(),
