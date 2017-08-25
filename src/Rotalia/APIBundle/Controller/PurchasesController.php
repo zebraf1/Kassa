@@ -95,7 +95,7 @@ class PurchasesController extends DefaultController
                 $from = new DateTime($dateFrom);
                 $purchaseQuery->filterByCreatedAt(['min' => $from]);
             } catch (\Exception $e) {
-                return JSendResponse::createFail('Vigane alguskuupäev', 403, ['dateFrom' => $e->getMessage()]);
+                return JSendResponse::createFail('Vigane alguskuupäev', 400, ['dateFrom' => $e->getMessage()]);
             }
         }
 

@@ -64,12 +64,12 @@ class Transaction extends BaseTransaction
     {
         return [
             'id' => $this->getId(),
-            'member' => $this->getMemberRelatedByMemberId()->getAjaxName(),
+            'member' => $this->getMemberRelatedByMemberId() ? $this->getMemberRelatedByMemberId()->getAjaxName() : null,
             'createdBy' => $this->getMemberRelatedByCreatedBy() ? $this->getMemberRelatedByCreatedBy()->getAjaxName() : null,
             'count' => intval($this->getCount()),
             'price' => doubleval($this->getCurrentPrice()),
-            'product' => $this->getProduct()->getAjaxData(),
-            'convent' => $this->getConvent()->getName(),
+            'product' => $this->getProduct() ? $this->getProduct()->getAjaxData() : null,
+            'convent' => $this->getConvent() ? $this->getConvent()->getName() : null,
             'createdAt' => $this->getCreatedAt()->format('H:i d.m.Y')
         ];
     }

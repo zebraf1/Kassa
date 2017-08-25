@@ -42,22 +42,10 @@ class PropelMigration_1503510123
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `ollekassa_report` DROP FOREIGN KEY `member_fk`;
-
-ALTER TABLE `ollekassa_transaction` DROP FOREIGN KEY `transaction_pos_fk`;
-
-DROP INDEX `FI_nsaction_pos_fk` ON `ollekassa_transaction`;
-
 ALTER TABLE `ollekassa_transaction`
     ADD `convent_id` INTEGER NOT NULL AFTER `member_id`;
 
-ALTER TABLE `ollekassa_transaction` DROP `pos_id`;
-
 CREATE INDEX `FI_nsaction_convent_fk` ON `ollekassa_transaction` (`convent_id`);
-
-ALTER TABLE `ollekassa_transaction` ADD CONSTRAINT `transaction_convent_fk`
-    FOREIGN KEY (`convent_id`)
-    REFERENCES `koondised` (`id`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -79,24 +67,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `ollekassa_report` ADD CONSTRAINT `member_fk`
-    FOREIGN KEY (`member_id`)
-    REFERENCES `liikmed` (`id`);
-
-ALTER TABLE `ollekassa_transaction` DROP FOREIGN KEY `transaction_convent_fk`;
-
 DROP INDEX `FI_nsaction_convent_fk` ON `ollekassa_transaction`;
 
-ALTER TABLE `ollekassa_transaction`
-    ADD `pos_id` INTEGER AFTER `member_id`;
-
 ALTER TABLE `ollekassa_transaction` DROP `convent_id`;
-
-CREATE INDEX `FI_nsaction_pos_fk` ON `ollekassa_transaction` (`pos_id`);
-
-ALTER TABLE `ollekassa_transaction` ADD CONSTRAINT `transaction_pos_fk`
-    FOREIGN KEY (`pos_id`)
-    REFERENCES `ollekassa_point_of_sale` (`id`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

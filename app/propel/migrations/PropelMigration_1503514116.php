@@ -42,7 +42,12 @@ class PropelMigration_1503514116
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `ollekassa_transaction` DROP FOREIGN KEY `transaction_convent_fk`;
+DROP INDEX `FI_nsaction_pos_fk` ON `ollekassa_transaction`;
+
+ALTER TABLE `ollekassa_transaction` DROP FOREIGN KEY `transaction_pos_fk`;
+
+ALTER TABLE `ollekassa_transaction` DROP `pos_id`;
+
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -64,9 +69,14 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `ollekassa_transaction` ADD CONSTRAINT `transaction_convent_fk`
-    FOREIGN KEY (`convent_id`)
-    REFERENCES `koondised` (`id`);
+ALTER TABLE `ollekassa_transaction`
+    ADD `pos_id` INTEGER AFTER `member_id`;
+
+CREATE INDEX `FI_nsaction_pos_fk` ON `ollekassa_transaction` (`pos_id`);
+
+ALTER TABLE `ollekassa_transaction` ADD CONSTRAINT `transaction_pos_fk`
+    FOREIGN KEY (`pos_id`)
+    REFERENCES `ollekassa_point_of_sale` (`id`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
