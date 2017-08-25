@@ -213,7 +213,6 @@ class PointOfSalesController extends DefaultController
             return JSendResponse::createFail('Õigused puuduvad, vajab super admin õigusi', 403);
         }
 
-        // TODO: remove point_of_sale_id from transaction, use convent_id instead. Solves FK constraint issue
         $pos->delete();
 
         return JSendResponse::createSuccess(['message' => 'Müügipunkt kustutatud']);
