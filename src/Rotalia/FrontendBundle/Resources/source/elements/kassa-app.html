@@ -65,7 +65,6 @@
 		<kassa-backend id="backend"
 		               member="{{member}}"
 		               settings="{{settings}}"
-		               members="{{members}}"
 		               active-products="{{activeProducts}}"
 		               inactive-products="{{inactiveProducts}}"
 		               product-groups="{{productGroups}}"
@@ -110,7 +109,6 @@
 						<kassa-logout data-page="logout"></kassa-logout>
 						<kassa-ost data-page="ost"
 						           member="[[member]]"
-						           members="[[members]]"
 						           products="[[activeProducts]]"
 						           product-groups="[[productGroups]]"
 						           convent-id="[[configuration.selectedConventId]]"></kassa-ost>
@@ -133,8 +131,7 @@
 						                    point-of-sales="[[pointOfSales]]"></kassa-admin-kassad>
 						<kassa-admin-ylekanded data-page="admin-ylekanded"
 						                       convent-id="[[configuration.selectedConventId]]"
-						                       transfers="[[transfers]]"
-						                       members="[[members]]"></kassa-admin-ylekanded>
+						                       transfers="[[transfers]]"></kassa-admin-ylekanded>
 						<kassa-admin-tasaarveldused data-page="admin-tasaarveldused"
 						                            convent-id="[[configuration.selectedConventId]]"
 						                            credit-nettings="[[creditNettings]]"></kassa-admin-tasaarveldused>

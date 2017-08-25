@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="kassa-page-behavior.html">
 <link rel="import" href="kassa-behavior.html">
@@ -10,7 +9,7 @@
 <link rel="import" href="kassa-table.html">
 <link rel="import" href="kassa-material.html">
 <link rel="import" href="kassa-date-picker.html">
-
+<link rel="import" href="kassa-member-picker.html">
 
 <dom-module id="kassa-admin-ylekanded">
 	<template>
@@ -64,8 +63,7 @@
 
 		<paper-dialog id="transfersDialog" modal style="max-width: 350px">
 			<kassa-material direction="vertical">
-				<vaadin-combo-box data-field="memberId" label="Kasutaja" item-label-path="name" item-value-path="id"
-				                  items="[[members]]"></vaadin-combo-box>
+				<kassa-member-picker data-field="memberId" label="Kasutaja"></kassa-member-picker>
 				<paper-input data-field="sum" label="Summa (€)" type="number" step="0.1"></paper-input>
 				<paper-textarea data-field="comment" label="Kommentaar" style="width:100%;"></paper-textarea>
 
@@ -87,9 +85,6 @@
                 transfers: {
                     type: Array
                 },
-                members: {
-                    type: Array
-                },
                 dialog: {
                     type: Node
                 },
@@ -108,9 +103,6 @@
             ready: function () {
                 this.set('dialog', this.$.transfersDialog);
                 this.set('rowDetailsInfo', {name: 'kassa-ylekanded'})
-            },
-            setUp: function () {
-                this.fire('kassa-backend-action', {action: 'doMembersGet'});
             },
             cleanUp: function() {
                 this.set('transfers', []);

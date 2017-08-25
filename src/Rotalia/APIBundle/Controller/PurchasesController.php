@@ -51,7 +51,9 @@ class PurchasesController extends DefaultController
         $limit = $request->get('limit', 5);
         $offset = $request->get('offset', 0);
 
-        $purchaseQuery = TransactionQuery::create();
+        $purchaseQuery = TransactionQuery::create()
+            ->filterByType(Transaction::TYPE_CREDIT_PURCHASE)
+        ;
 
         $memberConventId = $this->getMember()->getKoondisedId();
 

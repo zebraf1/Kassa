@@ -15,9 +15,6 @@
 		<!-- Settings -->
 		<iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Members -->
-		<iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Products -->
 		<iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
@@ -81,12 +78,6 @@
                 /* Settings */
                 settings: {
                     type: Object,
-                    notify: true,
-                    readOnly: true
-                },
-                /* Members */
-                members: {
-                    type: Array,
                     notify: true,
                     readOnly: true
                 },
@@ -177,13 +168,6 @@
             doSettingsGet: function () {
                 return this.$.settingsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setSettings(data);
-                }.bind(this))
-            },
-            /* Members */
-            doMembersGet: function () {
-                this.$.membersGet.set('params', {limit: 0});
-                this.$.membersGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
-                    this._setMembers(data.members);
                 }.bind(this))
             },
             /* Products */
@@ -298,7 +282,7 @@
             },
 	        /* Reports */
             doLastReportGet: function (conventId) {
-                this.$.reportGet.set('body', this._formatBody({
+                this.$.reportGet.set('params', this._formatBody({
                     conventId: conventId,
                     reportType: 'VERIFICATION',
                     limit: 1
@@ -363,10 +347,6 @@
                     case 'doAuthenticationGet':
                         promise = this.doAuthenticationGet();
                         break
-                    /* Members */
-                    case 'doMembersGet':
-                        promise = this.doMembersGet();
-                        break;
                     /* Products */
                     case 'doProductsGetAll':
                         promise = this.doProductsGetAll(data.conventId);
