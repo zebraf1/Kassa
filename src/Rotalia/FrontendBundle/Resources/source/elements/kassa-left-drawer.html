@@ -36,7 +36,7 @@
 			ul {
 				list-style-type: none;
 				padding: 0;
-				margin: 0;
+				margin: 0 0 3px;
 				width: 100%;
 				background-color: var(--kassa-dark-color);
 			}
@@ -104,6 +104,12 @@
 				display: none;
 			}
 
+			@media (max-height: 600px) {
+				#leftHead {
+					height: 128px;
+				}
+			}
+
 		</style>
 		<main hidden$="[[!isTrue(member)]]">
 			<div id="leftHead">
@@ -112,8 +118,15 @@
 			</div>
 
 			<ul>
-				<template is="dom-repeat" items="[[navigation]]" as="site">
-					<template is="dom-if" if="[[_hasRights(member, site.role, configuration.selectedConventId)]]">
+				<template is="dom-if" if="[[_hasRights(member, 'ROLE_USER', configuration.selectedConventId)]]">
+					<template is="dom-repeat" items="[[_filterByRole(navigation, 'ROLE_USER')]]" as="site">
+							<li><a href="#/[[site.page]]" class$="[[_classForSelected(site.page, page)]]">[[site.name]]</a></li>
+					</template>
+				</template>
+			</ul>
+			<ul>
+				<template is="dom-if" if="[[_hasRights(member, 'ROLE_ADMIN', configuration.selectedConventId)]]">
+					<template is="dom-repeat" items="[[_filterByRole(navigation, 'ROLE_ADMIN')]]" as="site">
 						<li><a href="#/[[site.page]]" class$="[[_classForSelected(site.page, page)]]">[[site.name]]</a></li>
 					</template>
 				</template>
@@ -167,6 +180,9 @@
 	            } else {
 	                return ''
 	            }
+            },
+	        _filterByRole: function (items, value) {
+		        return items.filter(item => item.role === value);
             }
         })
 	</script>

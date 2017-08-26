@@ -59,6 +59,12 @@
 			[hidden] {
 				display: none;
 			}
+
+			@media (max-height: 600px) {
+				app-toolbar.spacer {
+					display: none;
+				}
+			}
 		</style>
 
 
@@ -95,7 +101,7 @@
 							<paper-icon-button icon="kassa:help" hidden$="[[!rightNarrow]]"
 							                   on-tap="_toggleRightDrawer"></paper-icon-button>
 						</app-toolbar>
-						<app-toolbar></app-toolbar>
+						<app-toolbar class="spacer"></app-toolbar>
 						<app-toolbar>
 							<div main-title>
 								<img src$="[[importPath]]../images/icons/icon-96x96.png" alt="õkassa logo"/>
@@ -113,7 +119,6 @@
 						           product-groups="[[productGroups]]"
 						           convent-id="[[configuration.selectedConventId]]"></kassa-ost>
 						<kassa-ylevaade-ostud data-page="ylevaade-ostud"
-						                      convent-id="[[configuration.selectedConventId]]"
 						                      member-id="[[member.id]]"
 						                      purchases="[[purchases]]"></kassa-ylevaade-ostud>
 						<kassa-ylevaade-ylekanded
@@ -128,6 +133,7 @@
 						<kassa-admin-tootegrupid data-page="admin-tootegrupid"
 						                         product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
 						<kassa-admin-kassad data-page="admin-kassad"
+						                    convent-id="[[configuration.selectedConventId]]"
 						                    point-of-sales="[[pointOfSales]]"></kassa-admin-kassad>
 						<kassa-admin-ylekanded data-page="admin-ylekanded"
 						                       convent-id="[[configuration.selectedConventId]]"
@@ -162,8 +168,8 @@
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
 	                        {page: 'ylevaade-ostud', name: 'Ostud', role: 'ROLE_USER'},
 	                        {page: 'ylevaade-ylekanded', name: 'Ülekanded', role: 'ROLE_USER'},
-                            {page: 'admin-ostud', name: 'Konvendi Ostud', role: 'ROLE_ADMIN'},
-                            {page: 'admin-ylekanded', name: 'Konvendi Ülekanded', role: 'ROLE_ADMIN'},
+                            {page: 'admin-ostud', name: 'Konvendi ostud', role: 'ROLE_ADMIN'},
+                            {page: 'admin-ylekanded', name: 'Konvendi ülekanded', role: 'ROLE_ADMIN'},
                             {page: 'admin-tooted', name: 'Tooted', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegrupid', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
