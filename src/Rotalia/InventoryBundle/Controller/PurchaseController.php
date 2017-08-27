@@ -83,6 +83,7 @@ class PurchaseController extends DefaultController
                 return JSendResponse::createError('Vigane makseviis: '.$payment, 400);
                 break;
         }
+
         $currentMember = $this->getMember();
         $member = null;
         $basket = $request->get('basket');
@@ -90,7 +91,7 @@ class PurchaseController extends DefaultController
             if ($basket === null) {
                 return JSendResponse::createFail('Ostukorv puudub', 400);
             }
-            if (!is_array($basket) && $payment !== 'refund') {
+            if (!is_array($basket)) {
                 return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
             }
         }
@@ -138,7 +139,7 @@ class PurchaseController extends DefaultController
                 $transaction->setSum($sum);
                 $transaction->setMemberRelatedByCreatedBy($currentMember);
                 $transaction->setMemberRelatedByMemberId($member);
-                $transaction->setPointOfSale($pos);
+                $transaction->setConventId($conventId);
                 $transaction->setType($transactionType);
                 $transaction->save($connection);
                 // credit balance changes the same way (positive cash = positive credit). This sum is deducted from balance
@@ -157,7 +158,7 @@ class PurchaseController extends DefaultController
                     $transaction->setCurrentPrice($product->getPrice());
                     $transaction->setMemberRelatedByCreatedBy($currentMember);
                     $transaction->setMemberRelatedByMemberId($member);
-                    $transaction->setPointOfSale($pos);
+                    $transaction->setConventId($conventId);
                     $totalSumCents += (int)(100 * $transaction->calculateSum());
                     $transaction->setType($transactionType);
                     $transaction->save($connection);

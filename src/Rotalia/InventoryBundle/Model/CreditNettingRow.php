@@ -14,6 +14,7 @@ class CreditNettingRow extends BaseCreditNettingRow
         return [
             'id' => $this->getId(),
             'conventId' => $this->getConventId(),
+            'convent' => $this->getConvent()->getName(),
             'sum' => doubleval($this->getSum()),
             'nettingDone' => $this->getNettingDone()
         ];

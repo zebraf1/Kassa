@@ -62,10 +62,17 @@
 		</style>
 
 
-		<kassa-backend id="backend" member="{{member}}" settings="{{settings}}" members="{{members}}"
-		               active-products="{{activeProducts}}" inactive-products="{{inactiveProducts}}"
-		               product-groups="{{productGroups}}" point-of-sales="{{pointOfSales}}"
-		               last-report="{{lastReport}}" transfers="{{transfers}}" credit-nettings="{{creditNettings}}"></kassa-backend>
+		<kassa-backend id="backend"
+		               member="{{member}}"
+		               settings="{{settings}}"
+		               active-products="{{activeProducts}}"
+		               inactive-products="{{inactiveProducts}}"
+		               product-groups="{{productGroups}}"
+		               point-of-sales="{{pointOfSales}}"
+		               transfers="{{transfers}}"
+		               credit-nettings="{{creditNettings}}"
+		               purchases="{{purchases}}"></kassa-backend>
+
 		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]" convent-id="[[configuration.selectedConventId]]"></kassa-route>
 
 		<kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
@@ -102,10 +109,17 @@
 						<kassa-logout data-page="logout"></kassa-logout>
 						<kassa-ost data-page="ost"
 						           member="[[member]]"
-						           members="[[members]]"
 						           products="[[activeProducts]]"
 						           product-groups="[[productGroups]]"
 						           convent-id="[[configuration.selectedConventId]]"></kassa-ost>
+						<kassa-ylevaade-ostud data-page="ylevaade-ostud"
+						                      convent-id="[[configuration.selectedConventId]]"
+						                      member-id="[[member.id]]"
+						                      purchases="[[purchases]]"></kassa-ylevaade-ostud>
+						<kassa-ylevaade-ylekanded
+								data-page="ylevaade-ylekanded"
+								member-id="[[member.id]]"
+								transfers="[[transfers]]"></kassa-ylevaade-ylekanded>
 						<kassa-admin-tooted data-page="admin-tooted"
 						                    convent-id="[[configuration.selectedConventId]]"
 						                    active-products="[[activeProducts]]"
@@ -114,16 +128,16 @@
 						<kassa-admin-tootegrupid data-page="admin-tootegrupid"
 						                         product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
 						<kassa-admin-kassad data-page="admin-kassad"
-						                    point-of-sales="[[pointOfSales]]"
-						                    active-convents="[[settings.activeConvents]]"></kassa-admin-kassad>
+						                    point-of-sales="[[pointOfSales]]"></kassa-admin-kassad>
 						<kassa-admin-ylekanded data-page="admin-ylekanded"
 						                       convent-id="[[configuration.selectedConventId]]"
-						                       transfers="[[transfers]]"
-						                       members="[[members]]"></kassa-admin-ylekanded>
+						                       transfers="[[transfers]]"></kassa-admin-ylekanded>
 						<kassa-admin-tasaarveldused data-page="admin-tasaarveldused"
 						                            convent-id="[[configuration.selectedConventId]]"
-						                            credit-nettings="[[creditNettings]]"
-						                            active-convents="[[settings.activeConvents]]"></kassa-admin-tasaarveldused>
+						                            credit-nettings="[[creditNettings]]"></kassa-admin-tasaarveldused>
+						<kassa-admin-ostud data-page="admin-ostud"
+						                   convent-id="[[configuration.selectedConventId]]"
+						                   purchases="[[purchases]]"></kassa-admin-ostud>
 					</kassa-pages>
 				</app-header-layout>
 
@@ -146,9 +160,12 @@
                     value: function () {
                         return [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
-                            {page: 'admin-ylekanded', name: 'Ülekanded', role: 'ROLE_ADMIN'},
-                            {page: 'admin-tooted', name: 'Toodete ülevaade', role: 'ROLE_ADMIN'},
-                            {page: 'admin-tootegrupid', name: 'Tootegruppide ülevaade', role: 'ROLE_ADMIN'},
+	                        {page: 'ylevaade-ostud', name: 'Ostud', role: 'ROLE_USER'},
+	                        {page: 'ylevaade-ylekanded', name: 'Ülekanded', role: 'ROLE_USER'},
+                            {page: 'admin-ostud', name: 'Konvendi Ostud', role: 'ROLE_ADMIN'},
+                            {page: 'admin-ylekanded', name: 'Konvendi Ülekanded', role: 'ROLE_ADMIN'},
+                            {page: 'admin-tooted', name: 'Tooted', role: 'ROLE_ADMIN'},
+                            {page: 'admin-tootegrupid', name: 'Tootegrupid', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
 	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'}
                         ];

@@ -246,3 +246,32 @@ Rotalia\InventoryBundle\Model\CreditNettingRow:
         credit_netting_id: CreditNetting_1
         convent_id: Convent_7
         sum: -10
+
+Rotalia\InventoryBundle\Model\Transaction:
+    Purchase_1:
+        type: 'CREDIT_PURCHASE'
+        product_id: Product_1
+        member_id: Member_1886
+        created_by: Member_1886
+        convent_id: Convent_6
+        count: 1
+        current_price: 0.8
+        sum: 0.8
+    Purchase_2:
+          type: 'CREDIT_PURCHASE'
+          product_id: Product_2
+          member_id: Member_2122
+          created_by: Member_2123
+          convent_id: Convent_7
+          count: 3
+          current_price: 1.2
+          sum: 3.6
+    Purchase_3:
+          type: 'CREDIT_PURCHASE'
+          product_id: Product_3
+          member_id: Member_1886
+          created_by: Member_2123
+          convent_id: Convent_7
+          count: 1
+          current_price: 1
+          sum: 1

@@ -42,14 +42,10 @@
                 },
                 rowDetailsInfo: {
                     type: Object
-                },
-	            activeConvents: {
-                    type: Array,
-		            value: []
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
-	        observers: ['_computeRowDetails(activeConvents, conventId)'],
+	        observers: ['_computeRowDetails(conventId)'],
             setUp: function () {
                 this.fire('kassa-backend-action', {action: 'doCreditNettingsGet',
                     onSuccess: function () {
@@ -57,11 +53,10 @@
                     }.bind(this)
                 });
             },
-            _computeRowDetails: function (activeConvents, conventId) {
-                if (this.isTrue(this.activeConvents)) {
+            _computeRowDetails: function (conventId) {
+                if (conventId !== undefined) {
                     this.set('rowDetailsInfo', {
                         name: 'kassa-admin-tasaarveldused',
-	                    activeConvents: this.activeConvents,
 	                    conventId: this.conventId
                     });
                 }

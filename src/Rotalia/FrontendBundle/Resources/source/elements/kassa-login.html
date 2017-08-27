@@ -19,11 +19,11 @@
 		</style>
 
 		<main hidden$="[[_hideForm]]">
-			<form name="loginForm" id="loginForm" action="">
+			<form name="loginForm" id="loginForm" action="index.html">
 				<paper-input name="username" label="Kasutajanimi" type="text" disabled="[[confirmed]]"
-				             value="{{_username}}" required></paper-input>
+				             value="{{_username}}" required autocomplete="username"></paper-input>
 				<paper-input name="password" label="Parool" type="password" disabled="[[confirmed]]"
-				             value="{{_password}}" required></paper-input>
+				             value="{{_password}}" required autocomplete="current-password"></paper-input>
 				<kassa-confirm-button id="confirmButton" confirmed="{{confirmed}}" on-kassa-confirm="_doLogin">Sisene
 				</kassa-confirm-button>
 			</form>

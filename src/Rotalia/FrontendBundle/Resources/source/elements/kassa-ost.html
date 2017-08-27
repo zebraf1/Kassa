@@ -3,7 +3,6 @@
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 
 
 <link rel="import" href="kassa-ost-tootegrupp.html">
@@ -12,6 +11,7 @@
 <link rel="import" href="kassa-material.html">
 <link rel="import" href="kassa-page-behavior.html">
 <link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-member-picker.html">
 
 <dom-module id="kassa-ost">
 	<template>
@@ -24,7 +24,7 @@
 
 		</style>
 
-		<iron-a11y-keys target="[[_tasujaComboBox]]" keys="enter" on-keys-pressed="_selectFilterInput"></iron-a11y-keys>
+		<iron-a11y-keys target="[[_memberPicker]]" keys="enter" on-keys-pressed="_selectFilterInput"></iron-a11y-keys>
 		<iron-a11y-keys target="[[_filterInput]]" keys="enter" on-keys-pressed="_selectToode"></iron-a11y-keys>
 		<iron-a11y-keys target="[[_productCountInput]]" keys="esc"
 		                on-keys-pressed="_dismissproductCountDialog"></iron-a11y-keys>
@@ -34,10 +34,11 @@
 
 		<main id="mainContent">
 			<kassa-material direction="horizontal">
-				<vaadin-combo-box id="tasujaComboBox" label="Tasuja" value="[[member.id]]"
-				                  disabled="[[ostFixed]]" on-focusin="_selectTasujaComboBox"
-				                  on-focusout="_onFocusoutTasuja"
-				                  item-label-path="name" item-value-path="id" items="[[members]]"></vaadin-combo-box>
+				<kassa-member-picker id="memberPicker"
+				                     label="Tasuja"
+				                     disabled="[[ostFixed]]"
+				                     member="[[member]]"
+				                     active-members></kassa-member-picker>
 
 				<span class="row-break" style="font-size: 1.8em">Summa: [[_computeOstTotal(_chosenProducts.*)]]</span>
 			</kassa-material>
@@ -52,8 +53,7 @@
 				<paper-input id="filterInput" disabled="[[ostFixed]]" label="Otsi toodet" value="{{filterVal}}"
 				             on-focusin="_selectFilterInput"></paper-input>
 				<kassa-confirm-button class="row-break" disabled$="[[!_chosenProducts.length]]" confirmed="{{ostFixed}}"
-				                      double-confirm on-kassa-confirm="_confirmOst"
-				                      on-kassa-double-confirm="_doubleConfirmOst">Osta
+				                      double-confirm on-kassa-double-confirm="_doubleConfirmOst">Osta
 				</kassa-confirm-button>
 			</kassa-material>
 
@@ -90,10 +90,6 @@
                 member: {
                     type: Object
                 },
-                // Kõik kasutajad, kelle nimel saab osta
-                members: {
-                    type: Array
-                },
                 // Kõik tooted, mida saab osta
                 products: {
                     type: Array,
@@ -119,7 +115,7 @@
                     value: 0,
                     readOnly: true
                 },
-                _tasujaComboBox: {
+                _memberPicker: {
                     type: HTMLElement,
                     readOnly: true
                 },
@@ -138,17 +134,12 @@
             ],
             ready: function () {
                 // Key bindingute jaoks (a11y-keys)
-                this._set_tasujaComboBox(this.$.tasujaComboBox);
+                this._set_memberPicker(this.$.memberPicker);
                 this._set_filterInput(this.$.filterInput);
                 this._set_productCountInput(this.$.productCountInput);
             },
-            setUp: function () {
-                this.fire('kassa-backend-action', {action: 'doMembersGet'});
-            },
             cleanUp: function () {
-                if (this.member) {
-                    this.$.tasujaComboBox.value = this.member.id;
-                }
+                this.$.memberPicker.value = '';
                 this.set('ostFixed', false);
                 this.set('products', []);
                 this.set('productGroups', []);
@@ -196,16 +187,6 @@
                     return result
                 } else {
                     return []
-                }
-            },
-            _selectTasujaComboBox: function () {
-                // Highligthime teksti, et oleks mugavam kirjutada
-                this.$.tasujaComboBox.inputElement.select();
-            },
-            _onFocusoutTasuja: function () {
-                //Tühja tasuja korral on kasutaja ise tasuja
-                if (this.$.tasujaComboBox.value === '') {
-                    this.$.tasujaComboBox.value = this.member.id;
                 }
             },
             _selectFilterInput: function () {
@@ -279,19 +260,16 @@
                     this.splice('_chosenProducts', event.model.__data.index, 1);
                 }
             },
-            _confirmOst: function () {
-                // Tasuja väli peab olema täidetud
-                this._onFocusoutTasuja();
-            },
             _doubleConfirmOst: function () {
                 this.fire('kassa-backend-action', {
                     action: 'doPurchasePost',
                     conventId: this.conventId,
-                    memberId: this._tasujaComboBox.value,
+                    memberId: this._memberPicker.value,
                     basket: this._chosenProducts.map(product => this.pickProperties(product, ['id', 'count', 'price'])),
                     onSuccess: function () {
                         this.set('ostFixed', false);
                         this._set_chosenProducts([]);
+                        this.$.memberPicker.value = '';
                     }.bind(this),
                     onError: function () {
                         this.set('ostFixed', false);

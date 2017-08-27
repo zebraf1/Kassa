@@ -88,7 +88,11 @@
         mapIdToValue: function (id, items, key) {
             for (var i = 0; i < items.length; i++) {
                 if (items[i].id === id) {
-                    return items[i][key]
+                    if (key === null) {
+                        return items[i]
+                    } else {
+                        return items[i][key]
+                    }
                 }
             }
             return ''

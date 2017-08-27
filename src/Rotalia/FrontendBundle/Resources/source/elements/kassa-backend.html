@@ -15,9 +15,6 @@
 		<!-- Settings -->
 		<iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Members -->
-		<iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Products -->
 		<iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
@@ -42,6 +39,8 @@
 		<iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Purchase -->
+		<iron-ajax id="purchasesGet" handle-as="json" url='[[_computeURL("purchase")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Report -->
@@ -79,12 +78,6 @@
                 /* Settings */
                 settings: {
                     type: Object,
-                    notify: true,
-                    readOnly: true
-                },
-                /* Members */
-                members: {
-                    type: Array,
                     notify: true,
                     readOnly: true
                 },
@@ -128,15 +121,18 @@
                     type: Array,
                     notify: true,
                     readOnly: true
+	            },
+	            /* Purchases */
+	            purchases: {
+	                type: Array,
+		            notify: true,
+		            readOnly: true
 	            }
             },
             listeners: {
                 'error': '_onRequestError'
             },
             behaviors: [KassaBehavior],
-            attached: function () {
-                this.doAuthenticationGet();
-            },
             /* Authentication */
             doLogin: function (username, password) {
                 this.$.authenticationPost.set('body', {
@@ -152,7 +148,8 @@
             doLogout: function () {
                 return this.$.authenticationDelete.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.fire('kassa-message-success', data);
-                    return this.doAuthenticationGet();
+                    this._setCsrfToken(null);
+                    this._setMember(null);
                 }.bind(this));
             },
             doAuthenticationGet: function () {
@@ -171,13 +168,6 @@
             doSettingsGet: function () {
                 return this.$.settingsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setSettings(data);
-                }.bind(this))
-            },
-            /* Members */
-            doMembersGet: function () {
-                this.$.membersGet.set('params', {limit: 0});
-                this.$.membersGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
-                    this._setMembers(data.members);
                 }.bind(this))
             },
             /* Products */
@@ -281,9 +271,18 @@
                     return this.doAuthenticationGet();
                 }.bind(this))
             },
+            doPurchasesGet: function (conventId, memberId, dateFrom, dateUntil) {
+                this.$.purchasesGet.set('params', this._formatBody({
+		            conventId: conventId, memberId: memberId,
+	                limit: 0, dateFrom: dateFrom, dateUntil: dateUntil
+                }));
+                return this.$.purchasesGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._setPurchases(data.purchases);
+                }.bind(this))
+            },
 	        /* Reports */
             doLastReportGet: function (conventId) {
-                this.$.reportGet.set('body', this._formatBody({
+                this.$.reportGet.set('params', this._formatBody({
                     conventId: conventId,
                     reportType: 'VERIFICATION',
                     limit: 1
@@ -297,8 +296,11 @@
                 }.bind(this))
             },
 	        /* Transfers */
-            doTransfersGet: function (conventId, dateFrom, dateUntil) {
-                this.$.transfersGet.set('params', {conventId: conventId, limit: 0, dateFrom: dateFrom, dateUntil: dateUntil});
+            doTransfersGet: function (conventId, memberId, dateFrom, dateUntil) {
+                this.$.transfersGet.set('params', this._formatBody({
+                    conventId: conventId, memberId: memberId,
+	                limit: 0, dateFrom: dateFrom, dateUntil: dateUntil
+                }));
                 return this.$.transfersGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setTransfers(data.transfers);
                 }.bind(this))
@@ -345,10 +347,6 @@
                     case 'doAuthenticationGet':
                         promise = this.doAuthenticationGet();
                         break
-                    /* Members */
-                    case 'doMembersGet':
-                        promise = this.doMembersGet();
-                        break;
                     /* Products */
                     case 'doProductsGetAll':
                         promise = this.doProductsGetAll(data.conventId);
@@ -386,6 +384,9 @@
                         promise = this.doPointOfSalesDelete(data.id);
                         break;
                     /* Purchases */
+                    case 'doPurchasesGet':
+                        promise = this.doPurchasesGet(data.conventId, data.memberId, data.dateFrom, data.dateUntil);
+                        break;
                     case 'doPurchasePost':
                         promise = this.doPurchasePost(data.conventId, data.memberId, data.basket);
                         break;
@@ -395,7 +396,7 @@
                         break;
 	                /* Transfers */
 	                case 'doTransfersGet':
-                        promise = this.doTransfersGet(data.conventId, data.dateFrom, data.dateUntil);
+                        promise = this.doTransfersGet(data.conventId, data.memberId, data.dateFrom, data.dateUntil);
                         break;
 	                case 'doTransfersPost':
 	                    promise = this.doTransfersPost(data.conventId, data.itemType);
@@ -429,7 +430,7 @@
             _formatBody: function (body) {
                 var newBody = {};
                 for (var key in body) {
-                    if (body.hasOwnProperty(key) && this.isTrue(body[key])) {
+                    if (body.hasOwnProperty(key) && body[key] !== null && body[key] !== undefined) {
                         if (body[key].constructor === Object) {
                             for (var key2 in body[key]) {
                                 if (body[key].hasOwnProperty(key2)) {
@@ -445,7 +446,7 @@
                                 }
                             }
                         } else {
-                            newBody[key] = body[key];
+	                        newBody[key] = body[key];
                         }
                     }
                 }

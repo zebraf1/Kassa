@@ -96,7 +96,7 @@ class TransfersController extends DefaultController
                 $from = new DateTime($dateFrom);
                 $transferQuery->filterByCreatedAt(['min' => $from]);
             } catch (\Exception $e) {
-                return JSendResponse::createFail('Vigane alguskuupäev', 403, ['dateFrom' => $e->getMessage()]);
+                return JSendResponse::createFail('Vigane alguskuupäev', 400, ['dateFrom' => $e->getMessage()]);
             }
         }
 
@@ -111,15 +111,20 @@ class TransfersController extends DefaultController
             }
         }
 
-        $transfers = $transferQuery
-            ->orderByCreatedAt(\Criteria::DESC)
-            ->limit($limit)
-            ->offset($offset)
-            ->find()
-        ;
+        $transferQuery->orderByCreatedAt(\Criteria::DESC);
+
+        if ($limit) {
+            $transferQuery
+                ->limit($limit)
+                ->offset($offset)
+            ;
+        }
+
+        $transfers = $transferQuery->find();
 
         $resultTransfers = [];
 
+        /** @var Transfer $transfer */
         foreach ($transfers as $transfer) {
             $resultTransfers[] = $transfer->getAjaxData();
         }
@@ -162,7 +167,7 @@ class TransfersController extends DefaultController
             $conventId = $memberConventId;
         }
 
-        if ($conventId !== $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+        if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
             return JSendResponse::createFail('Teise konventi ülekande lisamiseks peab olema super admin', 403);
         }
 
