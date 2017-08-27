@@ -5,6 +5,7 @@ namespace Rotalia\InventoryBundle\Model;
 use DateTime;
 use Monolog\Logger;
 use PropelPDO;
+use Rotalia\InventoryBundle\Classes\Updates;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseReport;
 use Rotalia\UserBundle\Model\GuardDuty;
@@ -197,7 +198,7 @@ class Report extends BaseReport
         }
 
         $productCounts = [];
-        $updatesBetween = ReportQuery::findUpdateReportsBetween($previousVerification, $this);
+        $updatesBetween = ReportQuery::findUpdateReportsBetween($this->getConventId(), $previousVerification, $this);
         $initialCash = doubleval($previousVerification->getCash() * 100);
 
         //Previous report counts
@@ -548,10 +549,48 @@ class Report extends BaseReport
     }
 
     /**
+     * Basic fields for report
      * @return array
      */
     public function getAjaxData()
     {
+        return [
+            'id' => $this->getId(),
+            'type' => $this->getType(),
+            'target' => $this->getTarget(),
+            'member' => $this->getMember() ? $this->getMember()->getAjaxName() : null,
+            'createdAt' => $this->getCreatedAt('H:i d.m.Y'),
+            'cash' => $this->getCash(),
+            'deficit' => $this->getDeficit(),
+        ];
+    }
+
+    /**
+     * Includes report rows and previous report
+     * @return array
+     */
+    public function getFullAjaxData() {
+
+        $reportRows = [];
+
+        foreach ($this->getReportRows() as $reportRow) {
+            $reportRows[] = $reportRow->getAjaxData();
+        }
+
+
+        return [
+            'id' => $this->getId(),
+            'reportRows' => $reportRows,
+            'previousReport' => $this->getPreviousVerification()->getPreviousAjaxData()
+        ];
+
+    }
+
+    /**
+     * basic ajax data with report rows and updates to items from this to the next verification report.
+     * @return array
+     */
+    public function getPreviousAjaxData() {
         $reportRows = [];
 
         foreach ($this->getReportRows() as $reportRow) {
@@ -560,16 +599,53 @@ class Report extends BaseReport
 
         return [
             'id' => $this->getId(),
-            'memberName' => $this->getMemberName(),
-            'guardDutyMembers' => $this->getGuardDutyMembers(),
-            'memberId' => $this->getMemberId(),
             'type' => $this->getType(),
-            'createdAt' => $this->getCreatedAt('Y-m-d H:i:s'),
+            'target' => $this->getTarget(),
+            'member' => $this->getMember() ? $this->getMember()->getAjaxName() : null,
+            'createdAt' => $this->getCreatedAt('H:i d.m.Y'),
             'cash' => $this->getCash(),
-            'expectedCash' => $this->getExpectedCash(),
-            'profit' => $this->getActualProfit(),
-            'expectedProfit' => $this->getExpectedProfit(),
             'reportRows' => $reportRows,
+            'updates' => $this->getUpdates(),
         ];
     }
+
+    // Methods for the API
+
+    protected $nextVerification = null;
+
+    private function getPreviousVerification() {
+        if ($this->previousVerification === null) {
+            $this->previousVerification = ReportQuery::findPreviousVerificationReport($this);
+        }
+
+        return $this->previousVerification;
+    }
+
+    private function getNextVerification() {
+        if ($this->nextVerification === null) {
+            $this->nextVerification = ReportQuery::findNextVerificationReport($this);
+        }
+
+        return $this->nextVerification;
+    }
+
+    /**
+     * Updates Since this report.
+     * @return array
+     */
+    private function getUpdates()
+    {
+        return Updates::getUpdates($this->getTarget(), $this->getConventId(), $this, $this->getNextVerification());
+    }
+
+
+    /**
+     * @return int
+     */
+    private function getDeficit() {
+        //TODO
+        return 0;
+    }
+
+
 }

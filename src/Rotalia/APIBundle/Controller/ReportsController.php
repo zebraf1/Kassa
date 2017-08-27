@@ -35,6 +35,7 @@ class ReportsController extends DefaultController
      *          {"name"="limit","type"="int","description":"Limit number of reports returned, default 5"},
      *          {"name"="offset","type"="int","description":"Offset reports returned for pagination, default 0"},
      *          {"name"="conventId","type"="int","description"="Fetch reports for another convent than member home convent"},
+     *          {"name"="target","type"="string","description":"Either warehouse or storage"}
      *     }
      * )
      *
@@ -47,6 +48,7 @@ class ReportsController extends DefaultController
         $dateUntil = $request->get('dateUntil', null);
         $conventId = $request->get('conventId', null);
         $reportType = $request->get('reportType', null);
+        $target = $request->get('target', Product::INVENTORY_TYPE_STORAGE);
         $limit = $request->get('limit', 5);
         $offset = $request->get('offset', 0);
 
@@ -55,17 +57,12 @@ class ReportsController extends DefaultController
         $memberConventId = $this->getMember()->getKoondisedId();
 
         if ($conventId === null) {
-            $conventId = $this->getMember()->getKoondisedId();
-        }
-
-        if ($conventId === null) {
             $conventId = $memberConventId;
         }
 
         if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
             return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
         }
-
 
         if (!empty($dateFrom)) {
             try {
@@ -79,6 +76,8 @@ class ReportsController extends DefaultController
         if (!empty($dateUntil)) {
             try {
                 $until = new DateTime($dateUntil);
+                //Makes sure that the end date is included in the filter.
+                $until->modify('+1 day');
                 $reportQuery->filterByCreatedAt(['max' => $until]);
             } catch (\Exception $e) {
                 return JSendResponse::createFail('Vigane lõppkuupäev', 400, ['dateUntil' => $e->getMessage()]);
@@ -96,6 +95,7 @@ class ReportsController extends DefaultController
 
         $reports = $reportQuery
             ->filterByConventId($conventId)
+            ->filterByTarget($target)
             ->orderByCreatedAt(\Criteria::DESC)
             ->limit($limit)
             ->offset($offset)
@@ -104,11 +104,83 @@ class ReportsController extends DefaultController
 
         $resultReports = [];
 
+        /** @var Report $report */
         foreach ($reports as $report) {
             $resultReports[] = $report->getAjaxData();
         }
 
         return JSendResponse::createSuccess(['reports' => $resultReports]);
+    }
+
+    /**
+     * Finds the full ajax data for a particular report.
+     * When $id == -1, then the last verification report is returned.
+     *
+     * @ApiDoc(
+     *     resource = true,
+     *     statusCodes = {
+     *          200 = "Returned when successful",
+     *          403 = "Returned when user is not authenticated",
+     *          404 = "Returned when Report for ID is not found",
+     *     },
+     *     description="Fetch Report for ID",
+     *     section="Reports",
+     *     filters={
+     *          {"name"="conventId","type"="int","description"="Fetch report for convent other than members home, used only for id=-1"},
+     *          {"name"="target","type"="string","description":"Either warehouse or storage, used only for id=-1"}
+     *     }
+     * )
+     *
+     * @param Request $request
+     * @param $id
+     * @return JSendResponse
+     */
+    public function getAction(Request $request, $id) {
+
+        $memberConventId = $this->getMember()->getKoondisedId();
+
+        if ($id == -1) {
+
+            $conventId = $request->get('conventId', null);
+            $target = $request->get('target', Product::INVENTORY_TYPE_STORAGE);
+
+            if ($conventId === null) {
+                $conventId = $memberConventId;
+            }
+
+            if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+                return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
+            }
+
+            $report = ReportQuery::create()
+                ->filterByTarget($target)
+                ->filterByConventId($conventId)
+                ->filterByType(Report::TYPE_VERIFICATION)
+                ->orderByCreatedAt(\Criteria::DESC)
+                ->findOne()
+            ;
+
+            if ($report === null) {
+                return JSendResponse::createFail('Aruannet ei leitud', 404);
+            }
+
+            return JSendResponse::createSuccess(['report' => $report->getPreviousAjaxData()]);
+
+        } else {
+
+            $report = ReportQuery::create()
+                ->findPk($id);
+
+            if ($report === null) {
+                return JSendResponse::createFail('Aruannet ei leitud', 404);
+            }
+
+            if ($report->getConventId() != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+                return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
+            }
+
+            return JSendResponse::createSuccess(['report' => $report->getFullAjaxData()]);
+        }
     }
 
     /**
@@ -133,7 +205,7 @@ class ReportsController extends DefaultController
      * @param Request $request
      * @return JSendResponse
      */
-    public function createAction(Request $request)
+    public function postAction(Request $request)
     {
         $conventId = $request->get('conventId', null);
         $memberConventId = $this->getMember()->getKoondisedId();
@@ -164,6 +236,7 @@ class ReportsController extends DefaultController
         return $this->handleSubmit($request, $report);
     }
 
+    /** Might not get this part done. Keep it for later. */
     /**
      * Update a report. Use productId's as reportRows array keys to avoid unpredictable results.
      *
@@ -182,8 +255,8 @@ class ReportsController extends DefaultController
      * @param Request $request
      * @param $id
      * @return JSendResponse
-     */
-    public function updateAction(Request $request, $id)
+     *
+    public function patchAction(Request $request, $id)
     {
         $report = ReportQuery::create()->findPk($id);
 
@@ -208,6 +281,7 @@ class ReportsController extends DefaultController
 
         return $this->handleSubmit($request, $report);
     }
+    */
 
 
     /**
@@ -220,6 +294,9 @@ class ReportsController extends DefaultController
         if (!$this->isGranted(User::ROLE_USER)) {
             return JSendResponse::createFail('Tegevuseks pead olema sisse logitud', 401);
         }
+
+        $target = $request->get('inventoryTarget', Product::INVENTORY_TYPE_STORAGE);
+        $report->setTarget($target);
 
         $form = $this->createForm(new ReportType(), $report, [
             'method' => $request->getMethod(),
@@ -238,10 +315,9 @@ class ReportsController extends DefaultController
 
             if (!$report->isUpdate() && $report->isLatest()) {
                 // Save storage counts
-                $report->saveProductCounts(Product::INVENTORY_TYPE_STORAGE);
+                $report->saveProductCounts($target);
             } else if ($report->isUpdate()) {
                 $source = $request->get('inventorySource', null);
-                $target = $request->get('inventoryTarget', Product::INVENTORY_TYPE_STORAGE);
 
                 // Remove from source inventory (warehouse and in some cases storage)
                 if (!empty($source)) {
