@@ -1,5 +1,6 @@
 <?php
 namespace Rotalia\InventoryBundle\Controller;
+
 use Exception;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\ProductFilterType;
@@ -9,11 +10,10 @@ use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\InventoryBundle\Model\TransactionPeer;
 use Rotalia\UserBundle\Model\MemberQuery;
 use Rotalia\UserBundle\Model\User;
-use Rotalia\UserBundle\Model\UserQuery;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
 /**
  * Class PurchaseController
  * @package Rotalia\InventoryBundle\Controller
@@ -58,10 +58,9 @@ class PurchaseController extends DefaultController
      * )
      * @param Request $request
      * @param $payment
-     * @param null $memberId
      * @return JSendResponse
      */
-    public function paymentAction(Request $request, $payment, $memberId = null)
+    public function paymentAction(Request $request, $payment)
     {
         switch (strtolower($payment)) {
             case 'cash':
@@ -86,7 +85,10 @@ class PurchaseController extends DefaultController
 
         $currentMember = $this->getMember();
         $member = null;
+
+        $memberId = $request->get('memberId');
         $basket = $request->get('basket');
+
         if ($payment !== 'refund') {
             if ($basket === null) {
                 return JSendResponse::createFail('Ostukorv puudub', 400);
@@ -95,14 +97,17 @@ class PurchaseController extends DefaultController
                 return JSendResponse::createFail('Vigased ostukorvi andmed', 400);
             }
         }
+
         // Get Point of Sale
         $pos = $this->getPos($request);
+
         // User must be logged in or using a point of sale to proceed
         if ($currentMember) {
             $member = $currentMember;
         } elseif ($pos === null) {
             return JSendResponse::createFail('Ostmiseks peab olema sisse logitud', 403);
         }
+
         // Temporarily authenticated user via PoS
         if ($memberId) {
             $member = MemberQuery::create()->findPk($memberId);
@@ -110,24 +115,30 @@ class PurchaseController extends DefaultController
                 return JSendResponse::createFail('Kasutajat ei leitud', 400);
             }
         }
+
         if ($member === null && $pos === null) {
             return JSendResponse::createError('Tehing ei ole lubatud, logi sisse', 403);
         }
+
         if ($member === null && $payment !== 'cash') {
             return JSendResponse::createError($paymentType.' nõuab sisse logimist', 403);
         }
+
         if ($pos === null && $payment !== 'credit') {
             return JSendResponse::createError($paymentType.' nõuab kassat (näiteks konvendi arvuti)', 403);
         }
+
         // Use integer for summarizing double values (see: programming floating point issue)
         $totalSumCents = 0;
         $connection = \Propel::getConnection(TransactionPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
+
         if ($pos !== null) {
             $conventId = $pos->getConventId();
         } else {
             $conventId = $request->get('conventId', $member->getKoondisedId());
         }
+
         try {
             if ($payment === 'refund') {
                 // If sum is positive then cash was put in, otherwise cash was taken out
@@ -166,12 +177,14 @@ class PurchaseController extends DefaultController
                     $product->save();
                 }
             }
+
             // Reduce member credit
             if ($payment !== 'cash') {
                 $memberCredit = $member->getCredit($conventId);
                 $memberCredit->adjustCredit(-$totalSumCents / 100);
                 $memberCredit->save($connection);
             }
+
             // Add convent cash
             if ($payment !== 'credit') {
                 $setting = SettingQuery::getCurrentCashSetting($conventId);
@@ -180,7 +193,9 @@ class PurchaseController extends DefaultController
                 $setting->setValue($currentCash / 100);
                 $setting->save();
             }
+
             $connection->commit();
+
             return JSendResponse::createSuccess([
                 'totalSumCents' => $totalSumCents,
                 'newCredit' => $member->getTotalCredit()
@@ -190,6 +205,7 @@ class PurchaseController extends DefaultController
             return JSendResponse::createError($e->getMessage(), 500);
         }
     }
+
     /**
      * @param array $item
      * @return bool

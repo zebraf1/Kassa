@@ -2,11 +2,9 @@
 
 namespace Rotalia\APIBundle\Controller;
 
-use Exception;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\InventoryBundle\Model\TransactionQuery;
-use Rotalia\InventoryBundle\Model\TransferQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use DateTime;
