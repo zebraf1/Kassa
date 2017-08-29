@@ -5,14 +5,15 @@
     "elements/kassa-login.html",
     "elements/kassa-logout.html",
     "elements/kassa-ost.html",
+    "elements/kassa-aruanne.html",
     "elements/kassa-ylevaade-ostud.html",
     "elements/kassa-ylevaade-ylekanded.html",
     "elements/kassa-admin-tooted.html",
     "elements/kassa-admin-tootegrupid.html",
     "elements/kassa-admin-kassad.html",
     "elements/kassa-admin-ylekanded.html",
-    "elements/kassa-admin-tasaarveldused.html",
-    "elements/kassa-admin-ostud.html"
+    "elements/kassa-admin-ostud.html",
+    "elements/kassa-admin-tasaarveldused.html"
   ],
   "sources": [
     "elements/*",
@@ -23,14 +24,15 @@
     "elements/kassa-login.html",
     "elements/kassa-logout.html",
     "elements/kassa-ost.html",
+    "elements/kassa-aruanne.html",
     "elements/kassa-ylevaade-ostud.html",
     "elements/kassa-ylevaade-ylekanded.html",
     "elements/kassa-admin-tooted.html",
     "elements/kassa-admin-tootegrupid.html",
     "elements/kassa-admin-kassad.html",
     "elements/kassa-admin-ylekanded.html",
-    "elements/kassa-admin-tasaarveldused.html",
-    "elements/kassa-admin-ostud.html"
+    "elements/kassa-admin-ostud.html",
+    "elements/kassa-admin-tasaarveldused.html"
   ],
   "extraDependencies": [
     "bower_components/webcomponentsjs/*.js",

@@ -44,7 +44,9 @@
 		<iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Report -->
-		<iron-ajax id="reportGet" handle-as="json" url='[[_computeURL("reports")]]' method="GET"
+		<iron-ajax id="reportGet" handle-as="json" url='[[_computeURL("reports", _id)]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<iron-ajax id="reportsPost" handle-as="json" url='[[_computeURL("reports")]]' method="POST"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Transfers -->
 		<iron-ajax id="transfersGet" handle-as="json" url='[[_computeURL("transfers")]]' method="GET"
@@ -106,6 +108,11 @@
                 },
                 /* Reports */
                 lastReport: {
+                    type: Object,
+                    notify: true,
+                    readOnly: true
+                },
+	            updates: {
                     type: Object,
                     notify: true,
                     readOnly: true
@@ -281,18 +288,26 @@
                 }.bind(this))
             },
 	        /* Reports */
-            doLastReportGet: function (conventId) {
+            doLastReportGet: function (conventId, target) {
+                this.set('_id', -1);
                 this.$.reportGet.set('params', this._formatBody({
                     conventId: conventId,
-                    reportType: 'VERIFICATION',
-                    limit: 1
+                    target: target
                 }));
                 return this.$.reportGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
-                    if (data.length === 1) {
-                        this.set('lastReport', data[0]);
-                    } else {
-                        this.set('lastReport', null);
-                    }
+                    this._setLastReport(data.report);
+                    this._setUpdates(data.updates);
+                }.bind(this))
+            },
+            doReportPost: function(conventId, type, inventoryTarget, Report){
+                this.$.reportsPost.set('body', this._formatBody({
+                    conventId: conventId,
+                    type: type,
+                    inventoryTarget: inventoryTarget,
+                    Report: Report
+                }));
+                return this.$.reportsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this.fire('kassa-message-success', 'Aruanne edukalt lisatud');
                 }.bind(this))
             },
 	        /* Transfers */
@@ -392,7 +407,10 @@
                         break;
                     /* Reports */
                     case 'doLastReportGet':
-                        promise = this.doLastReportGet(data.conventId);
+                        promise = this.doLastReportGet(data.conventId, data.target);
+                        break;
+	                case 'doReportPost':
+                        promise = this.doReportPost(data.conventId, data.type, data.inventoryTarget, data.Report);
                         break;
 	                /* Transfers */
 	                case 'doTransfersGet':
@@ -427,26 +445,47 @@
                     });
                 }
             },
-            _formatBody: function (body) {
+            _formatBody: function (body, inner) {
+                if (inner === undefined) {
+                    inner = false;
+                }
+
+
                 var newBody = {};
                 for (var key in body) {
                     if (body.hasOwnProperty(key) && body[key] !== null && body[key] !== undefined) {
                         if (body[key].constructor === Object) {
-                            for (var key2 in body[key]) {
-                                if (body[key].hasOwnProperty(key2)) {
-                                    newBody[key + '[' + key2 + ']'] = body[key][key2];
+                            var innerBody = this._formatBody(body[key], true);
+                            for (var innerKey in innerBody) {
+                                if (innerBody.hasOwnProperty(innerKey)) {
+                                    if (inner) {
+                                        newBody['[' + key + ']' + innerKey] = innerBody[innerKey];
+                                    } else {
+                                        newBody[key + innerKey] = innerBody[innerKey];
+                                    }
+
                                 }
                             }
                         } else if (Array.isArray(body[key])) {
                             for (var i = 0; i < body[key].length; i++) {
-                                for (var key2 in body[key][i]) {
-                                    if (body[key][i].hasOwnProperty(key2)) {
-                                        newBody[key + '[' + i + ']' + '[' + key2 + ']'] = body[key][i][key2];
+                                var innerBody = this._formatBody(body[key][i], true);
+                                for (var innerKey in innerBody) {
+                                    if (innerBody.hasOwnProperty(innerKey)) {
+                                        if (inner) {
+                                            newBody['[' + key + ']' + '[' + i + ']' + innerKey] = innerBody[innerKey];
+                                        } else {
+                                            newBody[key + '[' + i + ']' + innerKey] = innerBody[innerKey];
+                                        }
+
                                     }
                                 }
                             }
                         } else {
-	                        newBody[key] = body[key];
+                            if (inner) {
+                                newBody['[' + key + ']'] = body[key];
+                            } else {
+                                newBody[key] = body[key];
+                            }
                         }
                     }
                 }
@@ -473,7 +512,7 @@
                 return 'Tekkis tundmatu viga.'
             },
             _computeURL: function (endpoint, id) {
-                if (typeof id === 'undefined') {
+                if (id === undefined || id === null) {
                     return '/api/' + endpoint + '/'
                 } else {
                     return '/api/' + endpoint + '/' + id + '/'

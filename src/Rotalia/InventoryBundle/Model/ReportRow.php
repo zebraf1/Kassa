@@ -90,7 +90,7 @@ class ReportRow extends BaseReportRow
     public function getAjaxData()
     {
         return [
-            'productId' => $this->getProductId(),
+            'product' => $this->getProduct()->getAjaxData(),
             'count' => $this->getCount(),
             'currentPrice' => $this->getCurrentPrice(),
         ];

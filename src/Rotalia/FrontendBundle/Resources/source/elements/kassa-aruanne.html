@@ -1,0 +1,254 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-equal-columns-behavior.html">
+<link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-aruanne-sularaha.html">
+<link rel="import" href="kassa-aruanne-summary.html">
+<link rel="import" href="kassa-aruanne-toode.html">
+<link rel="import" href="kassa-material.html">
+
+<dom-module id="kassa-aruanne">
+	<template>
+		<style>
+			main {
+				padding-bottom: 500px;
+			}
+
+			paper-tabs {
+				--paper-tabs-selection-bar-color: var(--kassa-secondary-color);
+				margin-bottom: 1em;
+			}
+
+			paper-tab {
+				--paper-tab-ink: var(--kassa-secondary-color);
+			}
+
+			#items {
+				display: flex;
+				flex-flow: row wrap;
+			}
+
+			#tail {
+				display: flex;
+				flex-flow: row wrap;
+			}
+
+			#tail > * {
+				flex: 0 1 auto;
+				margin: 0.5em;
+			}
+
+			[hidden] {
+				display: none;
+			}
+
+		</style>
+
+		<main>
+			<kassa-material direction="vertical">
+				<paper-tabs selected="{{selectedTarget}}" hidden$="[[!hasRights(member, 'ROLE_ADMIN', conventId)]]">
+					<paper-tab>Valvearuanne</paper-tab>
+					<paper-tab>Lao inventuur</paper-tab>
+				</paper-tabs>
+				<span>[[_computeGreeting(lastReport)]]</span>
+			</kassa-material>
+
+			<div id="items">
+				<template is="dom-repeat" items="{{mergedProducts}}" as="product" on-dom-change="setColumnWidths">
+					<kassa-aruanne-toode kassa-columns-item
+					                     data-index="[[index]]"
+					                     product="{{product}}"
+					                     fixed="[[reportFixed]]"
+					                     target="[[target]]"
+					                     hidden$="[[_isProductHidden(index, lastIndex)]]"
+					                     on-kogus-confirmed="_countConfirmed"></kassa-aruanne-toode>
+				</template>
+			</div>
+
+			<div id="tail">
+				<kassa-aruanne-sularaha fixed="[[reportFixed]]"
+				                        target="[[target]]"
+				                        cash-updates="[[updates.cash]]"
+				                        cash="{{cash}}"
+				                        cash-out="{{cashOutNow}}"
+				                        hidden$="[[_cashHidden(lastIndex, products)]]" 
+				                        on-cash-confirmed="_onCashConfirmed"></kassa-aruanne-sularaha>
+				<kassa-aruanne-summary products="[[products]]"
+				                       cash-start="[[lastReport.cash]]"
+				                       cash-updates="[[_combineCashUpdates(updates.cash, cashOutNow)]]"
+				                       cash-end="[[cash]]"
+				                       target="[[target]]"
+				                       on-report-confirmed="_confirmReport"
+				                       on-edit-report="_editReport"
+				                       hidden$="[[!reportFixed]]"></kassa-aruanne-summary>
+			</div>
+		</main>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-aruanne",
+            properties: {
+                conventId: {
+                    type: Number
+                },
+                member: {
+                    type: Object
+                },
+	            lastReport: {
+                    type: Object
+	            },
+	            updates: {
+                    type: Object
+	            },
+	            products: {
+                    type: Array,
+		            value: []
+	            },
+	            mergedProducts: {
+					type: Array,
+		            computed: '_mergeProducts(products, lastReport, updates)'
+	            },
+	            target: {
+                    type: String,
+		            computed: '_computeTarget(selectedTarget, member, conventId)'
+	            },
+                selectedTarget: {
+                    type: Number,
+	                value: 0
+                },
+	            lastIndex: {
+                    type: Number,
+		            value: 0
+	            },
+                reportFixed: {
+                    type: Boolean,
+	                value: false
+                },
+                cash: {
+                    type: Number
+                }
+            },
+            behaviors: [PageBehavior, KassaBehavior, EqualColumnsBehavior],
+            observers: [
+                '_loadProducts(pageActive, conventId)',
+                '_loadLastReport(pageActive, conventId, target)'
+            ],
+	        cleanUp: function () {
+		        this.set('lastIndex', 0);
+		        this.set('updates',  undefined);
+		        this.set('reportFixed', false);
+            },
+	        _loadProducts: function(pageActive, conventId) {
+                if (pageActive && (conventId !== undefined)) {
+                    this.fire('kassa-backend-action', {action: 'doProductsGetActive', conventId: conventId});
+                }
+	        },
+            _loadLastReport: function (pageActive, conventId, target) {
+                if (pageActive && (conventId !== undefined) && (target !== undefined)) {
+                    this.fire('kassa-page-loading');
+                    this.cleanUp();
+                    this.fire('kassa-backend-action', {
+                        action: 'doLastReportGet',
+                        conventId: conventId,
+	                    target: target,
+                        onSuccess: function () {
+                            this.fire('kassa-page-ready', {page: this})
+                        }.bind(this)
+                    });
+                }
+            },
+            _computeTarget: function(selectedTarget, member, conventId) {
+                if (this.hasRights(member, 'ROLE_ADMIN', conventId)) {
+                    return ['storage', 'warehouse'][selectedTarget];
+                } else {
+                    return 'storage'
+                }
+            },
+            _computeGreeting: function (lastReport) {
+	            if (lastReport !== undefined) {
+	                if (this.isTrue(lastReport)) {
+                        return 'Eelmise aruande koostas ' + lastReport.member + ' ' + lastReport.createdAt;
+                    } else {
+                        return 'Seda tüüpi aruannet pole siin konvendis veel koostatud';
+                    }
+	            }
+            },
+	        // Merge products with last report
+            _mergeProducts: function(products, lastReport, updates) {
+				var mergedProducts = [];
+
+				if (lastReport !== undefined && updates !== undefined) {
+					for (var i=0; i < products.length; i++) {
+					    var newProduct = products[i];
+
+					    if (updates['products'] === undefined || updates['products'][newProduct['id']] === undefined) {
+	                        newProduct['updates'] = {'in': 0, 'out': 0};
+					    } else {
+					        newProduct['updates'] = updates['products'][newProduct['id']];
+					    }
+
+					    newProduct['previousCount'] = 0;
+					    newProduct['estimatedCount'] = newProduct['previousCount'] + newProduct['updates']['in'] -newProduct['updates']['out'];
+					    newProduct['count'] = newProduct['estimatedCount'];
+
+					    mergedProducts.push(newProduct);
+					}
+				}
+	            return mergedProducts;
+            },
+            _isProductHidden: function (index, lastIndex) {
+	            return index > lastIndex;
+            },
+            _countConfirmed: function (event) {
+                if (event.model.index === this.lastIndex) {
+                    this.set('lastIndex', this.lastIndex + 1);
+                }
+            },
+            _cashHidden: function (lastIndex, products) {
+	            return lastIndex < products.length;
+            },
+            _onCashConfirmed: function () {
+	            this.set('reportFixed', true);
+	            this.$$('kassa-aruanne-summary').calcSummary();
+            },
+            _combineCashUpdates: function(cashUpdates, cashOutNow) {
+                if (cashUpdates === undefined) {
+                    cashUpdates = {'in': 0, 'out': 0};
+                }
+
+                return {
+                    'in': cashUpdates['in'] - parseFloat(cashOutNow),
+	                'out': cashUpdates['out']
+                }
+            },
+            _editReport: function () {
+                this.set('reportFixed', false);
+            },
+            _confirmReport: function () {
+                this.fire('kassa-backend-action', {
+                    action: 'doReportPost',
+                    conventId: this.conventId,
+	                type: 'VERIFICATION',
+                    inventoryTarget: this.target,
+	                Report: {
+                        cash: this.cash,
+                        reportRows: this.products.map(product => this.pickProperties(product, ['id', 'count'], ['productId', 'count']))
+                    },
+                    onSuccess: function () {
+                        this.$$('kassa-aruanne-summary').reset();
+	                    this._loadLastReport(this.pageActive, this.conventId, this.target);
+	                }.bind(this),
+                    onError: function () {
+                        this.$$('kassa-aruanne-summary').reset();
+	                    this.set('reportFixed', false);
+	                }.bind(this)
+                });
+            }
+        })
+	</script>
+</dom-module>

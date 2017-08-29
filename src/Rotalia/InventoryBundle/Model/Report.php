@@ -569,7 +569,7 @@ class Report extends BaseReport
      * Includes report rows and previous report
      * @return array
      */
-    public function getFullAjaxData() {
+    public function getPartialAjaxData() {
 
         $reportRows = [];
 
@@ -581,16 +581,16 @@ class Report extends BaseReport
         return [
             'id' => $this->getId(),
             'reportRows' => $reportRows,
-            'previousReport' => $this->getPreviousVerification()->getPreviousAjaxData()
+            'previousReport' => $this->getPreviousVerification() ? $this->getPreviousVerification()->getFullAjaxData() : null
         ];
 
     }
 
     /**
-     * basic ajax data with report rows and updates to items from this to the next verification report.
+     * Basic ajax data with report rows and updates to items from this to the next verification report.
      * @return array
      */
-    public function getPreviousAjaxData() {
+    public function getFullAjaxData() {
         $reportRows = [];
 
         foreach ($this->getReportRows() as $reportRow) {
@@ -604,8 +604,7 @@ class Report extends BaseReport
             'member' => $this->getMember() ? $this->getMember()->getAjaxName() : null,
             'createdAt' => $this->getCreatedAt('H:i d.m.Y'),
             'cash' => $this->getCash(),
-            'reportRows' => $reportRows,
-            'updates' => $this->getUpdates(),
+            'reportRows' => $reportRows
         ];
     }
 
@@ -613,31 +612,13 @@ class Report extends BaseReport
 
     protected $nextVerification = null;
 
-    private function getPreviousVerification() {
+    public function getPreviousVerification() {
         if ($this->previousVerification === null) {
             $this->previousVerification = ReportQuery::findPreviousVerificationReport($this);
         }
 
         return $this->previousVerification;
     }
-
-    private function getNextVerification() {
-        if ($this->nextVerification === null) {
-            $this->nextVerification = ReportQuery::findNextVerificationReport($this);
-        }
-
-        return $this->nextVerification;
-    }
-
-    /**
-     * Updates Since this report.
-     * @return array
-     */
-    private function getUpdates()
-    {
-        return Updates::getUpdates($this->getTarget(), $this->getConventId(), $this, $this->getNextVerification());
-    }
-
 
     /**
      * @return int

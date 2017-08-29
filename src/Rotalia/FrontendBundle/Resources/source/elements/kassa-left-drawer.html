@@ -118,14 +118,14 @@
 			</div>
 
 			<ul>
-				<template is="dom-if" if="[[_hasRights(member, 'ROLE_USER', configuration.selectedConventId)]]">
+				<template is="dom-if" if="[[hasRights(member, 'ROLE_USER', configuration.selectedConventId)]]">
 					<template is="dom-repeat" items="[[_filterByRole(navigation, 'ROLE_USER')]]" as="site">
 							<li><a href="#/[[site.page]]" class$="[[_classForSelected(site.page, page)]]">[[site.name]]</a></li>
 					</template>
 				</template>
 			</ul>
 			<ul>
-				<template is="dom-if" if="[[_hasRights(member, 'ROLE_ADMIN', configuration.selectedConventId)]]">
+				<template is="dom-if" if="[[hasRights(member, 'ROLE_ADMIN', configuration.selectedConventId)]]">
 					<template is="dom-repeat" items="[[_filterByRole(navigation, 'ROLE_ADMIN')]]" as="site">
 						<li><a href="#/[[site.page]]" class$="[[_classForSelected(site.page, page)]]">[[site.name]]</a></li>
 					</template>
@@ -164,16 +164,6 @@
 	            }
             },
             behaviors: [KassaBehavior],
-            _hasRights: function (member, role, conventId) {
-                if (this.isTrue(member) && this.isTrue(conventId)) {
-
-                    if ((role === 'ROLE_ADMIN') && (member.conventId !== conventId) && (member.roles.indexOf('ROLE_SUPER_ADMIN') < 0)) {
-                        return false;
-                    }
-                    return member.roles.indexOf(role) >= 0;
-                }
-                return false;
-            },
             _classForSelected: function (page, selectedPage) {
 	            if (page === selectedPage) {
 	                return 'active';

@@ -77,7 +77,9 @@
 		               point-of-sales="{{pointOfSales}}"
 		               transfers="{{transfers}}"
 		               credit-nettings="{{creditNettings}}"
-		               purchases="{{purchases}}"></kassa-backend>
+		               purchases="{{purchases}}"
+		               last-report="{{lastReport}}"
+		               updates="{{updates}}"></kassa-backend>
 
 		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]" convent-id="[[configuration.selectedConventId]]"></kassa-route>
 
@@ -118,6 +120,12 @@
 						           products="[[activeProducts]]"
 						           product-groups="[[productGroups]]"
 						           convent-id="[[configuration.selectedConventId]]"></kassa-ost>
+						<kassa-aruanne data-page="aruanne"
+						               convent-id="[[configuration.selectedConventId]]"
+						               member="[[member]]"
+						               products="{{activeProducts}}"
+						               last-report="[[lastReport]]"
+						               updates="[[updates]]"></kassa-aruanne>
 						<kassa-ylevaade-ostud data-page="ylevaade-ostud"
 						                      member-id="[[member.id]]"
 						                      purchases="[[purchases]]"></kassa-ylevaade-ostud>
@@ -166,6 +174,7 @@
                     value: function () {
                         return [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
+                            {page: 'aruanne', name: 'Koosta aruanne', role: 'ROLE_USER'},
 	                        {page: 'ylevaade-ostud', name: 'Ostud', role: 'ROLE_USER'},
 	                        {page: 'ylevaade-ylekanded', name: 'Ülekanded', role: 'ROLE_USER'},
                             {page: 'admin-ostud', name: 'Konvendi ostud', role: 'ROLE_ADMIN'},

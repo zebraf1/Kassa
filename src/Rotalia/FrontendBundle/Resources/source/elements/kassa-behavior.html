@@ -97,12 +97,27 @@
             }
             return ''
         },
-        pickProperties: function (object, keys) {
+        pickProperties: function (object, keys, newKeys) {
+
+            if (newKeys === undefined) {
+                newKeys = keys;
+            }
+
             var newObject = {};
             for (var i = 0; i < keys.length; i++) {
-                newObject[keys[i]] = object[keys[i]];
+                newObject[newKeys[i]] = object[keys[i]];
             }
             return newObject;
+        },
+        hasRights: function (member, role, conventId) {
+            if (this.isTrue(member) && this.isTrue(conventId)) {
+
+                if ((role === 'ROLE_ADMIN') && (member.conventId !== conventId) && (member.roles.indexOf('ROLE_SUPER_ADMIN') < 0)) {
+                    return false;
+                }
+                return member.roles.indexOf(role) >= 0;
+            }
+            return false;
         }
     };
 </script>

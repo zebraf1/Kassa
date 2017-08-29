@@ -1,0 +1,218 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link ref="import" href="../bower_components/paper-button/paper-button.html">
+<link ref="import" href="../bower_components/paper-input/paper-input.html">
+<link ref="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="kassa-icons.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-material.html">
+
+<dom-module id="kassa-aruanne-toode">
+	<template>
+		<style>
+			:host {
+				flex: 1 1 21em;
+				margin: 0.2em
+			}
+
+			#top {
+				display: flex;
+				flex-flow: row wrap;
+				justify-content: space-between;
+			}
+
+			#left {
+				display: flex;
+				flex-flow: column nowrap;
+				flex: 1 0 auto;
+				padding-bottom: 2em;
+			}
+
+			#left span:first-child {
+				font-size: 1.5em;
+			}
+
+			#left paper-icon-button {
+				--paper-icon-button: {
+					color: #aaaaaa;
+				}
+			}
+
+			#right {
+				display: flex;
+				flex-flow: column nowrap;
+				flex: 0 0 7em;
+				margin-left: auto;
+
+			}
+
+			#right div {
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: space-between;
+				padding: 0.1em;
+			}
+
+			#right div span {
+				display: block;
+				flex: 0 0 2.5em;
+				text-align: right;
+			}
+
+			#right div span:first-child {
+				flex: 1 0 auto;
+				text-align: left;
+			}
+
+			#bottom div {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-top: 1px solid #aaaaaa;
+				padding: 0.5em;
+			}
+
+			.borderbottom {
+				border-bottom: 1px solid #000;
+			}
+
+			.striketrough {
+				text-decoration: line-through;
+			}
+
+			[data-invisible] {
+				visibility: hidden;
+			}
+
+			[hidden] {
+				display: none !important;
+			}
+
+
+		</style>
+
+		<kassa-material>
+			<div id="top">
+				<div id="left">
+					<span>[[product.name]]</span>
+					<span>Suurus: [[formatAmount(product.amount, product.amountType)]]</span>
+					<span>Hind: [[eur2str(product.price)]]</span>
+					<paper-icon-button icon="kassa:edit" hidden$="[[_computeEditIconHidden(confirmed, editing, fixed)]]"
+					                   on-tap="_editKogus"></paper-icon-button>
+				</div>
+				<div id="right">
+					<div>
+						<span>Eelmises:</span>
+						<span>[[product.previousCount]]</span>
+					</div>
+					<div>
+						<span>[[strings.in]]:</span>
+						<span>+[[product.updates.in]]</span>
+					</div>
+					<div class="borderbottom">
+						<span>[[strings.out]]:</span>
+						<span>-[[product.updates.out]]</span>
+					</div>
+					<div class$="[[_computeKapisClass(product.estimatedCount, product.count)]]">
+						<span>[[strings.count]]:</span>
+						<span>[[product.estimatedCount]]</span>
+					</div>
+					<div data-invisible$="[[_computeTegelikHidden(product.estimatedCount, product.count)]]">
+						<span>Tegelikult:</span>
+						<span>[[product.count]]</span>
+					</div>
+				</div>
+			</div>
+			<div id="bottom" hidden$="[[fixed]]">
+				<div hidden$="[[confirmed]]">
+					<paper-button on-tap="_editKogus">Kogus Vale</paper-button>
+					<paper-button on-tap="_confirmKogus">Kogus Õige</paper-button>
+				</div>
+				<div hidden$="[[!editing]]">
+					<paper-input label="Tegelik kogus" type="number" min="0" step="1"
+					             value="{{product.count}}" id="currentCount"
+					             on-focusin="_onFocusinSelect"></paper-input>
+					<paper-button on-tap="_confirmKogus">Edasi</paper-button>
+				</div>
+			</div>
+		</kassa-material>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-aruanne-toode",
+            properties: {
+                product: {
+                    type: Object,
+                    value: {},
+                    notify: true
+                },
+                confirmed: {
+                    type: Boolean,
+                    value: false,
+                    readOnly: true
+                },
+                editing: {
+                    type: Boolean,
+                    value: false,
+                    readOnly: true
+                },
+                fixed: {
+                    type: Boolean,
+                    value: false
+                },
+	            target: {
+                    type: String
+	            },
+	            strings: {
+                    type: Object,
+		            computed: '_computeStrings(target)'
+	            }
+            },
+            behaviors: [KassaBehavior],
+            _computeEditIconHidden: function (confirmed, editing, fixed) {
+                return !confirmed || editing || fixed;
+            },
+            _computeTegelikHidden: function (estimatedCount, count) {
+                return estimatedCount == count;
+            },
+            _computeKapisClass: function (estimatedCount, count) {
+                if (estimatedCount != count) {
+                    return 'striketrough'
+                }
+                return ''
+            },
+            _confirmKogus: function (e) {
+                this._setConfirmed(true);
+                this._setEditing(false);
+                this.fire('kogus-confirmed');
+            },
+            _editKogus: function (e) {
+                this._setConfirmed(true);
+                this._setEditing(true);
+                this.$.currentCount.focus();
+            },
+            _onFocusinSelect: function (e) {
+                var target = e.target || e.srcElement;
+                target.inputElement.inputElement.select();
+            },
+            _computeStrings: function (target) {
+	            if (target === 'storage') {
+	                return {
+	                    in: 'Lisatud',
+		                out: 'ostetud',
+		                count: 'Kapis'
+	                }
+	            }
+
+	            if (target === 'warehouse') {
+                    return {
+                        in: 'Sisse',
+                        out: 'Kappi',
+                        count: 'Laos'
+                    }
+	            }
+            }
+        })
+	</script>
+</dom-module>

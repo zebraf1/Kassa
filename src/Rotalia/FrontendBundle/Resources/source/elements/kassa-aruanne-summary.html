@@ -1,0 +1,167 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-material.html">
+<link rel="import" href="kassa-confirm-button.html">
+
+
+<dom-module id="kassa-aruanne-summary">
+	<template>
+		<style>
+			table {
+				max-width: 30em;
+			}
+
+			.sub-row {
+				color: #888888;
+			}
+
+			.sub-row td:first-child {
+				padding-left: 1em;
+			}
+
+			td:last-child {
+				text-align: right;
+				padding-left: 1em;
+			}
+
+			.border-top td {
+				border-top: 1px solid #000;
+			}
+
+			td {
+				margin: 0.1em 0;
+			}
+
+			.buttons {
+				display: flex;
+				flex-flow: row wrap;
+			}
+
+			.buttons kassa-confirm-button {
+				margin-left: auto;
+			}
+
+		</style>
+		<kassa-material>
+			<h3>Kokkuvõte</h3>
+			<table>
+				<tr>
+					<td>Kassa väärtus alguses</td>
+					<td>[[eur2str(_valueStart)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Tooted</td>
+					<td>[[eur2str(_productsStart)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Sularaha</td>
+					<td>[[eur2str(cashStart)]]</td>
+				</tr>
+				<tr>
+					<td>Juurde lisatud</td>
+					<td>[[eur2str(_valueIn)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Tooted</td>
+					<td>[[eur2str(_productsIn)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Sularaha</td>
+					<td>[[_totalCashUpdates(cashUpdates)]]</td>
+				</tr>
+				<tr>
+					<td>Krediidiga ostud</td>
+					<td>[[eur2str(_creditPurchases)]]</td>
+				</tr>
+				<tr class="border-top">
+					<td>Eeldatav väärtus</td>
+					<td>[[eur2str(_valueEstimated)]]</td>
+				</tr>
+				<tr>
+					<td>Tegelik väärtus</td>
+					<td>[[eur2str(_valueEnd)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Tooted</td>
+					<td>[[eur2str(_productsEnd)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Sularaha</td>
+					<td>[[eur2str(cashEnd)]]</td>
+				</tr>
+				<tr>
+					<td>Puudujääk</td>
+					<td>[[eur2str(_deficit)]]</td>
+				</tr>
+			</table>
+			<div class="buttons">
+				<paper-button raised disabled="[[_isRequestLoading]]" on-tap="_editReport">Paranda</paper-button>
+				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}"
+				                      on-kassa-confirm="_confirmReport">Salvesta</kassa-confirm-button>
+			</div>
+		</kassa-material>
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-aruanne-summary",
+            properties: {
+                cashStart: {
+                    type: Number
+                },
+                cashUpdates: {
+                    type: Object
+                },
+                cashEnd: {
+                    type: Number
+                },
+                products: {
+                    type: Array
+                }
+            },
+            behaviors: [KassaBehavior],
+            calcSummary: function () {
+                if (this.cashStart === undefined) {
+                    this.set('cashStart', 0);
+                }
+
+
+                var _productsStart = 0;
+                var _productsIn = 0;
+                var _creditPurchases = 0;
+                var _productsEnd = 0;
+                for (var i = 0; i < this.products.length; i++) {
+                    _productsStart += this.products[i].previousCount * this.products[i].price;
+                    _productsIn += this.products[i].updates.in * this.products[i].price;
+                    _creditPurchases += this.products[i].updates.out * this.products[i].price;
+                    _productsEnd += this.products[i].count * this.products[i].price;
+                }
+
+                this.set('_valueStart', _productsStart + this.cashStart);
+                this.set('_valueIn', _productsIn + this.cashUpdates.in - this.cashUpdates.out);
+                this.set('_valueEstimated', this._valueStart + this._valueIn - _creditPurchases);
+                this.set('_valueEnd', _productsEnd + this.cashEnd);
+                this.set('_deficit', this._valueEstimated - this._valueEnd);
+
+                this.set('_productsStart', _productsStart);
+                this.set('_productsIn', _productsIn);
+                this.set('_creditPurchases', _creditPurchases);
+                this.set('_productsEnd', _productsEnd);
+
+            },
+	        reset: function () {
+		        this.$$('kassa-confirm-button').reset();
+            },
+	        _totalCashUpdates: function (cashUpdates) {
+                return this.eur2str(cashUpdates.in - cashUpdates.out);
+            },
+	        _confirmReport: function () {
+		        this.fire('report-confirmed');
+            },
+	        _editReport: function () {
+                this.fire('report-edit');
+            }
+        })
+	</script>
+</dom-module>

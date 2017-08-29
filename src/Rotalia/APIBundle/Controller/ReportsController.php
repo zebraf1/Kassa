@@ -4,6 +4,7 @@ namespace Rotalia\APIBundle\Controller;
 
 
 use Rotalia\APIBundle\Form\ReportType;
+use Rotalia\InventoryBundle\Classes\Updates;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
 use Rotalia\InventoryBundle\Model\Product;
@@ -148,10 +149,6 @@ class ReportsController extends DefaultController
                 $conventId = $memberConventId;
             }
 
-            if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-                return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
-            }
-
             $report = ReportQuery::create()
                 ->filterByTarget($target)
                 ->filterByConventId($conventId)
@@ -159,12 +156,9 @@ class ReportsController extends DefaultController
                 ->orderByCreatedAt(\Criteria::DESC)
                 ->findOne()
             ;
+            $updates = Updates::getUpdates($target, $conventId, $report, null);
 
-            if ($report === null) {
-                return JSendResponse::createFail('Aruannet ei leitud', 404);
-            }
-
-            return JSendResponse::createSuccess(['report' => $report->getPreviousAjaxData()]);
+            return JSendResponse::createSuccess(['report' => $report === null ? null : $report->getFullAjaxData(), 'updates' => $updates]);
 
         } else {
 
@@ -179,7 +173,9 @@ class ReportsController extends DefaultController
                 return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
             }
 
-            return JSendResponse::createSuccess(['report' => $report->getFullAjaxData()]);
+            $updates = Updates::getUpdates($report->getTarget(), $report->getConventId(), $report->getPreviousVerification(), $report);
+
+            return JSendResponse::createSuccess(['report' => $report->getFullAjaxData(), 'updates' => $updates]);
         }
     }
 
