@@ -29,13 +29,11 @@ class SearchController extends DefaultController
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 100);
 
-        // TODO: get selected convent id
-        $conventId = 6; // Tallinn
-
         /** @var Member[] $members */
         $members = MemberQuery::create()
             ->filterByFullName('%'.$name.'%', \Criteria::LIKE)
-            ->filterByKoondisedId($conventId)
+            ->filterByKoondisedId([6,7], \Criteria::IN) // Tallinn, Tartu
+            ->filterByLahkPohjusedId(0) // only active members
             ->orderByEesnimi()
             ->orderByPerenimi()
             ->paginate($page, $limit)
@@ -68,6 +66,7 @@ class SearchController extends DefaultController
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 100);
         $active = $request->get('active', null);
+        $conventId = $request->get('conventId', $this->getMember()->getConventId());
 
         /** @var Product[]|\PropelModelPager $products */
         $products = ProductQuery::create()
@@ -75,6 +74,7 @@ class SearchController extends DefaultController
             ->orderByName()
             ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
                 ->filterByActiveStatus($active)
+                ->filterByConventId($conventId)
             ->endUse()
             ->paginate($page, $limit)
         ;
@@ -85,6 +85,7 @@ class SearchController extends DefaultController
                 ->orderByName()
                 ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
                     ->filterByActiveStatus($active)
+                    ->filterByConventId($conventId)
                 ->endUse()
                 ->paginate($page, $limit)
             ;
