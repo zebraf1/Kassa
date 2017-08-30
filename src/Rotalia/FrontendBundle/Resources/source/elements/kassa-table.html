@@ -12,6 +12,7 @@
 	<link rel="lazy-import" group="kassa-admin-tooted" href="kassa-admin-tooted-row-details.html">
 	<link rel="lazy-import" group="kassa-ylekanded" href="kassa-ylekanded-row-details.html">
 	<link rel="lazy-import" group="kassa-admin-tasaarveldused" href="kassa-admin-tasaarveldused-row-details.html">
+	<link rel="lazy-import" group="kassa-admin-aruanded" href="kassa-admin-aruanded-row-details.html">
 
 	<template>
 		<style>
@@ -84,6 +85,8 @@
 						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-ylekanded-row-details>
 				<kassa-admin-tasaarveldused-row-details
 						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-admin-tasaarveldused-row-details>
+				<kassa-admin-aruanded-row-details
+						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-admin-aruanded-row-details>
 			</template>
 			<slot></slot>
 			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(editFunc)]]">

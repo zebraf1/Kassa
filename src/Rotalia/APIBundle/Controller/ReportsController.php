@@ -36,7 +36,8 @@ class ReportsController extends DefaultController
      *          {"name"="limit","type"="int","description":"Limit number of reports returned, default 5"},
      *          {"name"="offset","type"="int","description":"Offset reports returned for pagination, default 0"},
      *          {"name"="conventId","type"="int","description"="Fetch reports for another convent than member home convent"},
-     *          {"name"="target","type"="string","description":"Either warehouse or storage"}
+     *          {"name"="target","type"="string","description":"Either warehouse or storage"},
+     *          {"name"="reportType","type"="string","description":"Either VERIFICATION or UPDATE"}
      *     }
      * )
      *
@@ -49,7 +50,7 @@ class ReportsController extends DefaultController
         $dateUntil = $request->get('dateUntil', null);
         $conventId = $request->get('conventId', null);
         $reportType = $request->get('reportType', null);
-        $target = $request->get('target', Product::INVENTORY_TYPE_STORAGE);
+        $target = $request->get('target', null);
         $limit = $request->get('limit', 5);
         $offset = $request->get('offset', 0);
 
@@ -94,9 +95,12 @@ class ReportsController extends DefaultController
             $reportQuery->filterByType($reportType);
         }
 
+        if ($target !== null) {
+            $reportQuery->filterByTarget($target);
+        }
+
         $reports = $reportQuery
             ->filterByConventId($conventId)
-            ->filterByTarget($target)
             ->orderByCreatedAt(\Criteria::DESC)
             ->limit($limit)
             ->offset($offset)
@@ -175,7 +179,7 @@ class ReportsController extends DefaultController
 
             $updates = Updates::getUpdates($report->getTarget(), $report->getConventId(), $report->getPreviousVerification(), $report);
 
-            return JSendResponse::createSuccess(['report' => $report->getFullAjaxData(), 'updates' => $updates]);
+            return JSendResponse::createSuccess(['report' => $report->getPartialAjaxData(), 'updates' => $updates]);
         }
     }
 

@@ -1,15 +1,17 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="kassa-behavior.html">
 <link rel="import" href="kassa-page-behavior.html">
 <link rel="import" href="kassa-equal-columns-behavior.html">
 <link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-material.html">
+
 <link rel="import" href="kassa-aruanne-sularaha.html">
 <link rel="import" href="kassa-aruanne-summary.html">
 <link rel="import" href="kassa-aruanne-toode.html">
-<link rel="import" href="kassa-material.html">
 
 <dom-module id="kassa-aruanne">
 	<template>
@@ -60,7 +62,6 @@
 			<div id="items">
 				<template is="dom-repeat" items="{{mergedProducts}}" as="product" on-dom-change="setColumnWidths">
 					<kassa-aruanne-toode kassa-columns-item
-					                     data-index="[[index]]"
 					                     product="{{product}}"
 					                     fixed="[[reportFixed]]"
 					                     target="[[target]]"
@@ -83,7 +84,7 @@
 				                       cash-end="[[cash]]"
 				                       target="[[target]]"
 				                       on-report-confirmed="_confirmReport"
-				                       on-edit-report="_editReport"
+				                       on-report-edit="_editReport"
 				                       hidden$="[[!reportFixed]]"></kassa-aruanne-summary>
 			</div>
 		</main>
@@ -153,7 +154,8 @@
                     this.fire('kassa-page-loading');
                     this.cleanUp();
                     this.fire('kassa-backend-action', {
-                        action: 'doLastReportGet',
+                        action: 'doSingleReportGet',
+	                    id: -1,
                         conventId: conventId,
 	                    target: target,
                         onSuccess: function () {
@@ -192,7 +194,14 @@
 					        newProduct['updates'] = updates['products'][newProduct['id']];
 					    }
 
-					    newProduct['previousCount'] = 0;
+                        newProduct['previousCount'] = 0;
+					    for (var j=0; j < lastReport.reportRows.length; j++) {
+							if (lastReport.reportRows[j].product.id == products[i].id) {
+                                newProduct['previousCount'] = lastReport.reportRows[j].count;
+                                break;
+							}
+					    }
+
 					    newProduct['estimatedCount'] = newProduct['previousCount'] + newProduct['updates']['in'] -newProduct['updates']['out'];
 					    newProduct['count'] = newProduct['estimatedCount'];
 

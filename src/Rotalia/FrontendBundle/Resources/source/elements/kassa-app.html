@@ -78,8 +78,9 @@
 		               transfers="{{transfers}}"
 		               credit-nettings="{{creditNettings}}"
 		               purchases="{{purchases}}"
-		               last-report="{{lastReport}}"
-		               updates="{{updates}}"></kassa-backend>
+		               single-report="{{singleReport}}"
+		               updates="{{updates}}"
+		               reports="{{reports}}"></kassa-backend>
 
 		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]" convent-id="[[configuration.selectedConventId]]"></kassa-route>
 
@@ -124,7 +125,7 @@
 						               convent-id="[[configuration.selectedConventId]]"
 						               member="[[member]]"
 						               products="{{activeProducts}}"
-						               last-report="[[lastReport]]"
+						               last-report="[[singleReport]]"
 						               updates="[[updates]]"></kassa-aruanne>
 						<kassa-ylevaade-ostud data-page="ylevaade-ostud"
 						                      member-id="[[member.id]]"
@@ -152,6 +153,11 @@
 						<kassa-admin-ostud data-page="admin-ostud"
 						                   convent-id="[[configuration.selectedConventId]]"
 						                   purchases="[[purchases]]"></kassa-admin-ostud>
+						<kassa-admin-aruanded data-page="admin-aruanded"
+						                      convent-id="[[configuration.selectedConventId]]"
+						                      reports="[[reports]]"
+						                      single-report="[[singleReport]]"
+						                      updates="[[updates]]"></kassa-admin-aruanded>
 					</kassa-pages>
 				</app-header-layout>
 
@@ -179,6 +185,7 @@
 	                        {page: 'ylevaade-ylekanded', name: 'Ülekanded', role: 'ROLE_USER'},
                             {page: 'admin-ostud', name: 'Konvendi ostud', role: 'ROLE_ADMIN'},
                             {page: 'admin-ylekanded', name: 'Konvendi ülekanded', role: 'ROLE_ADMIN'},
+                            {page: 'admin-aruanded', name: 'Aruanded', role: 'ROLE_ADMIN'},
                             {page: 'admin-tooted', name: 'Tooted', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegrupid', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},

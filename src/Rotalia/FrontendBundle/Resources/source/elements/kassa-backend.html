@@ -107,7 +107,7 @@
                     readOnly: true
                 },
                 /* Reports */
-                lastReport: {
+                singleReport: {
                     type: Object,
                     notify: true,
                     readOnly: true
@@ -117,6 +117,11 @@
                     notify: true,
                     readOnly: true
                 },
+	            reports: {
+                    type: Array,
+		            notify: true,
+		            readOnly: true
+	            },
 	            /* Transactions */
                 transfers: {
                     type: Array,
@@ -288,15 +293,29 @@
                 }.bind(this))
             },
 	        /* Reports */
-            doLastReportGet: function (conventId, target) {
-                this.set('_id', -1);
+            doSingleReportGet: function (conventId, reportId, target) {
+                this.set('_id', reportId);
                 this.$.reportGet.set('params', this._formatBody({
                     conventId: conventId,
-                    target: target
+                    target: target,
+                    reportType: 'VERIFICATION'
                 }));
                 return this.$.reportGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
-                    this._setLastReport(data.report);
+                    this._setSingleReport(data.report);
                     this._setUpdates(data.updates);
+                }.bind(this))
+            },
+	        doReportsGet: function (conventId, target, reportType, dateFrom, dateUntil) {
+                this.set('_id', null);
+                this.$.reportGet.set('params', this._formatBody({
+                    conventId: conventId,
+                    target: target,
+                    reportType: reportType,
+                    dateFrom: dateFrom,
+                    dateUntil: dateUntil
+                }));
+                return this.$.reportGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._setReports(data.reports);
                 }.bind(this))
             },
             doReportPost: function(conventId, type, inventoryTarget, Report){
@@ -406,8 +425,11 @@
                         promise = this.doPurchasePost(data.conventId, data.memberId, data.basket);
                         break;
                     /* Reports */
-                    case 'doLastReportGet':
-                        promise = this.doLastReportGet(data.conventId, data.target);
+                    case 'doSingleReportGet':
+                        promise = this.doSingleReportGet(data.conventId, data.id, data.target);
+                        break;
+	                case 'doReportsGet':
+                        promise = this.doReportsGet(data.conventId, data.target, data.reportType, data.dateFrom, data.dateUntil);
                         break;
 	                case 'doReportPost':
                         promise = this.doReportPost(data.conventId, data.type, data.inventoryTarget, data.Report);
