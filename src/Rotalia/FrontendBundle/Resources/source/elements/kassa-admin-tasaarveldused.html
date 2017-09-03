@@ -7,7 +7,8 @@
 <dom-module id="kassa-admin-tasaarveldused">
 	<template>
 
-		<kassa-table items="[[creditNettings]]" scroll-target="[[scrollTarget]]" row-details-info="[[rowDetailsInfo]]">
+		<kassa-table items="[[creditNettings]]" scroll-target="[[scrollTarget]]" convent-id="[[conventId]]"
+		             row-details-name="kassa-admin-tasaarveldused">
 			<vaadin-grid-column flex-grow="0" width="3em">
 				<template class="header"><span style="text-align: right;">Id</span></template>
 				<template>
@@ -39,27 +40,15 @@
                 creditNettings: {
                     type: Array,
 	                value: []
-                },
-                rowDetailsInfo: {
-                    type: Object
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
-	        observers: ['_computeRowDetails(conventId)'],
             setUp: function () {
                 this.fire('kassa-backend-action', {action: 'doCreditNettingsGet',
                     onSuccess: function () {
                         this.fire('kassa-page-ready', {page: this})
                     }.bind(this)
                 });
-            },
-            _computeRowDetails: function (conventId) {
-                if (conventId !== undefined) {
-                    this.set('rowDetailsInfo', {
-                        name: 'kassa-admin-tasaarveldused',
-	                    conventId: this.conventId
-                    });
-                }
             },
 	        _computeStatus: function (creditNetting) {
                 var isDone = true;

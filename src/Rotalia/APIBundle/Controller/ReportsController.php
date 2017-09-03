@@ -4,7 +4,7 @@ namespace Rotalia\APIBundle\Controller;
 
 
 use Rotalia\APIBundle\Form\ReportType;
-use Rotalia\InventoryBundle\Classes\Updates;
+use Rotalia\APIBundle\Classes\Updates;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
 use Rotalia\InventoryBundle\Model\Product;
@@ -36,7 +36,6 @@ class ReportsController extends DefaultController
      *          {"name"="limit","type"="int","description":"Limit number of reports returned, default 5"},
      *          {"name"="offset","type"="int","description":"Offset reports returned for pagination, default 0"},
      *          {"name"="conventId","type"="int","description"="Fetch reports for another convent than member home convent"},
-     *          {"name"="target","type"="string","description":"Either warehouse or storage"},
      *          {"name"="reportType","type"="string","description":"Either VERIFICATION or UPDATE"}
      *     }
      * )
@@ -50,7 +49,6 @@ class ReportsController extends DefaultController
         $dateUntil = $request->get('dateUntil', null);
         $conventId = $request->get('conventId', null);
         $reportType = $request->get('reportType', null);
-        $target = $request->get('target', null);
         $limit = $request->get('limit', 5);
         $offset = $request->get('offset', 0);
 
@@ -95,10 +93,6 @@ class ReportsController extends DefaultController
             $reportQuery->filterByType($reportType);
         }
 
-        if ($target !== null) {
-            $reportQuery->filterByTarget($target);
-        }
-
         $reports = $reportQuery
             ->filterByConventId($conventId)
             ->orderByCreatedAt(\Criteria::DESC)
@@ -132,7 +126,7 @@ class ReportsController extends DefaultController
      *     section="Reports",
      *     filters={
      *          {"name"="conventId","type"="int","description"="Fetch report for convent other than members home, used only for id=-1"},
-     *          {"name"="target","type"="string","description":"Either warehouse or storage, used only for id=-1"}
+     *          {"name"="target","type"="string","description":"Either warehouse or storage, used only for id=-1"},
      *     }
      * )
      *
@@ -144,6 +138,8 @@ class ReportsController extends DefaultController
 
         $memberConventId = $this->getMember()->getKoondisedId();
 
+        $reportQuery = ReportQuery::create();
+
         if ($id == -1) {
 
             $conventId = $request->get('conventId', null);
@@ -153,7 +149,7 @@ class ReportsController extends DefaultController
                 $conventId = $memberConventId;
             }
 
-            $report = ReportQuery::create()
+            $report = $reportQuery
                 ->filterByTarget($target)
                 ->filterByConventId($conventId)
                 ->filterByType(Report::TYPE_VERIFICATION)
@@ -166,7 +162,7 @@ class ReportsController extends DefaultController
 
         } else {
 
-            $report = ReportQuery::create()
+            $report = $reportQuery
                 ->findPk($id);
 
             if ($report === null) {
@@ -177,9 +173,14 @@ class ReportsController extends DefaultController
                 return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
             }
 
-            $updates = Updates::getUpdates($report->getTarget(), $report->getConventId(), $report->getPreviousVerification(), $report);
+            if ($report->getType() == Report::TYPE_VERIFICATION) {
+                $updates = Updates::getUpdates($report->getTarget(), $report->getConventId(), $report->getPreviousVerification(), $report);
 
-            return JSendResponse::createSuccess(['report' => $report->getPartialAjaxData(), 'updates' => $updates]);
+                return JSendResponse::createSuccess(['report' => $report->getPartialAjaxData(), 'updates' => $updates]);
+            } elseif ($report->getType() == Report::TYPE_UPDATE) {
+
+                return JSendResponse::createSuccess(['report' => $report->getFullAjaxData()]);
+            }
         }
     }
 
@@ -192,9 +193,7 @@ class ReportsController extends DefaultController
      *   input = "Rotalia\APIBundle\Form\ReportType",
      *   filters={
      *      {"name"="conventId","type"="int","description"="Save report for selected convent instead of member home convent"},
-     *      {"name"="type","type"="string","description"="Report type: VERIFICATION (default) or UPDATE"},
-     *      {"name"="inventorySource","type"="string","description"="Use 'warehouse' to take products from warehouse for update report"},
-     *      {"name"="inventoryTarget","type"="string","description"="Save product counts to selected inventory: warehouse or storage"},
+     *      {"name"="type","type"="string","description"="Report type: VERIFICATION (default) or UPDATE"}
      *   },
      *   statusCodes = {
      *     201 = "Returned when successful",
@@ -295,9 +294,6 @@ class ReportsController extends DefaultController
             return JSendResponse::createFail('Tegevuseks pead olema sisse logitud', 401);
         }
 
-        $target = $request->get('inventoryTarget', Product::INVENTORY_TYPE_STORAGE);
-        $report->setTarget($target);
-
         $form = $this->createForm(new ReportType(), $report, [
             'method' => $request->getMethod(),
         ]);
@@ -311,27 +307,36 @@ class ReportsController extends DefaultController
                 $report->setMember($this->getUser()->getMember());
                 $report->updateRowPrices();
             }
-            $report->save();
+
 
             if (!$report->isUpdate() && $report->isLatest()) {
                 // Save storage counts
-                $report->saveProductCounts($target);
+                $report->saveProductCounts($report->getTarget());
             } else if ($report->isUpdate()) {
-                $source = $request->get('inventorySource', null);
 
-                // Remove from source inventory (warehouse and in some cases storage)
-                if (!empty($source)) {
-                    $report->saveProductCounts($source, 'reduce');
+                if ($report->getSource() === null && $report->getTarget() === null) {
+                    return JSendResponse::createFail('Kust ja kuhu ei tohi olla mõlemad tühjad', 400);
                 }
 
-                if (!empty($target)) {
+                if ($report->getSource() === $report->getTarget()) {
+                    return JSendResponse::createFail('Kust ja kuhu ei tohi olla samad', 400);
+                }
+
+                // Remove from source inventory (warehouse and in some cases storage)
+                if ($report->getSource() !== null) {
+                    $report->saveProductCounts($report->getSource(), 'reduce');
+                }
+
+                if ($report->getTarget() !== null) {
                     // Add to target inventory (warehouse or storage)
-                    $report->saveProductCounts($target, 'add');
+                    $report->saveProductCounts($report->getTarget(), 'add');
                 }
             }
 
+            $report->save();
+
             $code = $request->getMethod() === 'POST' ? 201 : 200;
-            return JSendResponse::createSuccess(['reportId' => $report->getId()], [], $code);
+            return JSendResponse::createSuccess(['report' => $report->getAjaxData()], [], $code);
         } else {
             $errors = FormErrorHelper::getErrors($form);
 

@@ -33,6 +33,7 @@ class ReportQuery extends BaseReportQuery
         //Note: #5 - join with report row cannot be used here because it would select only 1 related report row
         return self::create()
             ->filterByType(Report::TYPE_VERIFICATION)
+            ->filterByTarget($report->getTarget())
             ->filterByCreatedAt($report->getCreatedAt(), self::LESS_THAN)
             ->orderByCreatedAt(self::DESC)
             ->findOne();

@@ -1,7 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 
-<link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-row-details-behavior.html">
 
 <dom-module id="kassa-admin-aruanded-row-details">
 	<template>
@@ -9,6 +11,15 @@
 			main {
 				font-size: 13px;
 				padding-left: 1em;
+				width: 100%;
+			}
+
+			tbody td {
+				text-align: right;
+			}
+
+			tbody td:first-child {
+				text-align: left;
 			}
 
 			[hidden] {
@@ -16,8 +27,16 @@
 			}
 		</style>
 
-		<main hidden$='[[_isHidden(rowDetailsInfo)]]'>
-			<table>
+		<iron-ajax id="reportGet"
+		           url="/api/reports/[[item.id]]"
+		           loading="{{loading}}"
+		           handle-as="json"
+		           method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+
+		<main hidden$='[[isHidden]]'>
+			<paper-spinner active hidden$="[[!loading]]" style="height:25px; width: 25px; margin: 0 auto;"></paper-spinner>
+			<table hidden$="[[loading]]">
 				<thead>
 					<tr>
 						<th>Toode</th>
@@ -33,12 +52,12 @@
 					<template is="dom-repeat" items="[[rows]]" as="row">
 						<tr>
 							<td>[[row.name]]</td>
-							<td style="text-align: right">[[row.amount]]</td>
-							<td style="text-align: right">[[row.startCount]]</td>
-							<td style="text-align: right">[[row.inCount]]</td>
-							<td style="text-align: right">[[row.outCount]]</td>
-							<td style="text-align: right">[[row.estimatedCount]]</td>
-							<td style="text-align: right">[[row.count]]</td>
+							<td>[[row.amount]]</td>
+							<td>[[row.startCount]]</td>
+							<td>[[row.inCount]]</td>
+							<td>[[row.outCount]]</td>
+							<td>[[row.estimatedCount]]</td>
+							<td>[[row.count]]</td>
 						</tr>
 					</template>
 				</tbody>
@@ -50,63 +69,53 @@
         Polymer({
             is: "kassa-admin-aruanded-row-details",
             properties: {
-                item: {
-                    type: Object,
-	                observer: '_rowExpanded'
-                },
-                rowDetailsInfo: {
-                    type: Object
+                name: {
+                    type: String,
+	                value: 'kassa-admin-aruanded'
                 },
 	            rows: {
-                    type: Array,
-		            computed: '_computeRows(rowDetailsInfo.report, rowDetailsInfo.updates)'
-	            }
-            },
-            behaviors: [KassaBehavior],
-            _isHidden: function (rowDetailsInfo) {
-                if (this.isTrue(rowDetailsInfo)) {
-                    return (rowDetailsInfo.name !== 'kassa-admin-aruanded');
+                    type: Array
                 }
-
-                return true;
             },
-            _rowExpanded: function(item) {
-                if (this.isTrue(item) && !this._isHidden(this.rowDetailsInfo)) {
-                    this.fire('kassa-backend-action', {
-                        action: 'doSingleReportGet',
-                        id: item.id
+            behaviors: [KassaBehavior, RowDetailsBehavior],
+            rowActivated: function (callback) {
+                this.$.reportGet.generateRequest().completes.then(function (result) {
+                    var data = result.xhr.response.data;
+                    this.set('rows', this._computeRows(data.report, data.updates));
+                    this.async(function () {
+                        callback()
                     });
-                }
+                }.bind(this));
             },
             _computeRows: function (report, updates) {
-                if (report !== undefined && updates !== undefined && !this._isHidden(this.rowDetailsInfo)) {
-                    var rows = [];
+                var rows = [];
 
-                    for (var i=0; i<report.reportRows.length; i++) {
-                        var row = {};
+                for (var i=0; i<report.reportRows.length; i++) {
+                    var row = {};
 
-                        row.name = report.reportRows[i].product.name;
-                        row.amount = this.formatAmount(report.reportRows[i].product.amount, report.reportRows[i].product.amountType);
-                        row.startCount = 0;
-                        for (var j=0; j<report.previousReport.reportRows.length; j++) {
+                    row.name = report.reportRows[i].product.name;
+                    row.amount = this.formatAmount(report.reportRows[i].product.amount, report.reportRows[i].product.amountType);
+                    row.startCount = 0;
+                    if (this.isTrue(report.previousReport)) {
+                        for (var j = 0; j < report.previousReport.reportRows.length; j++) {
                             if (report.reportRows[i].product.id == report.previousReport.reportRows[j].product.id) {
                                 row.startCount = report.previousReport.reportRows[j].count;
                                 break;
                             }
                         }
-                        row.inCount = 0;
-                        row.outCount = 0;
-                        if (updates.products.hasOwnProperty(report.reportRows[i].product.id)) {
-                            row.inCount = updates.products[report.reportRows[i].product.id].in;
-                            row.outCount = updates.products[report.reportRows[i].product.id].out;
-                        }
-                        row.estimatedCount = row.startCount + row.inCount - row.outCount;
-	                    row.count = report.reportRows[i].count;
-                        rows.push(row);
                     }
-
-                    return rows;
+                    row.inCount = 0;
+                    row.outCount = 0;
+                    if (updates.products.hasOwnProperty(report.reportRows[i].product.id)) {
+                        row.inCount = updates.products[report.reportRows[i].product.id].in;
+                        row.outCount = updates.products[report.reportRows[i].product.id].out;
+                    }
+                    row.estimatedCount = row.startCount + row.inCount - row.outCount;
+                    row.count = report.reportRows[i].count;
+                    rows.push(row);
                 }
+
+                return rows;
             }
         })
 	</script>

@@ -24,7 +24,7 @@
 		</kassa-material>
 
 		<kassa-table items="[[transfers]]" add-func="doTransfersPost"
-		             dialog="[[dialog]]" scroll-target="[[scrollTarget]]" convent-id="[[conventId]]" row-details-info="[[rowDetailsInfo]]">
+		             dialog="[[dialog]]" scroll-target="[[scrollTarget]]" convent-id="[[conventId]]" row-details-name="kassa-ylekanded">
 			<vaadin-grid-column flex-grow="0" width="3em">
 				<template class="header"><span style="text-align: right;">Id</span></template>
 				<template>
@@ -88,9 +88,6 @@
                 dialog: {
                     type: Node
                 },
-                rowDetailsInfo: {
-                    type: Object
-                },
 	            _startDate: {
                     type: String
 	            },
@@ -102,7 +99,6 @@
             observers: ['_loadTransfers(pageActive, conventId)'],
             ready: function () {
                 this.set('dialog', this.$.transfersDialog);
-                this.set('rowDetailsInfo', {name: 'kassa-ylekanded'})
             },
             cleanUp: function() {
                 this.set('transfers', []);

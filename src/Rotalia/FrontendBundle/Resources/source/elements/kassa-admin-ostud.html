@@ -93,6 +93,9 @@
             },
             behaviors: [PageBehavior, KassaBehavior],
             observers: ['_loadPurchases(pageActive, conventId)'],
+	        setUp: function () {
+                this.$$('kassa-date-picker').ready();
+            },
             cleanUp: function() {
                 this.set('purchases', []);
             },

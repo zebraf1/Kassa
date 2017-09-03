@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/lazy-imports/lazy-imports-behavior.html">
+<link rel="import" href="../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selectable.html">
 
 <link rel="import" href="kassa-loading-page.html">
 <link rel="import" href="kassa-behavior.html">
@@ -19,25 +21,24 @@
 	<link rel="lazy-import" group="admin-tasaarveldused" href="kassa-admin-tasaarveldused.html">
 	<link rel="lazy-import" group="admin-ostud" href="kassa-admin-ostud.html">
 	<link rel="lazy-import" group="admin-aruanded" href="kassa-admin-aruanded.html">
+	<link rel="lazy-import" group="admin-tarned" href="kassa-admin-tarned.html">
 	<template>
 		<style>
-			main {
+			:host {
 				height: 100%;
 				width: 100%;
 				display: block;
 				padding: 1em;
-				overflow-y: hidden;
 				box-sizing: border-box;
+			}
+
+			::slotted(:not(.kassa-shown)) {
+				display: none !important;
 			}
 
 		</style>
 
-		<main>
-			<iron-pages selected="[[shown]]" attr-for-selected="data-page">
-				<kassa-loading-page data-page="loading"></kassa-loading-page>
-				<slot></slot>
-			</iron-pages>
-		</main>
+		<slot></slot>
 
 	</template>
 	<script>
@@ -45,14 +46,11 @@
             is: "kassa-pages",
 
             properties: {
-                selected: {
-                    type: String,
-                    observer: '_onSelectedChange'
-                },
                 shown: {
                     type: String,
                     value: 'loading',
-                    readOnly: true
+                    readOnly: true,
+	                observer: '_toggleShown'
                 },
                 selectedPage: {
                     type: HTMLElement,
@@ -60,9 +58,16 @@
                 },
 	            scrollTarget: {
                     type: HTMLElement
-	            }
+	            },
+                activateEvent: {
+                    type: String,
+                    value: null
+                }
             },
-            behaviors: [KassaBehavior, Polymer.LazyImportsBehavior],
+            behaviors: [KassaBehavior, Polymer.LazyImportsBehavior, Polymer.IronSelectableBehavior],
+	        observers: [
+	            '_onSelectedChange(selected)'
+	        ],
             listeners: {
                 'kassa-page-loading': '_onPageLoading',
 	            'kassa-page-ready': '_onPageReady'
@@ -76,9 +81,8 @@
 
                 this.importLazyGroup(newPage).then(function () {
                     //Tells the new page to do its setup.
-                    var newPageItem = this.$$('iron-pages')._valueToItem(newPage);
-	                newPageItem.sharedSetUp();
-	                newPageItem.setScrollTarget(this.scrollTarget);
+	                this.selectedItem.sharedSetUp();
+                    this.selectedItem.setScrollTarget(this.scrollTarget);
                 }.bind(this));
             },
             _onPageLoading: function () {
@@ -88,6 +92,13 @@
                 if (this.selected === event.detail.page.getAttribute('data-page')) {
                     this._setSelectedPage(event.detail.page);
                     this._setShown(this.selected);
+                }
+            },
+            _toggleShown: function (newShown, oldShown) {
+	            if (this.items !== undefined) {
+                    for (var i = 0; i < this.items.length; i++) {
+	                    this.toggleClass('kassa-shown', this.items[i].dataset.page == newShown, this.items[i]);
+                    }
                 }
             }
         })

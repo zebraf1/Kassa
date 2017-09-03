@@ -2,7 +2,6 @@
 
 namespace Rotalia\APIBundle\Form;
 
-
 use Rotalia\InventoryBundle\Form\ReportRowType as BaseReportRowType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -13,6 +12,9 @@ class ReportRowType extends BaseReportRowType
         $builder
             ->add('count', 'number')
             ->add('productId', 'text')
+            ->add('currentPrice', 'number', array(
+                'required' => false
+            ))
         ;
     }
 }

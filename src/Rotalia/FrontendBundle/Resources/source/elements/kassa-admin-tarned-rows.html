@@ -1,0 +1,115 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-ost-toode-valitud.html">
+
+
+<dom-module id="kassa-admin-tarned-rows">
+	<template>
+		<style>
+
+		</style>
+
+
+		<kassa-material direction="vertical">
+			<kassa-material direction="horizontal" flat style="align-self: stretch">
+				<vaadin-combo-box id="input"
+				                  selected-item="{{selectedItem}}"
+				                  label="Toode"
+				                  items="[[products]]"
+				                  item-value-path="id"
+				                  item-label-path="name"
+				                  on-focusin="_onFocusIn"
+				                  disabled="[[disabled]]">
+					<template>
+						[[item.name]]<br>
+						Suurus: [[formatAmount(item.amount, item.amountType)]]
+					</template>
+				</vaadin-combo-box>
+				<paper-button raised on-tap="_addProduct"  class="row-break" disabled="[[disabled]]">Lisa</paper-button>
+			</kassa-material>
+			<paper-input id="productCountInput" type="number" min="1" step="1"
+			             value="{{productCount}}" label="Kogus" disabled="[[disabled]]"></paper-input>
+			<paper-input label="Tüki hind (€)" type="number" step="0.1"  value="{{productPrice}}" disabled="[[disabled]]"></paper-input>
+		</kassa-material>
+
+		<template is="dom-repeat" items="[[chosenProducts]]" as="product">
+			<kassa-ost-valitud-toode product="[[product]]" on-tap="_removeProduct" fixed="[[disabled]]"></kassa-ost-valitud-toode>
+		</template>
+
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-admin-tarned-rows",
+            properties: {
+                products: {
+                    type: Array
+                },
+	            chosenProducts: {
+                    type: Array,
+		            value: []
+	            },
+	            value: {
+                    type: Array,
+		            value: [],
+		            computed: '_computeValue(chosenProducts.*)'
+	            },
+	            selectedItem: {
+                    type: Object,
+		            value: null
+	            },
+                productCount: {
+                    type: Number,
+	                value: 0
+                },
+                productPrice: {
+                    type: Number,
+	                value: 0
+                },
+	            disabled: {
+                    type: Boolean,
+		            value: false
+	            }
+            },
+            behaviors: [KassaBehavior],
+            _onFocusIn: function () {
+                this.$.input.inputElement.select();
+            },
+            _addProduct: function () {
+                if (this.selectedItem !== null) {
+                    this.splice('chosenProducts', 0, 0, {
+                        id: this.selectedItem.id,
+                        name: this.selectedItem.name,
+                        amount: this.selectedItem.amount,
+                        amountType: this.selectedItem.amountType,
+                        count: this.productCount,
+                        price: this.productPrice
+                    });
+
+                    this.set('selectedItem', null);
+                    this.set('productCount', 0);
+                    this.set('productPrice', 0);
+                }
+            },
+            _removeProduct: function (event) {
+                if (Polymer.dom(event).rootTarget.id === "icon" || Polymer.dom(event).rootTarget.localName === "paper-icon-button") {
+                    this.splice('chosenProducts', event.model.__data.index, 1);
+                }
+            },
+            clear: function () {
+                this.set('chosenProducts', []);
+                this.set('selectedItem', null);
+                this.set('productCount', 0);
+                this.set('productPrice', 0);
+            },
+            _computeValue: function(chosenProducts){
+                return chosenProducts.base.map(product => this.pickProperties(product, ['id', 'count', 'price'], ['productId', 'count', 'currentPrice']));
+            }
+
+        })
+	</script>
+</dom-module>

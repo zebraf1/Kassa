@@ -293,12 +293,12 @@
                 }.bind(this))
             },
 	        /* Reports */
-            doSingleReportGet: function (conventId, reportId, target) {
+            doSingleReportGet: function (conventId, reportId, target, reportType) {
                 this.set('_id', reportId);
                 this.$.reportGet.set('params', this._formatBody({
                     conventId: conventId,
                     target: target,
-                    reportType: 'VERIFICATION'
+                    reportType: reportType
                 }));
                 return this.$.reportGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setSingleReport(data.report);
@@ -312,21 +312,31 @@
                     target: target,
                     reportType: reportType,
                     dateFrom: dateFrom,
-                    dateUntil: dateUntil
+                    dateUntil: dateUntil,
+	                limit: 0
                 }));
                 return this.$.reportGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setReports(data.reports);
                 }.bind(this))
             },
-            doReportPost: function(conventId, type, inventoryTarget, Report){
+            doReportPost: function(conventId, type, Report){
                 this.$.reportsPost.set('body', this._formatBody({
                     conventId: conventId,
                     type: type,
-                    inventoryTarget: inventoryTarget,
                     Report: Report
                 }));
                 return this.$.reportsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.fire('kassa-message-success', 'Aruanne edukalt lisatud');
+                }.bind(this))
+            },
+            doDeliveryPost: function(conventId, itemType) {
+                this.$.reportsPost.set('body', this._formatBody({
+                    conventId: conventId,
+                    type: 'UPDATE',
+                    Report: itemType
+                }));
+                return this.$.reportsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this.fire('kassa-message-success', 'Tarne edukalt lisatud');
                 }.bind(this))
             },
 	        /* Transfers */
@@ -426,14 +436,17 @@
                         break;
                     /* Reports */
                     case 'doSingleReportGet':
-                        promise = this.doSingleReportGet(data.conventId, data.id, data.target);
+                        promise = this.doSingleReportGet(data.conventId, data.id, data.target, data.reportType);
                         break;
 	                case 'doReportsGet':
                         promise = this.doReportsGet(data.conventId, data.target, data.reportType, data.dateFrom, data.dateUntil);
                         break;
 	                case 'doReportPost':
-                        promise = this.doReportPost(data.conventId, data.type, data.inventoryTarget, data.Report);
+                        promise = this.doReportPost(data.conventId, data.type, data.Report);
                         break;
+	                case 'doDeliveryPost':
+	                    promise = this.doDeliveryPost(data.conventId, data.itemType);
+	                    break;
 	                /* Transfers */
 	                case 'doTransfersGet':
                         promise = this.doTransfersGet(data.conventId, data.memberId, data.dateFrom, data.dateUntil);
@@ -475,7 +488,13 @@
 
                 var newBody = {};
                 for (var key in body) {
-                    if (body.hasOwnProperty(key) && body[key] !== null && body[key] !== undefined) {
+                    if (body.hasOwnProperty(key)) {
+
+                        if (body[key] === null || body[key] === undefined || body[key] === '') {
+                            continue;
+                        }
+
+
                         if (body[key].constructor === Object) {
                             var innerBody = this._formatBody(body[key], true);
                             for (var innerKey in innerBody) {

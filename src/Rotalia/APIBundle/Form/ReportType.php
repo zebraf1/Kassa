@@ -2,6 +2,7 @@
 
 namespace Rotalia\APIBundle\Form;
 
+use Rotalia\InventoryBundle\Model\ReportPeer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -15,6 +16,14 @@ class ReportType extends AbstractType
     {
         $builder
             ->add('cash', 'number')
+            ->add('source', 'choice', array(
+                'choices' => [ReportPeer::SOURCE_STORAGE => 'Kassa', ReportPeer::SOURCE_WAREHOUSE => 'Ladu'],
+                'required' => false
+            ))
+            ->add('target', 'choice', array(
+                'choices' => [ReportPeer::TARGET_STORAGE => 'Kassa', ReportPeer::TARGET_WAREHOUSE => 'Ladu'],
+                'required' => false
+            ))
             ->add('reportRows', 'collection', [
                 'type' => new ReportRowType(),
                 'allow_add' => true,

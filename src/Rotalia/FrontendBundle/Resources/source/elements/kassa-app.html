@@ -113,7 +113,8 @@
 						</app-toolbar>
 					</app-header>
 
-					<kassa-pages selected="[[page]]" scroll-target="{{scrollTarget}}">
+					<kassa-pages selected="[[page]]" scroll-target="{{scrollTarget}}" attr-for-selected="data-page">
+						<kassa-loading-page data-page="loading"></kassa-loading-page>
 						<kassa-login data-page="login"></kassa-login>
 						<kassa-logout data-page="logout"></kassa-logout>
 						<kassa-ost data-page="ost"
@@ -155,9 +156,11 @@
 						                   purchases="[[purchases]]"></kassa-admin-ostud>
 						<kassa-admin-aruanded data-page="admin-aruanded"
 						                      convent-id="[[configuration.selectedConventId]]"
-						                      reports="[[reports]]"
-						                      single-report="[[singleReport]]"
-						                      updates="[[updates]]"></kassa-admin-aruanded>
+						                      reports="[[reports]]"></kassa-admin-aruanded>
+						<kassa-admin-tarned data-page="admin-tarned"
+						                    convent-id="[[configuration.selectedConventId]]"
+						                    deliveries="[[reports]]"
+						                    products="[[activeProducts]]"></kassa-admin-tarned>
 					</kassa-pages>
 				</app-header-layout>
 
@@ -186,9 +189,10 @@
                             {page: 'admin-ostud', name: 'Konvendi ostud', role: 'ROLE_ADMIN'},
                             {page: 'admin-ylekanded', name: 'Konvendi ülekanded', role: 'ROLE_ADMIN'},
                             {page: 'admin-aruanded', name: 'Aruanded', role: 'ROLE_ADMIN'},
+                            {page: 'admin-tarned', name: 'Tarned', role: 'ROLE_ADMIN'},
                             {page: 'admin-tooted', name: 'Tooted', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegrupid', role: 'ROLE_ADMIN'},
-                            {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
+                            //{page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
 	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'}
                         ];
                     }

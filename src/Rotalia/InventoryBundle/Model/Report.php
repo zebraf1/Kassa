@@ -5,7 +5,6 @@ namespace Rotalia\InventoryBundle\Model;
 use DateTime;
 use Monolog\Logger;
 use PropelPDO;
-use Rotalia\InventoryBundle\Classes\Updates;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseReport;
 use Rotalia\UserBundle\Model\GuardDuty;
@@ -528,7 +527,7 @@ class Report extends BaseReport
                     } else if ($action === 'reduce') {
                         $productInfo->reduceWarehouseCount($count);
                     } else {
-                        $productInfo->setWarehouseCount($count)->save();
+                        $productInfo->setWarehouseCount($count);
                     }
                     break;
                 case Product::INVENTORY_TYPE_STORAGE:
@@ -557,6 +556,7 @@ class Report extends BaseReport
         return [
             'id' => $this->getId(),
             'type' => $this->getType(),
+            'source' => $this->getSource(),
             'target' => $this->getTarget(),
             'member' => $this->getMember() ? $this->getMember()->getAjaxName() : null,
             'createdAt' => $this->getCreatedAt('H:i d.m.Y'),

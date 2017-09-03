@@ -14,6 +14,7 @@
     "elements/kassa-admin-ylekanded.html",
     "elements/kassa-admin-ostud.html",
     "elements/kassa-admin-aruanded.html",
+    "elements/kassa-admin-tarned.html",
     "elements/kassa-admin-tasaarveldused.html"
   ],
   "sources": [
@@ -34,6 +35,7 @@
     "elements/kassa-admin-ylekanded.html",
     "elements/kassa-admin-ostud.html",
     "elements/kassa-admin-aruanded.html",
+    "elements/kassa-admin-tarned.html",
     "elements/kassa-admin-tasaarveldused.html"
   ],
   "extraDependencies": [

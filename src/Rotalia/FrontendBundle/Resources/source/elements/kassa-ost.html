@@ -246,7 +246,8 @@
                     {
                         id: this.activeProduct.id,
                         name: this.activeProduct.name,
-                        amount: this.formatAmount(this.activeProduct.amount, this.activeProduct.amountType),
+                        amount: this.activeProduct.amount,
+                        amountType: this.activeProduct.amountType,
                         count: this.activeProduct.count,
                         price: this.activeProduct.price
                     });

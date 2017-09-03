@@ -38,7 +38,7 @@
 			<paper-icon-button icon="kassa:clear" data-invisible$="[[fixed]]"></paper-icon-button>
 			<span class="name">[[product.name]]</span>
 			<div class="row-break">
-				<span>[[product.count]] &times; [[product.amount]]</span>
+				<span>[[product.count]] &times; [[formatAmount(product.amount, product.amountType)]]</span>
 				<span>[[_computePrice(product.count, product.price)]]</span>
 			</div>
 		</kassa-material>

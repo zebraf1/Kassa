@@ -1,5 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+
 <link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-row-details-behavior.html">
 
 <dom-module id="kassa-ylekanded-row-details">
 	<template>
@@ -11,7 +13,7 @@
 
 		</style>
 
-		<main hidden$='[[_isHidden(rowDetailsInfo)]]'>
+		<main hidden$='[[isHidden]]'>
 			<pre>[[item.comment]]</pre>
 		</main>
 
@@ -20,21 +22,15 @@
         Polymer({
             is: "kassa-ylekanded-row-details",
             properties: {
-                item: {
-                    type: Object
+                name: {
+                    type: String,
+	                value: "kassa-ylekanded"
                 },
-                rowDetailsInfo: {
+                item: {
                     type: Object
                 }
             },
-            behaviors: [KassaBehavior],
-            _isHidden: function (rowDetailsInfo) {
-                if (this.isTrue(rowDetailsInfo)) {
-                    return (rowDetailsInfo.name !== 'kassa-ylekanded');
-                }
-
-                return true;
-            }
+            behaviors: [KassaBehavior, RowDetailsBehavior]
         })
 	</script>
 </dom-module>

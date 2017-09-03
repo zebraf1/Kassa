@@ -56,7 +56,8 @@
         <column name="convent_id" type="INTEGER" required="true" defaultValue="6" />
         <column name="cash" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="type" type="VARCHAR" required="true" defaultValue="VERIFICATION" />
-        <column name="target" type="ENUM" required="true" defaultValue="storage" valueSet="storage, warehouse" />
+        <column name="source" type="ENUM" valueSet="storage, warehouse" />
+        <column name="target" type="ENUM" valueSet="storage, warehouse" />
         <index name="member_id">
             <index-column name="member_id"/>
         </index>

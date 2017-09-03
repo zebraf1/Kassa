@@ -10,6 +10,9 @@
 
 			main {
 				margin: 0;
+			}
+
+			main:not([flat]) {
 				padding: 1em;
 				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
 				0 1px 5px 0 rgba(0, 0, 0, 0.12),
@@ -40,7 +43,7 @@
 
 		</style>
 
-		<main>
+		<main flat$="[[flat]]">
 			<slot></slot>
 		</main>
 
@@ -53,14 +56,18 @@
                 direction: {
                     type: String,
                     observer: '_directionChanged'
-                }
+                },
+	            flat: {
+                    type: Boolean,
+		            value: false
+	            }
             },
             behaviors: [KassaBehavior],
             _directionChanged: function (newDirection) {
                 if ((newDirection === 'vertical' || newDirection === 'horizontal')) {
                     this.$$('main').className = newDirection;
                 } else {
-                    console.log(newDirection);
+                    console.error(newDirection);
                 }
             }
         })

@@ -1,7 +1,6 @@
 <?php
 
-namespace Rotalia\InventoryBundle\Classes;
-
+namespace Rotalia\APIBundle\Classes;
 
 use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\Report;
@@ -14,7 +13,7 @@ use Rotalia\InventoryBundle\Model\TransactionQuery;
  * Class Updates
  * Updates to cash and product counts between reports.
  *
- * @package Rotalia\InventoryBundle\Classes
+ * @package Rotalia\APIPundle\Classes
  */
 class Updates
 {

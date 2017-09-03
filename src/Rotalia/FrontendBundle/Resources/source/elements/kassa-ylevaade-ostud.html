@@ -98,6 +98,7 @@
             behaviors: [PageBehavior, KassaBehavior],
 	        observers: ['_loadPurchases(paceActive)'],
             setUp: function () {
+                this.$$('kassa-date-picker').ready();
                 this._loadPurchases();
             },
             cleanUp: function() {
