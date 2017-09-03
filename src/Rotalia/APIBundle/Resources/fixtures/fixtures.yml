@@ -193,20 +193,6 @@ Rotalia\InventoryBundle\Model\ProductInfo:
         price: '1.00'
         status: ACTIVE
 
-Rotalia\InventoryBundle\Model\Report:
-    Report_1:
-        name: 'Mitte Keegi'
-        member_id: Member_2123
-        cash: '5.12'
-        convent_id: Convent_6
-
-Rotalia\InventoryBundle\Model\ReportRow:
-    ReportRow_1_1:
-        report_id: Report_1
-        product_id: Product_1
-        count: 5
-        current_price: 1
-
 Rotalia\InventoryBundle\Model\Setting:
     Setting_CurrentCash_Tallinn:
         reference: 'current_cash'
@@ -275,3 +261,19 @@ Rotalia\InventoryBundle\Model\Transaction:
           count: 1
           current_price: 1
           sum: 1
+
+Rotalia\InventoryBundle\Model\Report:
+    Report_1:
+        member_id: Member_2123
+        cash: '5.12'
+        convent_id: Convent_6
+        type: 'VERIFICATION'
+        target: 0
+
+
+Rotalia\InventoryBundle\Model\ReportRow:
+    ReportRow_1_1:
+        report_id: Report_1
+        product_id: Product_1
+        count: 5
+        current_price: 1

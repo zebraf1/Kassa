@@ -34,57 +34,44 @@ class Updates
             'products' => []
         ];
 
-        switch ($target) {
-            case Product::INVENTORY_TYPE_STORAGE:
-                $transactions = TransactionQuery::findTransactionsBetween($conventId, $report1, $report2);
+        if ($target == Product::INVENTORY_TYPE_STORAGE) {
+            $transactions = TransactionQuery::findTransactionsBetween($conventId, $report1, $report2);
 
-                /** @var Transaction $transaction */
-                foreach ($transactions as $transaction) {
-                    if(!array_key_exists($transaction->getProductId(), $updates['products'])) {
-                        $updates['products'][$transaction->getProductId()] = ['in' => 0, 'out' => 0];
-                    }
-
-                    $updates['products'][$transaction->getProductId()]['out'] += intval($transaction->getCount());
+            /** @var Transaction $transaction */
+            foreach ($transactions as $transaction) {
+                if (!array_key_exists($transaction->getProductId(), $updates['products'])) {
+                    $updates['products'][$transaction->getProductId()] = ['in' => 0, 'out' => 0];
                 }
 
-                /** @var Report $updateReport */
-                foreach ($updateReports as $updateReport) {
-                    if ($updateReport->getTarget() == Product::INVENTORY_TYPE_STORAGE) {
-                        $updates['cash']['out'] += $updateReport->getCash();
+                $updates['products'][$transaction->getProductId()]['out'] += intval($transaction->getCount());
+            }
 
-                        foreach ($updateReport->getReportRows() as $reportRow) {
-                            if(!array_key_exists($reportRow->getProductId(), $updates['products'])) {
-                                $updates['products'][$reportRow->getProductId()] = ['in' => 0, 'out' => 0];
-                            }
-
-                            $updates['products'][$reportRow->getProductId()]['in'] += $reportRow->getCount();
-
-                        }
-                    }
-                }
-                break;
-            case Product::INVENTORY_TYPE_WAREHOUSE:
-                /** @var Report $updateReport */
-                foreach ($updateReports as $updateReport) {
-                    if ($updateReport->getTarget() == Product::INVENTORY_TYPE_STORAGE) {
-                        $direction = 'out';
-                    } else {
-                        $direction = 'in';
-                    }
-
-                    $updates['cash'][$direction] += $updateReport->getCash();
-
-                    foreach ($updateReport->getReportRows() as $reportRow) {
-                        if(!array_key_exists($reportRow->getProductId(), $updates['products'])) {
-                            $updates['products'][$reportRow->getProductId()] = ['in' => 0, 'out' => 0];
-                        }
-
-                        $updates['products'][$reportRow->getProductId()][$direction] += $reportRow->getCount();
-
-                    }
-                }
         }
 
+        return self::collectUpdates($updateReports, $updates, $target);
+    }
+
+    private static function collectUpdates($updateReports, $updates, $target) {
+        /** @var Report $updateReport */
+        foreach ($updateReports as $updateReport) {
+            if ($updateReport->getTarget() == $target) {
+                $direction = 'in';
+            } elseif ($updateReport->getSource() == $target) {
+                $direction = 'out';
+            } else {
+                continue;
+            }
+            $updates['cash'][$direction] += $updateReport->getCash();
+
+            foreach ($updateReport->getReportRows() as $reportRow) {
+                if(!array_key_exists($reportRow->getProductId(), $updates['products'])) {
+                    $updates['products'][$reportRow->getProductId()] = ['in' => 0, 'out' => 0];
+                }
+
+                $updates['products'][$reportRow->getProductId()][$direction] += $reportRow->getCount();
+
+            }
+        }
         return $updates;
     }
 }

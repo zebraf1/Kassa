@@ -506,7 +506,7 @@ class Report extends BaseReport
     /**
      * @param $inventoryType
      * @param string $action
-     * @throws \HttpException
+     * @throws HttpException
      */
     public function saveProductCounts($inventoryType, $action = 'set')
     {
@@ -540,7 +540,7 @@ class Report extends BaseReport
                     }
                     break;
                 default:
-                    throw new \HttpException(400, 'Invalid inventoryType: '.$inventoryType);
+                    throw new HttpException(400, 'Invalid inventoryType: '.$inventoryType);
             }
 
             $productInfo->save();
