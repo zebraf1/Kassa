@@ -43,13 +43,13 @@
 				<vaadin-grid-column>
 					<template class="header">Kust</template>
 					<template>
-						<span>[[item.source]]</span>
+						<span>[[_mapInventoryType(item.source)]]</span>
 					</template>
 				</vaadin-grid-column>
 				<vaadin-grid-column>
 					<template class="header">Kuhu</template>
 					<template>
-						<span>[[item.target]]</span>
+						<span>[[_mapInventoryType(item.target)]]</span>
 					</template>
 				</vaadin-grid-column>
 				<vaadin-grid-column flex-grow="0">
@@ -156,6 +156,14 @@
                         }.bind(this)
                     });
                 }
+            },
+            _mapInventoryType: function (target) {
+                var map = {
+                    storage: 'Kassa',
+                    warehouse: 'Ladu'
+                };
+
+                return map[target];
             }
         })
 	</script>

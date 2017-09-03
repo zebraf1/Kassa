@@ -40,7 +40,7 @@
 			<vaadin-grid-column>
 				<template class="header">Tüüp</template>
 				<template>
-					<span>[[_mapTarget(item.target)]]</span>
+					<span>[[_mapInventoryType(item.target)]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="0">
@@ -105,7 +105,7 @@
                     });
                 }
             },
-            _mapTarget: function (target) {
+            _mapInventoryType: function (target) {
 	            var map = {
 	                storage: 'Valvearuanne',
 		            warehouse: 'Lao inventuur'

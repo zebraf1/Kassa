@@ -92,8 +92,8 @@
 					<td>[[eur2str(cashEnd)]]</td>
 				</tr>
 				<tr>
-					<td>Puudujääk</td>
-					<td>[[eur2str(_deficit)]]</td>
+					<td>[[_computeDeficitText(_deficit)]]</td>
+					<td>[[_computeDeficitNumb(_deficit)]]</td>
 				</tr>
 			</table>
 			<div class="buttons">
@@ -191,6 +191,16 @@
             },
 	        _editReport: function () {
                 this.fire('report-edit');
+            },
+            _computeDeficitText: function (deficit) {
+	            if (deficit >= 0) {
+	                return 'Puudujääk'
+	            }
+
+	            return 'Ülejääk'
+            },
+            _computeDeficitNumb: function (deficit) {
+	            return this.eur2str(Math.abs(deficit));
             }
         })
 	</script>

@@ -279,8 +279,9 @@
                 }));
                 return this.$.purchasePost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.fire('kassa-message-success', 'Ost edukalt sooritatud');
-                    //Laeme kasutaja krediidi uuesti (vb pole vaja, kui bug parandatud)
-                    return this.doAuthenticationGet();
+                    if (memberId == this.member.id) {
+                        this.set('member.creditBalance', data.newCredit);
+                    }
                 }.bind(this))
             },
             doPurchasesGet: function (conventId, memberId, dateFrom, dateUntil) {
@@ -336,6 +337,7 @@
                     Report: itemType
                 }));
                 return this.$.reportsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this.unshift('reports', data.report);
                     this.fire('kassa-message-success', 'Tarne edukalt lisatud');
                 }.bind(this))
             },

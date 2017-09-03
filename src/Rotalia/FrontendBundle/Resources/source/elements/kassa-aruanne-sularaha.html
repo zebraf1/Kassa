@@ -40,6 +40,14 @@
 		</style>
 
 		<kassa-material direction="vertical">
+			<h4>Sularaha varem välja võetud:</h4>
+			<span>[[_calcCashOut(cashUpdates)]]</span>
+
+			<h4>Sularaha nüüd välja võetud:</h4>
+			<paper-input type="number" value="{{cashOut}}" step="0.01" disabled="[[fixed]]" no-label-float>
+				<span slot="suffix">€</span>
+			</paper-input>
+			
 			<h3>[[strings.title]]:</h3>
 			<div class="raha-all">
 				<template is="dom-repeat" items="{{bills}}" as="bill">
@@ -53,14 +61,6 @@
 				</template>
 				<div><h4>Kokku:</h4><span>[[eur2str(cash)]]</span></div>
 			</div>
-
-			<h4>Sularaha varem välja võetud:</h4>
-			<span>[[_negativeCash(cashUpdates.in)]]</span>
-
-			<h4>Sularaha nüüd välja võetud:</h4>
-			<paper-input type="number" value="{{cashOut}}" step="0.01" disabled="[[fixed]]" no-label-float>
-				<span slot="suffix">€</span>
-			</paper-input>
 
 			<paper-button on-tap="_confirmCash" style="align-self: flex-end" disabled="[[fixed]]">Edasi</paper-button>
 		</kassa-material>
@@ -141,8 +141,11 @@
                     }
                 }
             },
-            _negativeCash: function (cash) {
-	            return this.eur2str(-cash);
+            _calcCashOut: function (cashUpdates) {
+                if (cashUpdates !== undefined) {
+                    return this.eur2str(cashUpdates.out - cashUpdates.in);
+                }
+                return this.eur2str(0);
             }
         })
 	</script>

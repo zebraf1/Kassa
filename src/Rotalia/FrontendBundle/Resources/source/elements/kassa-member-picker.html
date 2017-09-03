@@ -81,7 +81,7 @@
 	            }
             },
             _setDefaultValue: function(member, value) {
-                if (value === '' && member !== undefined) {
+                if (value === '' && member !== undefined && member !== null) {
                     this.set('members', [member]);
                     this.async(function () {
                         this.set('value', member.id);
