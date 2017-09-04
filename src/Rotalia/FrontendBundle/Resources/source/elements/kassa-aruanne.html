@@ -246,7 +246,7 @@
                 this.fire('kassa-backend-action', {
                     action: 'doReportPost',
                     conventId: this.conventId,
-	                type: 'VERIFICATION',
+	                cashOut: this.cashOutNow,
 	                Report: {
                         cash: this.cash,
                         target: this.target,

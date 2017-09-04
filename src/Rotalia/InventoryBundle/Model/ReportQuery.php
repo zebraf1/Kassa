@@ -79,7 +79,7 @@ class ReportQuery extends BaseReportQuery
         }
 
         if ($report2 !== null) {
-            $query->filterByCreatedAt($report2->getCreatedAt(), self::LESS_THAN);
+            $query->filterByCreatedAt($report2->getCreatedAt(), self::LESS_EQUAL);
         }
 
         return $query

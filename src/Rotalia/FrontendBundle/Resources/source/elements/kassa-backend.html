@@ -320,11 +320,12 @@
                     this._setReports(data.reports);
                 }.bind(this))
             },
-            doReportPost: function(conventId, type, Report){
+            doReportPost: function(conventId, Report, cashOut){
                 this.$.reportsPost.set('body', this._formatBody({
                     conventId: conventId,
-                    type: type,
-                    Report: Report
+                    type: 'VERIFICATION',
+                    Report: Report,
+	                cashOut: cashOut
                 }));
                 return this.$.reportsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.fire('kassa-message-success', 'Aruanne edukalt lisatud');
@@ -444,7 +445,7 @@
                         promise = this.doReportsGet(data.conventId, data.target, data.reportType, data.dateFrom, data.dateUntil);
                         break;
 	                case 'doReportPost':
-                        promise = this.doReportPost(data.conventId, data.type, data.Report);
+                        promise = this.doReportPost(data.conventId, data.Report, data.cashOut);
                         break;
 	                case 'doDeliveryPost':
 	                    promise = this.doDeliveryPost(data.conventId, data.itemType);

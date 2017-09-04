@@ -308,8 +308,20 @@ class ReportsController extends DefaultController
                 $report->updateRowPrices();
             }
 
-
             if (!$report->isUpdate() && $report->isLatest()) {
+                // add cash out to a update report
+                $cashOut = doubleval($request->get('cashOut', 0));
+                if ($cashOut !== 0) {
+                    $updateReport = new Report();
+                    $updateReport->setConventId($report->getConventId());
+                    $updateReport->setMember($this->getMember());
+                    $updateReport->setType(Report::TYPE_UPDATE);
+                    $updateReport->setTarget($report->getTarget() === Product::INVENTORY_TYPE_STORAGE ? Product::INVENTORY_TYPE_WAREHOUSE : null);
+                    $updateReport->setSource($report->getTarget());
+                    $updateReport->setCash($cashOut);
+                    $updateReport->save();
+                }
+
                 // Save storage counts
                 $report->saveProductCounts($report->getTarget());
             } else if ($report->isUpdate()) {

@@ -197,7 +197,7 @@ class ReportsControllerTest extends WebTestCase
 
 
         // Make an update report
-        // Must wait one second before and after, because updates query depends on timestamps
+        // Must wait one second before, because updates query depends on timestamps
         sleep(1);
         $cashDelta = 16.36;
         $params = [
@@ -209,7 +209,6 @@ class ReportsControllerTest extends WebTestCase
                 'cash' => $cashDelta
             ]
         ];
-        sleep(1);
 
         static::$client->request('POST', '/api/reports/', $params);
         $response = static::$client->getResponse();

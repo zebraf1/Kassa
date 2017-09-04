@@ -5,6 +5,7 @@ namespace Rotalia\InventoryBundle\Model;
 use DateTime;
 use Monolog\Logger;
 use PropelPDO;
+use Rotalia\APIBundle\Classes\Updates;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseReport;
 use Rotalia\UserBundle\Model\GuardDuty;
@@ -610,8 +611,6 @@ class Report extends BaseReport
 
     // Methods for the API
 
-    protected $nextVerification = null;
-
     public function getPreviousVerification() {
         if ($this->previousVerification === null) {
             $this->previousVerification = ReportQuery::findPreviousVerificationReport($this);
@@ -624,8 +623,57 @@ class Report extends BaseReport
      * @return int
      */
     private function getDeficit() {
-        //TODO
-        return 0;
+
+        if ($this->isUpdate()) {
+            // Has no meaning for update reports
+            return 0;
+        }
+
+        $previousVerification = $this->getPreviousVerification();
+        $updates = Updates::getUpdates($this->getTarget(), $this->getConventId(), $previousVerification, $this);
+
+        // Initial
+        $expectedCash = 0;
+        $expectedProductCounts = array();
+        $prices = array();
+        if ($previousVerification) {
+            $expectedCash = $previousVerification->getCash();
+
+            foreach ($previousVerification->getReportRows() as $row) {
+                $expectedProductCounts[$row->getProductId()] = $row->getCount();
+                $prices[$row->getProductId()] = $row->getCurrentPrice();
+            }
+        }
+
+        // Updates
+        $expectedCash += $updates['cash']['in'] - $updates['cash']['out'];
+        foreach ($updates['products'] as $productId => $productUpdates) {
+            if (array_key_exists($productId, $expectedProductCounts)) {
+                $expectedProductCounts[$productId] += $productUpdates['in'] - $productUpdates['out'];
+            } else {
+                $expectedProductCounts[$productId] = $productUpdates['in'] - $productUpdates['out'];
+            }
+        }
+
+        // Now
+        $realCash = $this->getCash();
+        $realProductCounts = array();
+        foreach ($this->getReportRows() as $row) {
+            $realProductCounts[$row->getProductId()] = $row->getCount();
+            $prices[$row->getProductId()] = $row->getCurrentPrice();
+        }
+
+        //difference
+        $cashDiff = $expectedCash - $realCash;
+        $productDiff = 0;
+        foreach (array_unique(array_merge(array_keys($expectedProductCounts), array_keys($realProductCounts))) as $productId) {
+            $expected = array_key_exists($productId, $expectedProductCounts) ? $expectedProductCounts[$productId] : 0;
+            $real = array_key_exists($productId, $realProductCounts) ? $realProductCounts[$productId] : 0;
+            $price = array_key_exists($productId, $prices) ? $prices[$productId] : 0;
+            $productDiff += ($expected - $real) * $price;
+        }
+        
+        return $cashDiff + $productDiff;
     }
 
 

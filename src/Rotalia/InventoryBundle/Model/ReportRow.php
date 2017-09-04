@@ -7,6 +7,12 @@ use Rotalia\InventoryBundle\Model\om\BaseReportRow;
 
 class ReportRow extends BaseReportRow
 {
+    public function getProduct(PropelPDO $con = null, $doQuery = true) {
+        // Necessary for updateCurrentPrice to work properly
+        $product = parent::getProduct($con, $doQuery);
+        $product->setConventId($this->getReport()->getConventId());
+        return $product;
+    }
     /**
      * @return float
      */
