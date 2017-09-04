@@ -110,10 +110,10 @@
                 }
             },
             behaviors: [KassaBehavior],
-            cleanUp: function () {
+            reset: function () {
+                this.set('cashOut', 0);
                 this.set('bills', this.properties.bills.value());
             },
-
             _computeBillSum: function (value, count) {
                 return this.eur2str(value * count);
             },

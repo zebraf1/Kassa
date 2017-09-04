@@ -672,7 +672,7 @@ class Report extends BaseReport
             $price = array_key_exists($productId, $prices) ? $prices[$productId] : 0;
             $productDiff += ($expected - $real) * $price;
         }
-        
+
         return $cashDiff + $productDiff;
     }
 

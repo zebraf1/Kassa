@@ -254,6 +254,7 @@
                     },
                     onSuccess: function () {
                         this.$$('kassa-aruanne-summary').reset();
+                        this.$$('kassa-aruanne-sularaha').reset();
 	                    this._loadLastReport(this.pageActive, this.conventId, this.target);
 	                }.bind(this),
                     onError: function () {
