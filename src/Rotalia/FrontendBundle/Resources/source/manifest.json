@@ -16,8 +16,8 @@
       "type": "image/png"
     }
   ],
-  "scope": "/fe/",
-  "start_url": "/fe/",
+  "scope": "/",
+  "start_url": "/",
   "display": "fullscreen",
   "orientation": "portrait",
   "background_color": "#0077c8",
