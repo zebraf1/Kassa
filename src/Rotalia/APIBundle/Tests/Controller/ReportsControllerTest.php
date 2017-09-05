@@ -163,7 +163,6 @@ class ReportsControllerTest extends WebTestCase
 
         $response = static::$client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());
-
         $productInfo->reload();
 
         $this->assertEquals($expectedStorageCount, $productInfo->getStorageCount());

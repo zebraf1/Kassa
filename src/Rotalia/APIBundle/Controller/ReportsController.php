@@ -134,7 +134,8 @@ class ReportsController extends DefaultController
      * @param $id
      * @return JSendResponse
      */
-    public function getAction(Request $request, $id) {
+    public function getAction(Request $request, $id)
+    {
 
         $memberConventId = $this->getMember()->getKoondisedId();
 
@@ -305,7 +306,9 @@ class ReportsController extends DefaultController
             $report = $form->getData();
             if ($report->isNew()) {
                 $report->setMember($this->getUser()->getMember());
-                $report->updateRowPrices();
+                if (!$report->isUpdate()) {
+                    $report->updateRowPrices();
+                }
             }
 
             if (!$report->isUpdate() && $report->isLatest()) {

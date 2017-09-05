@@ -29,8 +29,7 @@
   "builds": [
     {
       "preset": "es5-bundled",
-      "name": "default",
-      "addServiceWorker": false
+      "name": "default"
     }
   ],
   "lint": {
