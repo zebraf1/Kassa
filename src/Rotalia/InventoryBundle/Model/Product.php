@@ -12,6 +12,11 @@ class Product extends BaseProduct
     const INVENTORY_TYPE_WAREHOUSE = 'warehouse';
     const INVENTORY_TYPE_STORAGE = 'storage';
 
+    public static $types = [
+        self::INVENTORY_TYPE_WAREHOUSE,
+        self::INVENTORY_TYPE_STORAGE,
+    ];
+
     public $conventId = null;
 
     /**

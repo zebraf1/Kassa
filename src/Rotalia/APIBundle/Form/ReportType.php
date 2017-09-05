@@ -16,12 +16,10 @@ class ReportType extends AbstractType
     {
         $builder
             ->add('cash', 'number')
-            ->add('source', 'choice', array(
-                'choices' => [ReportPeer::SOURCE_STORAGE => 'Kassa', ReportPeer::SOURCE_WAREHOUSE => 'Ladu'],
+            ->add('source', 'text', array(
                 'required' => false
             ))
-            ->add('target', 'choice', array(
-                'choices' => [ReportPeer::TARGET_STORAGE => 'Kassa', ReportPeer::TARGET_WAREHOUSE => 'Ladu'],
+            ->add('target', 'text', array(
                 'required' => false
             ))
             ->add('reportRows', 'collection', [

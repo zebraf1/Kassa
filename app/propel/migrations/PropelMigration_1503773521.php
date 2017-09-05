@@ -43,10 +43,10 @@ class PropelMigration_1503773521
 SET FOREIGN_KEY_CHECKS = 0;
 
 ALTER TABLE `ollekassa_report`
-    ADD `target` TINYINT AFTER `type`;
+    ADD `target` VARCHAR(100) AFTER `type`;
     
 ALTER TABLE `ollekassa_report`
-    ADD `source` TINYINT AFTER `type`;
+    ADD `source` VARCHAR(100) AFTER `type`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
