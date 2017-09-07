@@ -312,9 +312,9 @@ class ReportsController extends DefaultController
             }
 
             if (!$report->isUpdate() && $report->isLatest()) {
-                // add cash out to a update report
+                // add cash out to a update report only if there is a cash difference
                 $cashOut = doubleval($request->get('cashOut', 0));
-                if ($cashOut !== 0) {
+                if (abs($cashOut) > 0.001) {
                     $updateReport = new Report();
                     $updateReport->setConventId($report->getConventId());
                     $updateReport->setMember($this->getMember());

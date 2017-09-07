@@ -95,7 +95,7 @@
                     type: String
                 }
             },
-            behaviors: [PageBehavior, KassaBehavior],
+            behaviors: [KassaBehavior, PageBehavior],
 	        observers: ['_loadPurchases(paceActive)'],
             setUp: function () {
                 this.$$('kassa-date-picker').ready();

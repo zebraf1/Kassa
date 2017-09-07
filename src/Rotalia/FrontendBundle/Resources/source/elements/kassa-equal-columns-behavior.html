@@ -4,7 +4,7 @@
     /**
      * @polymerBehavior
      */
-    EqualColumnsBehavior = {
+    EqualColumnsBehaviorImpl = {
 
         ready: function () {
             window.addEventListener('resize', this.setColumnWidths.bind(this));
@@ -33,5 +33,10 @@
                 }
             }.bind(this), 10);
         }
-    }
+    };
+
+    /**
+     * @polymerBehavior
+     */
+    EqualColumnsBehavior = [EqualColumnsBehaviorImpl];
 </script>

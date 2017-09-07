@@ -80,7 +80,7 @@
                     type: String
                 }
             },
-            behaviors: [PageBehavior, KassaBehavior],
+            behaviors: [KassaBehavior, PageBehavior],
             setUp: function () {
                 this.$$('kassa-date-picker').ready();
                 this._loadTransfers();
