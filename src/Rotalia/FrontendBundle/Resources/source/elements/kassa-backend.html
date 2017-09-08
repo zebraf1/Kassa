@@ -478,9 +478,14 @@
                         if (data.onError) {
                             data.onError.call();
                         } else {
-                            console.error(error);
+                            // On else sees, kuna ei taha uuesti proovida kõiki päringuid. Näiteks POST purcache.
+                            if (typeof error === 'object') {
+                                this.async(function () {
+                                    this.doAction(data);
+                                }.bind(this), 500);
+                            }
                         }
-                    });
+                    }.bind(this));
                 }
             },
             _formatBody: function (body, inner) {
@@ -547,13 +552,14 @@
                     if (event.detail.request.xhr.response.status === 'fail' || event.detail.request.xhr.response.status === 'error') {
                         return event.detail.request.xhr.response;
                     } else {
-                        console.error('Vigane vastus serverilt.', event);
+                        console.error(event);
+                        return {message: 'Vigane vastus serverilt'};
                     }
                 } else {
-                    console.error('Ei saanud vastust serverilt.', event);
+                    return {message: 'Ei saanud vastust serverilt'};
                 }
 
-                return 'Tekkis tundmatu viga.'
+                return {message: 'Tekkis tundmatu viga.'};
             },
             _computeURL: function (endpoint, id) {
                 if (id === undefined || id === null) {
