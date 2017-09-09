@@ -146,10 +146,11 @@
             },
             behaviors: [KassaBehavior],
             /* Authentication */
-            doLogin: function (username, password) {
+            doLogin: function (username, password, rememberMe) {
                 this.$.authenticationPost.set('body', {
                     username: username,
                     password: password,
+                    rememberMe: rememberMe,
                     csrfToken: this.csrfToken
                 });
                 return this.$.authenticationPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
@@ -386,7 +387,7 @@
                 switch (data.action) {
                     /* Authentication */
                     case 'doLogin':
-                        promise = this.doLogin(data.username, data.password);
+                        promise = this.doLogin(data.username, data.password, data.rememberMe);
                         break;
                     case 'doLogout':
                         promise = this.doLogout();

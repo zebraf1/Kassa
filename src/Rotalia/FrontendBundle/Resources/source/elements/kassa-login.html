@@ -1,10 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
 
 <link rel="import" href="kassa-behavior.html">
 <link rel="import" href="kassa-page-behavior.html">
 <link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-material.html">
 
 <dom-module id="kassa-login">
 	<template>
@@ -16,16 +18,23 @@
 				padding-bottom: 300px;
 			}
 
+			paper-toggle-button {
+				--paper-toggle-button-label-color: var(--secondary-text-color);
+			}
+
 		</style>
 
 		<main hidden$="[[_hideForm]]">
 			<form name="loginForm" id="loginForm" action="index.html">
 				<paper-input name="username" label="Kasutajanimi" type="text" disabled="[[confirmed]]"
-				             value="{{_username}}" required autocomplete="username"></paper-input>
+				             value="{{username}}" required autocomplete="username"></paper-input>
 				<paper-input name="password" label="Parool" type="password" disabled="[[confirmed]]"
-				             value="{{_password}}" required autocomplete="current-password"></paper-input>
-				<kassa-confirm-button id="confirmButton" confirmed="{{confirmed}}" on-kassa-confirm="_doLogin">Sisene
-				</kassa-confirm-button>
+				             value="{{password}}" required autocomplete="current-password"></paper-input>
+				<kassa-material direction="horizontal" flat>
+					<paper-toggle-button disabled="[[confirmed]]" checked="{{rememberMe}}">Pea mind meeles</paper-toggle-button>
+					<kassa-confirm-button id="confirmButton" confirmed="{{confirmed}}" on-kassa-confirm="_doLogin" class="row-break">Sisene
+					</kassa-confirm-button>
+				</kassa-material>
 			</form>
 		</main>
 
@@ -34,11 +43,15 @@
         Polymer({
             is: "kassa-login",
             properties: {
-                _username: {
+                username: {
                     type: String
                 },
-                _password: {
+                password: {
                     type: String
+                },
+                rememberMe: {
+                    type: Boolean,
+	                value: true
                 },
                 _hideForm: {
                     type: Boolean,
@@ -60,8 +73,9 @@
             },
             cleanUp: function () {
                 this.$.confirmButton.reset();
-                this.set('_username', '');
-                this.set('_password', '');
+                this.set('username', '');
+                this.set('password', '');
+                this.set('rememberMe', true);
             },
             _doLogin: function (event) {
                 // Kui vajutati eneterit, siis ära tee midagi.
@@ -76,8 +90,11 @@
 
                 this.fire('kassa-backend-action',
                     {
-                        action: 'doLogin', username: this._username, password: this._password,
-                        onError: this.cleanUp.bind(this)
+                        action: 'doLogin', username: this.username, password: this.password, rememberMe: this.rememberMe,
+                        onError: function () {
+                            this.$.confirmButton.reset();
+                            this.set('password', '');
+                        }.bind(this)
                     })
             }
         })
