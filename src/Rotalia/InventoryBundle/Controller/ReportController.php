@@ -20,10 +20,12 @@ class ReportController extends DefaultController
     public function listAction(Request $request)
     {
         $this->requireUser();
+        $conventId = $this->getMember()->getConventId();
         
         $activeReport = ReportQuery::create()
             ->filterByCreatedToday()
             ->filterByType(Report::TYPE_VERIFICATION) //Avoid update reports as active
+            ->filterByConventId($conventId)
             ->findOneOrCreate()
         ;
 
@@ -49,6 +51,7 @@ class ReportController extends DefaultController
         /** @var ReportQuery $reportQuery */
         $reportQuery = ReportQuery::create()
             ->orderByCreatedAt(\Criteria::DESC)
+            ->filterByConventId($conventId)
             ->limit(4);
 
         //Exclude active report, which is passed separately
@@ -86,12 +89,15 @@ class ReportController extends DefaultController
     {
         $this->requireUser();
 
+        $conventId = $this->getMember()->getConventId();
+
         $page = $request->get('page', 1);
 
         $products = ProductQuery::getActiveProductsFirst();
 
         $reports = ReportQuery::create()
             ->orderByCreatedAt(\Criteria::DESC)
+            ->filterByConventId($conventId)
             ->paginate($page, 5)
         ;
 
