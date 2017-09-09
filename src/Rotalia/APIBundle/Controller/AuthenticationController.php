@@ -157,6 +157,7 @@ class AuthenticationController extends DefaultController
             ]);
             $rememberMeToken = new RememberMeToken($user, "main", $this->getParameter('secret'));
             $rememberMeService->loginSuccess($request, $response, $rememberMeToken);
+            $tokenStorage->setToken($rememberMeToken);
         }
 
         return $response;
