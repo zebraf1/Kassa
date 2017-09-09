@@ -10,7 +10,7 @@ class HomeControllerTest extends WebTestCase
     public function testHomeSuccessful()
     {
         $this->loginSimpleUser();
-        $crawler = self::$client->request('GET', '/');
+        $crawler = self::$client->request('GET', '/vana/');
 
         $response = static::$client->getResponse();
         $this->assertEquals(200, $response->getStatusCode(), 'Failed asserting that homepage returns 200');
@@ -19,7 +19,7 @@ class HomeControllerTest extends WebTestCase
 
     public function testHomeUnauthorizedRedirect()
     {
-        self::$client->request('GET', '/');
+        self::$client->request('GET', '/vana/');
 
         $response = static::$client->getResponse();
         $this->assertTrue($response->isRedirection(), 'Failed asserting that homepage was redirected');

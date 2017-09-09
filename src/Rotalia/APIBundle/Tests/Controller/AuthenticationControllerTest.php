@@ -201,6 +201,6 @@ class AuthenticationControllerTest extends WebTestCase
         $postResult = json_decode($response->getContent());
 
         $this->assertEquals(401, $response->getStatusCode(), 'Failed: '.json_encode($postResult));
-        $this->assertEquals('Vale parool', $postResult->message);
+        $this->assertEquals('Vale kasutaja/parool', $postResult->message);
     }
 }

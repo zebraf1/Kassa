@@ -12,7 +12,7 @@ class InventoryControllerTest extends WebTestCase
     {
         $product = ProductQuery::create()->findOneByName('A le Coq Premium');
         $this->loginAdmin();
-        $crawler = self::$client->request('GET', '/tooted/muuda/'.$product->getId().'/');
+        $crawler = self::$client->request('GET', '/vana/tooted/muuda/'.$product->getId().'/');
 
         $response = self::$client->getResponse();
 

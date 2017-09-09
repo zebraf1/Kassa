@@ -1,6 +1,6 @@
 rotalia_frontend:
     resource: "@RotaliaFrontendBundle/Resources/config/routing.yml"
-    prefix:
+    prefix: /
 
 #rotalia_user:
 #    resource: "@RotaliaUserBundle/Resources/config/routing.yml"
@@ -8,11 +8,11 @@ rotalia_frontend:
 
 _welcome:
     pattern:  /
-    defaults: { _controller: RotaliaInventoryBundle:Home:home }
+    defaults: { _controller: RotaliaFrontendBundle:Home:index, fname:"index", extension:"html"}
 
 rotalia_inventory:
     resource: "@RotaliaInventoryBundle/Resources/config/routing.yml"
-    prefix:   /vana
+    prefix:   /vana/
 
 rotalia_api:
     resource: "@RotaliaAPIBundle/Resources/config/routing.yml"
