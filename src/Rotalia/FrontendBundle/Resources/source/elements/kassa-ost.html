@@ -92,13 +92,11 @@
                 },
                 // Kõik tooted, mida saab osta
                 products: {
-                    type: Array,
-                    value: []
+                    type: Array
                 },
                 // Kõik tootegrupid */
                 productGroups: {
-                    type: Array,
-                    value: []
+                    type: Array
                 },
                 conventId: {
                     type: Number
@@ -138,18 +136,21 @@
                 this._set_filterInput(this.$.filterInput);
                 this._set_productCountInput(this.$.productCountInput);
             },
+	        setUp: function () {
+                if (this.productGroups === undefined) {
+                    this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
+                }
+            },
             cleanUp: function () {
                 this.$.memberPicker.value = '';
                 this.set('ostFixed', false);
-                this.set('products', []);
-                this.set('productGroups', []);
+                this.set('products', undefined);
                 this._set_chosenProducts([]);
             },
             _loadProducts: function (pageActive, conventId) {
                 if (pageActive && (conventId !== undefined)) {
                     this.fire('kassa-page-loading');
-                    this.cleanUp();
-                    this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
+                    this._set_chosenProducts([]);
                     this.fire('kassa-backend-action', {
                         action: 'doProductsGetActive',
 	                    conventId: conventId,
@@ -185,9 +186,10 @@
                     }
 
                     return result
-                } else {
-                    return []
                 }
+
+	            return []
+
             },
             _selectFilterInput: function () {
                 // Highligthime teksti, et oleks mugavam kirjutada

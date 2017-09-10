@@ -107,12 +107,14 @@
                     type: Object
 	            },
 	            products: {
-                    type: Array,
-		            value: []
+                    type: Array
+	            },
+	            productGroups: {
+                    type: Array
 	            },
 	            mergedProducts: {
 					type: Array,
-		            computed: '_mergeProducts(products, lastReport, updates)'
+		            computed: '_mergeProducts(products, lastReport, updates, productGroups)'
 	            },
 	            target: {
                     type: String,
@@ -139,20 +141,31 @@
                 '_loadProducts(pageActive, conventId)',
                 '_loadLastReport(pageActive, conventId, target)'
             ],
+	        setUp: function () {
+                if (this.productGroups === undefined) {
+                    this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
+                }
+            },
 	        cleanUp: function () {
 		        this.set('lastIndex', 0);
+		        this.set('products', undefined);
 		        this.set('updates',  undefined);
 		        this.set('reportFixed', false);
             },
 	        _loadProducts: function(pageActive, conventId) {
                 if (pageActive && (conventId !== undefined)) {
+                    this.set('products', undefined);
                     this.fire('kassa-backend-action', {action: 'doProductsGetActive', conventId: conventId});
                 }
 	        },
-            _loadLastReport: function (pageActive, conventId, target) {
+            _loadLastReport: function (pageActive, conventId, target, productGroups) {
                 if (pageActive && (conventId !== undefined) && (target !== undefined)) {
                     this.fire('kassa-page-loading');
-                    this.cleanUp();
+
+                    this.set('lastIndex', 0);
+                    this.set('updates',  undefined);
+                    this.set('reportFixed', false);
+
                     this.fire('kassa-backend-action', {
                         action: 'doSingleReportGet',
 	                    id: -1,
@@ -182,14 +195,14 @@
 	            }
             },
 	        // Merge products with last report
-            _mergeProducts: function(products, lastReport, updates) {
-				var mergedProducts = [];
+            _mergeProducts: function(products, lastReport, updates, productGroups) {
+                let mergedProducts = [];
 
-				if (lastReport !== undefined && updates !== undefined) {
-					for (var i=0; i < products.length; i++) {
-					    var newProduct = products[i];
+                if (products !== undefined && lastReport !== undefined && updates !== undefined && productGroups !== undefined) {
+					for (let i=0; i < products.length; i++) {
+                        let newProduct = products[i];
 
-					    if (updates['products'] === undefined || updates['products'][newProduct['id']] === undefined) {
+                        if (updates['products'] === undefined || updates['products'][newProduct['id']] === undefined) {
 	                        newProduct['updates'] = {'in': 0, 'out': 0};
 					    } else {
 					        newProduct['updates'] = updates['products'][newProduct['id']];
@@ -198,7 +211,7 @@
                         newProduct['previousCount'] = 0;
 
 					    if (this.isTrue(lastReport)) {
-                            for (var j = 0; j < lastReport.reportRows.length; j++) {
+                            for (let j = 0; j < lastReport.reportRows.length; j++) {
                                 if (lastReport.reportRows[j].product.id == products[i].id) {
                                     newProduct['previousCount'] = lastReport.reportRows[j].count;
                                     break;
@@ -211,8 +224,27 @@
 
 					    mergedProducts.push(newProduct);
 					}
+
+                    // Prepare productGroups
+                    let productGroupIds = productGroups.map(productGroup => productGroup.id);
+
+                    // Sort products
+					mergedProducts = mergedProducts.sort(function (a, b) {
+						let aIndx = productGroupIds.indexOf(a.productGroupId);
+						if (aIndx === -1) {
+						    aIndx = productGroupIds.length;
+						}
+
+                        let bIndx = productGroupIds.indexOf(b.productGroupId);
+                        if (bIndx === -1) {
+                            bIndx = productGroupIds.length;
+                        }
+
+                        return aIndx - bIndx;
+                    });
 				}
-	            return mergedProducts;
+
+	            return mergedProducts
             },
             _isProductHidden: function (index, lastIndex) {
 	            return index > lastIndex;
@@ -223,6 +255,9 @@
                 }
             },
             _cashHidden: function (lastIndex, products) {
+                if (products === undefined) {
+                    return true;
+                }
 	            return lastIndex < products.length;
             },
             _onCashConfirmed: function () {
@@ -255,6 +290,7 @@
                     onSuccess: function () {
                         this.$$('kassa-aruanne-summary').reset();
                         this.$$('kassa-aruanne-sularaha').reset();
+                        this._loadProducts(this.pageActive, this.conventId);
 	                    this._loadLastReport(this.pageActive, this.conventId, this.target);
 	                }.bind(this),
                     onError: function () {
