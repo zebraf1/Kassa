@@ -28,19 +28,19 @@ class ProductInfo extends BaseProductInfo
     }
 
     /**
-     * @return float
+     * @return int
      */
     public function getStorageCount()
     {
-        return doubleval($this->storage_count);
+        return (int)$this->storage_count;
     }
 
     /**
-     * @return float
+     * @return int
      */
     public function getWarehouseCount()
     {
-        return doubleval($this->warehouse_count);
+        return (int)$this->warehouse_count;
     }
 
     /**

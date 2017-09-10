@@ -203,15 +203,15 @@ class Product extends BaseProduct
             'id' => $this->getId(),
             'name' => $this->getAjaxName(),
             'productCodes' => explode(',', $this->getProductCode()),
-            'price' => $productInfo ? doubleval($productInfo->getPrice()) : null,
-            'amount' => doubleval($this->getAmount()),
+            'price' => $productInfo ? round($productInfo->getPrice(), 2) : null,
+            'amount' => round($this->getAmount(), 2),
             'amountType' => $this->getAmountType(),
             'status' => $productInfo ? $productInfo->getStatus() : null,
             'productGroupId' => $this->getProductGroupId(),
             'inventoryCounts' => $productInfo ?
                 [
-                    'warehouse' => doubleval($productInfo->getWarehouseCount()),
-                    'storage' => doubleval($productInfo->getStorageCount()),
+                    'warehouse' => $productInfo->getWarehouseCount(),
+                    'storage' => $productInfo->getStorageCount(),
                 ] : null,
         ];
     }
