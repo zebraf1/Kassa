@@ -304,7 +304,7 @@
             },
             doPointOfSalesDelete: function (pointOfSaleId) {
                 this.set('_id', pointOfSaleId);
-                return this.$.pointOfSalesDelete.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                return this.$.pointOfSalesDelete.generateRequest().completes.then(this._checkSuccess).then(function () {
                     this._deleteItems('pointOfSales', this.pointOfSales, pointOfSaleId);
                     this.fire('kassa-message-success', 'Müügipunkt edukalt kustutatud');
                 }.bind(this))
@@ -318,7 +318,7 @@
                 }));
                 return this.$.purchasePost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.fire('kassa-message-success', 'Ost edukalt sooritatud');
-                    if (memberId == this.member.id) {
+                    if (memberId === this.member.id) {
                         this.set('member.creditBalance', data.newCredit);
                     }
                 }.bind(this))
@@ -369,7 +369,7 @@
                     Report: Report,
 	                cashOut: cashOut
                 }));
-                return this.$.reportsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                return this.$.reportsPost.generateRequest().completes.then(this._checkSuccess).then(function () {
                     this.fire('kassa-message-success', 'Aruanne edukalt lisatud');
                 }.bind(this))
             },
@@ -427,7 +427,7 @@
             },
             /* General */
             doAction: function (data) {
-                var promise;
+                let promise;
                 switch (data.action) {
                     /* Authentication */
                     case 'doLogin':
@@ -438,7 +438,7 @@
                         break;
                     case 'doAuthenticationGet':
                         promise = this.doAuthenticationGet();
-                        break
+                        break;
 	                /* Members */
 	                case 'doMembersGet':
 	                    promise = this.doMembersGet(data.conventId, data.isActive);
@@ -543,8 +543,8 @@
                 }
 
 
-                var newBody = {};
-                for (var key in body) {
+                const newBody = {};
+                for (let key in body) {
                     if (body.hasOwnProperty(key)) {
 
                         if (body[key] === null || body[key] === undefined || body[key] === '') {
@@ -565,7 +565,7 @@
                                 }
                             }
                         } else if (Array.isArray(body[key])) {
-                            for (var i = 0; i < body[key].length; i++) {
+                            for (let i = 0; i < body[key].length; i++) {
                                 var innerBody = this._formatBody(body[key][i], true);
                                 for (var innerKey in innerBody) {
                                     if (innerBody.hasOwnProperty(innerKey)) {
@@ -607,8 +607,6 @@
                 } else {
                     return {message: 'Ei saanud vastust serverilt'};
                 }
-
-                return {message: 'Tekkis tundmatu viga.'};
             },
             _computeURL: function (endpoint, id) {
                 if (id === undefined || id === null) {
@@ -621,11 +619,11 @@
             _onRequestError: function (event) {
                 event.stopPropagation();
 
-                var response = this._checkError(event);
+                const response = this._checkError(event);
                 this.fire('kassa-message-error', {message: response.message, data: response.data});
             },
             _updateItems: function (itemsPath, items, newItem) {
-                for (var i = 0; i < items.length; i++) {
+                for (let i = 0; i < items.length; i++) {
                     if (items[i]['id'] === newItem['id']) {
                         this.set(itemsPath + '.' + i, newItem);
                         return true
@@ -634,7 +632,7 @@
                 return false
             },
 	        _deleteItems: function (itemsPath, items, id) {
-                for (var i = 0; i < items.length; i++) {
+                for (let i = 0; i < items.length; i++) {
                     if (items[i]['id'] === id) {
                         this.splice(itemsPath, i, 1);
                         return true

@@ -168,18 +168,18 @@
                 this.listen(newVal, 'kassa-confirm', '_onDialogSubbmit');
             },
             _addItem: function () {
-                var fields = this.dialog.querySelectorAll('[data-field]');
+                const fields = this.dialog.querySelectorAll('[data-field]');
 
-                for (var i = 0; i < fields.length; i++) {
+                for (let i = 0; i < fields.length; i++) {
                     this._setElementValue(fields[i], '');
                 }
                 this._set_editItemId(null);
                 this.dialog.open();
             },
             _editItem: function (event) {
-                var fields = this.dialog.querySelectorAll('[data-field]');
+                const fields = this.dialog.querySelectorAll('[data-field]');
 
-                for (var i = 0; i < fields.length; i++) {
+                for (let i = 0; i < fields.length; i++) {
                     this._setElementValue(fields[i], event.model.item[fields[i].getAttribute('data-field')]);
                 }
                 this._set_editItemId(event.model.item.id);
@@ -188,18 +188,18 @@
             _deleteItem: function (event) {
                 this.fire('kassa-backend-action', {action: this.deleteFunc, id: event.model.item.id})
             },
-            _onDialogSubbmit: function (event) {
-                var data = {
+            _onDialogSubbmit: function () {
+                const data = {
                     action: this._editItemId ? this.editFunc : this.addFunc,
                     id: this._editItemId,
                     conventId: this.conventId,
                     itemType: {},
                     onSuccess: this._onDialogSuccess.bind(this),
                     onError: this._onDialogError.bind(this)
-                }
-                var fields = this.dialog.querySelectorAll('[data-field]')
+                };
+                const fields = this.dialog.querySelectorAll('[data-field]');
 
-                for (var i = 0; i < fields.length; i++) {
+                for (let i = 0; i < fields.length; i++) {
                     data.itemType[fields[i].getAttribute('data-field')] = this._getElementvalue(fields[i]);
                 }
                 this.fire('kassa-backend-action', data);

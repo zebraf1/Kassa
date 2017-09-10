@@ -82,8 +82,8 @@
             },
             behaviors: [KassaBehavior, RowDetailsBehavior],
             _computeStatus: function (sum, nettingDone) {
-	            var sentences;
-	            if (sum > 0) {
+                let sentences;
+                if (sum > 0) {
                     sentences = ['Makse saamata', 'Makse saadud'];
 	            } else if(sum < 0) {
                     sentences = ['Makse sooritamata', 'Makse sooritatud'];
@@ -95,7 +95,7 @@
             },
 	        _computeButtonText: function(selectedConventId, creditNettingRows) {
                 if (selectedConventId !== undefined && creditNettingRows !== undefined) {
-                    for (var i = 0; i < creditNettingRows.length; i++) {
+                    for (let i = 0; i < creditNettingRows.length; i++) {
                         if (selectedConventId === creditNettingRows[i].conventId) {
                             if (creditNettingRows[i].nettingDone) {
                                 return 'Tühista';
@@ -114,7 +114,7 @@
             },
 	        _isButtonHidden: function (selectedConventId, creditNettingRows) {
                 if (selectedConventId !== undefined && creditNettingRows !== undefined) {
-                    for (var i = 0; i < creditNettingRows.length; i++) {
+                    for (let i = 0; i < creditNettingRows.length; i++) {
                         if (selectedConventId === creditNettingRows[i].conventId) {
                             return creditNettingRows[i].sum === 0;
                         }
@@ -124,7 +124,7 @@
 		        return true
             },
             _confirmAction: function () {
-                for (var i = 0; i < this.item.creditNettingRows.length; i++) {
+                for (let i = 0; i < this.item.creditNettingRows.length; i++) {
                     if (this.conventId === this.item.creditNettingRows[i].conventId) {
                         this.fire('kassa-backend-action', {
                             action: 'doCreditNettingsPatch',

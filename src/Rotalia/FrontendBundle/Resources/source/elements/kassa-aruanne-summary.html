@@ -157,11 +157,11 @@
                 }
 
 
-                var _productsStart = 0;
-                var _productsIn = 0;
-                var _creditPurchases = 0;
-                var _productsEnd = 0;
-                for (var i = 0; i < this.products.length; i++) {
+                let _productsStart = 0;
+                let _productsIn = 0;
+                let _creditPurchases = 0;
+                let _productsEnd = 0;
+                for (let i = 0; i < this.products.length; i++) {
                     _productsStart += this.products[i].previousCount * this.products[i].price;
                     _productsIn += this.products[i].updates.in * this.products[i].price;
                     _creditPurchases += this.products[i].updates.out * this.products[i].price;

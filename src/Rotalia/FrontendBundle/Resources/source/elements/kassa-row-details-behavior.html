@@ -39,7 +39,7 @@
         },
         _activeItemChanged: function(item, activeItem) {
             if (this.isTrue(item) && this.isTrue(activeItem) && !this.isHidden) {
-                if (item.id == activeItem.item.id) {
+                if (item.id === activeItem.item.id) {
                     this.rowActivated(activeItem.callback);
                 }
             }

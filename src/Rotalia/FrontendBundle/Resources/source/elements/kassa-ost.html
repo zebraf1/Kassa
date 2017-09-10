@@ -162,10 +162,11 @@
             },
             _computeProductGroups: function (productGroups, products) {
                 if (this.pageActive && this.isTrue(products) && this.isTrue(productGroups)) {
-                    var groups = {};
+                    let i;
+                    const groups = {};
 
-                    for (var i = 0; i < products.length; i++) {
-                        var product = products[i];
+                    for (i = 0; i < products.length; i++) {
+                        const product = products[i];
                         if (!groups[product.productGroupId]) {
                             groups[product.productGroupId] = [];
                         }
@@ -173,8 +174,8 @@
                         groups[product.productGroupId].push(product);
                     }
 
-                    var result = [];
-                    for (var i = 0; i < productGroups.length; i++) {
+                    const result = [];
+                    for (i = 0; i < productGroups.length; i++) {
                         result.push({
                             name: productGroups[i].name,
                             products: typeof groups[productGroups[i].id] === 'undefined' ? [] : groups[productGroups[i].id]
@@ -198,9 +199,9 @@
             },
             _computeOstTotal: function (chosenProducts) {
                 //Arvutab kuvamiseks ostu summa
-                var total = 0;
+                let total = 0;
 
-                for (var i = 0; i < chosenProducts.base.length; i++) {
+                for (let i = 0; i < chosenProducts.base.length; i++) {
                     total += this.eur2cent(chosenProducts.base[i].count * chosenProducts.base[i].price);
                 }
 
@@ -208,8 +209,8 @@
             },
             _selectToode: function () {
                 // Enteri vajutamisel vali esimene toode
-                var productGroups = this.$.mainContent.querySelectorAll('kassa-ost-tootegrupp');
-                for (var i = 0; i < productGroups.length; i++) {
+                const productGroups = this.$.mainContent.querySelectorAll('kassa-ost-tootegrupp');
+                for (let i = 0; i < productGroups.length; i++) {
                     if (productGroups[i].selectFirst()) {
                         return null
                     }

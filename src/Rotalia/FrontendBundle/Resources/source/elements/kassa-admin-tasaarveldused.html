@@ -51,9 +51,9 @@
                 });
             },
 	        _computeStatus: function (creditNetting) {
-                var isDone = true;
+                let isDone = true;
                 if (this.isTrue(creditNetting)) {
-                    for (var i=0; i<creditNetting.creditNettingRows.length; i++) {
+                    for (let i=0; i<creditNetting.creditNettingRows.length; i++) {
                         if (creditNetting.creditNettingRows[i].nettingDone === 0) {
                             isDone = false;
                         }

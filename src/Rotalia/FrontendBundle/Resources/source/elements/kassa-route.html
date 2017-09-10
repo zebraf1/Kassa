@@ -36,7 +36,7 @@
             observers: ['_computePage(routeData, member, navigation, conventId)'],
             behaviors: [KassaBehavior],
             _computePage: function (routeData, member, navigation, conventId) {
-                var _default = 'ost';
+                const _default = 'ost';
 
                 //Pole sisse logitud?
                 if (!this.isTrue(member)) {
@@ -54,7 +54,7 @@
                         return null
                     }
 
-                    for (var i = 0; i < navigation.length; i++) {
+                    for (let i = 0; i < navigation.length; i++) {
                         if (routeData.page === navigation[i].page) {
 
                             //Has correct rights?

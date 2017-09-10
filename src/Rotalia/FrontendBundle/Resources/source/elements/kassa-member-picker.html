@@ -66,15 +66,15 @@
             _doMembersGet: function (filter) {
 	            if (filter !== undefined && filter !== '') {
 	                this.debounce('membersGet', function () {
-	                    var params = {'name': filter};
+                        const params = {'name': filter};
 
-	                    if (this.activeMembers) {
+                        if (this.activeMembers) {
 	                        params['isActive'] = true;
 	                    }
 
                         this.$.membersGet.set('params', params);
                         this.$.membersGet.generateRequest().completes.then(function (result) {
-                            var data = result.xhr.response.data;
+                            const data = result.xhr.response.data;
                             this.set('members', data.members);
                         }.bind(this));
                     }.bind(this), 200);

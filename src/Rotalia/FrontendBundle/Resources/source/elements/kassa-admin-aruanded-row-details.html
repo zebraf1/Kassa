@@ -80,7 +80,7 @@
             behaviors: [KassaBehavior, RowDetailsBehavior],
             rowActivated: function (callback) {
                 this.$.reportGet.generateRequest().completes.then(function (result) {
-                    var data = result.xhr.response.data;
+                    const data = result.xhr.response.data;
                     this.set('rows', this._computeRows(data.report, data.updates));
                     this.async(function () {
                         callback()
@@ -88,17 +88,17 @@
                 }.bind(this));
             },
             _computeRows: function (report, updates) {
-                var rows = [];
+                const rows = [];
 
-                for (var i=0; i<report.reportRows.length; i++) {
-                    var row = {};
+                for (let i=0; i<report.reportRows.length; i++) {
+                    const row = {};
 
                     row.name = report.reportRows[i].product.name;
                     row.amount = this.formatAmount(report.reportRows[i].product.amount, report.reportRows[i].product.amountType);
                     row.startCount = 0;
                     if (this.isTrue(report.previousReport)) {
-                        for (var j = 0; j < report.previousReport.reportRows.length; j++) {
-                            if (report.reportRows[i].product.id == report.previousReport.reportRows[j].product.id) {
+                        for (let j = 0; j < report.previousReport.reportRows.length; j++) {
+                            if (report.reportRows[i].product.id === report.previousReport.reportRows[j].product.id) {
                                 row.startCount = report.previousReport.reportRows[j].count;
                                 break;
                             }

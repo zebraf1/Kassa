@@ -158,7 +158,7 @@
                     this.fire('kassa-backend-action', {action: 'doProductsGetActive', conventId: conventId});
                 }
 	        },
-            _loadLastReport: function (pageActive, conventId, target, productGroups) {
+            _loadLastReport: function (pageActive, conventId, target) {
                 if (pageActive && (conventId !== undefined) && (target !== undefined)) {
                     this.fire('kassa-page-loading');
 
@@ -212,7 +212,7 @@
 
 					    if (this.isTrue(lastReport)) {
                             for (let j = 0; j < lastReport.reportRows.length; j++) {
-                                if (lastReport.reportRows[j].product.id == products[i].id) {
+                                if (lastReport.reportRows[j].product.id === products[i].id) {
                                     newProduct['previousCount'] = lastReport.reportRows[j].count;
                                     break;
                                 }

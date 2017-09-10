@@ -99,8 +99,8 @@
                 this.set('_error', true);
                 this.set('text', errorMessage.message);
 
-                var details = []
-                for (var key in errorMessage.data) {
+                const details = [];
+                for (let key in errorMessage.data) {
                     if (errorMessage.data.hasOwnProperty(key)) {
                         details.push({key: key, value: errorMessage.data[key]})
                     }
@@ -112,7 +112,7 @@
             open: function () {
                 return this.$.toast.open();
             },
-            close: function (e) {
+            close: function () {
                 return this.$.toast.close();
             }
         })

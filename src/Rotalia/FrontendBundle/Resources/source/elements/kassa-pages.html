@@ -95,10 +95,10 @@
                     this._setShown(this.selected);
                 }
             },
-            _toggleShown: function (newShown, oldShown) {
+            _toggleShown: function (newShown) {
 	            if (this.items !== undefined) {
-                    for (var i = 0; i < this.items.length; i++) {
-	                    this.toggleClass('kassa-shown', this.items[i].dataset.page == newShown, this.items[i]);
+                    for (let i = 0; i < this.items.length; i++) {
+	                    this.toggleClass('kassa-shown', this.items[i].dataset.page === newShown, this.items[i]);
                     }
                 }
             }

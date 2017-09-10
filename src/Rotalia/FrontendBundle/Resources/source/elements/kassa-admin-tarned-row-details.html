@@ -72,7 +72,7 @@
             behaviors: [KassaBehavior, RowDetailsBehavior],
             rowActivated: function (callback) {
                 this.$.reportGet.generateRequest().completes.then(function (result) {
-                    var data = result.xhr.response.data;
+                    const data = result.xhr.response.data;
                     this.set('rows', data.report.reportRows);
                     this.async(function () {
                         callback()

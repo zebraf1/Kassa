@@ -29,9 +29,9 @@
         },
         attached: function () {
             //Väike fix, dialoogid ja toast jäävad muidu varju
-            var body = document.querySelector('body');
-            var elements = Polymer.dom(this.root).querySelectorAll('paper-dialog');
-            for (var i = 0; i < elements.length; i++) {
+            const body = document.querySelector('body');
+            const elements = Polymer.dom(this.root).querySelectorAll('paper-dialog');
+            for (let i = 0; i < elements.length; i++) {
                 body.appendChild(elements[i]);
             }
         },

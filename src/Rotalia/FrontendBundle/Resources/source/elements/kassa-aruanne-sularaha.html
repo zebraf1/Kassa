@@ -94,10 +94,10 @@
                 bills: {
                     type: Array,
                     value: function () {
-                        var bills = [];
-                        var values = [500, 200, 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01];
+                        const bills = [];
+                        const values = [500, 200, 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01];
 
-                        for (var i = 0; i < values.length; i++) {
+                        for (let i = 0; i < values.length; i++) {
                             bills.push({value: values[i], count: 0});
                         }
 
@@ -118,14 +118,14 @@
                 return this.eur2str(value * count);
             },
 
-            _computeCash: function (event) {
-                var sum = 0;
-                for (var i = 0; i < this.bills.length; i++) {
+            _computeCash: function () {
+                let sum = 0;
+                for (let i = 0; i < this.bills.length; i++) {
                     sum += this.bills[i].value * this.bills[i].count;
                 }
                 this._setCash(sum);
             },
-            _confirmCash: function (evet) {
+            _confirmCash: function () {
 	            this.fire('cash-confirmed')
             },
             _computeStrings: function (target) {

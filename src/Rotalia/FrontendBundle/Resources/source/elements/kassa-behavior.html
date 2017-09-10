@@ -65,13 +65,13 @@
          */
         mapIdsToValues: function (items, mapping) {
 
-            var newItems = [];
+            const newItems = [];
 
-            for (var i = 0; i < items.length; i++) {
-	            var item = items[i];
-                var newItem = {};
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const newItem = {};
 
-                for (var key in item) {
+                for (let key in item) {
                     if (item.hasOwnProperty(key)) {
                         newItem[key] = item[key];
                         if (mapping.hasOwnProperty(key)) {
@@ -87,7 +87,7 @@
             return newItems
         },
         mapIdToValue: function (id, items, key) {
-            for (var i = 0; i < items.length; i++) {
+            for (let i = 0; i < items.length; i++) {
                 if (items[i].id === id) {
                     if (key === null) {
                         return items[i]
@@ -104,8 +104,8 @@
                 newKeys = keys;
             }
 
-            var newObject = {};
-            for (var i = 0; i < keys.length; i++) {
+            const newObject = {};
+            for (let i = 0; i < keys.length; i++) {
                 newObject[newKeys[i]] = object[keys[i]];
             }
             return newObject;

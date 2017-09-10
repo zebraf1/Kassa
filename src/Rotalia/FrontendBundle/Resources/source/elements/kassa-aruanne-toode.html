@@ -174,26 +174,26 @@
                 return !confirmed || editing || fixed;
             },
             _computeTegelikHidden: function (estimatedCount, count) {
-                return estimatedCount == count;
+                return estimatedCount === parseInt(count);
             },
             _computeKapisClass: function (estimatedCount, count) {
-                if (estimatedCount != count) {
+                if (estimatedCount !== parseInt(count)) {
                     return 'striketrough'
                 }
                 return ''
             },
-            _confirmKogus: function (e) {
+            _confirmKogus: function () {
                 this._setConfirmed(true);
                 this._setEditing(false);
                 this.fire('kogus-confirmed');
             },
-            _editKogus: function (e) {
+            _editKogus: function () {
                 this._setConfirmed(true);
                 this._setEditing(true);
                 this.$.currentCount.focus();
             },
             _onFocusinSelect: function (e) {
-                var target = e.target || e.srcElement;
+                const target = e.target || e.srcElement;
                 target.inputElement.inputElement.select();
             },
             _computeStrings: function (target) {
