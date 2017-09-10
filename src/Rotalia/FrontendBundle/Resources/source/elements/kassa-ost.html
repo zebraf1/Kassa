@@ -76,7 +76,7 @@
 
 			<div class="buttons">
 				<paper-button dialog-dismiss>Katkesta</paper-button>
-				<paper-button dialog-confirm on-tap="_onProductChocen" style="margin-right: 16px">Lisa toode
+				<paper-button dialog-confirm on-tap="_onProductChosen" style="margin-right: 16px">Lisa toode
 				</paper-button>
 			</div>
 		</paper-dialog>
@@ -228,14 +228,14 @@
             },
             _confirmproductCountDialog: function () {
                 this.$.productCountDialog.close();
-                this._onProductChocen();
+                this._onProductChosen();
                 this._selectFilterInput();
             },
             _dismissproductCountDialog: function () {
                 this.$.productCountDialog.close();
                 this._selectFilterInput();
             },
-            _onProductChocen: function () {
+            _onProductChosen: function () {
                 //Toode on lisatud valitud toodete hulka
 
                 //Puutetundlikul ekraanil on vaja väikest delayd.

@@ -6,6 +6,7 @@ namespace Rotalia\APIBundle\Controller;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\MemberQuery;
+use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -70,9 +71,13 @@ class MembersController extends DefaultController
             ->find();
 
 
+        $memberConventId = $this->getMember()->getConventId();
         $result = [];
         foreach ($members as $member) {
-            $result[] = $member->getAjaxData();
+            // Show credit balance only for members of admins convent or for all, if super admin.
+            $result[] = $member->getAjaxData(
+                $this->isGranted(User::ROLE_SUPER_ADMIN) ||
+                ($this->isGranted(User::ROLE_ADMIN) && $member->getConventId() == $memberConventId));
         }
 
         return JSendResponse::createSuccess(['members' => $result]);

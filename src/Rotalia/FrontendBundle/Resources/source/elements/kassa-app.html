@@ -71,6 +71,7 @@
 		<kassa-backend id="backend"
 		               member="{{member}}"
 		               settings="{{settings}}"
+		               members="{{members}}"
 		               active-products="{{activeProducts}}"
 		               inactive-products="{{inactiveProducts}}"
 		               product-groups="{{productGroups}}"
@@ -157,6 +158,9 @@
 						<kassa-admin-aruanded data-page="admin-aruanded"
 						                      convent-id="[[configuration.selectedConventId]]"
 						                      reports="[[reports]]"></kassa-admin-aruanded>
+						<kassa-admin-kasutajad data-page="admin-kasutajad"
+						                      convent-id="[[configuration.selectedConventId]]"
+						                      members="[[members]]"></kassa-admin-kasutajad>
 						<kassa-admin-tarned data-page="admin-tarned"
 						                    convent-id="[[configuration.selectedConventId]]"
 						                    deliveries="[[reports]]"
@@ -192,6 +196,7 @@
                             {page: 'admin-tarned', name: 'Tarned', role: 'ROLE_ADMIN'},
                             {page: 'admin-tooted', name: 'Tooted', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegrupid', role: 'ROLE_ADMIN'},
+                            {page: 'admin-kasutajad', name: 'Kasutajad', role: 'ROLE_ADMIN'},
                             //{page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
 	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'}
                         ];

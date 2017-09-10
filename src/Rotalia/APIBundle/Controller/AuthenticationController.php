@@ -50,7 +50,7 @@ class AuthenticationController extends DefaultController
 
         $memberData = null;
         if ($member !== null) {
-            $memberData = $member->getAjaxData();
+            $memberData = $member->getAjaxData(true);
 
             if ($user !== null) {
                 $memberData['roles'] = $user->getRoles();

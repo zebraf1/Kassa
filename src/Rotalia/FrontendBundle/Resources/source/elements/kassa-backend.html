@@ -15,6 +15,9 @@
 		<!-- Settings -->
 		<iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- Members -->
+		<iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<!-- Products -->
 		<iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
@@ -74,6 +77,12 @@
                 },
                 csrfToken: {
                     type: String,
+                    notify: true,
+                    readOnly: true
+                },
+	            /* Members */
+                members: {
+                    type: Array,
                     notify: true,
                     readOnly: true
                 },
@@ -147,12 +156,12 @@
             behaviors: [KassaBehavior],
             /* Authentication */
             doLogin: function (username, password, rememberMe) {
-                this.$.authenticationPost.set('body', {
+                this.$.authenticationPost.set('body', this._formatBody({
                     username: username,
                     password: password,
                     rememberMe: rememberMe,
                     csrfToken: this.csrfToken
-                });
+                }));
                 return this.$.authenticationPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.fire('kassa-message-success', data);
                     return this.doAuthenticationGet();
@@ -183,24 +192,44 @@
                     this._setSettings(data);
                 }.bind(this))
             },
+	        /* Members */
+	        doMembersGet: function (conventId, isActive) {
+                this.$.membersGet.set('params', this._formatBody({
+	                conventId: conventId,
+	                isActive: isActive,
+	                limit: 0
+                }));
+                return this.$.membersGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
+                    this._setMembers(data.members);
+                }.bind(this))
+            },
             /* Products */
             doProductsGetAll: function (conventId) {
                 return Promise.all([this.doProductsGetActive(conventId), this.doProductsGetInactive(conventId)])
             },
             doProductsGetActive: function (conventId) {
-                this.$.productsGet.set('params', {conventId: conventId, active: true});
+                this.$.productsGet.set('params', this._formatBody({
+	                conventId: conventId,
+	                active: true
+                }));
                 return this.$.productsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setActiveProducts(data.products);
                 }.bind(this))
             },
             doProductsGetInactive: function (conventId) {
-                this.$.productsGet.set('params', {conventId: conventId, active: false});
+                this.$.productsGet.set('params', this._formatBody({
+	                conventId: conventId,
+	                active: false
+                }));
                 return this.$.productsGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setInactiveProducts(data.products);
                 }.bind(this))
             },
             doProductsPost: function (conventId, productType) {
-                this.$.productsPost.set('body', this._formatBody({conventId: conventId, ProductType: productType}));
+                this.$.productsPost.set('body', this._formatBody({
+		                conventId: conventId,
+	                    ProductType: productType
+                }));
                 return this.$.productsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     if (data['status'] === 'ACTIVE') {
                         this.push('activeProducts', data.product);
@@ -211,7 +240,10 @@
                 }.bind(this))
             },
             doProductsPatch: function (conventId, productId, productType) {
-                this.$.productsPatch.set('body', this._formatBody({conventId: conventId, ProductType: productType}));
+                this.$.productsPatch.set('body', this._formatBody({
+	                conventId: conventId,
+	                ProductType: productType
+                }));
                 this.set('_id', productId);
                 return this.$.productsPatch.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     if (this._updateItems('activeProducts', this.activeProducts, data.product) || this._updateItems('inactiveProducts', this.inactiveProducts, data.product)) {
@@ -226,14 +258,18 @@
                 }.bind(this))
             },
             doProductGroupsPost: function (ProductGroupType) {
-                this.$.productGroupsPost.set('body', this._formatBody({ProductGroupType: ProductGroupType}));
+                this.$.productGroupsPost.set('body', this._formatBody({
+	                ProductGroupType: ProductGroupType
+                }));
                 return this.$.productGroupsPost.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this.push('productGroups', data.productGroup);
                     this.fire('kassa-message-success', 'Tootegrupp edukalt lisatud');
                 }.bind(this))
             },
             doProductGroupsPatch: function (productGroupId, ProductGroupType) {
-                this.$.productGroupsPatch.set('body', this._formatBody({ProductGroupType: ProductGroupType}));
+                this.$.productGroupsPatch.set('body', this._formatBody({
+	                ProductGroupType: ProductGroupType
+                }));
                 this.set('_id', productGroupId);
                 return this.$.productGroupsPatch.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._updateItems('productGroups', this.productGroups, data.productGroup);
@@ -257,7 +293,9 @@
                 }.bind(this))
             },
             doPointOfSalesPatch: function (pointOfSaleId, PointOfSaleType) {
-                this.$.pointOfSalesPatch.set('body', this._formatBody({PointOfSaleType: PointOfSaleType}));
+                this.$.pointOfSalesPatch.set('body', this._formatBody({
+	                PointOfSaleType: PointOfSaleType
+                }));
                 this.set('_id', pointOfSaleId);
                 return this.$.pointOfSalesPatch.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._updateItems('pointOfSales', this.pointOfSales, data.pointOfSale);
@@ -287,8 +325,11 @@
             },
             doPurchasesGet: function (conventId, memberId, dateFrom, dateUntil) {
                 this.$.purchasesGet.set('params', this._formatBody({
-		            conventId: conventId, memberId: memberId,
-	                limit: 0, dateFrom: dateFrom, dateUntil: dateUntil
+		            conventId: conventId,
+	                memberId: memberId,
+	                limit: 0,
+	                dateFrom: dateFrom,
+	                dateUntil: dateUntil
                 }));
                 return this.$.purchasesGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setPurchases(data.purchases);
@@ -346,8 +387,11 @@
 	        /* Transfers */
             doTransfersGet: function (conventId, memberId, dateFrom, dateUntil) {
                 this.$.transfersGet.set('params', this._formatBody({
-                    conventId: conventId, memberId: memberId,
-	                limit: 0, dateFrom: dateFrom, dateUntil: dateUntil
+                    conventId: conventId,
+	                memberId: memberId,
+	                limit: 0,
+	                dateFrom: dateFrom,
+	                dateUntil: dateUntil
                 }));
                 return this.$.transfersGet.generateRequest().completes.then(this._checkSuccess).then(function (data) {
                     this._setTransfers(data.transfers);
@@ -395,6 +439,10 @@
                     case 'doAuthenticationGet':
                         promise = this.doAuthenticationGet();
                         break
+	                /* Members */
+	                case 'doMembersGet':
+	                    promise = this.doMembersGet(data.conventId, data.isActive);
+	                    break;
                     /* Products */
                     case 'doProductsGetAll':
                         promise = this.doProductsGetAll(data.conventId);

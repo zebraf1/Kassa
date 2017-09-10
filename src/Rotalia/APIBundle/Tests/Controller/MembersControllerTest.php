@@ -83,4 +83,36 @@ class MembersControllerTest extends WebTestCase
             [false, ['Mitte Keegi']],
         ];
     }
+
+    public function testListCreditBalance() {
+
+        $this->loginSimpleUser();
+
+        static::$client->request('GET', '/api/members/');
+        $response = static::$client->getResponse();
+        $result = json_decode($response->getContent());
+
+        $this->assertEquals(200, $response->getStatusCode(), 'Error: '.$response->getContent());
+        $this->assertCount(3, $result->data->members);
+
+        foreach ($result->data->members as $member) {
+            $this->assertNull($member->creditBalance);
+        }
+    }
+
+    public function testListCreditBalanceAdmin() {
+
+        $this->loginAdmin();
+
+        static::$client->request('GET', '/api/members/');
+        $response = static::$client->getResponse();
+        $result = json_decode($response->getContent());
+
+        $this->assertEquals(200, $response->getStatusCode(), 'Error: '.$response->getContent());
+        $this->assertCount(3, $result->data->members);
+
+        foreach ($result->data->members as $member) {
+            $this->assertNotNull($member->creditBalance);
+        }
+    }
 }

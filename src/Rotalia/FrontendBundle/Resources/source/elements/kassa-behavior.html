@@ -75,6 +75,7 @@
                     if (item.hasOwnProperty(key)) {
                         newItem[key] = item[key];
                         if (mapping.hasOwnProperty(key)) {
+                            // Assume there is "Id" in the end of key
                             newItem[key.slice(0, -2)] = this.mapIdToValue(item[key], mapping[key][0], mapping[key][1])
                         }
                     }
