@@ -14,12 +14,21 @@
 				width: 100%;
 			}
 
-			tbody td {
-				text-align: right;
+			table {
+				border-spacing: 0;
 			}
 
-			tbody td:first-child {
+			thead th, tbody td {
+				text-align: right;
+				padding: 0.3em;
+			}
+
+			thead th:first-child, tbody td:first-child {
 				text-align: left;
+			}
+
+			tbody tr:nth-child(odd) {
+				background-color: #e6e6e6;
 			}
 
 			[hidden] {

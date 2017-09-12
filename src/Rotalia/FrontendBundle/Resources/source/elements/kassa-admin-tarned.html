@@ -71,23 +71,25 @@
 		<kassa-admin-tarned-dialog id="deliveriesDialog" opened="{{dialogOpen}}">
 			<kassa-material direction="horizontal">
 				<paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]" style="margin-left: auto">Sulge</paper-button>
-				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}">Salvesta</kassa-confirm-button>
+				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}"
+				                      disabled="[[_isNotSaveable(source, target, cash, chosenProducts.length)]]">Salvesta</kassa-confirm-button>
 			</kassa-material>
 
 			<kassa-material direction="vertical">
 				<div style="display: flex; flex-flow: row nowrap; align-items: flex-end">
-					<vaadin-combo-box data-field="source" disabled="[[_isRequestLoading]]"
+					<vaadin-combo-box data-field="source" disabled="[[_isRequestLoading]]" value="{{source}}"
 					                  label="Kust" item-value-path="value" item-label-path="label"
 					                  items="[[locations]]" style="flex: 1 1 50%"></vaadin-combo-box>
-					<vaadin-combo-box data-field="target" disabled="[[_isRequestLoading]]"
+					<vaadin-combo-box data-field="target" disabled="[[_isRequestLoading]]" value="{{target}}"
 					                  label="Kuhu" item-value-path="value" item-label-path="label"
 					                  items="[[locations]]" style="flex: 1 1 50%; margin-left: 0.8em"></vaadin-combo-box>
 				</div>
 
-				<paper-input data-field="cash" label="Sularaha (€)" type="number" step="0.1" disabled="[[_isRequestLoading]]" ></paper-input>
+				<paper-input data-field="cash" label="Sularaha (€)" type="number" step="0.1" disabled="[[_isRequestLoading]]" value="{{cash}}"></paper-input>
 			</kassa-material>
 
-			<kassa-admin-tarned-rows data-field="reportRows" products="[[products]]" disabled="[[_isRequestLoading]]" ></kassa-admin-tarned-rows>
+			<kassa-admin-tarned-rows data-field="reportRows" products="[[products]]" disabled="[[_isRequestLoading]]"
+			                         value="{{chosenProducts}}" price-description="[[_computePriceDescription(source, target)]]"></kassa-admin-tarned-rows>
 
 		</kassa-admin-tarned-dialog>
 
@@ -164,6 +166,35 @@
                 };
 
                 return map[target];
+            },
+	        _isNotSaveable: function (source, target, cash, productsLength) {
+                if (source === '' && target === '') {
+                    return true;
+                }
+
+		        if (cash === undefined) {
+		            return true;
+		        }
+
+		        return (cash === '' || (parseInt(cash) === 0)) && (productsLength === 0);
+            },
+	        _isNotEditable: function (source, target) {
+                if (source === '' || target === '') {
+                    return true;
+                }
+
+                return false;
+	        },
+            _computePriceDescription: function(source, target) {
+                if (source === '__null__' && (target === 'storage' || target === 'warehouse')) {
+                    return 'Sisseostu hind'
+                }
+
+                if (target === '__null__' && (source === 'storage' || source === 'warehouse')) {
+                    return 'Väljamüügi hind'
+                }
+
+                return null;
             }
         })
 	</script>

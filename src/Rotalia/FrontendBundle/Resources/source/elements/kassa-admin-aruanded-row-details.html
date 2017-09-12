@@ -4,6 +4,7 @@
 
 <link rel="import" href="kassa-behavior.html">
 <link rel="import" href="kassa-row-details-behavior.html">
+<link rel="import" href="kassa-aruanne-summary.html">
 
 <dom-module id="kassa-admin-aruanded-row-details">
 	<template>
@@ -12,14 +13,38 @@
 				font-size: 13px;
 				padding-left: 1em;
 				width: 100%;
+
+				display: flex;
+				flex-flow: row wrap;
 			}
 
-			tbody td {
+			table {
+				border-spacing: 0;
+			}
+
+			thead th, tbody td {
 				text-align: right;
+				padding: 0.3em;
 			}
 
-			tbody td:first-child {
+			thead th:first-child, tbody td:first-child {
 				text-align: left;
+			}
+
+			tbody tr:nth-child(odd) {
+				background-color: #e6e6e6;
+			}
+
+			tbody tr.red {
+				background-color: #e6c3c5;
+			}
+
+			tbody tr.green {
+				background-color: #c3e6cf;
+			}
+
+			table, kassa-aruanne-summary {
+				margin: 1em;
 			}
 
 			[hidden] {
@@ -41,6 +66,7 @@
 					<tr>
 						<th>Toode</th>
 						<th>Suurus</th>
+						<th>Hind</th>
 						<th>Alguses</th>
 						<th>Juurde</th>
 						<th>Välja</th>
@@ -50,9 +76,10 @@
 				</thead>
 				<tbody>
 					<template is="dom-repeat" items="[[rows]]" as="row">
-						<tr>
+						<tr class$="[[row.style]]">
 							<td>[[row.name]]</td>
 							<td>[[row.amount]]</td>
+							<td>[[eur2str(row.currentPrice)]]</td>
 							<td>[[row.startCount]]</td>
 							<td>[[row.inCount]]</td>
 							<td>[[row.outCount]]</td>
@@ -62,6 +89,14 @@
 					</template>
 				</tbody>
 			</table>
+
+			<kassa-aruanne-summary previous-report="[[_report.previousReport]]"
+			                       updates="[[_updates]]"
+			                       current-report="[[_report]]"
+			                       target="[[item.target]]"
+			                       flat
+			                       hidden$="[[loading]]">
+			</kassa-aruanne-summary>
 		</main>
 
 	</template>
@@ -75,19 +110,30 @@
                 },
 	            rows: {
                     type: Array
-                }
+                },
+	            _report: {
+                    type: Object
+	            },
+	            _updates: {
+                    type: Object
+	            }
             },
             behaviors: [KassaBehavior, RowDetailsBehavior],
             rowActivated: function (callback) {
                 this.$.reportGet.generateRequest().completes.then(function (result) {
                     const data = result.xhr.response.data;
                     this.set('rows', this._computeRows(data.report, data.updates));
+                    this.set('_report.cash', this.item.cash);
+                    this.$$('kassa-aruanne-summary').calcSummary();
                     this.async(function () {
                         callback()
                     });
                 }.bind(this));
             },
             _computeRows: function (report, updates) {
+                this.set('_report', report);
+                this.set('_updates', updates);
+
                 const rows = [];
 
                 for (let i=0; i<report.reportRows.length; i++) {
@@ -112,6 +158,16 @@
                     }
                     row.estimatedCount = row.startCount + row.inCount - row.outCount;
                     row.count = report.reportRows[i].count;
+                    row.currentPrice = report.reportRows[i].currentPrice;
+
+                    // CSS style for row
+	                row.style = '';
+	                if (row.count < row.estimatedCount) {
+	                    row.style = 'red';
+	                } else if (row.estimatedCount < row.count) {
+	                    row.style = 'green';
+	                }
+
                     rows.push(row);
                 }
 

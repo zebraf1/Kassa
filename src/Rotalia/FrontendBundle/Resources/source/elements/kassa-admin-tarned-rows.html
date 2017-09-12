@@ -10,7 +10,9 @@
 <dom-module id="kassa-admin-tarned-rows">
 	<template>
 		<style>
-
+			[hidden] {
+				display: none;
+			}
 		</style>
 
 
@@ -33,7 +35,8 @@
 			</kassa-material>
 			<paper-input id="productCountInput" type="number" min="1" step="1"
 			             value="{{productCount}}" label="Kogus" disabled="[[disabled]]"></paper-input>
-			<paper-input label="Tüki hind (€)" type="number" step="0.1"  value="{{productPrice}}" disabled="[[disabled]]"></paper-input>
+			<paper-input label="[[priceDescription]] (€)" hidden$="[[_isPriceHidden(priceDescription)]]" type="number" step="0.1"
+			             value="{{productPrice}}" disabled="[[disabled]]"></paper-input>
 		</kassa-material>
 
 		<template is="dom-repeat" items="[[chosenProducts]]" as="product">
@@ -56,7 +59,8 @@
 	            value: {
                     type: Array,
 		            value: [],
-		            computed: '_computeValue(chosenProducts.*)'
+		            computed: '_computeValue(chosenProducts.*)',
+		            notify: true
 	            },
 	            selectedItem: {
                     type: Object,
@@ -73,6 +77,11 @@
 	            disabled: {
                     type: Boolean,
 		            value: false
+	            },
+	            // If null, don't include price
+	            priceDescription: {
+                    type: String,
+		            value: null
 	            }
             },
             behaviors: [KassaBehavior],
@@ -108,6 +117,9 @@
             },
             _computeValue: function(chosenProducts){
                 return chosenProducts.base.map(product => this.pickProperties(product, ['id', 'count', 'price'], ['productId', 'count', 'currentPrice']));
+            },
+	        _isPriceHidden: function (priceDescription) {
+		        return priceDescription === null || priceDescription === undefined;
             }
 
         })

@@ -43,12 +43,16 @@
 				margin-left: auto;
 			}
 
+			[hidden] {
+				display: none;
+			}
+
 		</style>
-		<kassa-material>
-			<h3>Kokkuvõte</h3>
+		<kassa-material flat="[[flat]]">
+			<h3 hidden$="[[flat]]">Kokkuvõte</h3>
 			<table>
 				<tr>
-					<td>Kassa väärtus alguses</td>
+					<td>Väärtus alguses</td>
 					<td>[[eur2str(_valueStart)]]</td>
 				</tr>
 				<tr class="sub-row">
@@ -57,7 +61,7 @@
 				</tr>
 				<tr class="sub-row">
 					<td>Sularaha</td>
-					<td>[[eur2str(cashStart)]]</td>
+					<td>[[eur2str(_cashStart)]]</td>
 				</tr>
 				<tr>
 					<td>Juurde lisatud</td>
@@ -69,11 +73,19 @@
 				</tr>
 				<tr class="sub-row">
 					<td>Sularaha</td>
-					<td>[[_totalCashUpdates(cashUpdates)]]</td>
+					<td>[[eur2str(_cashIn)]]</td>
 				</tr>
 				<tr>
-					<td>Krediidiga ostud</td>
-					<td>[[eur2str(_creditPurchases)]]</td>
+					<td>Välja läinud</td>
+					<td>[[eur2str(_valueOut)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Tooted</td>
+					<td>[[eur2str(_productsOut)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Sularaha</td>
+					<td>[[eur2str(_cashOut)]]</td>
 				</tr>
 				<tr class="border-top">
 					<td>Eeldatav väärtus</td>
@@ -89,14 +101,14 @@
 				</tr>
 				<tr class="sub-row">
 					<td>Sularaha</td>
-					<td>[[eur2str(cashEnd)]]</td>
+					<td>[[eur2str(_cashEnd)]]</td>
 				</tr>
 				<tr>
 					<td>[[_computeDeficitText(_deficit)]]</td>
 					<td>[[_computeDeficitNumb(_deficit)]]</td>
 				</tr>
 			</table>
-			<div class="buttons">
+			<div class="buttons" hidden$="[[flat]]">
 				<paper-button raised disabled="[[_isRequestLoading]]" on-tap="_editReport">Paranda</paper-button>
 				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}"
 				                      on-kassa-confirm="_confirmReport">Salvesta</kassa-confirm-button>
@@ -107,84 +119,120 @@
         Polymer({
             is: "kassa-aruanne-summary",
             properties: {
-                cashStart: {
-                    type: Number
-                },
-                cashUpdates: {
+                previousReport: {
                     type: Object
                 },
-                cashEnd: {
-                    type: Number
+                updates: {
+                    type: Object
                 },
-                products: {
-                    type: Array
+                currentReport: {
+                    type: Object
                 },
 	            target: {
                     type: String
 	            },
+                flat: {
+                    type: Boolean,
+		            value: false
+	            },
                 _valueStart: {
-                    type: Number
-                },
-                _valueIn: {
-                    type: Number
-                },
-                _valueEstimated: {
-                    type: Number
-                },
-                _valueEnd: {
-                    type: Number
-                },
-                _deficit: {
                     type: Number
                 },
                 _productsStart: {
                     type: Number
                 },
+                _cashStart: {
+                    type: Number
+                },
+                _valueIn: {
+                    type: Number
+                },
                 _productsIn: {
                     type: Number
                 },
-                _creditPurchases: {
+	            _cashIn: {
+                    type: Number
+	            },
+                _valueOut: {
+                    type: Number
+                },
+                _productsOut: {
+                    type: Number
+                },
+	            _cashOut: {
+                    type: Number
+	            },
+                _valueEnd: {
                     type: Number
                 },
                 _productsEnd: {
+                    type: Number
+                },
+	            _cashEnd: {
+                    type: Number
+	            },
+                _valueEstimated: {
+                    type: Number
+                },
+                _deficit: {
                     type: Number
                 }
             },
             behaviors: [KassaBehavior],
             calcSummary: function () {
-                if (this.cashStart === undefined) {
-                    this.set('cashStart', 0);
+
+
+                let prices = {};
+
+                if (this.previousReport === null) {
+                    this.set('_cashStart', 0);
+                    this.set('_productsStart', 0);
+                    this.set('_valueStart', 0);
+                } else {
+                    this.set('_cashStart', this.previousReport.cash);
+                    let _productsStart = 0;
+                    for (let i = 0; i < this.previousReport.reportRows.length; i++) {
+                        _productsStart += this.previousReport.reportRows[i].count * this.previousReport.reportRows[i].currentPrice;
+                        prices[this.previousReport.reportRows[i].product.id] = this.previousReport.reportRows[i].currentPrice;
+                    }
+                    this.set('_productsStart', _productsStart);
+                    this.set('_valueStart', this._cashStart + this._productsStart);
                 }
 
-
-                let _productsStart = 0;
-                let _productsIn = 0;
-                let _creditPurchases = 0;
+                this.set('_cashEnd', this.currentReport.cash);
                 let _productsEnd = 0;
-                for (let i = 0; i < this.products.length; i++) {
-                    _productsStart += this.products[i].previousCount * this.products[i].price;
-                    _productsIn += this.products[i].updates.in * this.products[i].price;
-                    _creditPurchases += this.products[i].updates.out * this.products[i].price;
-                    _productsEnd += this.products[i].count * this.products[i].price;
+                for (let i = 0; i < this.currentReport.reportRows.length; i++) {
+                    _productsEnd += this.currentReport.reportRows[i].count * this.currentReport.reportRows[i].currentPrice;
+                    prices[this.currentReport.reportRows[i].product.id] = this.currentReport.reportRows[i].currentPrice;
+                }
+                this.set('_productsEnd', _productsEnd);
+                this.set('_valueEnd', this._cashEnd + this._productsEnd);
+
+                this.set('_cashIn', this.updates.cash.in);
+                this.set('_cashOut', this.updates.cash.out);
+                let _productsIn = 0;
+                let _productsOut = 0;
+
+                for (const product in this.updates.products) {
+                    if (this.updates.products.hasOwnProperty(product)) {
+                        if (prices.hasOwnProperty(product)) {
+                            _productsIn += this.updates.products[product].in * prices[product];
+                            _productsOut += this.updates.products[product].out * prices[product];
+                        }
+                    }
                 }
 
-                this.set('_valueStart', _productsStart + this.cashStart);
-                this.set('_valueIn', _productsIn + this.cashUpdates.in - this.cashUpdates.out);
-                this.set('_valueEstimated', this._valueStart + this._valueIn - _creditPurchases);
-                this.set('_valueEnd', _productsEnd + this.cashEnd);
-                this.set('_deficit', this._valueEstimated - this._valueEnd);
-
-                this.set('_productsStart', _productsStart);
                 this.set('_productsIn', _productsIn);
-                this.set('_creditPurchases', _creditPurchases);
-                this.set('_productsEnd', _productsEnd);
+                this.set('_productsOut', _productsOut);
+                this.set('_valueIn', this._cashIn + this._productsIn);
+                this.set('_valueOut', this._cashOut + this._productsOut);
 
+
+                this.set('_valueEstimated', this._valueStart + this._valueIn - this._valueOut);
+                this.set('_deficit', this._valueEstimated - this._valueEnd);
             },
 	        reset: function () {
 		        this.$$('kassa-confirm-button').reset();
-            },
-	        _totalCashUpdates: function (cashUpdates) {
-                return this.eur2str(cashUpdates.in - cashUpdates.out);
             },
 	        _confirmReport: function () {
 		        this.fire('report-confirmed');
