@@ -158,8 +158,10 @@ class PurchaseController extends DefaultController
             } else {
                 // Create transactions for all purchases
                 foreach ($basket as $item) {
-                    if (!$this->validateBasketItem($item)) {
-                        return JSendResponse::createError('Ostukorvis on vigane toode: '.json_encode($item), 400);
+                    try {
+                        $this->validateBasketItem($item);
+                    } catch (Exception $e) {
+                        return JSendResponse::createError('Ostukorvis on vigane toode: '.$e->getMessage(), 400);
                     }
                     $transaction = new Transaction();
                     $product = ProductQuery::create()->findPk($item['id']);
@@ -208,22 +210,22 @@ class PurchaseController extends DefaultController
 
     /**
      * @param array $item
-     * @return bool
+     *
+     * @throws Exception
      */
     private function validateBasketItem($item)
     {
         if (!isset($item['id'])) {
             $this->getLogger()->warning('Invalid id for basket item: '.json_encode($item));
-            return false;
+            throw new Exception('ID puudub');
         }
-        if (!isset($item['count']) || !ctype_digit($item['count'])) {
+        if (!isset($item['count']) || !ctype_digit($item['count']) || $item['count'] <= 0) {
             $this->getLogger()->warning('Invalid count for basket item: '.json_encode($item));
-            return false;
+            throw new Exception('Vigane kogus '.$item['count']);
         }
         if (!isset($item['price'])) {
             $this->getLogger()->warning('Invalid price for basket item: '.json_encode($item));
-            return false;
+            throw new Exception('Hind puudub');
         }
-        return true;
     }
 }
