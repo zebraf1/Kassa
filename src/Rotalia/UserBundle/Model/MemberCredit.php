@@ -2,6 +2,7 @@
 
 namespace Rotalia\UserBundle\Model;
 
+use Rotalia\APIBundle\Classes\OutOfCreditException;
 use Rotalia\UserBundle\Model\om\BaseMemberCredit;
 
 class MemberCredit extends BaseMemberCredit
@@ -22,14 +23,23 @@ class MemberCredit extends BaseMemberCredit
     }
 
     /**
-     * @param $amount
+     * @param      $amount
+     *
+     * @param null $creditLimit
+     *
      * @return $this
+     * @throws OutOfCreditException
      */
-    public function adjustCredit($amount)
+    public function adjustCredit($amount, $creditLimit = null)
     {
         $currentCredit = doubleval($this->getCredit());
         $amount = doubleval($amount);
         $newCredit = round($currentCredit + $amount, 2);
+
+        if ($creditLimit !== null && $newCredit < $creditLimit) {
+            throw new OutOfCreditException($newCredit, $creditLimit);
+        }
+
         $this->setCredit($newCredit);
 
         return $this;

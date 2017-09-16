@@ -36,6 +36,50 @@ Rotalia\UserBundle\Model\Convent:
         nimi: Brüssel
         kassa_aktiivne: '0'
 
+
+Rotalia\UserBundle\Model\Status:
+    Status_1:
+        nimi: Rebane
+        prefix: Reb!
+        suffix: reb!
+    Status_2:
+        nimi: Lihtliige
+        prefix: L!l!
+        suffix: l!l!
+    Status_3:
+        nimi: Tegevliige
+        prefix: Confr!
+        suffix: Rot!
+    Status_4:
+        nimi: Buršvilistlane
+        prefix: B!vil!
+        suffix: Rot!
+    Status_5:
+        nimi: Vilistlane
+        prefix: Vil!
+        suffix: vil!
+    Status_6:
+        nimi: Emeriitvilistlane
+        prefix: Emer!
+        suffix: vil! emer!
+
+Rotalia\UserBundle\Model\StatusCreditLimit:
+    StatusCreditLimit_1:
+        status_id: 1
+        credit_limit: 0
+    StatusCreditLimit_2:
+        status_id: 1
+        credit_limit: 0
+    StatusCreditLimit_3:
+        status_id: 1
+        credit_limit: -25
+    StatusCreditLimit_4:
+        status_id: 1
+        credit_limit: -25
+    StatusCreditLimit_5:
+        status_id: 1
+        credit_limit: -50
+
 Rotalia\UserBundle\Model\Member:
     Member_1886:
         koondised_id: Convent_6
@@ -61,16 +105,19 @@ Rotalia\UserBundle\Model\MemberCredit:
     MemberCredit_1:
         member_id: Member_2123
         convent_id: Convent_6
+        staatused_id: Status_3
         credit: 20.0
         comment: Test
     MemberCredit_2:
         member_id: Member_2123
         convent_id: Convent_7
+        staatused_id: Status_3
         credit: -10
         comment: Test
     MemberCredit_3:
         member_id: Member_2122
         convent_id: Convent_6
+        staatused_id: Status_5
         credit: 30
         comment: Test
 
