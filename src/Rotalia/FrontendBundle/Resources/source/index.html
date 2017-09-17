@@ -46,7 +46,7 @@
 				--kassa-secondary-color: #0077c8; /* blue */
 				--kassa-dark-color: #1A1A1A;
 				--kassa-success-color: #00bf44;
-				--kassa-error-color: #bf000c;
+				--kassa-error-color: #e51c23;
 
 				--paper-button: {
 					background: var(--kassa-secondary-color);
@@ -62,110 +62,11 @@
 		</style>
 	</custom-style>
 
-	<style>
-
-		/*Skeleton for fast first paint*/
-		html, body {
-			padding: 0;
-			margin: 0;
-			height: 100%;
-		}
-
-		#skeleton {
-			display: none;
-		}
-
-		.loading #skeleton {
-			display: flex;
-			flex-flow: row nowrap;
-			height: 100%;
-		}
-
-		#left {
-			flex: 0 0 256px;
-			background-color: #1A1A1A;
-			height: 100%;
-			box-shadow: 4px 0 4px rgba(0, 0, 0, 0.3);
-			z-index: 1;
-		}
-
-		#main {
-			flex: 1 1 100%;
-			display: flex;
-			flex-flow: column nowrap;
-		}
-
-		#head {
-			background-color: #84bd00;
-			flex: 0 0 192px;
-			color: #fff;
-			position: relative;
-			z-index: 0;
-		}
-
-		#content {
-			flex: 1 1 auto;
-			padding: 1em;
-		}
-
-		#right {
-			flex: 0 0 320px;
-			background-color: #f1f1f1;
-			height: 100%;
-			box-shadow: -4px 0 4px rgba(0, 0, 0, 0.3);
-			z-index: 1;
-		}
-
-		#title {
-			font-size: 50px;
-			position: absolute;
-			bottom: 0;
-			left: 10%;
-		}
-
-		#title img {
-			height: 1.2em;
-			width: 1.2em;
-		}
-
-		#title span {
-			position: absolute;
-			bottom: 0.15em;
-		}
-
-		@media screen and (max-width: 800px) {
-			#left {
-				display: none;
-			}
-		}
-
-		@media screen and (max-width: 1120px) {
-			#right {
-				display: none;
-			}
-		}
-	</style>
-
 
 </head>
 <body class="loading">
 
-<!-- Skeleton for fast first paint -->
-<div id="skeleton">
-	<div id="left"></div>
-	<div id="main">
-		<div id="head">
-			<div id="title">
-				<img src="images/icons/icon-96x96.png" alt="õkassa logo"/><span>KASSA</span>
-			</div>
-		</div>
-		<div id="content">
-		</div>
-	</div>
-	<div id="right"></div>
-</div>
-
-<kassa-app></kassa-app>
+	<kassa-app></kassa-app>
 
 </body>
 </html>
