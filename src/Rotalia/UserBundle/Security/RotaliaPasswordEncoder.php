@@ -31,6 +31,6 @@ class RotaliaPasswordEncoder implements PasswordEncoderInterface
      */
     public function isPasswordValid($encoded, $raw, $salt)
     {
-        return StringUtils::equals($encoded, $this->encodePassword($raw, $salt));
+        return hash_equals($encoded, $this->encodePassword($raw, $salt));
     }
 }
