@@ -223,6 +223,7 @@
             listeners: {
                 'kassa-message-success': '_onSuccessMessage',
                 'kassa-message-error': '_onErrorMessage',
+                'kassa-message-warning': '_onWarningMessage',
                 'kassa-backend-action': '_onBackendAction'
             },
             ready: function () {
@@ -231,6 +232,9 @@
             },
             _onSuccessMessage: function (event) {
                 this.$.toast.success(event.detail);
+            },
+            _onWarningMessage: function (event) {
+                this.$.toast.warning(event.detail);
             },
             _onErrorMessage: function (event) {
                 this.$.toast.error(event.detail);
