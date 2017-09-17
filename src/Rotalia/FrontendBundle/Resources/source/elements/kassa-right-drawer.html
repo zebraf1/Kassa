@@ -11,25 +11,19 @@
 				height: 100%;
 				box-shadow: -4px 0 4px rgba(0, 0, 0, 0.3);
 				padding: 1em;
+				text-align: left;
 			}
 
 		</style>
 
-		<template is="dom-repeat" items="{{faqs}}" as="faq">
-			<div>
-				<b>[[faq.title]]</b>
-				<p>[[faq.content]]</p>
-			</div>
-		</template>
+		Majanduse eestseisja kontod: <br />
+		Tartus: EE262200221067542623 Renee Alliksaar <br />
 
 	</template>
 	<script>
         Polymer({
             is: "kassa-right-drawer",
             properties: {
-                faqs: {
-                    type: Array
-                },
                 page: {
                     type: String
                 }
