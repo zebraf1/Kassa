@@ -81,7 +81,8 @@
 		               purchases="{{purchases}}"
 		               single-report="{{singleReport}}"
 		               updates="{{updates}}"
-		               reports="{{reports}}"></kassa-backend>
+		               reports="{{reports}}"
+		               credit-limits="{{creditLimits}}"></kassa-backend>
 
 		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]" convent-id="[[configuration.selectedConventId]]"></kassa-route>
 
@@ -166,6 +167,8 @@
 						                    convent-id="[[configuration.selectedConventId]]"
 						                    deliveries="[[reports]]"
 						                    products="[[activeProducts]]"></kassa-admin-tarned>
+						<kassa-super-admin-satted data-page="super-admin-satted"
+						                          credit-limits="[[creditLimits]]"></kassa-super-admin-satted>
 					</kassa-pages>
 				</app-header-layout>
 
@@ -199,7 +202,8 @@
                             {page: 'admin-tootegrupid', name: 'Tootegrupid', role: 'ROLE_ADMIN'},
                             {page: 'admin-kasutajad', name: 'Kasutajad', role: 'ROLE_ADMIN'},
                             //{page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
-	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'}
+	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'},
+	                        {page: 'super-admin-satted', name: 'Sätted', role: 'ROLE_SUPER_ADMIN'}
                         ];
                     }
                 },
