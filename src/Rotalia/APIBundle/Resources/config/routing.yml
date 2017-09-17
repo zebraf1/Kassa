@@ -25,6 +25,9 @@ transfer:
 creditNettings:
     resource: "@RotaliaAPIBundle/Resources/config/routing/creditNettings.yml"
 
+creditLimits:
+    resource: "@RotaliaAPIBundle/Resources/config/routing/creditLimits.yml"
+
 purchase:
     resource: "@RotaliaAPIBundle/Resources/config/routing/purchase.yml"
 

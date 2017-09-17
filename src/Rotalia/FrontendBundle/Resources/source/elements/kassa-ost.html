@@ -243,6 +243,9 @@
                 //Puutetundlikul ekraanil on vaja väikest delayd.
                 this._set_nextAllowedTime(Date.now() + 200);
 
+                if (this.activeProduct.inventoryCounts.storage - parseInt(this.activeProduct.count) < 0) {
+                    this.fire('kassa-message-warning', 'Kontrolli kas toodet ' + this.activeProduct.name + ' on piisavas koguses');
+                }
                 //Teeme nö deep-copy
                 this.push('_chosenProducts',
                     {

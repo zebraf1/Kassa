@@ -12,6 +12,10 @@
 				--iron-icon-fill-color: var(--kassa-error-color);
 			}
 
+			.warning {
+				--iron-icon-fill-color: var(--kassa-warning-color);
+			}
+
 			.success {
 				--iron-icon-fill-color: var(--kassa-success-color);
 			}
@@ -48,16 +52,33 @@
 			}
 		</style>
 
-		<paper-toast id="toast" duration="[[duration]]">
+		<paper-toast id="errorToast" duration="[[duration]]">
 			<main>
-				<iron-icon class="error" icon="kassa:error-outline" hidden$="[[!_error]]"></iron-icon>
-				<iron-icon class="success" icon="kassa:done" hidden$="[[_error]]"></iron-icon>
-				<div id="text">
+				<iron-icon class="error" icon="kassa:error-outline"></iron-icon>
+				<div>
 					<span>[[text]]</span><br />
 					<template is="dom-repeat" items="[[details]]">
 						<span>[[item.key]]: [[item.value]]</span><br />
 					</template>
 				</div>
+				<paper-button on-tap="close">
+					<slot></slot>
+				</paper-button>
+			</main>
+		</paper-toast>
+		<paper-toast id="warningToast" duration="[[duration]]">
+			<main>
+				<iron-icon class="warning" icon="kassa:warning"></iron-icon>
+				<span>[[text]]</span><br />
+				<paper-button on-tap="close">
+					<slot></slot>
+				</paper-button>
+			</main>
+		</paper-toast>
+		<paper-toast id="successToast" duration="[[duration]]">
+			<main>
+				<iron-icon class="success" icon="kassa:done"></iron-icon>
+				<span>[[text]]</span><br />
 				<paper-button on-tap="close">
 					<slot></slot>
 				</paper-button>
@@ -73,10 +94,6 @@
                     type: Number,
                     value: 3000
                 },
-                _error: {
-                    type: Boolean,
-                    value: false
-                },
                 text: {
                     type: String,
                     value: ""
@@ -88,15 +105,19 @@
             },
             behaviors: [KassaBehavior],
             success: function (message) {
-                this.close();
-                this.set('_error', false);
+                this.$.successToast.close();
                 this.set('text', message);
                 this.set('details', []);
-                this.open();
+                this.$.successToast.open();
+            },
+            warning: function (message) {
+                this.$.warningToast.close();
+                this.set('text', message);
+                this.set('details', []);
+                this.$.warningToast.open();
             },
             error: function (errorMessage) {
-                this.close();
-                this.set('_error', true);
+                this.$.errorToast.close();
                 this.set('text', errorMessage.message);
 
                 const details = [];
@@ -107,13 +128,12 @@
                 }
                 this.set('details', details);
 
-                this.open();
+                this.$.errorToast.open();
             },
-            open: function () {
-                return this.$.toast.open();
-            },
-            close: function () {
-                return this.$.toast.close();
+	        close: function () {
+                this.$.successToast.close();
+                this.$.warningToast.close();
+                this.$.errorToast.close();
             }
         })
 	</script>

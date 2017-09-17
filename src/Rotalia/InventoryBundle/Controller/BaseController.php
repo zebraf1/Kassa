@@ -16,6 +16,16 @@ class BaseController extends Controller
     /**
      * @throws AccessDeniedException
      */
+    protected function requireSuperAdmin()
+    {
+        if (!$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    /**
+     * @throws AccessDeniedException
+     */
     protected function requireAdmin()
     {
         if (!$this->isGranted(User::ROLE_ADMIN)) {

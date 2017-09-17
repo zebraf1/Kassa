@@ -1,0 +1,69 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-material.html">
+<link rel="import" href="kassa-confirm-button.html">
+
+<dom-module id="kassa-super-admin-satted">
+	<template>
+		<style>
+			td {
+				padding-right: 1em;
+			}
+
+		</style>
+
+		<!-- credit limit -->
+		<kassa-material direction="vertical">
+			<h2>Krediidi limiidid</h2>
+			<table>
+				<tbody>
+					<template is="dom-repeat" items="{{creditLimits}}">
+						<tr>
+							<td>[[item.statusName]]</td>
+							<td>
+								<paper-input value="{{item.creditLimit}}" type="number" step="0.01" no-label-float
+								             style="width: 4em" disabled="[[creditLimitLoading]]">
+									<div slot="suffix">€</div>
+								</paper-input>
+							</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+			<kassa-confirm-button id="creditLimitButton" confirmed="{{creditLimitLoading}}"
+			                      on-kassa-confirm="_saveCreditLimits">Salvesta</kassa-confirm-button>
+		</kassa-material>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-super-admin-satted",
+            properties: {
+                creditLimits: {
+                    type: Array
+                }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            setUp: function () {
+                this.fire('kassa-backend-action', {action: 'doCreditLimitsGet', onSuccess: function () {
+                    this.fire('kassa-page-ready', {page: this})
+                }.bind(this)});
+            },
+            _saveCreditLimits: function () {
+                this.fire('kassa-backend-action', {
+                    action: 'doCreditLimitsPatch',
+	                creditLimits: this.creditLimits,
+	                onSuccess: function () {
+                        this.$.creditLimitButton.reset();
+                }.bind(this)});
+            }
+        })
+	</script>
+</dom-module>
+
+
+

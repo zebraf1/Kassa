@@ -19,6 +19,10 @@
 				0 3px 1px -2px rgba(0, 0, 0, 0.2);
 			}
 
+			main.border:not([flat]) {
+				border: 1px solid rgba(0, 0, 0, 0.14);
+			}
+
 			main.horizontal {
 				display: flex;
 				justify-content: flex-start;
@@ -63,6 +67,14 @@
 	            }
             },
             behaviors: [KassaBehavior],
+	        ready: function () {
+                // Opera mini has no box shadow
+                const isOperaMini = (navigator.userAgent.indexOf('Opera Mini') > -1) || Object.prototype.toString.call(window.operamini) === '[object OperaMini]';
+                const isOpera = !!window.opera || /opera|opr/i.test(navigator.userAgent);
+                if (isOpera || isOperaMini) {
+                    this.$$('main').classList.add('border');
+                }
+            },
             _directionChanged: function (newDirection) {
                 if ((newDirection === 'vertical' || newDirection === 'horizontal')) {
                     this.$$('main').className = newDirection;

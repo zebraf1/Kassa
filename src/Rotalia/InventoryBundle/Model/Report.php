@@ -3,7 +3,6 @@
 namespace Rotalia\InventoryBundle\Model;
 
 use DateTime;
-use Monolog\Logger;
 use PropelPDO;
 use Rotalia\APIBundle\Classes\Updates;
 use Rotalia\InventoryBundle\Classes\XClassifier;

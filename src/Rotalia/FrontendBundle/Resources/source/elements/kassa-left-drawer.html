@@ -116,7 +116,6 @@
 				<h2>[[member.name]]</h2>
 				<h3>Saldo: [[eur2str(member.creditBalance)]]</h3>
 			</div>
-
 			<ul>
 				<template is="dom-if" if="[[hasRights(member, 'ROLE_USER', configuration.selectedConventId)]]">
 					<template is="dom-repeat" items="[[_filterByRole(navigation, 'ROLE_USER')]]" as="site">
@@ -127,6 +126,13 @@
 			<ul>
 				<template is="dom-if" if="[[hasRights(member, 'ROLE_ADMIN', configuration.selectedConventId)]]">
 					<template is="dom-repeat" items="[[_filterByRole(navigation, 'ROLE_ADMIN')]]" as="site">
+						<li><a href="#/[[site.page]]" class$="[[_classForSelected(site.page, page)]]">[[site.name]]</a></li>
+					</template>
+				</template>
+			</ul>
+			<ul>
+				<template is="dom-if" if="[[hasRights(member, 'ROLE_SUPER_ADMIN', configuration.selectedConventId)]]">
+					<template is="dom-repeat" items="[[_filterByRole(navigation, 'ROLE_SUPER_ADMIN')]]" as="site">
 						<li><a href="#/[[site.page]]" class$="[[_classForSelected(site.page, page)]]">[[site.name]]</a></li>
 					</template>
 				</template>

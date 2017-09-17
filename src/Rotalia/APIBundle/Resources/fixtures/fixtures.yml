@@ -36,23 +36,67 @@ Rotalia\UserBundle\Model\Convent:
         nimi: Brüssel
         kassa_aktiivne: '0'
 
+
+Rotalia\UserBundle\Model\Status:
+    Status_1:
+        nimi: Rebane
+        prefix: Reb!
+        suffix: reb!
+    Status_2:
+        nimi: Lihtliige
+        prefix: L!l!
+        suffix: l!l!
+    Status_3:
+        nimi: Tegevliige
+        prefix: Confr!
+        suffix: Rot!
+    Status_4:
+        nimi: Buršvilistlane
+        prefix: B!vil!
+        suffix: Rot!
+    Status_5:
+        nimi: Vilistlane
+        prefix: Vil!
+        suffix: vil!
+    Status_6:
+        nimi: Emeriitvilistlane
+        prefix: Emer!
+        suffix: 'vil! emer!'
+
+Rotalia\UserBundle\Model\StatusCreditLimit:
+    StatusCreditLimit_1:
+        status_id: Status_1
+        credit_limit: 0
+    StatusCreditLimit_2:
+        status_id: Status_2
+        credit_limit: 0
+    StatusCreditLimit_3:
+        status_id: Status_3
+        credit_limit: -25
+    StatusCreditLimit_4:
+        status_id: Status_4
+        credit_limit: -25
+    StatusCreditLimit_5:
+        status_id: Status_5
+        credit_limit: -50
+
 Rotalia\UserBundle\Model\Member:
     Member_1886:
         koondised_id: Convent_6
         koondised_alg: Convent_6
-        staatused_id: '5'
+        staatused_id: Status_5
         eesnimi: Super
         perenimi: Oluline
     Member_2122:
         koondised_id: Convent_6
         koondised_alg: Convent_6
-        staatused_id: '3'
+        staatused_id: Status_3
         eesnimi: Keegi
         perenimi: Oluline
     Member_2123:
         koondised_id: Convent_6
         koondised_alg: Convent_6
-        staatused_id: '3'
+        staatused_id: Status_3
         eesnimi: Mitte
         perenimi: Keegi
         lahk_pohjused_id: 1
