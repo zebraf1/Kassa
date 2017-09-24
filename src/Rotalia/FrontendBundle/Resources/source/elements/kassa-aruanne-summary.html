@@ -182,7 +182,17 @@
             calcSummary: function () {
 
 
+
+                // Compute the prices
                 let prices = {};
+                if (this.previousReport !== null) {
+                    for (let i = 0; i < this.previousReport.reportRows.length; i++) {
+                        prices[this.previousReport.reportRows[i].product.id] = this.previousReport.reportRows[i].currentPrice;
+                    }
+                }
+                for (let i = 0; i < this.currentReport.reportRows.length; i++) {
+                    prices[this.currentReport.reportRows[i].product.id] = this.currentReport.reportRows[i].currentPrice;
+                }
 
                 if (this.previousReport === null) {
                     this.set('_cashStart', 0);
@@ -192,8 +202,7 @@
                     this.set('_cashStart', this.previousReport.cash);
                     let _productsStart = 0;
                     for (let i = 0; i < this.previousReport.reportRows.length; i++) {
-                        _productsStart += this.previousReport.reportRows[i].count * this.previousReport.reportRows[i].currentPrice;
-                        prices[this.previousReport.reportRows[i].product.id] = this.previousReport.reportRows[i].currentPrice;
+                        _productsStart += this.previousReport.reportRows[i].count * prices[this.previousReport.reportRows[i].product.id];
                     }
                     this.set('_productsStart', _productsStart);
                     this.set('_valueStart', this._cashStart + this._productsStart);
@@ -202,8 +211,7 @@
                 this.set('_cashEnd', this.currentReport.cash);
                 let _productsEnd = 0;
                 for (let i = 0; i < this.currentReport.reportRows.length; i++) {
-                    _productsEnd += this.currentReport.reportRows[i].count * this.currentReport.reportRows[i].currentPrice;
-                    prices[this.currentReport.reportRows[i].product.id] = this.currentReport.reportRows[i].currentPrice;
+                    _productsEnd += this.currentReport.reportRows[i].count * prices[this.currentReport.reportRows[i].product.id];
                 }
                 this.set('_productsEnd', _productsEnd);
                 this.set('_valueEnd', this._cashEnd + this._productsEnd);
