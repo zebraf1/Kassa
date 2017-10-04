@@ -14,10 +14,12 @@
 /src/Rotalia/*Bundle/Model/map/
 /src/Rotalia/*Bundle/Model/om/
 /src/Rotalia/FrontendBundle/Resources/source/bower_components/
+/src/Rotalia/FrontendBundle/Resources/source/build/
 /composer.phar
 .idea/
 app/propel/generated-schemas/
 components/
 .directory
+.DS_Store
 
-package-lock\.json
+node_modules/
