@@ -2,6 +2,7 @@
 namespace Rotalia\InventoryBundle\Controller;
 
 use Exception;
+use Rotalia\APIBundle\Classes\OutOfCreditException;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\ProductFilterType;
 use Rotalia\InventoryBundle\Model\ProductQuery;
@@ -9,6 +10,7 @@ use Rotalia\InventoryBundle\Model\SettingQuery;
 use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\InventoryBundle\Model\TransactionPeer;
 use Rotalia\UserBundle\Model\MemberQuery;
+use Rotalia\UserBundle\Model\StatusCreditLimitQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -53,6 +55,7 @@ class PurchaseController extends DefaultController
      *     200 = "Returned when successful",
      *     400 = "Returned when input data has errors. If basket item price changes, basket must be synced",
      *     403 = "Returned when user is not logged in and browser is not point of sale",
+     *     422 = "Returned when user is out of credit. Reduce basket cost or add more credit",
      *     500 = "Returned when the transaction fails, all actions are reverted. Try again or report a problem",
      *   }
      * )
@@ -154,15 +157,17 @@ class PurchaseController extends DefaultController
                 $transaction->setType($transactionType);
                 $transaction->save($connection);
                 // credit balance changes the same way (positive cash = positive credit). This sum is deducted from balance
-                $totalSumCents = (int)(100 * -$sum);
+                $totalSumCents = (int) (100 * -$sum);
             } else {
                 // Create transactions for all purchases
                 foreach ($basket as $item) {
-                    if (!$this->validateBasketItem($item)) {
-                        return JSendResponse::createError('Ostukorvis on vigane toode: '.json_encode($item), 400);
+                    try {
+                        $this->validateBasketItem($item);
+                    } catch (Exception $e) {
+                        return JSendResponse::createError('Ostukorvis on vigane toode: ' . $e->getMessage(), 400);
                     }
                     $transaction = new Transaction();
-                    $product = ProductQuery::create()->findPk($item['id']);
+                    $product     = ProductQuery::create()->findPk($item['id']);
                     $product->setConventId($conventId);
                     $transaction->setCount($item['count']);
                     $transaction->setProduct($product);
@@ -170,7 +175,7 @@ class PurchaseController extends DefaultController
                     $transaction->setMemberRelatedByCreatedBy($currentMember);
                     $transaction->setMemberRelatedByMemberId($member);
                     $transaction->setConventId($conventId);
-                    $totalSumCents += (int)(100 * $transaction->calculateSum());
+                    $totalSumCents += (int) (100 * $transaction->calculateSum());
                     $transaction->setType($transactionType);
                     $transaction->save($connection);
                     $product->getProductInfo()->reduceStorageCount($item['count']);
@@ -180,14 +185,21 @@ class PurchaseController extends DefaultController
 
             // Reduce member credit
             if ($payment !== 'cash') {
+                // Check if member status has credit limit
+                $creditLimit = StatusCreditLimitQuery::create()
+                                                     ->filterByStatusId($member->getStaatusedId())
+                                                     ->findOne();
+                if ($creditLimit) {
+                    $creditLimit = $creditLimit->getCreditLimit();
+                }
                 $memberCredit = $member->getCredit($conventId);
-                $memberCredit->adjustCredit(-$totalSumCents / 100);
+                $memberCredit->adjustCredit(-$totalSumCents / 100, $creditLimit);
                 $memberCredit->save($connection);
             }
 
             // Add convent cash
             if ($payment !== 'credit') {
-                $setting = SettingQuery::getCurrentCashSetting($conventId);
+                $setting     = SettingQuery::getCurrentCashSetting($conventId);
                 $currentCash = doubleval($setting->getValue()) * 100;
                 $currentCash += $totalSumCents;
                 $setting->setValue($currentCash / 100);
@@ -198,8 +210,11 @@ class PurchaseController extends DefaultController
 
             return JSendResponse::createSuccess([
                 'totalSumCents' => $totalSumCents,
-                'newCredit' => $member->getTotalCredit()
+                'newCredit'     => $member->getTotalCredit()
             ]);
+        } catch (OutOfCreditException $e) {
+            $connection->rollBack();
+            return JSendResponse::createError($e->getMessage(), 422);
         } catch (Exception $e) {
             $connection->rollBack();
             return JSendResponse::createError($e->getMessage(), 500);
@@ -208,22 +223,22 @@ class PurchaseController extends DefaultController
 
     /**
      * @param array $item
-     * @return bool
+     *
+     * @throws Exception
      */
     private function validateBasketItem($item)
     {
         if (!isset($item['id'])) {
             $this->getLogger()->warning('Invalid id for basket item: '.json_encode($item));
-            return false;
+            throw new Exception('ID puudub');
         }
-        if (!isset($item['count']) || !ctype_digit($item['count'])) {
+        if (!isset($item['count']) || !ctype_digit($item['count']) || $item['count'] <= 0) {
             $this->getLogger()->warning('Invalid count for basket item: '.json_encode($item));
-            return false;
+            throw new Exception('Vigane kogus '.$item['count']);
         }
         if (!isset($item['price'])) {
             $this->getLogger()->warning('Invalid price for basket item: '.json_encode($item));
-            return false;
+            throw new Exception('Hind puudub');
         }
-        return true;
     }
 }

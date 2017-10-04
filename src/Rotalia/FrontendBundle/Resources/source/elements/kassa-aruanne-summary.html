@@ -1,0 +1,263 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-material.html">
+<link rel="import" href="kassa-confirm-button.html">
+
+
+<dom-module id="kassa-aruanne-summary">
+	<template>
+		<style>
+			table {
+				max-width: 30em;
+			}
+
+			.sub-row {
+				color: #888888;
+			}
+
+			.sub-row td:first-child {
+				padding-left: 1em;
+			}
+
+			td:last-child {
+				text-align: right;
+				padding-left: 1em;
+			}
+
+			.border-top td {
+				border-top: 1px solid #000;
+			}
+
+			td {
+				margin: 0.1em 0;
+			}
+
+			.buttons {
+				display: flex;
+				flex-flow: row wrap;
+			}
+
+			.buttons kassa-confirm-button {
+				margin-left: auto;
+			}
+
+			[hidden] {
+				display: none;
+			}
+
+		</style>
+		<kassa-material flat="[[flat]]">
+			<h3 hidden$="[[flat]]">Kokkuvõte</h3>
+			<table>
+				<tr>
+					<td>Väärtus alguses</td>
+					<td>[[eur2str(_valueStart)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Tooted</td>
+					<td>[[eur2str(_productsStart)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Sularaha</td>
+					<td>[[eur2str(_cashStart)]]</td>
+				</tr>
+				<tr>
+					<td>Juurde lisatud</td>
+					<td>[[eur2str(_valueIn)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Tooted</td>
+					<td>[[eur2str(_productsIn)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Sularaha</td>
+					<td>[[eur2str(_cashIn)]]</td>
+				</tr>
+				<tr>
+					<td>Välja läinud</td>
+					<td>[[eur2str(_valueOut)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Tooted</td>
+					<td>[[eur2str(_productsOut)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Sularaha</td>
+					<td>[[eur2str(_cashOut)]]</td>
+				</tr>
+				<tr class="border-top">
+					<td>Eeldatav väärtus</td>
+					<td>[[eur2str(_valueEstimated)]]</td>
+				</tr>
+				<tr>
+					<td>Tegelik väärtus</td>
+					<td>[[eur2str(_valueEnd)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Tooted</td>
+					<td>[[eur2str(_productsEnd)]]</td>
+				</tr>
+				<tr class="sub-row">
+					<td>Sularaha</td>
+					<td>[[eur2str(_cashEnd)]]</td>
+				</tr>
+				<tr>
+					<td>[[_computeDeficitText(_deficit)]]</td>
+					<td>[[_computeDeficitNumb(_deficit)]]</td>
+				</tr>
+			</table>
+			<div class="buttons" hidden$="[[flat]]">
+				<paper-button raised disabled="[[_isRequestLoading]]" on-tap="_editReport">Paranda</paper-button>
+				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}"
+				                      on-kassa-confirm="_confirmReport">Salvesta</kassa-confirm-button>
+			</div>
+		</kassa-material>
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-aruanne-summary",
+            properties: {
+                previousReport: {
+                    type: Object
+                },
+                updates: {
+                    type: Object
+                },
+                currentReport: {
+                    type: Object
+                },
+	            target: {
+                    type: String
+	            },
+                flat: {
+                    type: Boolean,
+		            value: false
+	            },
+                _valueStart: {
+                    type: Number
+                },
+                _productsStart: {
+                    type: Number
+                },
+                _cashStart: {
+                    type: Number
+                },
+                _valueIn: {
+                    type: Number
+                },
+                _productsIn: {
+                    type: Number
+                },
+	            _cashIn: {
+                    type: Number
+	            },
+                _valueOut: {
+                    type: Number
+                },
+                _productsOut: {
+                    type: Number
+                },
+	            _cashOut: {
+                    type: Number
+	            },
+                _valueEnd: {
+                    type: Number
+                },
+                _productsEnd: {
+                    type: Number
+                },
+	            _cashEnd: {
+                    type: Number
+	            },
+                _valueEstimated: {
+                    type: Number
+                },
+                _deficit: {
+                    type: Number
+                }
+            },
+            behaviors: [KassaBehavior],
+            calcSummary: function () {
+
+
+
+                // Compute the prices
+                let prices = {};
+                if (this.previousReport !== null) {
+                    for (let i = 0; i < this.previousReport.reportRows.length; i++) {
+                        prices[this.previousReport.reportRows[i].product.id] = this.previousReport.reportRows[i].currentPrice;
+                    }
+                }
+                for (let i = 0; i < this.currentReport.reportRows.length; i++) {
+                    prices[this.currentReport.reportRows[i].product.id] = this.currentReport.reportRows[i].currentPrice;
+                }
+
+                if (this.previousReport === null) {
+                    this.set('_cashStart', 0);
+                    this.set('_productsStart', 0);
+                    this.set('_valueStart', 0);
+                } else {
+                    this.set('_cashStart', this.previousReport.cash);
+                    let _productsStart = 0;
+                    for (let i = 0; i < this.previousReport.reportRows.length; i++) {
+                        _productsStart += this.previousReport.reportRows[i].count * prices[this.previousReport.reportRows[i].product.id];
+                    }
+                    this.set('_productsStart', _productsStart);
+                    this.set('_valueStart', this._cashStart + this._productsStart);
+                }
+
+                this.set('_cashEnd', this.currentReport.cash);
+                let _productsEnd = 0;
+                for (let i = 0; i < this.currentReport.reportRows.length; i++) {
+                    _productsEnd += this.currentReport.reportRows[i].count * prices[this.currentReport.reportRows[i].product.id];
+                }
+                this.set('_productsEnd', _productsEnd);
+                this.set('_valueEnd', this._cashEnd + this._productsEnd);
+
+                this.set('_cashIn', this.updates.cash.in);
+                this.set('_cashOut', this.updates.cash.out);
+                let _productsIn = 0;
+                let _productsOut = 0;
+
+                for (const product in this.updates.products) {
+                    if (this.updates.products.hasOwnProperty(product)) {
+                        if (prices.hasOwnProperty(product)) {
+                            _productsIn += this.updates.products[product].in * prices[product];
+                            _productsOut += this.updates.products[product].out * prices[product];
+                        }
+                    }
+                }
+
+                this.set('_productsIn', _productsIn);
+                this.set('_productsOut', _productsOut);
+                this.set('_valueIn', this._cashIn + this._productsIn);
+                this.set('_valueOut', this._cashOut + this._productsOut);
+
+
+                this.set('_valueEstimated', this._valueStart + this._valueIn - this._valueOut);
+                this.set('_deficit', this._valueEstimated - this._valueEnd);
+            },
+	        reset: function () {
+		        this.$$('kassa-confirm-button').reset();
+            },
+	        _confirmReport: function () {
+		        this.fire('report-confirmed');
+            },
+	        _editReport: function () {
+                this.fire('report-edit');
+            },
+            _computeDeficitText: function (deficit) {
+	            if (deficit >= 0) {
+	                return 'Puudujääk'
+	            }
+
+	            return 'Ülejääk'
+            },
+            _computeDeficitNumb: function (deficit) {
+	            return this.eur2str(Math.abs(deficit));
+            }
+        })
+	</script>
+</dom-module>

@@ -44,7 +44,7 @@
             },
             _initiateSelect: function (member, els) {
                 if (this.isTrue(member) && this.conventId === undefined) {
-                    for (i = 0; i < els.length; i++) {
+                    for (let i = 0; i < els.length; i++) {
                         if (member.conventId === els[i].id) {
                             this.set('_selectedConventNr', i);
                             this.set('_selectedName', els[i].name);

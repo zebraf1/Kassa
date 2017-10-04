@@ -36,23 +36,67 @@ Rotalia\UserBundle\Model\Convent:
         nimi: Brüssel
         kassa_aktiivne: '0'
 
+
+Rotalia\UserBundle\Model\Status:
+    Status_1:
+        nimi: Rebane
+        prefix: Reb!
+        suffix: reb!
+    Status_2:
+        nimi: Lihtliige
+        prefix: L!l!
+        suffix: l!l!
+    Status_3:
+        nimi: Tegevliige
+        prefix: Confr!
+        suffix: Rot!
+    Status_4:
+        nimi: Buršvilistlane
+        prefix: B!vil!
+        suffix: Rot!
+    Status_5:
+        nimi: Vilistlane
+        prefix: Vil!
+        suffix: vil!
+    Status_6:
+        nimi: Emeriitvilistlane
+        prefix: Emer!
+        suffix: 'vil! emer!'
+
+Rotalia\UserBundle\Model\StatusCreditLimit:
+    StatusCreditLimit_1:
+        status_id: Status_1
+        credit_limit: 0
+    StatusCreditLimit_2:
+        status_id: Status_2
+        credit_limit: 0
+    StatusCreditLimit_3:
+        status_id: Status_3
+        credit_limit: -25
+    StatusCreditLimit_4:
+        status_id: Status_4
+        credit_limit: -25
+    StatusCreditLimit_5:
+        status_id: Status_5
+        credit_limit: -50
+
 Rotalia\UserBundle\Model\Member:
     Member_1886:
         koondised_id: Convent_6
         koondised_alg: Convent_6
-        staatused_id: '5'
+        staatused_id: Status_5
         eesnimi: Super
         perenimi: Oluline
     Member_2122:
         koondised_id: Convent_6
         koondised_alg: Convent_6
-        staatused_id: '3'
+        staatused_id: Status_3
         eesnimi: Keegi
         perenimi: Oluline
     Member_2123:
         koondised_id: Convent_6
         koondised_alg: Convent_6
-        staatused_id: '3'
+        staatused_id: Status_3
         eesnimi: Mitte
         perenimi: Keegi
         lahk_pohjused_id: 1
@@ -193,20 +237,6 @@ Rotalia\InventoryBundle\Model\ProductInfo:
         price: '1.00'
         status: ACTIVE
 
-Rotalia\InventoryBundle\Model\Report:
-    Report_1:
-        name: 'Mitte Keegi'
-        member_id: Member_2123
-        cash: '5.12'
-        convent_id: Convent_6
-
-Rotalia\InventoryBundle\Model\ReportRow:
-    ReportRow_1_1:
-        report_id: Report_1
-        product_id: Product_1
-        count: 5
-        current_price: 1
-
 Rotalia\InventoryBundle\Model\Setting:
     Setting_CurrentCash_Tallinn:
         reference: 'current_cash'
@@ -275,3 +305,19 @@ Rotalia\InventoryBundle\Model\Transaction:
           count: 1
           current_price: 1
           sum: 1
+
+Rotalia\InventoryBundle\Model\Report:
+    Report_1:
+        member_id: Member_2123
+        cash: '5.12'
+        convent_id: Convent_6
+        type: 'VERIFICATION'
+        target: 0
+
+
+Rotalia\InventoryBundle\Model\ReportRow:
+    ReportRow_1_1:
+        report_id: Report_1
+        product_id: Product_1
+        count: 5
+        current_price: 1

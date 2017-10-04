@@ -1,0 +1,335 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-material.html">
+<link rel="import" href="kassa-aruanne-sularaha.html">
+<link rel="import" href="kassa-aruanne-summary.html">
+<link rel="import" href="kassa-aruanne-toode.html">
+
+<dom-module id="kassa-aruanne">
+	<template>
+		<style>
+			main {
+				padding-bottom: 500px;
+			}
+
+			paper-tabs {
+				--paper-tabs-selection-bar-color: var(--kassa-secondary-color);
+				margin-bottom: 1em;
+			}
+
+			paper-tab {
+				--paper-tab-ink: var(--kassa-secondary-color);
+			}
+
+			#items {
+				display: flex;
+				flex-flow: row wrap;
+				align-content: flex-start;
+				justify-content: space-between;
+			}
+
+			#items > * {
+				flex: 1 0 21em;
+				margin: 0.2em;
+			}
+
+			#tail {
+				display: flex;
+				flex-flow: row wrap;
+			}
+
+			#tail > * {
+				flex: 0 1 auto;
+				margin: 0.5em;
+			}
+
+			[hidden] {
+				display: none;
+			}
+
+		</style>
+
+		<main>
+			<kassa-material direction="vertical">
+				<paper-tabs selected="{{selectedTarget}}" hidden$="[[!hasRights(member, 'ROLE_ADMIN', conventId)]]" no-slide>
+					<paper-tab>Valvearuanne</paper-tab>
+					<paper-tab>Lao inventuur</paper-tab>
+				</paper-tabs>
+				<span>[[_computeGreeting(previousReport)]]</span>
+			</kassa-material>
+
+			<div id="items">
+				<template is="dom-repeat" items="{{mergedProducts}}" as="product">
+					<kassa-aruanne-toode product="{{product}}"
+					                     fixed="[[reportFixed]]"
+					                     target="[[target]]"
+					                     hidden$="[[_isProductHidden(index, lastIndex)]]"
+					                     on-kogus-confirmed="_countConfirmed"></kassa-aruanne-toode>
+				</template>
+				<template is="dom-repeat" items="{{mergedProducts}}" as="product">
+					<div></div>
+				</template>
+			</div>
+
+			<div id="tail">
+				<kassa-aruanne-sularaha fixed="[[reportFixed]]"
+				                        target="[[target]]"
+				                        cash-updates="[[updates.cash]]"
+				                        cash="{{cash}}"
+				                        cash-out="{{cashOutNow}}"
+				                        hidden$="[[_cashHidden(lastIndex, products)]]" 
+				                        on-cash-confirmed="_onCashConfirmed"></kassa-aruanne-sularaha>
+				<kassa-aruanne-summary previous-report="[[previousReport]]"
+				                       updates="[[_newUpdates]]"
+				                       current-report="[[_currentReport]]"
+				                       target="[[target]]"
+				                       on-report-confirmed="_confirmReport"
+				                       on-report-edit="_editReport"
+				                       hidden$="[[!reportFixed]]"></kassa-aruanne-summary>
+			</div>
+		</main>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-aruanne",
+            properties: {
+                conventId: {
+                    type: Number
+                },
+                member: {
+                    type: Object
+                },
+                previousReport: {
+                    type: Object
+	            },
+	            updates: {
+                    type: Object
+	            },
+	            products: {
+                    type: Array
+	            },
+	            productGroups: {
+                    type: Array
+	            },
+	            mergedProducts: {
+					type: Array,
+		            computed: '_mergeProducts(products, previousReport, updates, productGroups)'
+	            },
+	            target: {
+                    type: String,
+		            computed: '_computeTarget(selectedTarget, member, conventId)'
+	            },
+                selectedTarget: {
+                    type: Number
+                },
+	            lastIndex: {
+                    type: Number,
+		            value: 0
+	            },
+                reportFixed: {
+                    type: Boolean,
+	                value: false
+                },
+                cash: {
+                    type: Number
+                },
+	            _currentReport: {
+                    type: Object
+	            },
+	            // Includes cash out from this report
+	            _newUpdates: {
+                    type: Object
+	            }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            observers: [
+                '_loadProducts(pageActive, conventId)',
+                '_loadPreviousReport(pageActive, conventId, target)'
+            ],
+	        setUp: function () {
+                if (this.productGroups === undefined) {
+                    this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
+                }
+                this.set('selectedTarget', 0);
+            },
+	        cleanUp: function () {
+		        this.set('lastIndex', 0);
+		        this.set('products', undefined);
+		        this.set('updates',  undefined);
+		        this.set('reportFixed', false);
+            },
+	        _loadProducts: function(pageActive, conventId) {
+                if (pageActive && (conventId !== undefined)) {
+                    this.set('products', undefined);
+                    this.fire('kassa-backend-action', {action: 'doProductsGetActive', conventId: conventId});
+                }
+	        },
+            _loadPreviousReport: function (pageActive, conventId, target) {
+                if (pageActive && (conventId !== undefined) && (target !== undefined)) {
+                    this.fire('kassa-page-loading');
+
+                    this.set('lastIndex', 0);
+                    this.set('updates',  undefined);
+                    this.set('reportFixed', false);
+
+                    this.fire('kassa-backend-action', {
+                        action: 'doSingleReportGet',
+	                    id: -1,
+                        conventId: conventId,
+	                    target: target,
+                        reportType: 'VERIFICATION',
+                        onSuccess: function () {
+                            this.fire('kassa-page-ready', {page: this})
+                        }.bind(this)
+                    });
+                }
+            },
+            _computeTarget: function(selectedTarget, member, conventId) {
+                if (this.hasRights(member, 'ROLE_ADMIN', conventId)) {
+                    return ['storage', 'warehouse'][parseInt(selectedTarget)];
+                } else {
+                    return 'storage'
+                }
+            },
+            _computeGreeting: function (previousReport) {
+	            if (previousReport !== undefined) {
+	                if (this.isTrue(previousReport)) {
+                        return 'Eelmise aruande koostas ' + previousReport.member + ' ' + previousReport.createdAt;
+                    } else {
+                        return 'Seda tüüpi aruannet pole siin konvendis veel koostatud';
+                    }
+	            }
+            },
+	        // Merge products with previous report
+            _mergeProducts: function(products, previousReport, updates, productGroups) {
+                let mergedProducts = [];
+
+                if (products !== undefined && previousReport !== undefined && updates !== undefined && productGroups !== undefined) {
+					for (let i=0; i < products.length; i++) {
+                        let newProduct = products[i];
+
+                        if (updates['products'] === undefined || updates['products'][newProduct['id']] === undefined) {
+	                        newProduct['updates'] = {'in': 0, 'out': 0};
+					    } else {
+					        newProduct['updates'] = updates['products'][newProduct['id']];
+					    }
+
+                        newProduct['previousCount'] = 0;
+
+					    if (this.isTrue(previousReport)) {
+                            for (let j = 0; j < previousReport.reportRows.length; j++) {
+                                if (previousReport.reportRows[j].product.id === products[i].id) {
+                                    newProduct['previousCount'] = previousReport.reportRows[j].count;
+                                    break;
+                                }
+                            }
+                        }
+
+					    newProduct['estimatedCount'] = newProduct['previousCount'] + newProduct['updates']['in'] - newProduct['updates']['out'];
+					    newProduct['count'] = newProduct['estimatedCount'];
+
+					    mergedProducts.push(newProduct);
+					}
+
+                    // Prepare productGroups
+                    let productGroupIds = productGroups.map(productGroup => productGroup.id);
+
+                    // Sort products
+					mergedProducts = mergedProducts.sort(function (a, b) {
+						let aIndx = productGroupIds.indexOf(a.productGroupId);
+						if (aIndx === -1) {
+						    aIndx = productGroupIds.length;
+						}
+
+                        let bIndx = productGroupIds.indexOf(b.productGroupId);
+                        if (bIndx === -1) {
+                            bIndx = productGroupIds.length;
+                        }
+
+                        return aIndx - bIndx;
+                    });
+				}
+
+	            return mergedProducts
+            },
+            _isProductHidden: function (index, lastIndex) {
+	            return index > lastIndex;
+            },
+            _countConfirmed: function (event) {
+                if (event.model.index === this.lastIndex) {
+                    this.set('lastIndex', this.lastIndex + 1);
+                }
+            },
+            _cashHidden: function (lastIndex, products) {
+                if (products === undefined) {
+                    return true;
+                }
+	            return lastIndex < products.length;
+            },
+            _onCashConfirmed: function () {
+	            this.set('reportFixed', true);
+	            this._extractCurrentReport();
+	            this.$$('kassa-aruanne-summary').calcSummary();
+            },
+            _extractCurrentReport: function () {
+				let currentReport = {};
+
+				currentReport.cash = this.cash;
+                currentReport.reportRows = [];
+
+                for (let i = 0; i < this.products.length; i++) {
+                    let reportRow = {
+                        currentPrice: this.products[i].price,
+	                    count: parseInt(this.products[i].count),
+	                    product: {
+                            id: this.products[i].id
+	                    }
+                    };
+
+                    currentReport.reportRows.push(reportRow);
+                }
+
+				this.set('_currentReport', currentReport);
+
+                let newUpdates = {};
+                newUpdates.products = this.updates.products;
+                newUpdates.cash = {in: this.updates.cash.in, out: this.updates.cash.out + parseInt(this.cashOutNow)};
+
+                this.set('_newUpdates', newUpdates);
+
+            },
+            _editReport: function () {
+                this.set('reportFixed', false);
+            },
+            _confirmReport: function () {
+                this.fire('kassa-backend-action', {
+                    action: 'doReportPost',
+                    conventId: this.conventId,
+	                cashOut: this.cashOutNow,
+	                Report: {
+                        cash: this.cash,
+                        target: this.target,
+                        reportRows: this.products.map(product => this.pickProperties(product, ['id', 'count'], ['productId', 'count']))
+                    },
+                    onSuccess: function () {
+                        this.$$('kassa-aruanne-summary').reset();
+                        this.$$('kassa-aruanne-sularaha').reset();
+                        this._loadProducts(this.pageActive, this.conventId);
+	                    this._loadPreviousReport(this.pageActive, this.conventId, this.target);
+	                }.bind(this),
+                    onError: function () {
+                        this.$$('kassa-aruanne-summary').reset();
+	                    this.set('reportFixed', false);
+	                }.bind(this)
+                });
+            }
+        })
+	</script>
+</dom-module>

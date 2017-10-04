@@ -64,15 +64,16 @@ class Member extends BaseMember
     /**
      * REST API output data for Member object
      *
+     * @param bool $includeCredit
      * @return array
      */
-    public function getAjaxData()
+    public function getAjaxData($includeCredit=false)
     {
         return [
             'id' => $this->getId(),
             'name' => $this->getFullName(),
             'conventId' => $this->koondised_id,
-            'creditBalance' => doubleval($this->getTotalCredit())
+            'creditBalance' => $includeCredit ? doubleval($this->getTotalCredit()) : null
         ];
     }
 }

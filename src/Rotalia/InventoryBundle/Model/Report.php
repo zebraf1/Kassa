@@ -3,8 +3,8 @@
 namespace Rotalia\InventoryBundle\Model;
 
 use DateTime;
-use Monolog\Logger;
 use PropelPDO;
+use Rotalia\APIBundle\Classes\Updates;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Model\om\BaseReport;
 use Rotalia\UserBundle\Model\GuardDuty;
@@ -197,7 +197,7 @@ class Report extends BaseReport
         }
 
         $productCounts = [];
-        $updatesBetween = ReportQuery::findUpdateReportsBetween($previousVerification, $this);
+        $updatesBetween = ReportQuery::findUpdateReportsBetween($this->getConventId(), $previousVerification, $this);
         $initialCash = doubleval($previousVerification->getCash() * 100);
 
         //Previous report counts
@@ -506,7 +506,7 @@ class Report extends BaseReport
     /**
      * @param $inventoryType
      * @param string $action
-     * @throws \HttpException
+     * @throws HttpException
      */
     public function saveProductCounts($inventoryType, $action = 'set')
     {
@@ -527,7 +527,7 @@ class Report extends BaseReport
                     } else if ($action === 'reduce') {
                         $productInfo->reduceWarehouseCount($count);
                     } else {
-                        $productInfo->setWarehouseCount($count)->save();
+                        $productInfo->setWarehouseCount($count);
                     }
                     break;
                 case Product::INVENTORY_TYPE_STORAGE:
@@ -540,7 +540,7 @@ class Report extends BaseReport
                     }
                     break;
                 default:
-                    throw new \HttpException(400, 'Invalid inventoryType: '.$inventoryType);
+                    throw new HttpException(400, 'Invalid inventoryType: '.$inventoryType);
             }
 
             $productInfo->save();
@@ -548,10 +548,49 @@ class Report extends BaseReport
     }
 
     /**
+     * Basic fields for report
      * @return array
      */
     public function getAjaxData()
     {
+        return [
+            'id' => $this->getId(),
+            'type' => $this->getType(),
+            'source' => $this->getSource(),
+            'target' => $this->getTarget(),
+            'member' => $this->getMember() ? $this->getMember()->getAjaxName() : null,
+            'createdAt' => $this->getCreatedAt('H:i d.m.Y'),
+            'cash' => $this->getCash(),
+            'deficit' => $this->getDeficit(),
+        ];
+    }
+
+    /**
+     * Includes report rows and previous report
+     * @return array
+     */
+    public function getPartialAjaxData() {
+
+        $reportRows = [];
+
+        foreach ($this->getReportRows() as $reportRow) {
+            $reportRows[] = $reportRow->getAjaxData();
+        }
+
+
+        return [
+            'id' => $this->getId(),
+            'reportRows' => $reportRows,
+            'previousReport' => $this->getPreviousVerification() ? $this->getPreviousVerification()->getFullAjaxData() : null
+        ];
+
+    }
+
+    /**
+     * Basic ajax data with report rows and updates to items from this to the next verification report.
+     * @return array
+     */
+    public function getFullAjaxData() {
         $reportRows = [];
 
         foreach ($this->getReportRows() as $reportRow) {
@@ -560,16 +599,81 @@ class Report extends BaseReport
 
         return [
             'id' => $this->getId(),
-            'memberName' => $this->getMemberName(),
-            'guardDutyMembers' => $this->getGuardDutyMembers(),
-            'memberId' => $this->getMemberId(),
             'type' => $this->getType(),
-            'createdAt' => $this->getCreatedAt('Y-m-d H:i:s'),
+            'target' => $this->getTarget(),
+            'member' => $this->getMember() ? $this->getMember()->getAjaxName() : null,
+            'createdAt' => $this->getCreatedAt('H:i d.m.Y'),
             'cash' => $this->getCash(),
-            'expectedCash' => $this->getExpectedCash(),
-            'profit' => $this->getActualProfit(),
-            'expectedProfit' => $this->getExpectedProfit(),
-            'reportRows' => $reportRows,
+            'reportRows' => $reportRows
         ];
     }
+
+    // Methods for the API
+
+    public function getPreviousVerification() {
+        if ($this->previousVerification === null) {
+            $this->previousVerification = ReportQuery::findPreviousVerificationReport($this);
+        }
+
+        return $this->previousVerification;
+    }
+
+    /**
+     * @return int
+     */
+    private function getDeficit() {
+
+        if ($this->isUpdate()) {
+            // Has no meaning for update reports
+            return 0;
+        }
+
+        $previousVerification = $this->getPreviousVerification();
+        $updates = Updates::getUpdates($this->getTarget(), $this->getConventId(), $previousVerification, $this);
+
+        // Initial
+        $expectedCash = 0;
+        $expectedProductCounts = array();
+        $prices = array();
+        if ($previousVerification) {
+            $expectedCash = $previousVerification->getCash();
+
+            foreach ($previousVerification->getReportRows() as $row) {
+                $expectedProductCounts[$row->getProductId()] = $row->getCount();
+                $prices[$row->getProductId()] = $row->getCurrentPrice();
+            }
+        }
+
+        // Updates
+        $expectedCash += $updates['cash']['in'] - $updates['cash']['out'];
+        foreach ($updates['products'] as $productId => $productUpdates) {
+            if (array_key_exists($productId, $expectedProductCounts)) {
+                $expectedProductCounts[$productId] += $productUpdates['in'] - $productUpdates['out'];
+            } else {
+                $expectedProductCounts[$productId] = $productUpdates['in'] - $productUpdates['out'];
+            }
+        }
+
+        // Now
+        $realCash = $this->getCash();
+        $realProductCounts = array();
+        foreach ($this->getReportRows() as $row) {
+            $realProductCounts[$row->getProductId()] = $row->getCount();
+            $prices[$row->getProductId()] = $row->getCurrentPrice();
+        }
+
+        //difference
+        $cashDiff = $expectedCash - $realCash;
+        $productDiff = 0;
+        foreach (array_unique(array_merge(array_keys($expectedProductCounts), array_keys($realProductCounts))) as $productId) {
+            $expected = array_key_exists($productId, $expectedProductCounts) ? $expectedProductCounts[$productId] : 0;
+            $real = array_key_exists($productId, $realProductCounts) ? $realProductCounts[$productId] : 0;
+            $price = array_key_exists($productId, $prices) ? $prices[$productId] : 0;
+            $productDiff += ($expected - $real) * $price;
+        }
+
+        return $cashDiff + $productDiff;
+    }
+
+
 }

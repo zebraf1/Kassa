@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 <link rel="import" href="../bower_components/lazy-imports/lazy-imports-behavior.html">
 
 <link rel="import" href="kassa-fab.html">
@@ -9,9 +10,12 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-table">
-	<link rel="lazy-import" group="kassa-admin-tooted" href="kassa-admin-tooted-row-details.html">
 	<link rel="lazy-import" group="kassa-ylekanded" href="kassa-ylekanded-row-details.html">
+	<link rel="lazy-import" group="kassa-admin-tooted" href="kassa-admin-tooted-row-details.html">
 	<link rel="lazy-import" group="kassa-admin-tasaarveldused" href="kassa-admin-tasaarveldused-row-details.html">
+	<link rel="lazy-import" group="kassa-admin-aruanded" href="kassa-admin-aruanded-row-details.html">
+	<link rel="lazy-import" group="kassa-admin-tarned" href="kassa-admin-tarned-row-details.html">
+
 
 	<template>
 		<style>
@@ -43,6 +47,10 @@
 				font-family: Roboto, sans-serif;
 				--divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
 				height: auto;
+
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+				0 1px 5px 0 rgba(0, 0, 0, 0.12),
+				0 3px 1px -2px rgba(0, 0, 0, 0.2);
 
 				--vaadin-grid-cell: {
 					padding-left: 20px;
@@ -78,12 +86,16 @@
 
 		<vaadin-grid id="table" items="[[items]]" on-active-item-changed="_onActiveItemChanged">
 			<template class="row-details">
-				<kassa-admin-tooted-row-details
-						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-admin-tooted-row-details>
-				<kassa-ylekanded-row-details
-						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-ylekanded-row-details>
-				<kassa-admin-tasaarveldused-row-details
-						item="[[item]]" row-details-info="[[rowDetailsInfo]]"></kassa-admin-tasaarveldused-row-details>
+				<kassa-admin-tooted-row-details active-item="[[_activeItem]]"
+						item="[[item]]" row-details-name="[[rowDetailsName]]"></kassa-admin-tooted-row-details>
+				<kassa-ylekanded-row-details active-item="[[_activeItem]]"
+						item="[[item]]" row-details-name="[[rowDetailsName]]"></kassa-ylekanded-row-details>
+				<kassa-admin-tasaarveldused-row-details active-item="[[_activeItem]]" convent-id="[[conventId]]"
+						item="[[item]]" row-details-name="[[rowDetailsName]]"></kassa-admin-tasaarveldused-row-details>
+				<kassa-admin-aruanded-row-details active-item="[[_activeItem]]"
+						item="[[item]]" row-details-name="[[rowDetailsName]]"></kassa-admin-aruanded-row-details>
+				<kassa-admin-tarned-row-details active-item="[[_activeItem]]"
+						item="[[item]]" row-details-name="[[rowDetailsName]]"></kassa-admin-tarned-row-details>
 			</template>
 			<slot></slot>
 			<vaadin-grid-column width="48px" flex-grow="0" hidden$="[[!isTrue(editFunc)]]">
@@ -109,8 +121,6 @@
                 items: {
                     type: Array
                 },
-                dataSource: Object,
-                columns: Array,
                 //dialog properties
                 addFunc: {
                     type: String,
@@ -131,12 +141,16 @@
                 conventId: {
                     type: Number
                 },
-                rowDetailsInfo: {
-                    type: Object,
-                    value: null,
+                rowDetailsName: {
+                    type: String,
                     observer: '_loadRowDetails'
                 },
-                _activeItemId: {
+	            _activeItem: {
+                    type: Object,
+		            readOnly: true,
+		            value: null
+	            },
+                _editItemId: {
                     type: Number,
                     readOnly: true
                 },
@@ -145,52 +159,51 @@
                     observer: '_setFabLocation'
                 }
             },
-            observers: ['_computeFilteredItems(dataSource, filter.*)'],
             behaviors: [KassaBehavior, Polymer.LazyImportsBehavior],
             ready: function () {
                 window.addEventListener('resize', this._setFabLocation.bind(this));
             },
-            _loadRowDetails: function (rowDetailsInfo) {
-                if (this.isTrue(rowDetailsInfo)) {
-                    this.importLazyGroup(rowDetailsInfo.name);
+            _loadRowDetails: function (rowDetailsName) {
+                if (rowDetailsName !== undefined) {
+                    this.importLazyGroup(rowDetailsName);
                 }
             },
             _attachDialogListener: function (newVal) {
                 this.listen(newVal, 'kassa-confirm', '_onDialogSubbmit');
             },
             _addItem: function () {
-                var fields = this.dialog.querySelectorAll('[data-field]');
+                const fields = this.dialog.querySelectorAll('[data-field]');
 
-                for (var i = 0; i < fields.length; i++) {
+                for (let i = 0; i < fields.length; i++) {
                     this._setElementValue(fields[i], '');
                 }
-                this._set_activeItemId(null);
+                this._set_editItemId(null);
                 this.dialog.open();
             },
             _editItem: function (event) {
-                var fields = this.dialog.querySelectorAll('[data-field]');
+                const fields = this.dialog.querySelectorAll('[data-field]');
 
-                for (var i = 0; i < fields.length; i++) {
+                for (let i = 0; i < fields.length; i++) {
                     this._setElementValue(fields[i], event.model.item[fields[i].getAttribute('data-field')]);
                 }
-                this._set_activeItemId(event.model.item.id);
+                this._set_editItemId(event.model.item.id);
                 this.dialog.open();
             },
             _deleteItem: function (event) {
                 this.fire('kassa-backend-action', {action: this.deleteFunc, id: event.model.item.id})
             },
-            _onDialogSubbmit: function (event) {
-                var data = {
-                    action: this._activeItemId ? this.editFunc : this.addFunc,
-                    id: this._activeItemId,
+            _onDialogSubbmit: function () {
+                const data = {
+                    action: this._editItemId ? this.editFunc : this.addFunc,
+                    id: this._editItemId,
                     conventId: this.conventId,
                     itemType: {},
                     onSuccess: this._onDialogSuccess.bind(this),
                     onError: this._onDialogError.bind(this)
-                }
-                var fields = this.dialog.querySelectorAll('[data-field]')
+                };
+                const fields = this.dialog.querySelectorAll('[data-field]');
 
-                for (var i = 0; i < fields.length; i++) {
+                for (let i = 0; i < fields.length; i++) {
                     data.itemType[fields[i].getAttribute('data-field')] = this._getElementvalue(fields[i]);
                 }
                 this.fire('kassa-backend-action', data);
@@ -205,6 +218,8 @@
             _setElementValue: function (element, value) {
                 if (element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
                     element.checked = value === 'ACTIVE';
+                } else if (element.nodeName.toLocaleLowerCase() === 'kassa-admin-tarned-rows') {
+                    element.clear();
                 } else {
                     element.value = value;
                 }
@@ -213,11 +228,24 @@
                 if (element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
                     return element.checked ? "ACTIVE" : "DISABLED"
                 } else {
-                    return element.value
+                    return element.value === '__null__' ? null : element.value;
                 }
             },
-            _onActiveItemChanged: function (e) {
-                this.$.table.expandedItems = [e.detail.value];
+            _onActiveItemChanged: function (event) {
+                if (this.rowDetailsName !== undefined) {
+                    if (event.detail.value === null) {
+                        this.$.table.expandedItems = [];
+						this._set_activeItem({});
+                    } else {
+                        this._set_activeItem({
+	                        item: event.detail.value,
+	                        callback: function () {
+                                this.$.table.$.scroller._gridResizeHandler();
+                            }.bind(this)
+                        });
+                        this.$.table.expandedItems = [event.detail.value];
+                    }
+                }
             },
             _setFabLocation: function () {
                 this.$$('kassa-fab').style.left = this.scrollTarget.getBoundingClientRect().right - 76 + 'px';

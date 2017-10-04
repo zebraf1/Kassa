@@ -1,0 +1,93 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-row-details-behavior.html">
+
+<dom-module id="kassa-admin-tarned-row-details">
+	<template>
+		<style>
+			main {
+				font-size: 13px;
+				padding-left: 1em;
+				width: 100%;
+			}
+
+			table {
+				border-spacing: 0;
+			}
+
+			thead th, tbody td {
+				text-align: right;
+				padding: 0.3em;
+			}
+
+			thead th:first-child, tbody td:first-child {
+				text-align: left;
+			}
+
+			tbody tr:nth-child(odd) {
+				background-color: #e6e6e6;
+			}
+
+			[hidden] {
+				display: none;
+			}
+		</style>
+
+		<iron-ajax id="reportGet"
+		           url="/api/reports/[[item.id]]"
+		           loading="{{loading}}"
+		           handle-as="json"
+		           method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+
+		<main hidden$='[[isHidden]]'>
+			<paper-spinner active hidden$="[[!loading]]" style="height:25px; width: 25px; margin: 0 auto;"></paper-spinner>
+			<table hidden$="[[loading]]">
+				<thead>
+					<tr>
+						<th>Toode</th>
+						<th>Suurus</th>
+						<th>Kogus</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template is="dom-repeat" items="[[rows]]" as="row">
+						<tr>
+							<td>[[row.product.name]]</td>
+							<td>[[formatAmount(row.product.amount, row.product.amountType)]]</td>
+							<td>[[row.count]]</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+		</main>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-admin-tarned-row-details",
+            properties: {
+                name: {
+                    type: String,
+	                value: 'kassa-admin-tarned'
+                },
+	            rows: {
+                    type: Array
+                }
+            },
+            behaviors: [KassaBehavior, RowDetailsBehavior],
+            rowActivated: function (callback) {
+                this.$.reportGet.generateRequest().completes.then(function (result) {
+                    const data = result.xhr.response.data;
+                    this.set('rows', data.report.reportRows);
+                    this.async(function () {
+                        callback()
+                    });
+                }.bind(this));
+            }
+        })
+	</script>
+</dom-module>

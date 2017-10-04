@@ -1,6 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+
 <link rel="import" href="kassa-ost-toode.html">
-<link rel="import" href="kassa-equal-columns-behavior.html">
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-ost-tootegrupp">
@@ -10,12 +10,14 @@
 				margin-left: 1em;
 			}
 
-			div {
+			#items {
 				display: flex;
 				flex-flow: row wrap;
+				align-content: flex-start;
+				justify-content: space-between;
 			}
 
-			kassa-ost-toode {
+			#items > * {
 				flex: 1 0 16.8em;
 				margin: 0.2em;
 			}
@@ -28,8 +30,11 @@
 
 		<div id="items">
 			<template is="dom-repeat" items=[[products]] as="product" filter="[[_filter(filterVal)]]"
-			          rendered-item-count="{{productsCount}}" on-dom-change="setColumnWidths">
-				<kassa-ost-toode product="[[product]]" on-tap="_selectProduct" kassa-columns-item></kassa-ost-toode>
+			          rendered-item-count="{{productsCount}}">
+				<kassa-ost-toode product="[[product]]" on-tap="_selectProduct"></kassa-ost-toode>
+			</template>
+			<template is="dom-repeat" items=[[products]] as="product" filter="[[_filter(filterVal)]]">
+				<div></div>
 			</template>
 		</div>
 
@@ -47,9 +52,9 @@
                     value: ''
                 }
             },
-            behaviors: [EqualColumnsBehavior, KassaBehavior],
+            behaviors: [KassaBehavior],
             selectFirst: function () {
-                var first = this.$.items.querySelector('kassa-ost-toode');
+                const first = this.$.items.querySelector('kassa-ost-toode');
                 if (this.isTrue(first)) {
                     this._selectProduct({model: {product: first.product}});
                     return true

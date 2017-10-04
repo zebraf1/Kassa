@@ -2,7 +2,6 @@
 
 namespace Rotalia\APIBundle\Tests\Controller;
 
-
 use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
 use Rotalia\InventoryBundle\Model\Report;
@@ -50,7 +49,9 @@ class ReportsControllerTest extends WebTestCase
         }
 
         $params = [
+            'type' => Report::TYPE_VERIFICATION,
             'Report' => [
+                'target' => 'storage',
                 'cash' => '12.34',
                 'reportRows' => $reportRows
             ]
@@ -64,13 +65,15 @@ class ReportsControllerTest extends WebTestCase
 
         $result = json_decode($response->getContent());
 
-        $reportId = $result->data->reportId;
+        $reportId = $result->data->report->id;
 
         $report = ReportQuery::create()->findPk($reportId);
 
         $this->assertNotEmpty($report);
 
         $this->assertEquals(12.34, $report->getCash());
+
+        /* No PATCH at the moment
 
         foreach ($report->getReportRows() as $reportRow) {
             $this->assertEquals(13, $reportRow->getCount());
@@ -107,6 +110,7 @@ class ReportsControllerTest extends WebTestCase
                 $this->assertEquals(13, $reportRow->getCount());
             }
         }
+        */
     }
 
     /**
@@ -146,9 +150,9 @@ class ReportsControllerTest extends WebTestCase
         $params = [
             'conventId' => $convent->getId(),
             'type' => Report::TYPE_UPDATE,
-            'inventorySource' => $source,
-            'inventoryTarget' => $target,
             'Report' => [
+                'source' => $source,
+                'target' => $target,
                 'reportRows' => [
                     ['count' => $addedCount, 'productId' => $product->getId()]
                 ],
@@ -159,11 +163,112 @@ class ReportsControllerTest extends WebTestCase
 
         $response = static::$client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());
-
         $productInfo->reload();
 
         $this->assertEquals($expectedStorageCount, $productInfo->getStorageCount());
         $this->assertEquals($expectedWarehouseCount, $productInfo->getWarehouseCount());
+    }
+
+    /**
+     * @dataProvider providerCreateUpdateReport
+     * @param $source
+     * @param $target
+     */
+    public function testCashUpdates($source, $target) {
+
+        $this->loginSuperAdmin();
+
+        $convent = ConventQuery::create()->findOneByName('Tallinn');
+
+        // Make a verification reports
+        foreach ([Product::INVENTORY_TYPE_STORAGE, Product::INVENTORY_TYPE_WAREHOUSE] as $verificationTarget) {
+            static::$client->request('POST', '/api/reports/', [
+                'conventId' => $convent->getId(),
+                'type' => Report::TYPE_VERIFICATION,
+                'Report' => [
+                    'target' => $verificationTarget
+                ]
+            ]);
+            $response = static::$client->getResponse();
+            $this->assertEquals(201, $response->getStatusCode());
+        }
+
+
+
+        // Make an update report
+        // Must wait one second before, because updates query depends on timestamps
+        sleep(1);
+        $cashDelta = 16.36;
+        $params = [
+            'conventId' => $convent->getId(),
+            'type' => Report::TYPE_UPDATE,
+            'Report' => [
+                'source' => $source,
+                'target' => $target,
+                'cash' => $cashDelta
+            ]
+        ];
+
+        static::$client->request('POST', '/api/reports/', $params);
+        $response = static::$client->getResponse();
+        $this->assertEquals(201, $response->getStatusCode());
+        // Check results
+
+        // storage
+        static::$client->request('GET', '/api/reports/-1/', [
+            'conventId' => $convent->getId(),
+            'target' => Product::INVENTORY_TYPE_STORAGE
+        ]);
+
+        $response = static::$client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $result = json_decode($response->getContent());
+
+        $cashUpdates = $result->data->updates->cash;
+
+        if ($target == Product::INVENTORY_TYPE_STORAGE) {
+            $this->assertEquals($cashDelta, $cashUpdates->in);
+        } elseif ($target == Product::INVENTORY_TYPE_WAREHOUSE) {
+            $this->assertEquals(0, $cashUpdates->in);
+        } else {
+            $this->assertEquals(0, $cashUpdates->in);
+        }
+
+        if ($source == Product::INVENTORY_TYPE_STORAGE) {
+            $this->assertEquals($cashDelta, $cashUpdates->out);
+        } elseif ($source == Product::INVENTORY_TYPE_WAREHOUSE) {
+            $this->assertEquals(0, $cashUpdates->out);
+        } else {
+            $this->assertEquals(0, $cashUpdates->out);
+        }
+
+        // Warehouse
+        static::$client->request('GET', '/api/reports/-1/', [
+            'conventId' => $convent->getId(),
+            'target' => Product::INVENTORY_TYPE_WAREHOUSE
+        ]);
+
+        $response = static::$client->getResponse();
+        $result = json_decode($response->getContent());
+
+        $cashUpdates = $result->data->updates->cash;
+
+        if ($target == Product::INVENTORY_TYPE_STORAGE) {
+            $this->assertEquals(0, $cashUpdates->in);
+        } elseif ($target == Product::INVENTORY_TYPE_WAREHOUSE) {
+            $this->assertEquals($cashDelta, $cashUpdates->in);
+        } else {
+            $this->assertEquals(0, $cashUpdates->in);
+        }
+
+        if ($source == Product::INVENTORY_TYPE_STORAGE) {
+            $this->assertEquals(0, $cashUpdates->out);
+        } elseif ($source == Product::INVENTORY_TYPE_WAREHOUSE) {
+            $this->assertEquals($cashDelta, $cashUpdates->out);
+        } else {
+            $this->assertEquals(0, $cashUpdates->out);
+        }
+
     }
 
     public function providerCreateUpdateReport()

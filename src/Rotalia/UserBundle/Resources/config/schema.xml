@@ -90,8 +90,22 @@
         <index name="coet_a">
             <index-column name="coet_a"/>
         </index>
+        <foreign-key foreignTable="staatused" name="liikmed_staatused_fk" skipSql="true">
+            <reference local="staatused_id" foreign="id" />
+        </foreign-key>
         <vendor type="mysql">
             <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+    </table>
+
+    <table name="staatused" phpName="Status">
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="nimi" phpName="Name" type="VARCHAR" size="100" required="true" />
+        <column name="prefix" type="VARCHAR" size="10" required="true" />
+        <column name="suffix" type="VARCHAR" size="10" required="true" />
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+            <parameter name="Charset" value="utf8"/>
         </vendor>
     </table>
 
@@ -202,6 +216,22 @@
         </foreign-key>
         <foreign-key foreignTable="koondised" name="member_credit_koondised_fk" skipSql="true">
             <reference local="convent_id" foreign="id" />
+        </foreign-key>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+    </table>
+
+    <table name="ollekassa_staatused_credit_limit" phpName="StatusCreditLimit">
+        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="status_id" type="INTEGER" required="true" />
+        <column name="credit_limit" type="INTEGER" required="true" defaultValue="0"/>
+        <index name="status_id">
+            <index-column name="status_id"/>
+        </index>
+        <foreign-key foreignTable="staatused" name="status_credit_limit_status_fk" skipSql="true">
+            <reference local="status_id" foreign="id" />
         </foreign-key>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>

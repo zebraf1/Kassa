@@ -15,8 +15,11 @@ class AuthenticationControllerTest extends WebTestCase
      * Get login info, check that user name is correct
      * Logout
      * Check that user is logged out
+     *
+     * @dataProvider providerSuccessfulLoginAndLogout
+     * @param bool $rememberMe
      */
-    public function testSuccessfulLoginAndLogout()
+    public function testSuccessfulLoginAndLogout($rememberMe = false)
     {
         $client = static::$client;
 
@@ -45,6 +48,7 @@ class AuthenticationControllerTest extends WebTestCase
                 'csrfToken' => $getResult->data->csrfToken,
                 'username' => 'user1', // from fixtures
                 'password' => 'test123', // from fixtures
+                'rememberMe' => $rememberMe,
             ]
         );
 
@@ -57,11 +61,18 @@ class AuthenticationControllerTest extends WebTestCase
         $postResult = json_decode($response->getContent());
         $this->assertEquals('success', $postResult->status);
 
+        /** @var Cookie[] $cookies */
         $cookies = $response->headers->getCookies();
         /** @var Cookie $sessionCookie */
-        $sessionCookie = $cookies[0];
+        $sessionCookie = $cookies[$rememberMe ? 1 : 0];
         $this->assertEquals('MOCKSESSID', $sessionCookie->getName());
         $sessionId = $sessionCookie->getValue();
+
+        // Check if remember me cookie is set
+        if ($rememberMe) {
+            $rememberMeCookie = $cookies[0];
+            $this->assertEquals('REMEMBERME', $rememberMeCookie->getName());
+        }
 
         $clientCookie = $client->getCookieJar()->get('MOCKSESSID');
         $this->assertEquals($sessionId, $clientCookie->getValue());
@@ -112,6 +123,17 @@ class AuthenticationControllerTest extends WebTestCase
         $this->assertEquals(null, $getResult->data->member);
         $this->assertEquals(null, $getResult->data->pointOfSaleId);
         $this->assertNotEmpty($getResult->data->csrfToken);
+    }
+
+    /**
+     * @return array
+     */
+    public function providerSuccessfulLoginAndLogout()
+    {
+        return [
+            [true], // rememberMe - check that logout works properly
+            [false], // don't remember ME
+        ];
     }
 
     // Test authentication failed 400 403
@@ -201,6 +223,6 @@ class AuthenticationControllerTest extends WebTestCase
         $postResult = json_decode($response->getContent());
 
         $this->assertEquals(401, $response->getStatusCode(), 'Failed: '.json_encode($postResult));
-        $this->assertEquals('Vale parool', $postResult->message);
+        $this->assertEquals('Vale kasutaja/parool', $postResult->message);
     }
 }

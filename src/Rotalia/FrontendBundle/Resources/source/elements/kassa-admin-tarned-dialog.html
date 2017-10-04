@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-ost-toode-valitud.html">
+
+<dom-module id="kassa-admin-tarned-dialog">
+	<template>
+		<style>
+			[hidden] {
+				display: none;
+			}
+		</style>
+
+		<main hidden$="[[!opened]]">
+			<slot></slot>
+		</main>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-admin-tarned-dialog",
+            properties: {
+                opened: {
+                    type: Boolean,
+	                value: false,
+	                notify: true
+                }
+            },
+            behaviors: [KassaBehavior],
+            listeners: {
+                'tap': '_onDialogClick'
+            },
+	        open: function () {
+		        this.set('opened', true);
+            },
+	        close: function () {
+                this.set('opened', false);
+            },
+            _onDialogClick: function(event) {
+                // Search for the element with dialog-confirm or dialog-dismiss,
+                // from the root target until this (excluded).
+                const path = Polymer.dom(event).path;
+                let i = 0;
+                const l = path.indexOf(this);
+                for (; i < l; i++) {
+                    const target = path[i];
+                    if (target.hasAttribute && (target.hasAttribute('dialog-dismiss') || target.hasAttribute('dialog-confirm'))) {
+                        this.close();
+                        event.stopPropagation();
+                        break;
+                    }
+                }
+            }
+        })
+	</script>
+</dom-module>

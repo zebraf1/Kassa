@@ -8,10 +8,15 @@ use Rotalia\UserBundle\Model\User;
 use Rotalia\UserBundle\Model\UserQuery;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\RememberMeToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Symfony\Component\Security\Http\RememberMe\RememberMeServicesInterface;
+use Symfony\Component\Security\Http\RememberMe\TokenBasedRememberMeServices; // Used for API documentation
 
 /**
  * Class AuthenticationController
@@ -45,7 +50,7 @@ class AuthenticationController extends DefaultController
 
         $memberData = null;
         if ($member !== null) {
-            $memberData = $member->getAjaxData();
+            $memberData = $member->getAjaxData(true);
 
             if ($user !== null) {
                 $memberData['roles'] = $user->getRoles();
@@ -85,10 +90,11 @@ class AuthenticationController extends DefaultController
      *     description="Create new session",
      *     section="Authentication",
      *     formType="POST",
-     *     filters={
-     *          {"name"="csrfToken","dataType"="string"},
-     *          {"name"="username","dataType"="string"},
-     *          {"name"="password","dataType"="string"},
+     *     parameters={
+     *          {"name"="csrfToken","dataType"="string","required"=true},
+     *          {"name"="username","dataType"="string","required"=true},
+     *          {"name"="password","dataType"="string","required"=true},
+     *          {"name"="rememberMe","dataType"="boolean","required"=false},
      *     }
      * )
      *
@@ -116,27 +122,45 @@ class AuthenticationController extends DefaultController
             return JSendResponse::createFail('Kasutajat ei leitud', 401);
         }
 
-        // Get the encoder to check user password
-        /** @var EncoderFactoryInterface $encoderFactory */
-        $encoderFactory = $this->get('security.encoder_factory');
-        $encoder = $encoderFactory->getEncoder($user);
+        $token = new UsernamePasswordToken($username, $password, "main", $user->getRoles());
 
-        // Note the difference
-        if (!$encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-            // Get profile list
-            return JSendResponse::createFail('Vale parool', 401);
+        /** @var AuthenticationManagerInterface $authenticationManager */
+        $authenticationManager = $this->get('security.authentication.manager');
+        /** @var TokenStorageInterface $tokenStorage */
+        $tokenStorage = $this->get('security.token_storage');
+        try {
+            $newToken = $authenticationManager->authenticate($token);
+            $tokenStorage->setToken($newToken);
+        } catch (BadCredentialsException $e) {
+            return JSendResponse::createFail('Vale kasutaja/parool', 401);
+        } catch (AuthenticationException $e) {
+            return JSendResponse::createFail('Logimine ebaõnnestus. '.$e->getMessage(), 401);
         }
 
-        // Login the user
+        $response = JSendResponse::createSuccess('Autoriseerimine õnnestus');
 
-        $token = new UsernamePasswordToken($user, null, "main", $user->getRoles());
-        $this->get("security.context")->setToken($token); // User is logged in
+        $rememberMe = $request->get('rememberMe', false);
+        if ($rememberMe) {
+            /** @var RememberMeServicesInterface $rememberMeService */
 
-        // Dispatch the login event to all listeners
-        $event = new InteractiveLoginEvent($request, $token);
-        $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
+            $userProvider = $this->get('rotalia_user_provider');
+            // TODO get config from services.yml
+            $rememberMeService = new TokenBasedRememberMeServices([$userProvider], $this->getParameter('secret'), "main", [
+                    'name' => 'REMEMBERME',
+                    'lifetime' => 31536000,
+                    'path' => '/',
+                    'domain' => null,
+                    'secure' => false,
+                    'httponly' => true,
+                    'always_remember_me' => false,
+                    'remember_me_parameter' => 'rememberMe',
+            ]);
+            $rememberMeToken = new RememberMeToken($user, "main", $this->getParameter('secret'));
+            $rememberMeService->loginSuccess($request, $response, $rememberMeToken);
+            $tokenStorage->setToken($rememberMeToken);
+        }
 
-        return JSendResponse::createSuccess('Autoriseerimine õnnestus');
+        return $response;
     }
 
     /**
@@ -158,11 +182,32 @@ class AuthenticationController extends DefaultController
     public function logoutAction(Request $request)
     {
         // Logout user
-        $this->get('security.context')->setToken(null);
+        $token = $this->get('security.token_storage')->getToken();
+        $this->get('security.token_storage')->setToken(null);
 
         // Invalidate session
         if ($request->getSession()->invalidate()) {
-            return JSendResponse::createSuccess('Välja logitud');
+            $response = JSendResponse::createSuccess('Välja logitud');
+
+            // Delete rememberMe cookie upon logout
+            if ($token instanceof RememberMeToken) {
+                $userProvider = $this->get('rotalia_user_provider');
+                // TODO get config from services.yml
+                $rememberMeService = new TokenBasedRememberMeServices([$userProvider], $this->getParameter('secret'), "main", [
+                    'name' => 'REMEMBERME',
+                    'lifetime' => 31536000,
+                    'path' => '/',
+                    'domain' => null,
+                    'secure' => false,
+                    'httponly' => true,
+                    'always_remember_me' => false,
+                    'remember_me_parameter' => 'rememberMe',
+                ]);
+
+                $rememberMeService->logout($request, $response, $token);
+            }
+
+            return $response;
         } else {
             return JSendResponse::createError('Välja logimine ebaõnnestus', 500);
         }

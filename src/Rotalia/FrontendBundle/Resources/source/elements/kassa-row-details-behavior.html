@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+    /**
+     * @polymerBehavior
+     */
+    RowDetailsBehaviorImpl = {
+
+        properties: {
+            // Name of this element
+            name: {
+                type: String,
+                value: ''
+            },
+            // Name of the active element
+            rowDetailsName: {
+                type: String,
+                value: ''
+            },
+	        // Id of the active element
+	        activeItem: {
+                type: Object
+	        },
+            isHidden: {
+                type: Boolean,
+                computed: '_computeIsHidden(name, rowDetailsName)'
+            },
+	        item: {
+                type: Object
+	        }
+        },
+	    observers: ['_activeItemChanged(item, activeItem)'],
+        _computeIsHidden: function (name, rowDetailsName) {
+	        if (name !== undefined && rowDetailsName !== undefined) {
+	            return name !== rowDetailsName;
+	        }
+
+	        return true;
+        },
+        _activeItemChanged: function(item, activeItem) {
+            if (this.isTrue(item) && this.isTrue(activeItem) && !this.isHidden) {
+                if (item.id === activeItem.item.id) {
+                    this.rowActivated(activeItem.callback);
+                }
+            }
+        },
+	    rowActivated: function (callback) {
+		    // Must be filled by elements implementing this behavior
+        }
+    };
+
+    /**
+     * @polymerBehavior
+     */
+    RowDetailsBehavior = [RowDetailsBehaviorImpl]
+</script>

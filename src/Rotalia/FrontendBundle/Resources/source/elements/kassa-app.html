@@ -59,19 +59,30 @@
 			[hidden] {
 				display: none;
 			}
+
+			@media (max-height: 600px) {
+				app-toolbar.spacer {
+					display: none;
+				}
+			}
 		</style>
 
 
 		<kassa-backend id="backend"
 		               member="{{member}}"
 		               settings="{{settings}}"
+		               members="{{members}}"
 		               active-products="{{activeProducts}}"
 		               inactive-products="{{inactiveProducts}}"
 		               product-groups="{{productGroups}}"
 		               point-of-sales="{{pointOfSales}}"
 		               transfers="{{transfers}}"
 		               credit-nettings="{{creditNettings}}"
-		               purchases="{{purchases}}"></kassa-backend>
+		               purchases="{{purchases}}"
+		               single-report="{{singleReport}}"
+		               updates="{{updates}}"
+		               reports="{{reports}}"
+		               credit-limits="{{creditLimits}}"></kassa-backend>
 
 		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]" convent-id="[[configuration.selectedConventId]]"></kassa-route>
 
@@ -95,7 +106,7 @@
 							<paper-icon-button icon="kassa:help" hidden$="[[!rightNarrow]]"
 							                   on-tap="_toggleRightDrawer"></paper-icon-button>
 						</app-toolbar>
-						<app-toolbar></app-toolbar>
+						<app-toolbar class="spacer"></app-toolbar>
 						<app-toolbar>
 							<div main-title>
 								<img src$="[[importPath]]../images/icons/icon-96x96.png" alt="õkassa logo"/>
@@ -104,7 +115,8 @@
 						</app-toolbar>
 					</app-header>
 
-					<kassa-pages selected="[[page]]" scroll-target="{{scrollTarget}}">
+					<kassa-pages selected="[[page]]" scroll-target="{{scrollTarget}}" attr-for-selected="data-page">
+						<kassa-loading-page data-page="loading"></kassa-loading-page>
 						<kassa-login data-page="login"></kassa-login>
 						<kassa-logout data-page="logout"></kassa-logout>
 						<kassa-ost data-page="ost"
@@ -112,8 +124,14 @@
 						           products="[[activeProducts]]"
 						           product-groups="[[productGroups]]"
 						           convent-id="[[configuration.selectedConventId]]"></kassa-ost>
+						<kassa-aruanne data-page="aruanne"
+						               convent-id="[[configuration.selectedConventId]]"
+						               member="[[member]]"
+						               products="{{activeProducts}}"
+						               previous-report="[[singleReport]]"
+						               updates="[[updates]]"
+						               product-groups="[[productGroups]]"></kassa-aruanne>
 						<kassa-ylevaade-ostud data-page="ylevaade-ostud"
-						                      convent-id="[[configuration.selectedConventId]]"
 						                      member-id="[[member.id]]"
 						                      purchases="[[purchases]]"></kassa-ylevaade-ostud>
 						<kassa-ylevaade-ylekanded
@@ -128,6 +146,7 @@
 						<kassa-admin-tootegrupid data-page="admin-tootegrupid"
 						                         product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
 						<kassa-admin-kassad data-page="admin-kassad"
+						                    convent-id="[[configuration.selectedConventId]]"
 						                    point-of-sales="[[pointOfSales]]"></kassa-admin-kassad>
 						<kassa-admin-ylekanded data-page="admin-ylekanded"
 						                       convent-id="[[configuration.selectedConventId]]"
@@ -138,6 +157,18 @@
 						<kassa-admin-ostud data-page="admin-ostud"
 						                   convent-id="[[configuration.selectedConventId]]"
 						                   purchases="[[purchases]]"></kassa-admin-ostud>
+						<kassa-admin-aruanded data-page="admin-aruanded"
+						                      convent-id="[[configuration.selectedConventId]]"
+						                      reports="[[reports]]"></kassa-admin-aruanded>
+						<kassa-admin-kasutajad data-page="admin-kasutajad"
+						                      convent-id="[[configuration.selectedConventId]]"
+						                      members="[[members]]"></kassa-admin-kasutajad>
+						<kassa-admin-tarned data-page="admin-tarned"
+						                    convent-id="[[configuration.selectedConventId]]"
+						                    deliveries="[[reports]]"
+						                    products="[[activeProducts]]"></kassa-admin-tarned>
+						<kassa-super-admin-satted data-page="super-admin-satted"
+						                          credit-limits="[[creditLimits]]"></kassa-super-admin-satted>
 					</kassa-pages>
 				</app-header-layout>
 
@@ -160,14 +191,19 @@
                     value: function () {
                         return [
                             {page: 'ost', name: 'Osta õllekassast', role: 'ROLE_USER'},
+                            {page: 'aruanne', name: 'Koosta aruanne', role: 'ROLE_USER'},
 	                        {page: 'ylevaade-ostud', name: 'Ostud', role: 'ROLE_USER'},
 	                        {page: 'ylevaade-ylekanded', name: 'Ülekanded', role: 'ROLE_USER'},
-                            {page: 'admin-ostud', name: 'Konvendi Ostud', role: 'ROLE_ADMIN'},
-                            {page: 'admin-ylekanded', name: 'Konvendi Ülekanded', role: 'ROLE_ADMIN'},
+                            {page: 'admin-ostud', name: 'Konvendi ostud', role: 'ROLE_ADMIN'},
+                            {page: 'admin-ylekanded', name: 'Konvendi ülekanded', role: 'ROLE_ADMIN'},
+                            {page: 'admin-aruanded', name: 'Aruanded', role: 'ROLE_ADMIN'},
+                            {page: 'admin-tarned', name: 'Tarned', role: 'ROLE_ADMIN'},
                             {page: 'admin-tooted', name: 'Tooted', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegrupid', role: 'ROLE_ADMIN'},
-                            {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
-	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'}
+                            {page: 'admin-kasutajad', name: 'Kasutajad', role: 'ROLE_ADMIN'},
+                            //{page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
+	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'},
+	                        {page: 'super-admin-satted', name: 'Sätted', role: 'ROLE_SUPER_ADMIN'}
                         ];
                     }
                 },
@@ -187,6 +223,7 @@
             listeners: {
                 'kassa-message-success': '_onSuccessMessage',
                 'kassa-message-error': '_onErrorMessage',
+                'kassa-message-warning': '_onWarningMessage',
                 'kassa-backend-action': '_onBackendAction'
             },
             ready: function () {
@@ -195,6 +232,9 @@
             },
             _onSuccessMessage: function (event) {
                 this.$.toast.success(event.detail);
+            },
+            _onWarningMessage: function (event) {
+                this.$.toast.warning(event.detail);
             },
             _onErrorMessage: function (event) {
                 this.$.toast.error(event.detail);

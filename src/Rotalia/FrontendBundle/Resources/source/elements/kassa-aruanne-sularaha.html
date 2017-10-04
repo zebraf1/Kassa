@@ -1,0 +1,152 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-material.html">
+
+<dom-module id="kassa-aruanne-sularaha">
+	<template>
+		<style>
+			main {
+				width: 16em;
+			}
+
+			.raha-all {
+				display: flex;
+				flex-flow: column wrap;
+			}
+
+			.raha {
+				display: flex;
+				flex-flow: row nowrap;
+				align-items: baseline;
+				width: 15em;
+			}
+
+			.raha span:first-child {
+				flex: 0 0 6em;
+			}
+
+			.raha span:last-child {
+				flex: 1 0 5em;
+				text-align: right;
+			}
+
+			paper-input {
+				width: 5em;
+			}
+
+		</style>
+
+		<kassa-material direction="vertical">
+			<h4>Sularaha varem välja võetud:</h4>
+			<span>[[_calcCashOut(cashUpdates)]]</span>
+
+			<h4>Sularaha nüüd välja võetud:</h4>
+			<paper-input type="number" value="{{cashOut}}" step="0.01" disabled="[[fixed]]" no-label-float>
+				<span slot="suffix">€</span>
+			</paper-input>
+			
+			<h3>[[strings.title]]:</h3>
+			<div class="raha-all">
+				<template is="dom-repeat" items="{{bills}}" as="bill">
+					<div class="raha">
+						<span>[[eur2str(bill.value)]] &times;</span>
+						<paper-input value="{{bill.count}}" type="number" step="1" min="0"
+						             on-change="_computeCash" disabled="[[fixed]]"
+						             no-label-float></paper-input>
+						<span>= [[_computeBillSum(bill.value, bill.count)]]</span>
+					</div>
+				</template>
+				<div><h4>Kokku:</h4><span>[[eur2str(cash)]]</span></div>
+			</div>
+
+			<paper-button on-tap="_confirmCash" style="align-self: flex-end" disabled="[[fixed]]">Edasi</paper-button>
+		</kassa-material>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-aruanne-sularaha",
+            properties: {
+                cash: {
+                    type: Number,
+                    value: 0,
+                    notify: true,
+                    readOnly: true
+                },
+	            cashOut: {
+                    type: Number,
+		            value: 0,
+		            notify: true
+	            },
+	            cashUpdates: {
+                    type: Object
+	            },
+                fixed: {
+                    type: Boolean,
+                    value: false
+                },
+	            target: {
+                    type: String
+	            },
+                bills: {
+                    type: Array,
+                    value: function () {
+                        const bills = [];
+                        const values = [500, 200, 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01];
+
+                        for (let i = 0; i < values.length; i++) {
+                            bills.push({value: values[i], count: 0});
+                        }
+
+                        return bills
+                    }
+                },
+                strings: {
+                    type: Object,
+                    computed: '_computeStrings(target)'
+                }
+            },
+            behaviors: [KassaBehavior],
+            reset: function () {
+                this.set('cashOut', 0);
+                this.set('bills', this.properties.bills.value());
+            },
+            _computeBillSum: function (value, count) {
+                return this.eur2str(value * count);
+            },
+
+            _computeCash: function () {
+                let sum = 0;
+                for (let i = 0; i < this.bills.length; i++) {
+                    sum += this.bills[i].value * this.bills[i].count;
+                }
+                this._setCash(sum);
+            },
+            _confirmCash: function () {
+	            this.fire('cash-confirmed')
+            },
+            _computeStrings: function (target) {
+                if (target === 'storage') {
+                    return {
+                        title: 'Sularaha kassas'
+                    }
+                }
+
+                if (target === 'warehouse') {
+                    return {
+                        title: 'Sularaha laos'
+                    }
+                }
+            },
+            _calcCashOut: function (cashUpdates) {
+                if (cashUpdates !== undefined) {
+                    return this.eur2str(cashUpdates.out - cashUpdates.in);
+                }
+                return this.eur2str(0);
+            }
+        })
+	</script>
+</dom-module>

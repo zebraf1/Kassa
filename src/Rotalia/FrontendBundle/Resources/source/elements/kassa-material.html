@@ -9,25 +9,31 @@
 			}
 
 			main {
-				/* flexbox*/
-				display: flex;
-				justify-content: flex-start;
-
-				/* Other */
 				margin: 0;
+			}
+
+			main:not([flat]) {
 				padding: 1em;
 				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
 				0 1px 5px 0 rgba(0, 0, 0, 0.12),
 				0 3px 1px -2px rgba(0, 0, 0, 0.2);
 			}
 
+			main.border:not([flat]) {
+				border: 1px solid rgba(0, 0, 0, 0.14);
+			}
+
 			main.horizontal {
+				display: flex;
+				justify-content: flex-start;
 				flex-direction: row;
 				flex-wrap: wrap;
 				align-items: center;
 			}
 
 			main.vertical {
+				display: flex;
+				justify-content: flex-start;
 				flex-direction: column;
 				flex-wrap: nowrap;
 				align-items: flex-start;
@@ -41,7 +47,7 @@
 
 		</style>
 
-		<main>
+		<main flat$="[[flat]]">
 			<slot></slot>
 		</main>
 
@@ -54,14 +60,26 @@
                 direction: {
                     type: String,
                     observer: '_directionChanged'
-                }
+                },
+	            flat: {
+                    type: Boolean,
+		            value: false
+	            }
             },
             behaviors: [KassaBehavior],
+	        ready: function () {
+                // Opera mini has no box shadow
+                const isOperaMini = (navigator.userAgent.indexOf('Opera Mini') > -1) || Object.prototype.toString.call(window.operamini) === '[object OperaMini]';
+                const isOpera = !!window.opera || /opera|opr/i.test(navigator.userAgent);
+                if (isOpera || isOperaMini) {
+                    this.$$('main').classList.add('border');
+                }
+            },
             _directionChanged: function (newDirection) {
                 if ((newDirection === 'vertical' || newDirection === 'horizontal')) {
                     this.$$('main').className = newDirection;
                 } else {
-                    console.log(newDirection);
+                    console.error(newDirection);
                 }
             }
         })

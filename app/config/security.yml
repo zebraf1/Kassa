@@ -8,11 +8,15 @@ security:
             form_login:
                 provider: fos_userbundle
                 csrf_provider: form.csrf_provider # todo: use security.csrf.token_manager
+            user_checker: ~
             remember_me:
-                key:      "%secret%"
-                lifetime: 31536000 # 1 year in seconds
-                path:     /
-            logout:       true
+                secret:      "%secret%"
+                user_providers: [fos_userbundle]
+                remember_me_parameter: rememberMe
+                always_remember_me: true
+            logout:
+                invalidate_session: true
+                delete_cookies:     ~
             anonymous:    true
 
     access_control:

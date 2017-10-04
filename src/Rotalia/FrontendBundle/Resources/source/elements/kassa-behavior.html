@@ -65,16 +65,17 @@
          */
         mapIdsToValues: function (items, mapping) {
 
-            var newItems = [];
+            const newItems = [];
 
-            for (var i = 0; i < items.length; i++) {
-	            var item = items[i];
-                var newItem = {};
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const newItem = {};
 
-                for (var key in item) {
+                for (let key in item) {
                     if (item.hasOwnProperty(key)) {
                         newItem[key] = item[key];
                         if (mapping.hasOwnProperty(key)) {
+                            // Assume there is "Id" in the end of key
                             newItem[key.slice(0, -2)] = this.mapIdToValue(item[key], mapping[key][0], mapping[key][1])
                         }
                     }
@@ -86,7 +87,7 @@
             return newItems
         },
         mapIdToValue: function (id, items, key) {
-            for (var i = 0; i < items.length; i++) {
+            for (let i = 0; i < items.length; i++) {
                 if (items[i].id === id) {
                     if (key === null) {
                         return items[i]
@@ -97,12 +98,27 @@
             }
             return ''
         },
-        pickProperties: function (object, keys) {
-            var newObject = {};
-            for (var i = 0; i < keys.length; i++) {
-                newObject[keys[i]] = object[keys[i]];
+        pickProperties: function (object, keys, newKeys) {
+
+            if (newKeys === undefined) {
+                newKeys = keys;
+            }
+
+            const newObject = {};
+            for (let i = 0; i < keys.length; i++) {
+                newObject[newKeys[i]] = object[keys[i]];
             }
             return newObject;
+        },
+        hasRights: function (member, role, conventId) {
+            if (this.isTrue(member) && this.isTrue(conventId)) {
+
+                if ((role === 'ROLE_ADMIN') && (member.conventId !== conventId) && (member.roles.indexOf('ROLE_SUPER_ADMIN') < 0)) {
+                    return false;
+                }
+                return member.roles.indexOf(role) >= 0;
+            }
+            return false;
         }
     };
 </script>

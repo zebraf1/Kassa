@@ -1,0 +1,204 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-confirm-button.html">
+<link rel="import" href="kassa-table.html">
+<link rel="import" href="kassa-material.html">
+<link rel="import" href="kassa-date-picker.html">
+<link rel="import" href="kassa-admin-tarned-dialog.html">
+<link rel="import" href="kassa-admin-tarned-rows.html">
+
+<dom-module id="kassa-admin-tarned">
+	<template>
+		<style>
+			kassa-material {
+				margin-bottom: 1em;
+			}
+		</style>
+
+		<div hidden$="[[dialogOpen]]">
+			<kassa-material direction="horizontal">
+				<kassa-date-picker on-kassa-confirm="_loadDeliveries" start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
+			</kassa-material>
+
+			<kassa-table items="[[deliveries]]" add-func="doDeliveryPost"
+			             dialog="[[dialog]]" scroll-target="[[scrollTarget]]" convent-id="[[conventId]]" row-details-name="kassa-admin-tarned">
+				<vaadin-grid-column flex-grow="0" width="3em">
+					<template class="header"><span style="text-align: right;">Id</span></template>
+					<template>
+						<span style="text-align: right;">[[item.id]]</span>
+					</template>
+				</vaadin-grid-column>
+				<vaadin-grid-column flex-grow="1">
+					<template class="header">
+						<vaadin-grid-filter path="member" value="[[_memberFilter]]">
+							<paper-input label="Koostaja" value="{{_memberFilter}}" slot="filter" no-label-float></paper-input>
+						</vaadin-grid-filter>
+					</template>
+					<template>
+						<span>[[item.member]]</span>
+					</template>
+				</vaadin-grid-column>
+				<vaadin-grid-column>
+					<template class="header">Kust</template>
+					<template>
+						<span>[[_mapInventoryType(item.source)]]</span>
+					</template>
+				</vaadin-grid-column>
+				<vaadin-grid-column>
+					<template class="header">Kuhu</template>
+					<template>
+						<span>[[_mapInventoryType(item.target)]]</span>
+					</template>
+				</vaadin-grid-column>
+				<vaadin-grid-column flex-grow="0">
+					<template class="header"><span style="text-align: right;">Sularaha</span></template>
+					<template>
+						<span style="text-align: right;">[[eur2str(item.cash)]]</span>
+					</template>
+				</vaadin-grid-column>
+				<vaadin-grid-column  flex-grow="0" width="150px">
+					<template class="header">Aeg</template>
+					<template>
+						<span>[[item.createdAt]]</span>
+					</template>
+				</vaadin-grid-column>
+			</kassa-table>
+		</div>
+
+
+		<kassa-admin-tarned-dialog id="deliveriesDialog" opened="{{dialogOpen}}">
+			<kassa-material direction="horizontal">
+				<paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]" style="margin-left: auto">Sulge</paper-button>
+				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}"
+				                      disabled="[[_isNotSaveable(source, target, cash, chosenProducts.length)]]">Salvesta</kassa-confirm-button>
+			</kassa-material>
+
+			<kassa-material direction="vertical">
+				<div style="display: flex; flex-flow: row nowrap; align-items: flex-end">
+					<vaadin-combo-box data-field="source" disabled="[[_isRequestLoading]]" value="{{source}}"
+					                  label="Kust" item-value-path="value" item-label-path="label"
+					                  items="[[locations]]" style="flex: 1 1 50%"></vaadin-combo-box>
+					<vaadin-combo-box data-field="target" disabled="[[_isRequestLoading]]" value="{{target}}"
+					                  label="Kuhu" item-value-path="value" item-label-path="label"
+					                  items="[[locations]]" style="flex: 1 1 50%; margin-left: 0.8em"></vaadin-combo-box>
+				</div>
+
+				<paper-input data-field="cash" label="Sularaha (€)" type="number" step="0.1" disabled="[[_isRequestLoading]]" value="{{cash}}"></paper-input>
+			</kassa-material>
+
+			<kassa-admin-tarned-rows data-field="reportRows" products="[[products]]" disabled="[[_isRequestLoading]]"
+			                         value="{{chosenProducts}}" price-description="[[_computePriceDescription(source, target)]]"></kassa-admin-tarned-rows>
+
+		</kassa-admin-tarned-dialog>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-admin-tarned",
+            properties: {
+                conventId: {
+                    type: Number
+                },
+	            products: {
+                    type: Array,
+		            value: []
+	            },
+                deliveries: {
+                    type: Array
+                },
+	            singleDelivery: {
+                    type: Object
+	            },
+                dialog: {
+                    type: Node
+                },
+                _startDate: {
+                    type: String
+                },
+                _endDate: {
+                    type: String
+                },
+	            locations: {
+                    type: Array,
+		            value: function () {
+			            return [
+			                {label: 'Universum', value: '__null__'},
+				            {label: 'Ladu', value: 'warehouse'},
+				            {label: 'Kassa', value: 'storage'}]
+                    }
+	            }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            observers: ['_loadDeliveries(pageActive, conventId)'],
+            ready: function () {
+                this.set('dialog', this.$.deliveriesDialog);
+            },
+	        setUp: function () {
+                this.$$('kassa-date-picker').ready();
+            },
+            cleanUp: function() {
+                this.set('deliveries', []);
+            },
+            _loadDeliveries: function (pageActive, conventId) {
+                if (pageActive && conventId !== undefined) {
+                    this.fire('kassa-page-loading');
+                    this.cleanUp();
+                    this.fire('kassa-backend-action', {
+                        action: 'doProductsGetActive',
+                        conventId: conventId
+                    });
+                    this.fire('kassa-backend-action', {
+                        action: 'doReportsGet', conventId: this.conventId,
+                        dateFrom: this._startDate, dateUntil: this._endDate,
+                        reportType: 'UPDATE',
+                        onSuccess: function () {
+                            this.fire('kassa-page-ready', {page: this})
+                        }.bind(this)
+                    });
+                }
+            },
+            _mapInventoryType: function (target) {
+                const map = {
+                    storage: 'Kassa',
+                    warehouse: 'Ladu'
+                };
+
+                return map[target];
+            },
+	        _isNotSaveable: function (source, target, cash, productsLength) {
+                if (source === '' && target === '') {
+                    return true;
+                }
+
+		        if (cash === undefined) {
+		            return true;
+		        }
+
+		        return (cash === '' || (parseInt(cash) === 0)) && (productsLength === 0);
+            },
+	        _isNotEditable: function (source, target) {
+                if (source === '' || target === '') {
+                    return true;
+                }
+
+                return false;
+	        },
+            _computePriceDescription: function(source, target) {
+                if (source === '__null__' && (target === 'storage' || target === 'warehouse')) {
+                    return 'Sisseostu hind'
+                }
+
+                if (target === '__null__' && (source === 'storage' || source === 'warehouse')) {
+                    return 'Väljamüügi hind'
+                }
+
+                return null;
+            }
+        })
+	</script>
+</dom-module>
+
+
+

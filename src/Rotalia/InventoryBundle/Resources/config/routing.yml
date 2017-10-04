@@ -1,3 +1,7 @@
+RotaliaInventory_home:
+    pattern:  /
+    defaults: { _controller: RotaliaInventoryBundle:Home:home }
+
 RotaliaReport_list:
     pattern:  /aruanded/
     defaults: { _controller: RotaliaInventoryBundle:Report:List, update: 0 }

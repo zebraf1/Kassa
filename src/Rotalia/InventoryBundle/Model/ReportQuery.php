@@ -33,25 +33,57 @@ class ReportQuery extends BaseReportQuery
         //Note: #5 - join with report row cannot be used here because it would select only 1 related report row
         return self::create()
             ->filterByType(Report::TYPE_VERIFICATION)
+            ->filterByConventId($report->getConventId())
+            ->filterByTarget($report->getTarget())
             ->filterByCreatedAt($report->getCreatedAt(), self::LESS_THAN)
             ->orderByCreatedAt(self::DESC)
             ->findOne();
     }
 
     /**
-     * Find previous report with type verification
+     * Find next report with type verification
+     *
+     * @param Report $report
+     * @return Report
+     * @throws \PropelException
+     */
+    public static function findNextVerificationReport(Report $report)
+    {
+        //Note: #5 - join with report row cannot be used here because it would select only 1 related report row
+        return self::create()
+            ->filterByType(Report::TYPE_VERIFICATION)
+            ->filterByConventId($report->getConventId())
+            ->filterByTarget($report->getTarget())
+            ->filterByCreatedAt($report->getCreatedAt(), self::GREATER_THAN)
+            ->orderByCreatedAt(self::ASC)
+            ->findOne();
+    }
+
+    /**
+     * Find update reports that were created between reports 1 and 2
+     * Assumes that reports are from the same convent
      *
      * @param Report $report1
      * @param Report $report2
+     * @param $conventId
      * @return Report[]
-     * @throws \PropelException
      */
-    public static function findUpdateReportsBetween(Report $report1, Report $report2)
+    public static function findUpdateReportsBetween($conventId, Report $report1 = null, Report $report2 = null)
     {
-        return self::create()
+
+        $query = self::create()
             ->filterByType(Report::TYPE_UPDATE)
-            ->filterByCreatedAt($report1->getCreatedAt(), self::GREATER_THAN)
-            ->filterByCreatedAt($report2->getCreatedAt(), self::LESS_THAN)
+            ->filterByConventId($conventId);
+
+        if ($report1 !== null) {
+            $query->filterByCreatedAt($report1->getCreatedAt(), self::GREATER_THAN);
+        }
+
+        if ($report2 !== null) {
+            $query->filterByCreatedAt($report2->getCreatedAt(), self::LESS_EQUAL);
+        }
+
+        return $query
             ->joinReportRow('report_row')
             ->with('report_row')
             ->find();

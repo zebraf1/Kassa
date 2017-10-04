@@ -56,6 +56,8 @@
         <column name="convent_id" type="INTEGER" required="true" defaultValue="6" />
         <column name="cash" type="DECIMAL" size="10" scale="2" required="true" />
         <column name="type" type="VARCHAR" required="true" defaultValue="VERIFICATION" />
+        <column name="source" type="VARCHAR" size="100"/>
+        <column name="target" type="VARCHAR" size="100" />
         <index name="member_id">
             <index-column name="member_id"/>
         </index>
