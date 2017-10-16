@@ -18,7 +18,6 @@
 /composer.phar
 .idea/
 app/propel/generated-schemas/
-components/
 .directory
 .DS_Store
 

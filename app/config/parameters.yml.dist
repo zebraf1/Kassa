@@ -22,3 +22,10 @@ parameters:
     debug_toolbar:          true
     debug_redirects:        false
     use_assetic_controller: true
+
+    mail_fetcher.server_path:   ~
+    mail_fetcher.port:          143
+    mail_fetcher.service:       imap
+    mail_fetcher.username:      ~
+    mail_fetcher.password:      ~
+    mail_fetcher.mailbox:       ~

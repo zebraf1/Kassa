@@ -1,8 +1,18 @@
 parameters:
     rotalia_api.exception_listener.class: Rotalia\APIBundle\Security\Http\ExceptionListener
+    mail_fetcher.class: Rotalia\APIBundle\Components\EmailFetchClient
 
 services:
     rotalia_api.exception_listener:
         class: %rotalia_api.exception_listener.class%
         tags:
             - { name: kernel.event_listener, event: kernel.exception, priority: 20 }
+    rotalia.mail_fetcher:
+        class: %mail_fetcher.class%
+        arguments:
+            - %mail_fetcher.server_path%
+            - %mail_fetcher.port%
+            - %mail_fetcher.service%
+            - %mail_fetcher.username%
+            - %mail_fetcher.password%
+            - %mail_fetcher.mailbox%
