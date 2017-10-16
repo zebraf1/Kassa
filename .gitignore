@@ -22,3 +22,4 @@ app/propel/generated-schemas/
 .DS_Store
 
 node_modules/
+/components/
