@@ -14,19 +14,27 @@
 				text-align: left;
 			}
 
+			[hidden] {
+				display: none;
+			}
+
 		</style>
 
-		<h4>Majanduse eestseisja kontod </h4>
-		<p>Tartus: EE262200221067542623 <br /> Renee Alliksaar </p>
-		<p>Tallinnas: EE227700771001671466 <br /> Tõnu Jeret </p>
+		<div hidden$="[[!isTrue(activeConvents)]]">
+			<h4>Majanduse eestseisja kontod</h4>
+			<template is="dom-repeat" items="[[activeConvents]]" as="convent">
+				<p>[[convent.name]]: [[convent.settings.bankAccountIban]] <br /> [[convent.settings.bankAccountOwner]] </p>
+			</template>
+		</div>
 
 	</template>
 	<script>
         Polymer({
             is: "kassa-right-drawer",
             properties: {
-                page: {
-                    type: String
+                activeConvents: {
+                    type: Array,
+	                value: []
                 }
             },
             behaviors: [KassaBehavior],

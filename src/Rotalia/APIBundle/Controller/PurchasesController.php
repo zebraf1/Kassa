@@ -77,7 +77,7 @@ class PurchasesController extends DefaultController
             $dateFrom->modify('-1 hour');
             $dateFrom = $dateFrom->format('Y-m-d H:i:s');
             $dateUntil = null;
-            $limit = 0;
+            $limit = null;
             $offset = 0;
 
         } else {

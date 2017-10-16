@@ -188,6 +188,7 @@
                     this.fire('kassa-message-success', data);
                     this._setCsrfToken(null);
                     this._setMember(null);
+                    this._setSettings(null);
                 }.bind(this));
             },
             doAuthenticationGet: function () {
