@@ -111,11 +111,19 @@
 			}
 
 		</style>
-		<main hidden$="[[!isTrue(member)]]">
+		<main>
 			<div id="leftHead">
 				<h2>[[member.name]]</h2>
-				<h3>Saldo: [[eur2str(member.creditBalance)]]</h3>
+				<h3 hidden$="[[!isTrue(member)]]">Saldo: [[eur2str(member.creditBalance)]]</h3>
 			</div>
+			<ul>
+				<template is="dom-if" if="[[!isTrue(member)]]">
+					<li><a href="#/login"  class$="[[_classForSelected('login', page)]]">Logi sisse</a></li>
+					<template is="dom-if" if="[[isTrue(pointOfSaleId)]]">
+						<li><a href="#/ostud-voog" class$="[[_classForSelected('ostud-voog', page)]]">Ostud</a></li>
+					</template>
+				</template>
+			</ul>
 			<ul>
 				<template is="dom-if" if="[[hasRights(member, 'ROLE_USER', configuration.selectedConventId)]]">
 					<template is="dom-repeat" items="[[_filterByRole(navigation, 'ROLE_USER')]]" as="site">
@@ -167,7 +175,10 @@
 	            configuration: {
                     type: Object,
 		            notify: true
-	            }
+	            },
+                pointOfSaleId: {
+                    type: String
+                }
             },
             behaviors: [KassaBehavior],
             _classForSelected: function (page, selectedPage) {
