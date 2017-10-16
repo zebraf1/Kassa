@@ -70,6 +70,7 @@
 
 		<kassa-backend id="backend"
 		               member="{{member}}"
+		               point-of-sale-id="{{pointOfSaleId}}"
 		               settings="{{settings}}"
 		               members="{{members}}"
 		               active-products="{{activeProducts}}"
@@ -84,14 +85,22 @@
 		               reports="{{reports}}"
 		               credit-limits="{{creditLimits}}"></kassa-backend>
 
-		<kassa-route member="[[member]]" page="{{page}}" navigation="[[navigation]]" convent-id="[[configuration.selectedConventId]]"></kassa-route>
+		<kassa-route member="[[member]]"
+		             page="{{page}}"
+		             navigation="[[navigation]]"
+		             convent-id="[[configuration.selectedConventId]]"
+		             point-of-sale-id="[[pointOfSaleId]]"></kassa-route>
 
-		<kassa-toast id="toast" duration="5000">Sulge!</kassa-toast>
+		<kassa-toast id="toast" duration="5000"></kassa-toast>
 
 		<app-drawer-layout fullbleed responsive-width="800px" narrow="{{leftNarrow}}">
 			<app-drawer id="leftDrawer" align="left" slot="drawer">
-				<kassa-left-drawer page="[[page]]" member="[[member]]" active-convents="[[settings.activeConvents]]"
-				                   navigation="[[navigation]]" configuration="{{configuration}}"></kassa-left-drawer>
+				<kassa-left-drawer page="[[page]]"
+				                   member="[[member]]"
+				                   active-convents="[[settings.activeConvents]]"
+				                   navigation="[[navigation]]"
+				                   configuration="{{configuration}}"
+				                   point-of-sale-id="[[pointOfSaleId]]"></kassa-left-drawer>
 			</app-drawer>
 			<app-drawer-layout fullbleed responsive-width="1120px" narrow="{{rightNarrow}}" id="rightDrawerLayout">
 				<app-header-layout fullbleed has-scrolling-region>
@@ -169,6 +178,7 @@
 						                    products="[[activeProducts]]"></kassa-admin-tarned>
 						<kassa-super-admin-satted data-page="super-admin-satted"
 						                          credit-limits="[[creditLimits]]"></kassa-super-admin-satted>
+						<kassa-ostud-voog data-page="ostud-voog" purchases="[[purchases]]"></kassa-ostud-voog>
 					</kassa-pages>
 				</app-header-layout>
 
@@ -201,7 +211,7 @@
                             {page: 'admin-tooted', name: 'Tooted', role: 'ROLE_ADMIN'},
                             {page: 'admin-tootegrupid', name: 'Tootegrupid', role: 'ROLE_ADMIN'},
                             {page: 'admin-kasutajad', name: 'Kasutajad', role: 'ROLE_ADMIN'},
-                            //{page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
+                            {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
 	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'},
 	                        {page: 'super-admin-satted', name: 'Sätted', role: 'ROLE_SUPER_ADMIN'}
                         ];

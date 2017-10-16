@@ -21,6 +21,7 @@ security:
 
     access_control:
         - { path: ^/api/authentication, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/purchase, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, roles: ROLE_USER }
         - { path: ^/kassa, role: IS_AUTHENTICATED_ANONYMOUSLY }
