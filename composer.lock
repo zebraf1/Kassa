@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc0f3f0bd3433bdd7cc9d6598f08d87e",
+    "content-hash": "0318d75672c9dca68b54435dacc78492",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1120,6 +1120,55 @@
                 "minification"
             ],
             "time": "2016-11-11T18:43:20+00:00"
+        },
+        {
+            "name": "luxifer/fetch",
+            "version": "v0.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/luxifer/Fetch.git",
+                "reference": "4320801d21565348b96ed77a697b3951f2a64212"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/luxifer/Fetch/zipball/4320801d21565348b96ed77a697b3951f2a64212",
+                "reference": "4320801d21565348b96ed77a697b3951f2a64212",
+                "shasum": ""
+            },
+            "require": {
+                "ext-imap": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "0.5.*",
+                "phpunit/phpunit": "4.2.*",
+                "satooshi/php-coveralls": "dev-master",
+                "tedivm/dovecottesting": "1.2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Fetch": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Robert Hafner",
+                    "email": "tedivm@tedivm.com"
+                }
+            ],
+            "description": "A PHP IMAP Library",
+            "homepage": "http://github.com/tedious/Fetch",
+            "keywords": [
+                "email",
+                "imap",
+                "pop3"
+            ],
+            "time": "2015-07-02T13:45:38+00:00"
         },
         {
             "name": "michelf/php-markdown",
