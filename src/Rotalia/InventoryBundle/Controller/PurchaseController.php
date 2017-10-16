@@ -138,6 +138,12 @@ class PurchaseController extends DefaultController
 
         if ($pos !== null) {
             $conventId = $pos->getConventId();
+            // Check if conventID was given
+            $currentConventId = $request->get('conventId');
+            if ($currentConventId && $currentConventId != $conventId) {
+                $posConvent = $pos->getConvent() ? $pos->getConvent()->getName() : 'Tundmatu';
+                return JSendResponse::createError('See brauser on määratud müügipunktiks ('.$posConvent.') ja ei luba valitud konvendist ostu', 400);
+            }
         } else {
             $conventId = $request->get('conventId', $member->getKoondisedId());
         }
