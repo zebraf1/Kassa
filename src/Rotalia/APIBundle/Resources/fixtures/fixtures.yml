@@ -240,15 +240,35 @@ Rotalia\InventoryBundle\Model\ProductInfo:
 
 Rotalia\InventoryBundle\Model\Setting:
     Setting_CurrentCash_Tallinn:
-        reference: 'current_cash'
+        reference: 'currentCash'
         object: 'convent'
         object_id: Convent_6
         value: 122
     Setting_CurrentCash_Tartu:
-        reference: 'current_cash'
+        reference: 'currentCash'
         object: 'convent'
         object_id: Convent_7
         value: 0
+    Setting_BankAccountIban_Tartu:
+        reference: 'bankAccountIban'
+        object: 'convent'
+        object_id: Convent_7
+        value: 'EE12334455666'
+    Setting_BankAccountOwner_Tartu:
+        reference: 'bankAccountOwner'
+        object: 'convent'
+        object_id: Convent_7
+        value: 'Jaan Jopakolla'
+    Setting_BankAccountIban_Tallinn:
+        reference: 'bankAccountIban'
+        object: 'convent'
+        object_id: Convent_6
+        value: 'EE12334455777'
+    Setting_BankAccountOwner_Tallinn:
+        reference: 'bankAccountOwner'
+        object: 'convent'
+        object_id: Convent_6
+        value: 'Juhan Nikerdis'
 
 Rotalia\InventoryBundle\Model\Transfer:
     Transfer_1:

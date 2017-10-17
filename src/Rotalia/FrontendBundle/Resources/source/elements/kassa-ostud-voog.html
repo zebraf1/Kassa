@@ -1,0 +1,117 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-table.html">
+<link rel="import" href="kassa-material.html">
+
+<dom-module id="kassa-ostud-voog">
+	<template>
+
+		<kassa-table items="[[purchases]]" scroll-target="[[scrollTarget]]">
+			<vaadin-grid-column flex-grow="0" width="3em">
+				<template class="header"><span style="text-align: right;">Id</span></template>
+				<template>
+					<span style="text-align: right;">[[item.id]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column flex-grow="1">
+				<template class="header">
+					Ostja
+				</template>
+				<template>
+					<span>[[item.createdBy]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column flex-grow="1">
+				<template class="header">
+					Tasuja
+				</template>
+				<template>
+					<span>[[item.member]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column>
+				<template class="header">Toode</template>
+				<template>
+					<span>[[item.product.name]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column flex-grow="0">
+				<template class="header"><span style="text-align: right;">Kogus</span></template>
+				<template>
+					<span style="text-align: right;">[[item.count]] &times; [[formatAmount(item.product.amount, item.product.amountType)]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column flex-grow="0">
+				<template class="header"><span style="text-align: right;">Summa</span></template>
+				<template>
+					<span style="text-align: right;">[[_computePrice(item.count, item.price)]]</span>
+				</template>
+			</vaadin-grid-column>
+			<vaadin-grid-column  flex-grow="0" width="150px">
+				<template class="header">Aeg</template>
+				<template>
+					<span>[[item.createdAt]]</span>
+				</template>
+			</vaadin-grid-column>
+		</kassa-table>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-ostud-voog",
+            properties: {
+                purchases: {
+                    type: Array
+                },
+	            asyncHandler: {
+                    type: Object,
+		            readOnly: true
+	            }
+            },
+            behaviors: [KassaBehavior, PageBehavior],
+            observers: ['_loadPurchases(paceActive)'],
+            setUp: function () {
+                this._loadPurchases();
+            },
+            cleanUp: function() {
+                this.cancelAsync(this.asyncHandler);
+                this.set('purchases', []);
+            },
+            _loadPurchases: function () {
+                if (this.pageActive) {
+                    this.fire('kassa-page-loading');
+                    this.cleanUp();
+                    this.fire('kassa-backend-action', {
+                        action: 'doPurchasesGet',
+                        onSuccess: function () {
+                            this.fire('kassa-page-ready', {page: this})
+                        }.bind(this)
+                    });
+                }
+
+                this._setAsyncHandler(this.async(this._updatePurchases.bind(this), 10000));
+            },
+            _updatePurchases: function () {
+                this.fire('kassa-backend-action', {
+                    action: 'doPurchasesGet',
+	                onSuccess: function () {
+                        this._setAsyncHandler(this.async(this._updatePurchases.bind(this), 10000));
+                    }.bind(this),
+                    onError: function () {
+                        this.fire('kassa-message-warning', 'Ühendus on ebastabiilne');
+                        this._setAsyncHandler(this.async(this._updatePurchases.bind(this), 30000));
+                    }.bind(this)
+                });
+            },
+            _computePrice: function (count, price) {
+                // Üksiku toote hind
+                return this.eur2str(count * price);
+            }
+        })
+	</script>
+</dom-module>
+
+
+

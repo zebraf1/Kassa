@@ -53,39 +53,71 @@ class PurchasesController extends DefaultController
             ->filterByType(Transaction::TYPE_CREDIT_PURCHASE)
         ;
 
-        $memberConventId = $this->getMember()->getKoondisedId();
 
-        if ($memberId == $this->getMember()->getId()) {
-            // User requests its own purchases
-            $purchaseQuery->filterByEitherMemberId($memberId);
+        if ($this->getMember() === null) {
+            // Get Point of Sale
+            $pos = $this->getPos($request);
 
-            if ($conventId !== null) {
-                $purchaseQuery->filterByConventId($conventId);
+            if ($pos == null) {
+                return JSendResponse::createFail("Ostude nägemiseks peab olema kas sisse logitud või kasutama müügipunkti", 403);
             }
-        } elseif ($conventId == $memberConventId) {
-            if ($this->isGranted(User::ROLE_ADMIN)) {
-                $purchaseQuery->filterByConventId($conventId);
 
-                if ($memberId !== null) {
-                    $purchaseQuery->filterByEitherMemberId($memberId);
-                }
-            } else {
-                return JSendResponse::createFail('Ainult admin saab pärida teiste oste', 403);
+            if ($conventId !== null && $conventId != $pos->getConventId()) {
+                return JSendResponse::createFail('Müügipunktist näeb ainult sama konvendi oste', 403);
             }
+
+            if ($memberId !== null) {
+                return JSendResponse::createFail('Müügipunktist ei saa vaadata üksiku kasutaja oste', 403);
+            }
+
+            $purchaseQuery->filterByConventId($pos->getConventId());
+
+            // Set other filtering by hand
+            $dateFrom = new DateTime();
+            $dateFrom->modify('-1 hour');
+            $dateFrom = $dateFrom->format('Y-m-d H:i:s');
+            $dateUntil = null;
+            $limit = null;
+            $offset = 0;
+
         } else {
-            if ($this->isGranted(User::ROLE_SUPER_ADMIN)) {
+            // Authenticated user
+
+            $memberConventId = $this->getMember()->getKoondisedId();
+
+            if ($memberId == $this->getMember()->getId()) {
+                // User requests its own purchases
+                $purchaseQuery->filterByEitherMemberId($memberId);
 
                 if ($conventId !== null) {
                     $purchaseQuery->filterByConventId($conventId);
                 }
+            } elseif ($conventId == $memberConventId) {
+                if ($this->isGranted(User::ROLE_ADMIN)) {
+                    $purchaseQuery->filterByConventId($conventId);
 
-                if ($memberId !== null) {
-                    $purchaseQuery->filterByEitherMemberId($memberId);
+                    if ($memberId !== null) {
+                        $purchaseQuery->filterByEitherMemberId($memberId);
+                    }
+                } else {
+                    return JSendResponse::createFail('Ainult admin saab pärida teiste oste', 403);
                 }
-
             } else {
-                return JSendResponse::createFail('Ainult super admin saab pärida teiste oste teistes konventides', 403);
+                if ($this->isGranted(User::ROLE_SUPER_ADMIN)) {
+
+                    if ($conventId !== null) {
+                        $purchaseQuery->filterByConventId($conventId);
+                    }
+
+                    if ($memberId !== null) {
+                        $purchaseQuery->filterByEitherMemberId($memberId);
+                    }
+
+                } else {
+                    return JSendResponse::createFail('Ainult super admin saab pärida teiste oste teistes konventides', 403);
+                }
             }
+
         }
 
         if (!empty($dateFrom)) {

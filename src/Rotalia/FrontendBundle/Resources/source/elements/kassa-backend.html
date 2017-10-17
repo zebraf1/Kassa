@@ -85,6 +85,11 @@
                     notify: true,
                     readOnly: true
                 },
+                pointOfSaleId: {
+                    type: String,
+	                notify: true,
+	                readOnly: true
+                },
 	            /* Members */
                 members: {
                     type: Array,
@@ -183,6 +188,7 @@
                     this.fire('kassa-message-success', data);
                     this._setCsrfToken(null);
                     this._setMember(null);
+                    this._setSettings(null);
                 }.bind(this));
             },
             doAuthenticationGet: function () {
@@ -195,6 +201,7 @@
                         this._setMember(data.member);
                         this.doSettingsGet();
                     }
+                    this._setPointOfSaleId(data.pointOfSaleId);
                 }.bind(this));
             },
             /* Settings */

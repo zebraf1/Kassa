@@ -33,6 +33,10 @@ class SettingsControllerTest extends WebTestCase
 
         foreach ($result->data->activeConvents as $convent) {
             $this->assertTrue(in_array($convent->name, $expectedActiveConvents));
+            $this->assertTrue(!empty($convent->settings));
+            // TODO - must use Fixture classes for settings
+//            $this->assertTrue(!empty($convent->settings->bankAccountOwner), json_encode($convent->settings));
+//            $this->assertTrue(!empty($convent->settings->bankAccountIban));
         }
     }
 

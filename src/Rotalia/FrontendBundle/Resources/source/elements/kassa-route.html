@@ -31,20 +31,31 @@
                 },
 	            conventId: {
                     type: Number
-	            }
+	            },
+                pointOfSaleId: {
+                    type: String
+                }
             },
-            observers: ['_computePage(routeData, member, navigation, conventId)'],
+            observers: ['_computePage(routeData, member, navigation, conventId, pointOfSaleId)'],
             behaviors: [KassaBehavior],
-            _computePage: function (routeData, member, navigation, conventId) {
+            _computePage: function (routeData, member, navigation, conventId, pointOfSaleId) {
                 const _default = 'ost';
 
                 //Pole sisse logitud?
                 if (!this.isTrue(member)) {
-                    this._setPage('login');
-                    if (routeData.page === 'logout') {
-                        this.set('routeData.page', 'login');
+
+                    if (this.isTrue(pointOfSaleId) && routeData.page === 'ostud-voog') {
+						this._setPage(routeData.page);
+						return null;
+
+                    } else {
+                        this._setPage('login');
+                        if (routeData.page === 'logout') {
+                            this.set('routeData.page', 'login');
+                        }
+                        return null
+
                     }
-                    return null
                 }
 
                 if (this.isTrue(routeData) && routeData.page) {
