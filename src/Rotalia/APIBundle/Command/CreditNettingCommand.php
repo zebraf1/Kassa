@@ -40,6 +40,8 @@ class CreditNettingCommand extends Command
                 ->getData()
             ;
 
+            $output->writeln(sprintf("Number of convents with active kassa: %d", count($activeConventIds)));
+
             // Members who are at active convents
             $memberIdsAtActiveConvents = MemberQuery::create()
                 ->filterByKoondisedId($activeConventIds)
@@ -60,6 +62,8 @@ class CreditNettingCommand extends Command
                 $memberCreditsByMemberId[$memberCredit->getMemberId()] = $memberCredit->getVirtualColumn('SUMcredit');
             }
 
+            $output->writeln(sprintf("Number of members with non-zero credit: %d", count($memberCreditsByMemberId)));
+
             // Incoming credit for each convent
             /** @var MemberCredit[] $memberCredits */
             $memberCredits = MemberCreditQuery::create()
@@ -74,9 +78,15 @@ class CreditNettingCommand extends Command
                 ->find($connection)
             ;
 
+            $output->writeln("Incoming credits:");
             $memberCreditsByConventIdIn = [];
             foreach ($memberCredits as $memberCredit) {
                 $memberCreditsByConventIdIn[$memberCredit->getVirtualColumn('Member.koondised_id')] = $memberCredit->getVirtualColumn('SUMcredit');
+                $output->writeln(sprintf("%s: %.2f",
+                    ConventQuery::create()->findPk($memberCredit->getVirtualColumn('Member.koondised_id'), $connection)->getName(),
+                    $memberCredit->getVirtualColumn('SUMcredit')
+                    )
+                );
             }
 
             // Outgoing credit for each convent
@@ -91,9 +101,12 @@ class CreditNettingCommand extends Command
                 ->find($connection)
             ;
 
+            $output->writeln("Outgoing credits:");
             $memberCreditsByConventIdOut = [];
             foreach ($memberCredits as $memberCredit) {
                 $memberCreditsByConventIdOut[$memberCredit->getConventID()] = $memberCredit->getVirtualColumn('SUMcredit');
+                $output->writeln(sprintf("%s: %.2f", $memberCredit->getConvent()->getName(), $memberCredit->getVirtualColumn('SUMcredit')));
+
             }
 
             // Redistribute the credits
@@ -102,6 +115,7 @@ class CreditNettingCommand extends Command
                 ->delete($connection)
             ;
 
+            $output->writeln("Members whose credit is not moved:");
             foreach ($memberCreditsByMemberId as $memberId => $credit) {
                 $member = MemberQuery::create()->findPk($memberId);
                 if (in_array($member->getConventId(), $activeConventIds)) {
@@ -110,8 +124,11 @@ class CreditNettingCommand extends Command
                     $memberCredit->setConventId($member->getKoondisedId());
                     $memberCredit->setCredit($credit);
                     $memberCredit->save($connection);
+                } else {
+                    $output->writeln($member->getFullName());
                 }
             }
+            $output->writeln("Credit redistributed!");
 
             // Insert Credit netting
             $creditNetting = new CreditNetting();
@@ -133,12 +150,18 @@ class CreditNettingCommand extends Command
                 $creditNettingRow->save($connection);
             }
 
+            $output->writeln("Credit netting inserted!");
+
             $connection->commit();
+            $output->writeln("Success!");
 
         } catch (Exception $e) {
+            $output->writeln("Caught an exeption:");
+            $output->writeln($e->getMessage());
+            $output->writeln("Rooling back!");
             $connection->rollback();
             throw $e;
         }
-
+        $output->writeln("All done!");
     }
 }
