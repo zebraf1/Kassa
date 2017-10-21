@@ -636,6 +636,7 @@
                     return result.xhr.response.data;
                 } else {
                     console.error('Vigane vastus serverilt.', result);
+                    this.fire('kassa-message-error', {message: 'Vigane vastus serverilt.'});
                 }
             },
             _checkError: function (event) {
