@@ -18,7 +18,7 @@ class PurchasesControllerTest extends WebTestCase
         $result = json_decode($response->getContent());
 
         $this->assertEquals(403, $response->getStatusCode());
-        $this->assertEquals('Access Denied.', $result->message);
+        $this->assertEquals('Ostude nägemiseks peab olema kas sisse logitud või kasutama müügipunkti', $result->message);
     }
 
     /**
