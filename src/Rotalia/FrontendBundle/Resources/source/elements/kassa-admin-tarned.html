@@ -146,7 +146,8 @@
                     this.fire('kassa-page-loading');
                     this.cleanUp();
                     this.fire('kassa-backend-action', {
-                        action: 'doProductsGetActive',
+                        action: 'doProductsGet',
+	                    isActive: true,
                         conventId: conventId
                     });
                     this.fire('kassa-backend-action', {
