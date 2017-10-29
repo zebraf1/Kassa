@@ -5,6 +5,7 @@ namespace Rotalia\APIBundle\Controller;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Model\Transaction;
 use Rotalia\InventoryBundle\Model\TransactionQuery;
+use Rotalia\UserBundle\Model\MemberQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use DateTime;
@@ -30,6 +31,8 @@ class PurchasesController extends DefaultController
      *     filters={
      *          {"name"="conventId","type"="int","description"="Fetch purchases for another convent than member home convent"},
      *          {"name"="memberId","dataType"="integer","description"="Member ID of user in interest"},
+     *          {"name"="memberName","dataType"="string","description"="Part of the name of the payer"},
+     *          {"name"="createdByName","dataType"="string","description"="Part of the name of the buyer"},
      *          {"name"="dateFrom","type"="string","description":"datetime string"},
      *          {"name"="dateUntil","type"="string","description":"datetime string"},
      *          {"name"="limit","type"="int","description":"Limit number of purchases returned, default 5"},
@@ -44,6 +47,8 @@ class PurchasesController extends DefaultController
     {
         $conventId = $request->get('conventId', null);
         $memberId = $request->get('memberId', null);
+        $memberName = $request->get('memberName');
+        $createdByName = $request->get('createdByName');
         $dateFrom = $request->get('dateFrom', null);
         $dateUntil = $request->get('dateUntil', null);
         $limit = $request->get('limit', 5);
@@ -120,6 +125,26 @@ class PurchasesController extends DefaultController
 
         }
 
+        if (!empty($memberName)) {
+            $purchaseQuery->filterByMemberId(
+                MemberQuery::create()
+                    ->filterByFullName($memberName.'%', \Criteria::LIKE)
+                    ->select('id')
+                    ->find()
+                    ->getData()
+            );
+        }
+
+        if (!empty($createdByName)) {
+            $purchaseQuery->filterByCreatedBy(
+                MemberQuery::create()
+                    ->filterByFullName($createdByName.'%', \Criteria::LIKE)
+                    ->select('id')
+                    ->find()
+                    ->getData()
+            );
+        }
+
         if (!empty($dateFrom)) {
             try {
                 $from = new DateTime($dateFrom);
@@ -142,12 +167,7 @@ class PurchasesController extends DefaultController
 
         $purchaseQuery->orderByCreatedAt(\Criteria::DESC);
 
-        if ($limit) {
-            $purchaseQuery
-                ->limit($limit)
-                ->offset($offset)
-            ;
-        }
+        $contentRange = $this->limitQuery($purchaseQuery, $limit, $offset);
 
         $purchases = $purchaseQuery->find();
 
@@ -158,7 +178,10 @@ class PurchasesController extends DefaultController
             $resultPurchases[] = $purchase->getAjaxData();
         }
 
-        return JSendResponse::createSuccess(['purchases' => $resultPurchases]);
+        return JSendResponse::createSuccess(
+            ['purchases' => $resultPurchases],
+            ['Content-Range' => "purchases ".$contentRange]
+        );
 
     }
 }

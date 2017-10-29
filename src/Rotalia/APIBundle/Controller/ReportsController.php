@@ -31,6 +31,7 @@ class ReportsController extends DefaultController
      *     description="Fetch Reports list",
      *     section="Reports",
      *     filters={
+     *          {"name"="memberName","dataType"="string","description"="Part of the name of the member"},
      *          {"name"="dateFrom","type"="string","description":"datetime string"},
      *          {"name"="dateUntil","type"="string","description":"datetime string"},
      *          {"name"="limit","type"="int","description":"Limit number of reports returned, default 5"},
@@ -45,6 +46,7 @@ class ReportsController extends DefaultController
      */
     public function listAction(Request $request)
     {
+        $memberName = $request->get('memberName');
         $dateFrom = $request->get('dateFrom', null);
         $dateUntil = $request->get('dateUntil', null);
         $conventId = $request->get('conventId', null);
@@ -62,6 +64,13 @@ class ReportsController extends DefaultController
 
         if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
             return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
+        }
+
+        if (!empty($memberName)) {
+            $reportQuery
+                ->useMemberQuery()
+                ->filterByFullName($memberName.'%', \Criteria::LIKE)
+                ->endUse();
         }
 
         if (!empty($dateFrom)) {
@@ -93,14 +102,14 @@ class ReportsController extends DefaultController
             $reportQuery->filterByType($reportType);
         }
 
-        $reports = $reportQuery
+        $reportQuery
             ->filterByConventId($conventId)
             ->orderByCreatedAt(\Criteria::DESC)
-            ->limit($limit)
-            ->offset($offset)
-            ->find()
         ;
 
+        $contentRange = $this->limitQuery($reportQuery, $limit, $offset);
+
+        $reports = $reportQuery->find();
         $resultReports = [];
 
         /** @var Report $report */
@@ -108,7 +117,7 @@ class ReportsController extends DefaultController
             $resultReports[] = $report->getAjaxData();
         }
 
-        return JSendResponse::createSuccess(['reports' => $resultReports]);
+        return JSendResponse::createSuccess(['reports' => $resultReports], ['Content-Range' => "reports ".$contentRange]);
     }
 
     /**

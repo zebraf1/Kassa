@@ -34,6 +34,7 @@ class TransfersController extends DefaultController
      *     filters={
      *          {"name"="conventId","type"="int","description"="Fetch transfers for another convent than member home convent"},
      *          {"name"="memberId","dataType"="integer","description"="Member ID of user in interest"},
+     *          {"name"="memberName","dataType"="string","description"="Part of the name of the member"},
      *          {"name"="dateFrom","type"="string","description":"datetime string"},
      *          {"name"="dateUntil","type"="string","description":"datetime string"},
      *          {"name"="limit","type"="int","description":"Limit number of transfers returned, default 5"},
@@ -48,6 +49,7 @@ class TransfersController extends DefaultController
     {
         $conventId = $request->get('conventId', null);
         $memberId = $request->get('memberId', null);
+        $memberName = $request->get('memberName');
         $dateFrom = $request->get('dateFrom', null);
         $dateUntil = $request->get('dateUntil', null);
         $limit = $request->get('limit', 5);
@@ -91,6 +93,13 @@ class TransfersController extends DefaultController
             }
         }
 
+        if (!empty($memberName)) {
+            $transferQuery
+                ->useMemberRelatedByMemberIdQuery()
+                ->filterByFullName($memberName.'%', \Criteria::LIKE)
+                ->endUse();
+        }
+
         if (!empty($dateFrom)) {
             try {
                 $from = new DateTime($dateFrom);
@@ -113,12 +122,7 @@ class TransfersController extends DefaultController
 
         $transferQuery->orderByCreatedAt(\Criteria::DESC);
 
-        if ($limit) {
-            $transferQuery
-                ->limit($limit)
-                ->offset($offset)
-            ;
-        }
+        $contentRange = $this->limitQuery($transferQuery, $limit, $offset);
 
         $transfers = $transferQuery->find();
 
@@ -129,7 +133,10 @@ class TransfersController extends DefaultController
             $resultTransfers[] = $transfer->getAjaxData();
         }
 
-        return JSendResponse::createSuccess(['transfers' => $resultTransfers]);
+        return JSendResponse::createSuccess(
+            ['transfers' => $resultTransfers],
+            ['Content-Range' => "transfers ".$contentRange]
+        );
 
     }
 

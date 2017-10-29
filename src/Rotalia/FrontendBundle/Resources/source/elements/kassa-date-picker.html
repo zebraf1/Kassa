@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="kassa-vaadin-button-style.html">
 <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
@@ -15,25 +14,17 @@
 
 			main {
 				width: 100%;
-
 				display: flex;
-				flex-flow: row wrap;
-				justify-content: space-between;
-				align-items: flex-end;
-			}
-
-			paper-button {
-				margin-left: auto;
+				flex-flow: column nowrap;
+				justify-content: flex-start;
+				align-items: flex-start;
 			}
 
 		</style>
 
 		<main>
-			<div>
-				<vaadin-date-picker id="startDatePicker" value="{{startDate}}" max="[[endDate]]" label="Algus"></vaadin-date-picker> <br />
-				<vaadin-date-picker id="endDatePicker" value="{{endDate}}" min="[[startDate]]" label="Lõpp"></vaadin-date-picker>
-			</div>
-			<paper-button raised on-tap="_onCOnfirm">Lae uuesti</paper-button>
+			<vaadin-date-picker id="startDatePicker" value="{{startDate}}" max="[[endDate]]" label="Algus"></vaadin-date-picker>
+			<vaadin-date-picker id="endDatePicker" value="{{endDate}}" min="[[startDate]]" label="Lõpp"></vaadin-date-picker>
 		</main>
 
 
@@ -131,12 +122,8 @@
 
                 const today = new Date();
                 this.set('endDate', this._i18n.formatDate(today,  true));
-                today.setDate(today.getDate() - 7);
+                today.setMonth(today.getMonth() - 1);
                 this.set('startDate', this._i18n.formatDate(today,  true));
-
-            },
-            _onCOnfirm: function () {
-	            this.fire('kassa-confirm');
             }
         })
 	</script>

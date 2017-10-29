@@ -6,7 +6,7 @@
 <link rel="import" href="kassa-table.html">
 <link rel="import" href="kassa-material.html">
 <link rel="import" href="kassa-date-picker.html">
-
+<link rel="import" href="kassa-table-footer.html">
 
 <dom-module id="kassa-ylevaade-ylekanded">
 	<template>
@@ -17,7 +17,7 @@
 		</style>
 
 		<kassa-material direction="horizontal">
-			<kassa-date-picker on-kassa-confirm="_loadTransfers" start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
+			<kassa-date-picker start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
 		</kassa-material>
 
 		<kassa-table items="[[transfers]]" scroll-target="[[scrollTarget]]" row-details-name="kassa-ylekanded">
@@ -59,6 +59,8 @@
 			</vaadin-grid-column>
 		</kassa-table>
 
+		<kassa-table-footer id="footer" offset="{{_offset}}"></kassa-table-footer>
+
 	</template>
 	<script>
         Polymer({
@@ -78,26 +80,31 @@
                 },
                 _endDate: {
                     type: String
+                },
+                _offset: {
+                    type: Number
                 }
             },
             behaviors: [KassaBehavior, PageBehavior],
+            observers: [
+                'loadTransfers(_startDate, _endDate, _offset)'
+            ],
             setUp: function () {
-                this.$$('kassa-date-picker').ready();
-                this._loadTransfers();
+                this.loadTransfers();
+                this.fire('kassa-page-ready', {page: this});
             },
-            cleanUp: function() {
-                this.set('transfers', []);
-            },
-            _loadTransfers: function () {
+            loadTransfers: function () {
                 if (this.pageActive) {
-                    this.fire('kassa-page-loading');
-                    this.cleanUp();
+                    const limit = 15;
+                    this.set('transfers', []);
+                    this.$.footer.hide();
                     this.fire('kassa-backend-action', {
                         action: 'doTransfersGet',
 	                    memberId: this.memberId,
                         dateFrom: this._startDate, dateUntil: this._endDate,
-                        onSuccess: function () {
-                            this.fire('kassa-page-ready', {page: this})
+                        limit: limit, offset: this._offset,
+                        onSuccess: function (headers) {
+                            this.$.footer.show(headers['Content-Range'], limit);
                         }.bind(this)
                     });
                 }

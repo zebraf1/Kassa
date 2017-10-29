@@ -1,0 +1,156 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-material.html">
+
+<dom-module id="kassa-table-footer">
+	<template>
+		<style>
+			:host {
+				width: 100%;
+			}
+
+			main {
+				width: 100%;
+				display: flex;
+				flex-flow: column nowrap;
+				align-items: stretch;
+				justify-content: flex-start;
+			}
+
+			#spinnerWrapper {
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: center;
+				align-items: center;
+				margin-top: 0.8em;
+			}
+
+			#buttons {
+				cursor: pointer;
+				display: flex;
+				flex-flow: row nowrap;
+				align-items: stretch;
+				justify-content: flex-end;
+			}
+
+			a {
+				display: block;
+				border: 1px solid var(--dark-theme-divider-color);
+				border-radius: 3px;
+				margin: 1px;
+				padding: 5px
+			}
+
+			a:not([placeHolder]):hover {
+				background-color: var(--light-theme-divider-color);
+			}
+
+			a[selected] {
+				color: #FFF;
+				background-color: var(--kassa-secondary-color);
+			}
+
+			[hidden] {
+				display: none;
+			}
+
+		</style>
+
+		<main>
+			<kassa-material direction="horizontal" hidden$="[[_hidden]]">
+				<div id="buttons" on-tap="_onTap" class="row-break">
+					<template is="dom-repeat" items="[[pages]]" as="page">
+						<template is="dom-if" if="[[!page.placeHolder]]">
+							<a selected$="[[page.selected]]">[[page.number]]</a>
+						</template>
+						<template is="dom-if" if="[[page.placeHolder]]">
+							<a placeHolder>...</a>
+						</template>
+					</template>
+				</div>
+			</kassa-material>
+			<div id="spinnerWrapper"><paper-spinner active="[[_hidden]]"></paper-spinner></div>
+		</main>
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-table-footer",
+            properties: {
+                offset: {
+                    type: Number,
+                    notify: true,
+                    value: 0
+                },
+	            buffer: {
+		            type: Number,
+		            value: 2
+	            },
+                pages: {
+                    type: Array,
+	                value: []
+                },
+	            _pageSize: {
+                    type: Number
+	            },
+	            _hidden: {
+                    type: Boolean,
+		            value: true
+	            }
+            },
+            behaviors: [KassaBehavior],
+            ready: function () {
+
+            },
+            /**
+             * @param contentRange - has the format "itemName 1-5/20"
+             * @param limit - page size
+             */
+	        show: function (contentRange, limit) {
+	            const match = /(\w+)\s(\d+)-(\d+)\/(\d+)/gi.exec(contentRange);
+	            const start = Number(match[2]);
+	            const total = Number(match[4]);
+
+	            const totalPages = Math.ceil(total/limit);
+	            const currentPage = 1 + Math.floor(start/limit);
+
+	            const buttons = Math.min(totalPages, 5 + 2*this.buffer);
+	            const leftButton = Math.max(2, currentPage - this.buffer - 1);
+	            const rightButton = Math.min(leftButton + (buttons - 3), totalPages - 1);
+	            const pages = [];
+                pages.push({number: 1, selected: currentPage === 1, placeHolder: false}); // Esimene
+	            if (buttons > 2) {
+                    pages.push({number: leftButton, selected: currentPage === leftButton, placeHolder: leftButton > 2});
+                }
+	            for (let i=leftButton+1; i <= rightButton-1; i++) {
+	                pages.push({number: i, selected: currentPage === i, placeHolder: false});
+	            }
+	            if (buttons > 3) {
+                    pages.push({
+                        number: rightButton, selected: currentPage === rightButton, placeHolder: rightButton < totalPages - 2});
+                }
+	            if (buttons > 1) {
+                    pages.push({number: totalPages, selected: currentPage === totalPages, placeHolder: false}); // Viimane
+	            }
+	            this.set('pages', pages);
+
+	            this.set('_pageSize', limit);
+
+		        this.set('_hidden', false);
+            },
+	        hide: function () {
+                this.set('_hidden', true);
+            },
+	        _onTap: function (e) {
+	            if (e.path[0].tagName = 'a') {
+					const number = Number(e.path[0].innerHTML);
+					if (!isNaN(number)) {
+					    this.set('offset', (number - 1)*this._pageSize);
+					}
+	            }
+            }
+        })
+	</script>
+</dom-module>

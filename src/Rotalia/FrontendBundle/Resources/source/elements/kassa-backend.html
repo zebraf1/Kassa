@@ -319,13 +319,16 @@
                 }.bind(this));
             },
             /* Purchase */
-            doPurchasesGet: function (conventId, memberId, dateFrom, dateUntil) {
+            doPurchasesGet: function (conventId, memberId, memberName, createdByName, dateFrom, dateUntil, limit, offset) {
                 this.$.purchasesGet.set('params', this._formatBody({
                     conventId: conventId,
                     memberId: memberId,
-                    limit: 0,
+                    memberName: memberName,
+                    createdByName: createdByName,
                     dateFrom: dateFrom,
-                    dateUntil: dateUntil
+                    dateUntil: dateUntil,
+                    limit: limit,
+	                offset: offset
                 }));
                 return this.$.purchasesGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setPurchases(response.data.purchases);
@@ -361,15 +364,17 @@
                     return response.headers;
                 }.bind(this));
             },
-	        doReportsGet: function (conventId, target, reportType, dateFrom, dateUntil) {
+	        doReportsGet: function (conventId, target, reportType, memberName,  dateFrom, dateUntil, limit, offset) {
                 this.set('_id', null);
                 this.$.reportGet.set('params', this._formatBody({
                     conventId: conventId,
                     target: target,
                     reportType: reportType,
+                    memberName: memberName,
                     dateFrom: dateFrom,
                     dateUntil: dateUntil,
-	                limit: 0
+	                limit: limit,
+	                offset: offset
                 }));
                 return this.$.reportGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setReports(response.data.reports);
@@ -400,13 +405,15 @@
                 }.bind(this));
             },
 	        /* Transfers */
-            doTransfersGet: function (conventId, memberId, dateFrom, dateUntil) {
+            doTransfersGet: function (conventId, memberId, memberName, dateFrom, dateUntil, limit, offset) {
                 this.$.transfersGet.set('params', this._formatBody({
                     conventId: conventId,
 	                memberId: memberId,
-	                limit: 0,
+                    memberName: memberName,
 	                dateFrom: dateFrom,
-	                dateUntil: dateUntil
+	                dateUntil: dateUntil,
+                    limit: limit,
+	                offset: offset
                 }));
                 return this.$.transfersGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setTransfers(response.data.transfers);
@@ -516,7 +523,8 @@
                         break;
                     /* Purchases */
                     case 'doPurchasesGet':
-                        promise = this.doPurchasesGet(data.conventId, data.memberId, data.dateFrom, data.dateUntil);
+                        promise = this.doPurchasesGet(data.conventId, data.memberId, data.memberName, data.createdByName,
+	                        data.dateFrom, data.dateUntil, data.limit, data.offset);
                         break;
                     case 'doPurchasePost':
                         promise = this.doPurchasePost(data.conventId, data.memberId, data.basket);
@@ -526,7 +534,8 @@
                         promise = this.doSingleReportGet(data.conventId, data.id, data.target, data.reportType);
                         break;
 	                case 'doReportsGet':
-                        promise = this.doReportsGet(data.conventId, data.target, data.reportType, data.dateFrom, data.dateUntil);
+                        promise = this.doReportsGet(data.conventId, data.target, data.reportType, data.memberName,
+                            data.dateFrom, data.dateUntil, data.limit, data.offset);
                         break;
 	                case 'doReportPost':
                         promise = this.doReportPost(data.conventId, data.Report, data.cashOut);
@@ -536,7 +545,8 @@
 	                    break;
 	                /* Transfers */
 	                case 'doTransfersGet':
-                        promise = this.doTransfersGet(data.conventId, data.memberId, data.dateFrom, data.dateUntil);
+                        promise = this.doTransfersGet(data.conventId, data.memberId, data.memberName,
+	                        data.dateFrom, data.dateUntil, data.limit, data.offset);
                         break;
 	                case 'doTransfersPost':
 	                    promise = this.doTransfersPost(data.conventId, data.itemType);
@@ -620,7 +630,6 @@
                     inner = false;
                 }
 
-
                 const newBody = {};
                 for (let key in body) {
                     if (body.hasOwnProperty(key)) {
@@ -630,8 +639,8 @@
                         }
 
                         if (body[key].constructor === Object) {
-                            var innerBody = this._formatBody(body[key], true);
-                            for (var innerKey in innerBody) {
+                            let innerBody = this._formatBody(body[key], true);
+                            for (let innerKey in innerBody) {
                                 if (innerBody.hasOwnProperty(innerKey)) {
                                     if (inner) {
                                         newBody['[' + key + ']' + innerKey] = innerBody[innerKey];
@@ -644,8 +653,8 @@
 
                         } else if (Array.isArray(body[key])) {
                             for (let i = 0; i < body[key].length; i++) {
-                                var innerBody = this._formatBody(body[key][i], true);
-                                for (var innerKey in innerBody) {
+                                let innerBody = this._formatBody(body[key][i], true);
+                                for (let innerKey in innerBody) {
                                     if (innerBody.hasOwnProperty(innerKey)) {
                                         if (inner) {
                                             newBody['[' + key + ']' + '[' + i + ']' + innerKey] = innerBody[innerKey];
