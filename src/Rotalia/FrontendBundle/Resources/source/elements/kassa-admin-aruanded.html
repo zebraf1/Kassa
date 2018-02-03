@@ -5,7 +5,7 @@
 <link rel="import" href="kassa-table.html">
 <link rel="import" href="kassa-material.html">
 <link rel="import" href="kassa-date-picker.html">
-
+<link rel="import" href="kassa-table-footer.html">
 
 <dom-module id="kassa-admin-aruanded">
 	<template>
@@ -16,7 +16,7 @@
 		</style>
 
 		<kassa-material direction="horizontal">
-			<kassa-date-picker on-kassa-confirm="_loadReports" start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
+			<kassa-date-picker start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
 		</kassa-material>
 
 		<kassa-table items="[[reports]]" scroll-target="[[scrollTarget]]"  row-details-name="kassa-admin-aruanded"
@@ -29,9 +29,7 @@
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="1">
 				<template class="header">
-					<vaadin-grid-filter path="member" value="[[_memberFilter]]">
-						<paper-input label="Koostaja" value="{{_memberFilter}}" slot="filter" no-label-float></paper-input>
-					</vaadin-grid-filter>
+					<paper-input label="Koostaja" value="{{_memberNameFilter}}" slot="filter" no-label-float></paper-input>
 				</template>
 				<template>
 					<span>[[item.member]]</span>
@@ -63,6 +61,8 @@
 			</vaadin-grid-column>
 		</kassa-table>
 
+		<kassa-table-footer id="footer" offset="{{_offset}}"></kassa-table-footer>
+
 	</template>
 	<script>
         Polymer({
@@ -79,28 +79,41 @@
                 },
                 _endDate: {
                     type: String
+                },
+                _memberNameFilter: {
+                    type: String
+                },
+                _offset: {
+                    type: Number
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
             observers: [
-                '_loadReports(pageActive, conventId)',
+                'loadReportsDelayed(_memberNameFilter)',
+                'loadReports(conventId, _startDate, _endDate, _offset)'
             ],
 	        setUp: function () {
-                this.$$('kassa-date-picker').ready();
+                this.loadReports();
+                this.fire('kassa-page-ready', {page: this});
             },
             cleanUp: function() {
-                this.set('reports', []);
+                this.set('_memberNameFilter', '');
             },
-            _loadReports: function () {
+            loadReportsDelayed: function () {
+                this.debounce('loadReports', this.loadReports.bind(this), 200);
+            },
+            loadReports: function () {
                 if (this.pageActive) {
-                    this.fire('kassa-page-loading');
-                    this.cleanUp();
+                    const limit = 15;
+                    this.set('reports', []);
+                    this.$.footer.hide();
                     this.fire('kassa-backend-action', {
                         action: 'doReportsGet', conventId: this.conventId,
+                        reportType: 'VERIFICATION', memberName: this._memberNameFilter,
                         dateFrom: this._startDate, dateUntil: this._endDate,
-                        reportType: 'VERIFICATION',
-                        onSuccess: function () {
-                            this.fire('kassa-page-ready', {page: this})
+                        limit: limit, offset: this._offset,
+                        onSuccess: function (headers) {
+                            this.$.footer.show(headers['Content-Range'], limit);
                         }.bind(this)
                     });
                 }

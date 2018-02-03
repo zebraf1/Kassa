@@ -73,8 +73,7 @@
 		               point-of-sale-id="{{pointOfSaleId}}"
 		               settings="{{settings}}"
 		               members="{{members}}"
-		               active-products="{{activeProducts}}"
-		               inactive-products="{{inactiveProducts}}"
+		               products="{{products}}"
 		               product-groups="{{productGroups}}"
 		               point-of-sales="{{pointOfSales}}"
 		               transfers="{{transfers}}"
@@ -130,13 +129,13 @@
 						<kassa-logout data-page="logout"></kassa-logout>
 						<kassa-ost data-page="ost"
 						           member="[[member]]"
-						           products="[[activeProducts]]"
+						           products="[[products]]"
 						           product-groups="[[productGroups]]"
 						           convent-id="[[configuration.selectedConventId]]"></kassa-ost>
 						<kassa-aruanne data-page="aruanne"
 						               convent-id="[[configuration.selectedConventId]]"
 						               member="[[member]]"
-						               products="{{activeProducts}}"
+						               products="[[products]]"
 						               previous-report="[[singleReport]]"
 						               updates="[[updates]]"
 						               product-groups="[[productGroups]]"></kassa-aruanne>
@@ -149,8 +148,7 @@
 								transfers="[[transfers]]"></kassa-ylevaade-ylekanded>
 						<kassa-admin-tooted data-page="admin-tooted"
 						                    convent-id="[[configuration.selectedConventId]]"
-						                    active-products="[[activeProducts]]"
-						                    inactive-products="[[inactiveProducts]]"
+						                    products="[[products]]"
 						                    product-groups="[[productGroups]]"></kassa-admin-tooted>
 						<kassa-admin-tootegrupid data-page="admin-tootegrupid"
 						                         product-groups="[[productGroups]]"></kassa-admin-tootegrupid>
@@ -175,7 +173,7 @@
 						<kassa-admin-tarned data-page="admin-tarned"
 						                    convent-id="[[configuration.selectedConventId]]"
 						                    deliveries="[[reports]]"
-						                    products="[[activeProducts]]"></kassa-admin-tarned>
+						                    products="[[products]]"></kassa-admin-tarned>
 						<kassa-super-admin-satted data-page="super-admin-satted"
 						                          credit-limits="[[creditLimits]]"></kassa-super-admin-satted>
 						<kassa-ostud-voog data-page="ostud-voog" purchases="[[purchases]]"></kassa-ostud-voog>

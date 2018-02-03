@@ -37,6 +37,7 @@
         },
         sharedSetUp: function () {
             this.async(function() {
+                this.fire('kassa-page-loading');
                 this._setPageActive(true);
                 this.setUp();
             }.bind(this), 1);

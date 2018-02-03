@@ -151,8 +151,9 @@
                     this.fire('kassa-page-loading');
                     this._set_chosenProducts([]);
                     this.fire('kassa-backend-action', {
-                        action: 'doProductsGetActive',
+                        action: 'doProductsGet',
 	                    conventId: conventId,
+	                    isActive: true,
 	                    onSuccess: function () {
                             this.fire('kassa-page-ready', {page: this})
                         }.bind(this)

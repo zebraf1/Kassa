@@ -8,6 +8,7 @@
 <link rel="import" href="kassa-date-picker.html">
 <link rel="import" href="kassa-admin-tarned-dialog.html">
 <link rel="import" href="kassa-admin-tarned-rows.html">
+<link rel="import" href="kassa-table-footer.html">
 
 <dom-module id="kassa-admin-tarned">
 	<template>
@@ -19,7 +20,7 @@
 
 		<div hidden$="[[dialogOpen]]">
 			<kassa-material direction="horizontal">
-				<kassa-date-picker on-kassa-confirm="_loadDeliveries" start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
+				<kassa-date-picker start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
 			</kassa-material>
 
 			<kassa-table items="[[deliveries]]" add-func="doDeliveryPost"
@@ -32,9 +33,7 @@
 				</vaadin-grid-column>
 				<vaadin-grid-column flex-grow="1">
 					<template class="header">
-						<vaadin-grid-filter path="member" value="[[_memberFilter]]">
-							<paper-input label="Koostaja" value="{{_memberFilter}}" slot="filter" no-label-float></paper-input>
-						</vaadin-grid-filter>
+						<paper-input label="Koostaja" value="{{_memberNameFilter}}" slot="filter" no-label-float></paper-input>
 					</template>
 					<template>
 						<span>[[item.member]]</span>
@@ -65,8 +64,9 @@
 					</template>
 				</vaadin-grid-column>
 			</kassa-table>
+			
+			<kassa-table-footer id="footer" offset="{{_offset}}"></kassa-table-footer>
 		</div>
-
 
 		<kassa-admin-tarned-dialog id="deliveriesDialog" opened="{{dialogOpen}}">
 			<kassa-material direction="horizontal">
@@ -120,6 +120,12 @@
                 _endDate: {
                     type: String
                 },
+                _memberNameFilter: {
+                    type: String
+                },
+                _offset: {
+                    type: Number
+                },
 	            locations: {
                     type: Array,
 		            value: function () {
@@ -131,30 +137,44 @@
 	            }
             },
             behaviors: [PageBehavior, KassaBehavior],
-            observers: ['_loadDeliveries(pageActive, conventId)'],
+            observers: [
+                'loadProducts(conventId)',
+                'loadDeliveriesDelayed(_memberNameFilter)',
+                'loadDeliveries(conventId, _startDate, _endDate, _offset)'
+            ],
             ready: function () {
                 this.set('dialog', this.$.deliveriesDialog);
             },
 	        setUp: function () {
-                this.$$('kassa-date-picker').ready();
+                this.loadProducts();
+                this.loadDeliveries();
+                this.fire('kassa-page-ready', {page: this});
             },
             cleanUp: function() {
-                this.set('deliveries', []);
+                this.set('_memberNameFilter', '');
             },
-            _loadDeliveries: function (pageActive, conventId) {
-                if (pageActive && conventId !== undefined) {
-                    this.fire('kassa-page-loading');
-                    this.cleanUp();
-                    this.fire('kassa-backend-action', {
-                        action: 'doProductsGetActive',
-                        conventId: conventId
-                    });
+	        loadProducts: function () {
+                this.fire('kassa-backend-action', {
+                    action: 'doProductsGet',
+                    isActive: true,
+                    conventId: this.conventId
+                });
+            },
+            loadDeliveriesDelayed: function () {
+                this.debounce('loadDeliveries', this.loadDeliveries.bind(this), 200);
+            },
+            loadDeliveries: function () {
+                if (this.pageActive) {
+                    const limit = 15;
+                    this.set('deliveries', []);
+                    this.$.footer.hide();
                     this.fire('kassa-backend-action', {
                         action: 'doReportsGet', conventId: this.conventId,
+                        reportType: 'UPDATE', memberName: this._memberNameFilter,
                         dateFrom: this._startDate, dateUntil: this._endDate,
-                        reportType: 'UPDATE',
-                        onSuccess: function () {
-                            this.fire('kassa-page-ready', {page: this})
+                        limit: limit, offset: this._offset,
+                        onSuccess: function (headers) {
+                            this.$.footer.show(headers['Content-Range'], limit);
                         }.bind(this)
                     });
                 }

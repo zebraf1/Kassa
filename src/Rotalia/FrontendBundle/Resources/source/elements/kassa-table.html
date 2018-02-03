@@ -16,7 +16,6 @@
 	<link rel="lazy-import" group="kassa-admin-aruanded" href="kassa-admin-aruanded-row-details.html">
 	<link rel="lazy-import" group="kassa-admin-tarned" href="kassa-admin-tarned-row-details.html">
 
-
 	<template>
 		<style>
 			:host {
@@ -35,10 +34,6 @@
 				position: fixed;
 				right: 20px;
 				bottom: 20px;
-			}
-
-			.DISABLED {
-				color: #888;
 			}
 
 			/* Grid material styling*/
@@ -121,6 +116,36 @@
                 items: {
                     type: Array
                 },
+                dialog: {
+                    type: HTMLElement,
+                    observer: '_attachDialogListener'
+                },
+                conventId: {
+                    type: Number
+                },
+                rowDetailsName: {
+                    type: String,
+                    observer: '_loadRowDetails'
+                },
+                scrollTarget: {
+                    type: HTMLElement,
+                    observer: '_setFabLocation'
+                },
+                /**
+                 * Item that has its row details shown
+                 */
+	            _activeItem: {
+                    type: Object,
+		            readOnly: true,
+		            value: null
+	            },
+                /**
+                 * Item, that has its edit dialog open
+                 */
+                _editItemId: {
+                    type: Number,
+                    readOnly: true
+                },
                 //dialog properties
                 addFunc: {
                     type: String,
@@ -133,30 +158,6 @@
                 deleteFunc: {
                     type: String,
                     value: ''
-                },
-                dialog: {
-                    type: HTMLElement,
-                    observer: '_attachDialogListener'
-                },
-                conventId: {
-                    type: Number
-                },
-                rowDetailsName: {
-                    type: String,
-                    observer: '_loadRowDetails'
-                },
-	            _activeItem: {
-                    type: Object,
-		            readOnly: true,
-		            value: null
-	            },
-                _editItemId: {
-                    type: Number,
-                    readOnly: true
-                },
-                scrollTarget: {
-                    type: HTMLElement,
-                    observer: '_setFabLocation'
                 }
             },
             behaviors: [KassaBehavior, Polymer.LazyImportsBehavior],

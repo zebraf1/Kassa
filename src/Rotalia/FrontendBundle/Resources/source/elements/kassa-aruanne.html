@@ -168,7 +168,11 @@
 	        _loadProducts: function(pageActive, conventId) {
                 if (pageActive && (conventId !== undefined)) {
                     this.set('products', undefined);
-                    this.fire('kassa-backend-action', {action: 'doProductsGetActive', conventId: conventId});
+                    this.fire('kassa-backend-action', {
+                        action: 'doProductsGet',
+	                    isActive: true,
+	                    conventId: conventId
+                    });
                 }
 	        },
             _loadPreviousReport: function (pageActive, conventId, target) {

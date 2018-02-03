@@ -10,6 +10,7 @@
 <link rel="import" href="kassa-material.html">
 <link rel="import" href="kassa-date-picker.html">
 <link rel="import" href="kassa-member-picker.html">
+<link rel="import" href="kassa-table-footer.html">
 
 <dom-module id="kassa-admin-ylekanded">
 	<template>
@@ -20,7 +21,7 @@
 		</style>
 
 		<kassa-material direction="horizontal">
-			<kassa-date-picker on-kassa-confirm="_loadTransfers" start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
+			<kassa-date-picker start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
 		</kassa-material>
 
 		<kassa-table items="[[transfers]]" add-func="doTransfersPost"
@@ -33,9 +34,7 @@
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="1">
 				<template class="header">
-					<vaadin-grid-filter path="member" value="{{_nameFilter}}">
-						<paper-input label="Nimi" value="{{_nameFilter}}" slot="filter" no-label-float></paper-input>
-					</vaadin-grid-filter>
+					<paper-input label="Nimi" value="{{_memberNameFilter}}" slot="filter" no-label-float></paper-input>
 				</template>
 				<template>
 					<span>[[item.member]]</span>
@@ -60,6 +59,8 @@
 				</template>
 			</vaadin-grid-column>
 		</kassa-table>
+
+		<kassa-table-footer id="footer" offset="{{_offset}}"></kassa-table-footer>
 
 		<paper-dialog id="transfersDialog" modal style="max-width: 350px">
 			<kassa-material direction="vertical">
@@ -88,34 +89,49 @@
                 dialog: {
                     type: Node
                 },
+                _memberNameFilter: {
+                    type: String
+                },
 	            _startDate: {
                     type: String
 	            },
                 _endDate: {
                     type: String
+                },
+                _offset: {
+                    type: Number
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
-            observers: ['_loadTransfers(pageActive, conventId)'],
+            observers: [
+                'loadTransfers(conventId, _startDate, _endDate, _offset)',
+	            'loadPurchasesDelayed(_memberNameFilter)'
+            ],
             ready: function () {
                 this.set('dialog', this.$.transfersDialog);
             },
-            cleanUp: function() {
-                this.set('transfers', []);
+            setUp: function () {
+                this.loadTransfers();
+                this.fire('kassa-page-ready', {page: this});
             },
-            _loadTransfers: function () {
-	            if (this.pageActive) {
-                    this.fire('kassa-page-loading');
-	                this.cleanUp();
-	                this.fire('kassa-backend-action', {
-	                    action: 'doTransfersGet',
-		                conventId: this.conventId,
-		                dateFrom: this._startDate, dateUntil: this._endDate,
-		                onSuccess: function () {
-                            this.fire('kassa-page-ready', {page: this})
+            loadPurchasesDelayed: function () {
+                this.debounce('loadTransfers', this.loadTransfers.bind(this), 200);
+            },
+            loadTransfers: function () {
+                if (this.pageActive) {
+                    const limit = 15;
+                    this.set('transfers', []);
+                    this.$.footer.hide();
+                    this.fire('kassa-backend-action', {
+                        action: 'doTransfersGet',
+                        conventId: this.conventId, memberName: this._memberNameFilter,
+                        dateFrom: this._startDate, dateUntil: this._endDate,
+                        limit: limit, offset: this._offset,
+                        onSuccess: function (headers) {
+                            this.$.footer.show(headers['Content-Range'], limit);
                         }.bind(this)
-	                });
-	            }
+                    });
+                }
             }
         })
 	</script>

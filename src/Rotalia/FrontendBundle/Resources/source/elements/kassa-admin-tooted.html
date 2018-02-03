@@ -12,12 +12,19 @@
 <link rel="import" href="kassa-table.html">
 <link rel="import" href="kassa-material.html">
 
-
 <dom-module id="kassa-admin-tooted">
 	<template>
 		<style>
+			kassa-material {
+				margin-bottom: 1em;
+			}
 		</style>
-		<kassa-table items="[[_mapIdsToValues(products, productGroups)]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
+
+		<kassa-material direction="horizontal">
+			<paper-toggle-button checked="{{isActive}}">Aktiivsed tooted</paper-toggle-button>
+		</kassa-material>
+
+		<kassa-table items="[[_mapIdsToValues(products.*, productGroups)]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
 		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details-name="kassa-admin-tooted">
 			<vaadin-grid-column flex-grow="0" width="3em">
 				<template class="header"><span style="text-align: right;">Id</span></template>
@@ -32,25 +39,25 @@
 					</vaadin-grid-filter>
 				</template>
 				<template>
-					<span class$="[[item.status]]">[[item.name]]</span>
+					<span>[[item.name]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="0">
 				<template class="header"><span style="text-align: right;">Suurus</span></template>
 				<template>
-					<span class$="[[item.status]]" style="text-align: right;">[[formatAmount(item.amount, item.amountType)]]</span>
+					<span style="text-align: right;">[[formatAmount(item.amount, item.amountType)]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="0">
 				<template class="header">Grupp</template>
 				<template>
-					<span class$="[[item.status]]">[[item.productGroup]]</span>
+					<span>[[item.productGroup]]</span>
 				</template>
 			</vaadin-grid-column>
 			<vaadin-grid-column flex-grow="0">
 				<template class="header"><span style="text-align: right;">Hind</span></template>
 				<template>
-					<span class$="[[item.status]]" style="text-align: right;">[[eur2str(item.price)]]</span>
+					<span style="text-align: right;">[[eur2str(item.price)]]</span>
 				</template>
 			</vaadin-grid-column>
 		</kassa-table>
@@ -84,25 +91,22 @@
                 conventId: {
                     type: Number
                 },
-                activeProducts: {
-                    type: Array
-                },
-                inactiveProducts: {
-                    type: Array
-                },
                 products: {
-                    type: Array,
-                    computed: '_merge(activeProducts.*, inactiveProducts.*)'
+                    type: Array
                 },
                 productGroups: {
                     type: Array
                 },
                 dialog: {
                     type: Node
+                },
+                isActive: {
+                    type: Boolean,
+                    value: true
                 }
             },
             behaviors: [PageBehavior, KassaBehavior],
-            observers: ['_loadProducts(pageActive, conventId)'],
+            observers: ['_loadProducts(pageActive, isActive, conventId)'],
             ready: function () {
                 this.set('dialog', this.$.dialog);
             },
@@ -110,31 +114,24 @@
                 this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
             },
 	        cleanUp: function() {
-                this.set('activeProducts', []);
-                this.set('inactiveProducts', []);
+                this.set('products', []);
 	        },
-            _loadProducts: function (pageActive, conventId) {
+            _loadProducts: function (pageActive, isActive, conventId) {
                 if (pageActive) {
                     this.fire('kassa-page-loading');
                     this.cleanUp();
                     this.fire('kassa-backend-action', {
-                        action: 'doProductsGetAll',
+                        action: 'doProductsGet',
 	                    conventId: conventId,
+	                    isActive: isActive,
 	                    onSuccess: function () {
                             this.fire('kassa-page-ready', {page: this})
                         }.bind(this)
                     });
                 }
             },
-            _merge: function (array1, array2) {
-                if ((array1.base !== undefined) && (array2.base !== undefined)) {
-                    return array1.base.concat(array2.base)
-                } else {
-                    return [];
-                }
-
-            },
             _mapIdsToValues: function(products, productGroups) {
+                products = products.base;
                 if ((products !== undefined) && (productGroups !== undefined)) {
                     return this.mapIdsToValues(products, {
                         'productGroupId': [productGroups, 'name']
