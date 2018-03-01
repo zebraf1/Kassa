@@ -35,7 +35,7 @@ class CreditNettingCommand extends Command
             // Convents where kassa is active.
             $activeConventIds = ConventQuery::create()
                 ->filterByIsActive(true)
-                ->select('id')
+                ->select(['id'])
                 ->find($connection)
                 ->getData()
             ;
@@ -45,7 +45,7 @@ class CreditNettingCommand extends Command
             // Members who are at active convents
             $memberIdsAtActiveConvents = MemberQuery::create()
                 ->filterByKoondisedId($activeConventIds)
-                ->select('id')
+                ->select(['id'])
                 ->find($connection)
                 ->getData()
             ;
