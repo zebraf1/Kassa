@@ -42,6 +42,13 @@ class ProductType extends AbstractType
                 'multiple' => false,
                 'choices' => XClassifier::$STATUSES
             ))
+            ->add('resourceType', 'choice', array(
+                'label' => 'Tüüp',
+                'required' => true,
+                'expanded' => false,
+                'multiple' => false,
+                'choices' => XClassifier::$RESOURCE_TYPES
+            ))
             ->add('productCode', 'text', array(
                 'label' => 'Tootekood',
                 'required' => false,

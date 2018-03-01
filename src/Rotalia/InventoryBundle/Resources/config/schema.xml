@@ -27,6 +27,7 @@
         <column name="warehouse_count" type="DECIMAL" size="10" scale="2" defaultValue="0" />
         <column name="storage_count" type="DECIMAL" size="10" scale="2" defaultValue="0" />
         <column name="status" type="VARCHAR" size="50" defaultValue="DISABLED" />
+        <column name="resource_type" type="VARCHAR" size="50" defaultValue="LIMITED" />
         <foreign-key foreignTable="ollekassa_product" name="product_info_product_fk" onUpdate="CASCADE" onDelete="CASCADE">
             <reference local="product_id" foreign="id" />
         </foreign-key>

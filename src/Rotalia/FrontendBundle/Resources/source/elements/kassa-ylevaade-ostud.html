@@ -126,6 +126,7 @@
                     this.$.footer.hide();
                     this.fire('kassa-backend-action', {
                         action: 'doPurchasesGet',
+	                    memberId: this.memberId,
                         dateFrom: this._startDate, dateUntil: this._endDate,
                         memberName: this._memberNameFilter, createdByName: this._createdByNameFilter,
                         limit: limit, offset: this._offset,

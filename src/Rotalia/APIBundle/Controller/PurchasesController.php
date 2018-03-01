@@ -40,7 +40,6 @@ class PurchasesController extends DefaultController
      *     }
      * )
      *
-     * @param Request $request
      * @return JSendResponse
      */
     public function listAction(Request $request)

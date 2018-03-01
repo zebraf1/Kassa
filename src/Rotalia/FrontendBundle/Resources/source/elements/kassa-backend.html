@@ -223,10 +223,11 @@
                 }.bind(this));
             },
             /* Products */
-            doProductsGet: function (conventId, isActive) {
+            doProductsGet: function (conventId, isActive, resourceType) {
                 this.$.productsGet.set('params', this._formatBody({
 	                conventId: conventId,
-	                active: isActive
+	                active: isActive,
+                    resourceType: resourceType
                 }));
                 return this.$.productsGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setProducts(response.data.products);
@@ -490,7 +491,7 @@
 	                    break;
                     /* Products */
                     case 'doProductsGet':
-                        promise = this.doProductsGet(data.conventId, data.isActive);
+                        promise = this.doProductsGet(data.conventId, data.isActive, data.resourceType);
                         break;
                     case 'doProductsPost':
                         promise = this.doProductsPost(data.conventId, data.itemType);

@@ -118,6 +118,19 @@ class Product extends BaseProduct
     /**
      * @inheritdoc
      */
+    public function setResourceType($v)
+    {
+
+        if ($info = $this->getProductInfo()) {
+            $info->setResourceType($v);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getPrice()
     {
         if ($info = $this->getProductInfo()) {
@@ -139,6 +152,16 @@ class Product extends BaseProduct
 
         // todo remove
         return parent::getStatus();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getResourceType()
+    {
+        if ($info = $this->getProductInfo()) {
+            return $info->getResourceType();
+        }
     }
 
     /**
@@ -218,6 +241,7 @@ class Product extends BaseProduct
                     'warehouse' => $productInfo->getWarehouseCount(),
                     'storage' => $productInfo->getStorageCount(),
                 ] : null,
+            'resourceType' => $productInfo ? $productInfo->getResourceType() : null,
         ];
     }
 

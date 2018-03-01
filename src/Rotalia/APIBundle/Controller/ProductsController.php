@@ -3,6 +3,7 @@
 namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\APIBundle\Form\ProductType;
+use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
 use Rotalia\InventoryBundle\Model\Product;
@@ -36,6 +37,7 @@ class ProductsController extends DefaultController
      *          {"name"="page","type"="int","default"="1"},
      *          {"name"="limit","type"="int","default"="0"},
      *          {"name"="active","type"="boolean"},
+     *          {"name"="resourceType","type"="string","description"="Either LIMITED or UNLIMITED"},
      *          {"name"="conventId","type"="int","description"="Fetch price and status for another convent than member home convent"},
      *     }
      * )
@@ -47,10 +49,11 @@ class ProductsController extends DefaultController
     {
         $name = $request->get('name', null);
         $productCode = $request->get('productCode', null);
+        $active = $request->get('active', null);
+        $resourceType = $request->get('resourceType', array_keys(XClassifier::$RESOURCE_TYPES));
+        $productGroupId = $request->get('productGroupId', null);
         $page = (int)$request->get('page', 1);
         $limit = (int)$request->get('limit', 0);
-        $active = $request->get('active', null);
-        $productGroupId = $request->get('productGroupId', null);
 
         $conventId = $request->get('conventId', null);
 
@@ -70,6 +73,7 @@ class ProductsController extends DefaultController
         $productQuery
             ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
                 ->filterByActiveStatus($active)
+                ->filterByResourceType($resourceType)
             ->endUse()
             ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
                 ->filterByConventId($conventId)
