@@ -137,7 +137,7 @@ class PurchasesController extends DefaultController
         if (!empty($createdByName)) {
             $purchaseQuery->filterByCreatedBy(
                 MemberQuery::create()
-                    ->filterByFullName($createdByName . '%', \Criteria::LIKE)
+                    ->filterByFullName($createdByName.'%', \Criteria::LIKE)
                     ->select(['id'])
                     ->find()
                     ->getData()
