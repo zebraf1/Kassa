@@ -218,7 +218,7 @@
             },
             _setElementValue: function (element, value) {
                 if (element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
-                    element.checked = value === 'ACTIVE';
+                    element.checked = value === element.getAttribute('data-true-value');
                 } else if (element.nodeName.toLocaleLowerCase() === 'kassa-admin-tarned-rows') {
                     element.clear();
                 } else {
@@ -227,7 +227,7 @@
             },
             _getElementvalue: function (element) {
                 if (element.nodeName.toLocaleLowerCase() === 'paper-toggle-button') {
-                    return element.checked ? "ACTIVE" : "DISABLED"
+                    return element.checked ? element.getAttribute('data-true-value') : element.getAttribute('data-false-value')
                 } else {
                     return element.value === '__null__' ? null : element.value;
                 }

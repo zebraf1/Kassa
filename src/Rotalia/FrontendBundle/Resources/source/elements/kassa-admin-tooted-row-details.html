@@ -27,8 +27,10 @@
 		</style>
 
 		<main hidden$='[[isHidden]]'>
-			<div><span>Kogus kapis:</span><span>[[item.inventoryCounts.storage]]</span></div>
-			<div><span>Kogus laos:</span><span>[[item.inventoryCounts.warehouse]]</span></div>
+			<template is="dom-if" if="[[_isFinite(item.resourceType)]]">
+				<div><span>Kogus kapis:</span><span>[[item.inventoryCounts.storage]]</span></div>
+				<div><span>Kogus laos:</span><span>[[item.inventoryCounts.warehouse]]</span></div>
+			</template>
 		</main>
 
 	</template>
@@ -45,6 +47,9 @@
                 }
             },
             behaviors: [KassaBehavior, RowDetailsBehavior],
+            _isFinite: function (resourceType) {
+	            return resourceType === 'LIMITED'
+            }
         })
 	</script>
 </dom-module>

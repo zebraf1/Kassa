@@ -157,7 +157,8 @@
                 this.fire('kassa-backend-action', {
                     action: 'doProductsGet',
                     isActive: true,
-                    conventId: this.conventId
+                    conventId: this.conventId,
+                    resourceType: 'LIMITED'
                 });
             },
             loadDeliveriesDelayed: function () {

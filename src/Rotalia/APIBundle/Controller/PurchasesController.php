@@ -40,7 +40,6 @@ class PurchasesController extends DefaultController
      *     }
      * )
      *
-     * @param Request $request
      * @return JSendResponse
      */
     public function listAction(Request $request)
@@ -129,7 +128,7 @@ class PurchasesController extends DefaultController
             $purchaseQuery->filterByMemberId(
                 MemberQuery::create()
                     ->filterByFullName($memberName.'%', \Criteria::LIKE)
-                    ->select('id')
+                    ->select(['id'])
                     ->find()
                     ->getData()
             );
@@ -139,7 +138,7 @@ class PurchasesController extends DefaultController
             $purchaseQuery->filterByCreatedBy(
                 MemberQuery::create()
                     ->filterByFullName($createdByName.'%', \Criteria::LIKE)
-                    ->select('id')
+                    ->select(['id'])
                     ->find()
                     ->getData()
             );

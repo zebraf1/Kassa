@@ -75,7 +75,12 @@
 				<vaadin-combo-box data-field="productGroupId" label="Grupp" item-label-path="name" item-value-path="id"
 				                  items="[[productGroups]]"></vaadin-combo-box>
 				<paper-input data-field="price" label="Hind (€)" type="number" min="0" step="0.1"></paper-input>
-				<paper-toggle-button data-field="status">Käibel?</paper-toggle-button>
+				<div style="display: flex; flex-flow: row nowrap; align-items: flex-end">
+					<paper-toggle-button data-field="resourceType" data-true-value="UNLIMITED"
+					                     data-false-value="LIMITED">Lõputu?</paper-toggle-button>
+					<paper-toggle-button data-field="status" data-true-value="ACTIVE" data-false-value="DISABLED"
+					                     style="margin-left: 1.8em">Käibel?</paper-toggle-button>
+				</div>
 			</kassa-material>
 			<div class="buttons">
 				<paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]">Sulge</paper-button>
