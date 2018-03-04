@@ -7,7 +7,13 @@ env:
   - SYMFONY_VERSION="2.8.2" DB=mysql
 
 install:
+  - composer install
+  - php app/console propel:build
   - npm install -g bower polymer-cli@next
-  - polymer install --variants
-  - sh build.sh
+  - cd src/Rotalia/FrontendBundle/Resources/source/
+  - bower prune
+  - bower install
+  - bower update
+  - polymer build
+#  - php app/console propel:mig:mig -y
 
