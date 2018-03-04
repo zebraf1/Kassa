@@ -17,3 +17,5 @@ install:
   - polymer build
 #  - php app/console propel:mig:mig -y
 
+script:
+  - phpunit -c app/
