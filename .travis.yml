@@ -7,5 +7,7 @@ env:
   - SYMFONY_VERSION="2.8.2" DB=mysql
 
 install:
-   - sh build.sh
+  - npm install -g bower
+  - npm install -g polymer
+  - sh build.sh
 
