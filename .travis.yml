@@ -4,7 +4,7 @@ php:
   - 7.1
 
 env:
-  - SYMFONY_VERSION="2.8.2" DB=mysql DB_USER=root
+  - SYMFONY_VERSION="2.8.2" DB=mysql DB_USER=root SYMFONY_ENV=test
 
 install:
   - composer install
@@ -15,9 +15,9 @@ install:
   - polymer build
   - cd $TRAVIS_BUILD_DIR
   # Propel
-  - php app/console propel:database:drop
+  - php app/console propel:database:drop --force
   - php app/console propel:database:create
-  - php app/console propel:sql:insert
+  - php app/console propel:sql:insert --force
 
 script:
   - phpunit -c app/
