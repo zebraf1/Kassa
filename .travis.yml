@@ -4,7 +4,7 @@ php:
   - 7.1
 
 env:
-  - SYMFONY_VERSION="2.8.2" DB=mysql
+  - SYMFONY_VERSION="2.8.2" DB=mysql DB_USER=root
 
 install:
   - composer install
@@ -15,5 +15,8 @@ install:
   - bower install
   - bower update
   - polymer build
-#  - php app/console propel:mig:mig -y
+  # Propel
+  - php app/console propel:database:drop
+  - php app/console propel:database:create
+  - php app/console propel:sql:insert
 
