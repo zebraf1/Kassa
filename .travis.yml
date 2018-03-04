@@ -1,0 +1,11 @@
+language: php
+
+php:
+  - 7.1
+
+env:
+  - SYMFONY_VERSION="2.8.2" DB=mysql
+
+install:
+   - sh build.sh
+
