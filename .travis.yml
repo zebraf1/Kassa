@@ -1,0 +1,23 @@
+language: php
+
+php:
+  - 7.1
+
+env:
+  - SYMFONY_VERSION="2.8.2" DB=mysql DB_USER=root SYMFONY_ENV=test
+
+install:
+  - composer install
+  - php app/console propel:build
+  - npm install -g bower polymer-cli@"^1.6.0"
+  - cd src/Rotalia/FrontendBundle/Resources/source/
+  - bower install
+  - polymer build
+  - cd $TRAVIS_BUILD_DIR
+  # Propel
+  - php app/console propel:database:drop --force
+  - php app/console propel:database:create
+  - php app/console propel:sql:insert --force
+
+script:
+  - phpunit -c app/
