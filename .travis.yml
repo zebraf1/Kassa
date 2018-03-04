@@ -7,7 +7,7 @@ env:
   - SYMFONY_VERSION="2.8.2" DB=mysql
 
 install:
-  - npm install -g bower
-  - npm install -g polymer
+  - npm install -g bower polymer-cli@next
+  - polymer install --variants
   - sh build.sh
 
