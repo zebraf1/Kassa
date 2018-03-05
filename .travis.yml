@@ -15,7 +15,6 @@ install:
   - polymer build
   - cd $TRAVIS_BUILD_DIR
   # Propel
-  - php app/console propel:database:drop --force
   - php app/console propel:database:create
   - php app/console propel:sql:insert --force
 
