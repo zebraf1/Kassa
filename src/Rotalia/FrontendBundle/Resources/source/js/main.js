@@ -14,6 +14,8 @@
                         case 'installed':
                             if (navigator.serviceWorker.controller) {
                                 console.log('SW: New or updated content is available.');
+                                sessionStorage.setItem('cacheUpdate', 'true');
+                                location.reload();
                             } else {
                                 console.log('SW: Content is now available offline!');
                             }

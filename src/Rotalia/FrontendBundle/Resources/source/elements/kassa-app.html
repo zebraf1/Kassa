@@ -237,6 +237,11 @@
             ready: function () {
                 this.scrollTarget = this.$$('app-header-layout').$.contentContainer;
                 this.fire('kassa-app-loaded');
+
+                if (sessionStorage.getItem('cacheUpdate')) {
+                    sessionStorage.removeItem('cacheUpdate');
+                    this._onSuccessMessage({detail: 'ÕKassa uuendatud'});
+                }
             },
             _onSuccessMessage: function (event) {
                 this.$.toast.success(event.detail);

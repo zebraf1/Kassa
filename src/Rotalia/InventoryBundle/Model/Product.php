@@ -33,6 +33,9 @@ class Product extends BaseProduct
             case XClassifier::AMOUNT_TYPE_LITRE:
                 return 'L';
                 break;
+            case XClassifier::AMOUNT_TYPE_CENTI_LITRE:
+                return 'cl';
+                break;
             case XClassifier::AMOUNT_TYPE_KG:
                 return 'kg';
                 break;

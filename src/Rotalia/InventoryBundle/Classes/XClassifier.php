@@ -15,12 +15,14 @@ class XClassifier
     const AMOUNT_TYPE = 'AMOUNT_TYPE';
     const AMOUNT_TYPE_PIECE = 'PIECE';
     const AMOUNT_TYPE_LITRE = 'LITRE';
+    const AMOUNT_TYPE_CENTI_LITRE = 'CENTI_LITRE';
     const AMOUNT_TYPE_KG = 'KG';
     const AMOUNT_TYPE_G = 'G';
 
     public static $AMOUNT_TYPES = [
         self::AMOUNT_TYPE_PIECE => 'Tükk',
         self::AMOUNT_TYPE_LITRE => 'Liiter',
+        self::AMOUNT_TYPE_CENTI_LITRE => 'Sentiliiter',
         self::AMOUNT_TYPE_KG => 'Kilogramm',
         self::AMOUNT_TYPE_G => 'Gramm',
     ];

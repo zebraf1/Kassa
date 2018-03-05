@@ -244,19 +244,18 @@
                 //Puutetundlikul ekraanil on vaja väikest delayd.
                 this._set_nextAllowedTime(Date.now() + 200);
 
-                if (this.activeProduct.inventoryCounts.storage - parseInt(this.activeProduct.count) < 0) {
+                if ((this.activeProduct.resourceType === 'LIMITED') && (this.activeProduct.inventoryCounts.storage - parseInt(this.activeProduct.count) < 0)) {
                     this.fire('kassa-message-warning', 'Kontrolli kas toodet ' + this.activeProduct.name + ' on piisavas koguses');
                 }
                 //Teeme nö deep-copy
-                this.push('_chosenProducts',
-                    {
+                this.push('_chosenProducts', {
                         id: this.activeProduct.id,
                         name: this.activeProduct.name,
                         amount: this.activeProduct.amount,
                         amountType: this.activeProduct.amountType,
                         count: this.activeProduct.count,
                         price: this.activeProduct.price
-                    });
+                });
 
                 this.async(function () {
                     this._selectFilterInput();

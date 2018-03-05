@@ -43,17 +43,16 @@
             switch (amountType) {
                 case 'PIECE':
                     return amount + ' tk';
-                    break;
                 case 'LITRE':
                     return amount + ' l';
-                    break;
+	            case 'CENTI_LITRE':
+	                return amount + ' cl';
                 case 'KG':
                     if (amount < 1) {
                         return amount * 1000 + ' g'
                     } else {
                         return amount + ' kg'
                     }
-                    break;
                 default:
                     return '';
             }
