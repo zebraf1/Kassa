@@ -1,6 +1,8 @@
 Kassa
 =====
 
+[![Build Status](https://travis-ci.org/zebraf1/Kassa.svg?branch=master)](https://travis-ci.org/zebraf1/Kassa)
+
 Inventory system
 
 Clone Repository
