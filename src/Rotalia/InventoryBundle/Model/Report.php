@@ -629,7 +629,9 @@ class Report extends BaseReport
         }
 
         $previousVerification = $this->getPreviousVerification();
-        $updates = Updates::getUpdates($this->getTarget(), $this->getConventId(), $previousVerification, $this);
+        $updates = Updates::getUpdatesBetweenReports(
+            $this->getTarget(), $this->getConventId(),
+            XClassifier::RESOURCE_TYPE_LIMITED, $previousVerification, $this);
 
         // Initial
         $expectedCash = 0;
@@ -639,8 +641,10 @@ class Report extends BaseReport
             $expectedCash = $previousVerification->getCash();
 
             foreach ($previousVerification->getReportRows() as $row) {
-                $expectedProductCounts[$row->getProductId()] = $row->getCount();
-                $prices[$row->getProductId()] = $row->getCurrentPrice();
+                if ($row->getProduct()->getResourceType() === XClassifier::RESOURCE_TYPE_LIMITED) {
+                    $expectedProductCounts[$row->getProductId()] = $row->getCount();
+                    $prices[$row->getProductId()] = $row->getCurrentPrice();
+                }
             }
         }
 
@@ -658,8 +662,10 @@ class Report extends BaseReport
         $realCash = $this->getCash();
         $realProductCounts = array();
         foreach ($this->getReportRows() as $row) {
-            $realProductCounts[$row->getProductId()] = $row->getCount();
-            $prices[$row->getProductId()] = $row->getCurrentPrice();
+            if ($row->getProduct()->getResourceType() === XClassifier::RESOURCE_TYPE_LIMITED) {
+                $realProductCounts[$row->getProductId()] = $row->getCount();
+                $prices[$row->getProductId()] = $row->getCurrentPrice();
+            }
         }
 
         //difference

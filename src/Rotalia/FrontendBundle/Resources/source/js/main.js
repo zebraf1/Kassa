@@ -8,7 +8,7 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('service-worker.js').then(function (reg) {
             reg.onupdatefound = function () {
-                var installingWorker = reg.installing;
+                let installingWorker = reg.installing;
                 installingWorker.onstatechange = function () {
                     switch (installingWorker.state) {
                         case 'installed':

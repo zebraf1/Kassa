@@ -31,6 +31,9 @@ creditLimits:
 purchase:
     resource: "@RotaliaAPIBundle/Resources/config/routing/purchase.yml"
 
+economyReport:
+    resource: "@RotaliaAPIBundle/Resources/config/routing/economyReport.yml"
+
 RotaliaAPI_purchasePayment:
     pattern:  /purchase/{payment}/
     defaults: { _controller: RotaliaInventoryBundle:Purchase:Payment }

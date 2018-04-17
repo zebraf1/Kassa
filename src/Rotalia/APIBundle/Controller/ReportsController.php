@@ -5,6 +5,7 @@ namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\APIBundle\Form\ReportType;
 use Rotalia\APIBundle\Classes\Updates;
+use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
 use Rotalia\InventoryBundle\Model\Product;
@@ -63,7 +64,7 @@ class ReportsController extends DefaultController
         }
 
         if ($conventId != $memberConventId && !$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            return JSendResponse::createFail('Teise konvendi raporteid saab näha ainult super admin', 403);
+            return JSendResponse::createFail('Teise konvendi aruandeid saab näha ainult super admin', 403);
         }
 
         if (!empty($memberName)) {
@@ -166,7 +167,8 @@ class ReportsController extends DefaultController
                 ->orderByCreatedAt(\Criteria::DESC)
                 ->findOne()
             ;
-            $updates = Updates::getUpdates($target, $conventId, $report, null);
+            $updates = Updates::getUpdatesBetweenReports(
+                $target, $conventId, XClassifier::RESOURCE_TYPE_LIMITED, $report, null);
 
             return JSendResponse::createSuccess(['report' => $report === null ? null : $report->getFullAjaxData(), 'updates' => $updates]);
 
@@ -184,7 +186,9 @@ class ReportsController extends DefaultController
             }
 
             if ($report->getType() == Report::TYPE_VERIFICATION) {
-                $updates = Updates::getUpdates($report->getTarget(), $report->getConventId(), $report->getPreviousVerification(), $report);
+                $updates = Updates::getUpdatesBetweenReports(
+                    $report->getTarget(), $report->getConventId(),
+                    XClassifier::RESOURCE_TYPE_LIMITED, $report->getPreviousVerification(), $report);
 
                 return JSendResponse::createSuccess(['report' => $report->getPartialAjaxData(), 'updates' => $updates]);
             } elseif ($report->getType() == Report::TYPE_UPDATE) {

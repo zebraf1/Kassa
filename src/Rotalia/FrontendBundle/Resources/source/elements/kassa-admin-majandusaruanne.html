@@ -1,0 +1,361 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="kassa-page-behavior.html">
+<link rel="import" href="kassa-behavior.html">
+<link rel="import" href="kassa-material.html">
+<link rel="import" href="kassa-date-picker.html">
+
+<dom-module id="kassa-admin-majandusaruanne">
+	<template>
+		<style>
+			kassa-material {
+				margin-bottom: 1em;
+			}
+
+			table {
+				border-spacing: 0;
+				font-size: 13px;
+			}
+
+			table.products thead th, table.products tbody td {
+				text-align: right;
+				padding: 0.3em;
+			}
+
+			table.products thead th:first-child, table.products tbody td:first-child {
+				text-align: left;
+			}
+
+			table.products tbody tr:nth-child(odd) {
+				background-color: #e6e6e6;
+			}
+
+			.spacing {
+				margin-right: 0.5em;
+			}
+
+			table.summary td {
+				margin: 0.1em 0;
+			}
+
+			table.summary td:last-child {
+				text-align: right;
+				padding-left: 1em;
+			}
+
+			table.summary {
+				margin-left: auto;
+			}
+
+			.bottom-container {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				width: 100%;
+				margin-top: 1.5em;
+			}
+		</style>
+
+		<kassa-material direction="horizontal">
+			<kassa-date-picker start-date="{{_startDate}}" end-date="{{_endDate}}"></kassa-date-picker>
+		</kassa-material>
+
+		<kassa-material direction="vertical">
+			<table class="products">
+				<thead>
+					<tr>
+						<th rowspan="2">Toode</th>
+						<th rowspan="2">Suurus</th>
+						<th colspan="4" style="text-align: center">Ladu</th>
+						<th colspan="4" style="text-align: center">Kapp</th>
+						<th rowspan="2">Hind sisse</th>
+						<th rowspan="2">Hind välja</th>
+						<th rowspan="2">Käive</th>
+						<th rowspan="2">Kasum</th>
+					</tr>
+					<tr>
+						<th>Alguses</th>
+						<th>Juurde</th>
+						<th>Välja</th>
+						<th class="spacing">Lõpus</th>
+						<th>Alguses</th>
+						<th>Juurde</th>
+						<th>Välja</th>
+						<th class="spacing">Lõpus</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template is="dom-repeat" items="[[limitedProducts]]">
+						<tr>
+							<td>[[item.name]]</td>
+							<td class="spacing">[[item.amount]]</td>
+							<td>[[item.economyReport.warehouse.initial]]</td>
+							<td>[[item.economyReport.warehouse.in]]</td>
+							<td>[[item.economyReport.warehouse.out]]</td>
+							<td class="spacing">[[item.economyReport.warehouse.final]]</td>
+							<td>[[item.economyReport.storage.initial]]</td>
+							<td>[[item.economyReport.storage.in]]</td>
+							<td>[[item.economyReport.storage.out]]</td>
+							<td class="spacing">[[item.economyReport.storage.final]]</td>
+							<td>[[eur2str(item.averagePriceIn)]]</td>
+							<td>[[eur2str(item.averagePriceOut)]]</td>
+							<td>[[item.sales]]</td>
+							<td>[[item.profit]]</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+
+			<div class="bottom-container">
+				<table class="products">
+					<thead>
+					<tr>
+						<th>Toode</th>
+						<th>Suurus</th>
+						<th>Tarbitud</th>
+						<th>Hind</th>
+						<th>Müük</th>
+					</tr>
+					</thead>
+					<tbody>
+						<template is="dom-repeat" items="[[unlimitedProducts]]">
+							<tr>
+								<td>[[item.name]]</td>
+								<td>[[item.amount]]</td>
+								<td>[[item.economyReport.out]]</td>
+								<td>[[eur2str(item.averagePriceOut)]]</td>
+								<td>[[eur2str(item.sales)]]</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+
+				<table class="summary">
+					<tr>
+						<td>Piiratud toodete müügitulu</td>
+						<td>[[eur2str(limitedProfit)]]</td>
+					</tr>
+					<tr>
+						<td>Lõputute toodete müügitulu</td>
+						<td>[[eur2str(unlimitedProfit)]]</td>
+					</tr>
+					<tr>
+						<td>Sularaha alguses</td>
+						<td>[[eur2str(initialCash)]]</td>
+					</tr>
+					<tr>
+						<td>Sularaha välja</td>
+						<td>[[eur2str(cashChange)]]</td>
+					</tr>
+					<tr>
+						<td>Sularaha lõpus</td>
+						<td>[[eur2str(finalCash)]]</td>
+					</tr>
+					<tr>
+						<td style="border-top: 1px solid #000000">Kasum</td>
+						<td style="border-top: 1px solid #000000">[[eur2str(totalProfit)]]</td>
+					</tr>
+				</table>
+			</kassa-material>
+		</kassa-material>
+
+
+	</template>
+	<script>
+        Polymer({
+            is: "kassa-admin-majandusaruanne",
+            properties: {
+                conventId: {
+                    type: Number
+                },
+                products: {
+                    type: Array
+                },
+	            economyReport: {
+                    type: Array
+	            },
+                _startDate: {
+                    type: String
+                },
+                _endDate: {
+                    type: String
+                },
+                limitedProducts: {
+                    type: Array,
+                    computed: '_computeLimitedProducts(products, economyReport)'
+                },
+                unlimitedProducts: {
+                    type: Array,
+                    computed: '_computeUnlimitedProducts(products, economyReport)'
+                },
+	            limitedProfit : {
+                    type: Number,
+		            value: 0
+	            },
+                unlimitedProfit : {
+                    type: Number,
+                    value: 0
+                },
+	            initialCash: {
+                    type: Number,
+                    value: 0
+                },
+	            finalCash: {
+                    type: Number,
+                    value: 0
+                },
+	            cashChange: {
+                    type: Number,
+                    value: 0
+                },
+	            totalProfit: {
+                    type: Number,
+                    value: 0
+                }
+            },
+            behaviors: [PageBehavior, KassaBehavior],
+            observers: [
+                'loadProducts(pageActive, conventId)',
+	            'loadEconomyReport(pageActive, conventId, _startDate, _endDate)',
+	            'computeCash(limitedProfit, unlimitedProfit)'
+            ],
+            setUp: function () {
+                this.loadEconomyReport();
+            },
+            cleanUp: function() {},
+            loadProducts: function (pageActive, conventId) {
+                if (pageActive) {
+                    this.fire('kassa-page-loading');
+                    this.cleanUp();
+                    this.fire('kassa-backend-action', {
+                        action: 'doProductsGet',
+                        conventId: conventId,
+                        onSuccess: function () {
+                            this.fire('kassa-page-ready', {page: this})
+                        }.bind(this)
+                    });
+                }
+            },
+            loadEconomyReport: function() {
+                if (this.pageActive) {
+                    this.fire('kassa-backend-action', {
+                        action: 'doEconomyReportGet',
+                        conventId: this.conventId,
+	                    dateFrom: this._startDate,
+	                    dateUntil: this._endDate
+                    });
+                }
+            },
+            _computeLimitedProducts: function(products, economyReport) {
+                if (this.isTrue(products) && this.isTrue(economyReport)) {
+                    let newProducts = [];
+                    let totalProfit = 0;
+                    for (let i = 0; i < products.length; i++) {
+						if (products[i]['resourceType'] === 'LIMITED') {
+							if (products[i]['id'] in economyReport['LIMITED']) {
+
+                                let economyReportInfo = economyReport['LIMITED'][products[i]['id']];
+
+                                if (economyReportInfo['warehouse'] === undefined) {
+                                    economyReportInfo['warehouse'] = {
+                                        initial: 0,
+                                        in: 0,
+                                        internal_in: 0,
+                                        out: 0,
+                                        internal_out: 0,
+                                        average_price_out: 0,
+                                        final: 0
+                                    }
+                                }
+
+                                if (economyReportInfo['storage'] === undefined) {
+                                    economyReportInfo['storage'] = {
+                                        initial: 0,
+                                        in: 0,
+                                        internal_in: 0,
+                                        out: 0,
+                                        internal_out: 0,
+                                        average_price_out: 0,
+                                        final: 0
+                                    }
+                                }
+
+                                let sales = economyReportInfo['storage']['average_price_out']*(
+                                    economyReportInfo['storage']['out'] - economyReportInfo['storage']['internal_out']
+                                ) + economyReportInfo['warehouse']['average_price_out']*(
+                                    economyReportInfo['warehouse']['out'] - economyReportInfo['warehouse']['internal_out']
+                                );
+
+                                let averagePriceOut = sales / (economyReportInfo['storage']['out'] - economyReportInfo['storage']['internal_out'] + economyReportInfo['warehouse']['out'] - economyReportInfo['warehouse']['internal_out']);
+
+                                let expenses = economyReportInfo['average_price_in']*((
+                                    economyReportInfo['storage']['initial'] + economyReportInfo['storage']['in'] - economyReportInfo['storage']['final'] - economyReportInfo['storage']['internal_out']
+                                ) + (
+                                    economyReportInfo['warehouse']['initial'] + economyReportInfo['warehouse']['in'] - economyReportInfo['warehouse']['final'] - economyReportInfo['warehouse']['internal_out']
+                                ));
+
+                                let profit = sales - expenses;
+                                totalProfit += profit;
+
+                                newProducts.push({
+                                    name: products[i]['name'],
+                                    amount: this.formatAmount(products[i]['amount'], products[i]['amountType']),
+                                    economyReport: economyReportInfo,
+                                    averagePriceIn: economyReportInfo['average_price_in'],
+                                    averagePriceOut: averagePriceOut,
+                                    sales: this.eur2str(sales),
+	                                profit: this.eur2str(profit)
+                                });
+							}
+						}
+                    }
+                    this.set('limitedProfit', totalProfit);
+                    return newProducts;
+                }
+            },
+            _computeUnlimitedProducts: function(products, economyReport) {
+                if (this.isTrue(products) && this.isTrue(economyReport)) {
+                    let newProducts = [];
+                    let totalProfit = 0;
+                    for (let i = 0; i < products.length; i++) {
+                        if (products[i]['resourceType'] === 'UNLIMITED') {
+                            if (products[i]['id'] in economyReport['UNLIMITED']) {
+                                let economyReportInfo = economyReport['UNLIMITED'][products[i]['id']];
+
+                                newProducts.push({
+                                    name: products[i]['name'],
+                                    amount: this.formatAmount(products[i]['amount'], products[i]['amountType']),
+                                    economyReport: economyReportInfo,
+                                    averagePriceOut: economyReportInfo['average_price_out'],
+	                                sales: economyReportInfo['average_price_out']*economyReportInfo['out']
+                                });
+
+                                totalProfit += economyReportInfo['average_price_out']*economyReportInfo['out'];
+                            }
+                        }
+                    }
+                    this.set('unlimitedProfit', totalProfit);
+                    return newProducts;
+                }
+            },
+            computeCash: function() {
+                let initialCash = this.economyReport['cash']['storage']['initial'] + this.economyReport['cash']['warehouse']['initial'];
+                let finalCash = this.economyReport['cash']['storage']['final'] + this.economyReport['cash']['warehouse']['final'];
+                let cashChange = (this.economyReport['cash']['storage']['out'] - this.economyReport['cash']['storage']['internal_out']) -
+	                (this.economyReport['cash']['storage']['in'] - this.economyReport['cash']['storage']['internal_in']) +
+	                (this.economyReport['cash']['warehouse']['out'] - this.economyReport['cash']['warehouse']['internal_out']) -
+                    (this.economyReport['cash']['warehouse']['in'] - this.economyReport['cash']['warehouse']['internal_in']);
+
+                let totalProfit = this.limitedProfit + this.unlimitedProfit + finalCash + cashChange - initialCash;
+
+                this.set('initialCash', initialCash);
+                this.set('finalCash', finalCash);
+                this.set('cashChange', cashChange);
+                this.set('totalProfit', totalProfit);
+            }
+        })
+	</script>
+</dom-module>
+
+
+
