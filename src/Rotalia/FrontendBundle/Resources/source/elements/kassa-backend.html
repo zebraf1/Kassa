@@ -66,6 +66,9 @@
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 		<iron-ajax id="statusCreditLimitsPatch" handle-as="json" url='[[_computeURL("statusCreditLimits", _id)]]' method="PATCH"
 		           content-type="application/x-www-form-urlencoded"></iron-ajax>
+		<!-- Economy report -->
+		<iron-ajax id="economyReportGet" handle-as="json" url='[[_computeURL("economyReport")]]' method="GET"
+		           content-type="application/x-www-form-urlencoded"></iron-ajax>
 	</template>
 	<script>
         Polymer({
@@ -156,6 +159,12 @@
 	            },
 	            /* Status credit limits */
 	            creditLimits: {
+                    type: Array,
+                    notify: true,
+                    readOnly: true
+                },
+                /* Economy report */
+                economyReport: {
                     type: Array,
                     notify: true,
                     readOnly: true
@@ -471,6 +480,17 @@
                     this.fire('kassa-message-success', 'Krediidi limiidid edukalt määratud');
                 }.bind(this));
             },
+            /* Economy report */
+	        doEconomyReportGet: function(conventId, dateFrom, dateUntil) {
+                this.$.economyReportGet.set('params', this._formatBody({
+                    conventId: conventId,
+                    dateFrom: dateFrom,
+                    dateUntil: dateUntil
+                }));
+                return this.$.economyReportGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
+                    this._setEconomyReport(response.data);
+                }.bind(this));
+	        },
             /* General */
             doAction: function (data) {
                 let promise;
@@ -566,6 +586,10 @@
                     case 'doCreditLimitsPatch':
                         promise = this.doCreditLimitsPatch(data.creditLimits);
                         break;
+                    /* Economy report */
+	                case 'doEconomyReportGet':
+	                    promise = this.doEconomyReportGet(data.conventId, data.dateFrom, data.dateUntil);
+	                    break;
                     /* General */
                     default:
                         console.error('Vale action.', data);

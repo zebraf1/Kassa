@@ -1,0 +1,4 @@
+RotaliaAPI_economyReport_get:
+    pattern:  /economyReport/
+    methods: [GET]
+    defaults: { _controller: RotaliaAPIBundle:EconomyReport:Get }

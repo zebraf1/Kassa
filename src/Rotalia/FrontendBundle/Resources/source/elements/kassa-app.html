@@ -82,6 +82,7 @@
 		               single-report="{{singleReport}}"
 		               updates="{{updates}}"
 		               reports="{{reports}}"
+		               economy-report="{{economyReport}}"
 		               credit-limits="{{creditLimits}}"></kassa-backend>
 
 		<kassa-route member="[[member]]"
@@ -174,6 +175,10 @@
 						                    convent-id="[[configuration.selectedConventId]]"
 						                    deliveries="[[reports]]"
 						                    products="[[products]]"></kassa-admin-tarned>
+						<kassa-admin-majandusaruanne data-page="admin-majandusaruanne"
+						                             convent-id="[[configuration.selectedConventId]]"
+						                             products="[[products]]"
+						                             economy-report="[[economyReport]]"></kassa-admin-majandusaruanne>
 						<kassa-super-admin-satted data-page="super-admin-satted"
 						                          credit-limits="[[creditLimits]]"></kassa-super-admin-satted>
 						<kassa-ostud-voog data-page="ostud-voog" purchases="[[purchases]]"></kassa-ostud-voog>
@@ -211,6 +216,7 @@
                             {page: 'admin-kasutajad', name: 'Kasutajad', role: 'ROLE_ADMIN'},
                             {page: 'admin-kassad', name: 'Müügipunktid', role: 'ROLE_ADMIN'},
 	                        {page: 'admin-tasaarveldused', name: 'Tasaarveldused', role: 'ROLE_ADMIN'},
+	                        {page: 'admin-majandusaruanne', name: 'Majandusaruanne', role: 'ROLE_ADMIN'},
 	                        {page: 'super-admin-satted', name: 'Sätted', role: 'ROLE_SUPER_ADMIN'}
                         ];
                     }
