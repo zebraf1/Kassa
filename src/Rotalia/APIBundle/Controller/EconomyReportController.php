@@ -110,7 +110,7 @@ class EconomyReportController extends DefaultController
                     $limitedResults[$id][$target]['internal_in'] = $counts['internal_in'];
                     $limitedResults[$id][$target]['out'] = $counts['out'];
                     $limitedResults[$id][$target]['internal_out'] = $counts['internal_out'];
-                    $limitedResults[$id][$target]['average_price_out'] = round(($counts['out'] - $counts['internal_out']) == 0 ? 0 : $counts['total_price_out']/($counts['out'] - $counts['internal_out']), 2);
+                    $limitedResults[$id][$target]['average_price_out'] = ($counts['out'] - $counts['internal_out']) == 0 ? 0 : round($counts['total_price_out']/($counts['out'] - $counts['internal_out']), 2);
                 } else {
                     $limitedResults[$id][$target] = [
                         'initial' => 0,
@@ -118,7 +118,7 @@ class EconomyReportController extends DefaultController
                         'internal_in' => $counts['internal_in'],
                         'out' => $counts['out'],
                         'internal_out' => $counts['internal_out'],
-                        'average_price_out' => round(($counts['out'] - $counts['internal_out']) == 0 ? 0 : $counts['total_price_out']/($counts['out'] - $counts['internal_out']), 2),
+                        'average_price_out' => ($counts['out'] - $counts['internal_out']) == 0 ? 0 : round($counts['total_price_out']/($counts['out'] - $counts['internal_out']), 2),
                         'final' => 0
                     ];
                 }

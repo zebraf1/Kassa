@@ -37,6 +37,8 @@ class Updates
     }
 
     /**
+     * internal_in and internal_out mean transfers between storage and warehouse.
+     *
      * @param $target
      * @param $conventId
      * @param $resourceType
@@ -48,7 +50,12 @@ class Updates
     public static function getUpdatesBetweenDates($target, $conventId, $resourceType, DateTime $dateFrom = null, DateTime $dateUntil = null) {
 
         $updates = [
-            'cash' => ['in' => 0, 'out' => 0, 'internal_in' => 0, 'internal_out' => 0],
+            'cash' => [
+                'in' => 0,
+                'out' => 0,
+                'internal_in' => 0,
+                'internal_out' => 0
+            ],
             'products' => []
         ];
 
@@ -149,8 +156,8 @@ class Updates
 
         // Initial
         $expectedCash = 0;
-        $expectedProductCounts = array();
-        $prices = array();
+        $expectedProductCounts = [];
+        $prices = [];
         if ($previousVerification) {
             $expectedCash = $previousVerification->getCash();
 
@@ -172,6 +179,9 @@ class Updates
             }
         }
 
-        return ['cash' => $expectedCash, 'products' => $expectedProductCounts];
+        return [
+            'cash' => $expectedCash,
+            'products' => $expectedProductCounts
+        ];
     }
 }

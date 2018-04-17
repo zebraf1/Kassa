@@ -2,11 +2,7 @@
 
 namespace Rotalia\APIBundle\Tests\Controller;
 
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\ProductQuery;
-use Rotalia\InventoryBundle\Model\Report;
-use Rotalia\InventoryBundle\Model\ReportQuery;
-use Rotalia\UserBundle\Model\ConventQuery;
+use Rotalia\InventoryBundle\Classes\XClassifier;
 
 class EconomyReportControllerTest extends WebTestCase
 {
@@ -27,9 +23,26 @@ class EconomyReportControllerTest extends WebTestCase
 
         static::$client->request('GET', '/api/economyReport/');
         $response = static::$client->getResponse();
-        $result = json_decode($response->getContent());
 
         $this->assertEquals(403, $response->getStatusCode());
+    }
+
+    public function testGetAdmin()
+    {
+
+        $this->loginAdmin();
+
+        static::$client->request('GET', '/api/economyReport/');
+        $response = static::$client->getResponse();
+        $result = json_decode($response->getContent());
+
+        //print_r(  $result->data);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertNotNull($result->data);
+        $this->assertNotNull($result->data->cash);
+        $this->assertNotNull($result->data->LIMITED);
+        $this->assertNotNull($result->data->UNLIMITED);
     }
 
 }
