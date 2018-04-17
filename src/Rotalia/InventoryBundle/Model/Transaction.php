@@ -2,6 +2,7 @@
 
 namespace Rotalia\InventoryBundle\Model;
 
+use PropelPDO;
 use Rotalia\InventoryBundle\Model\om\BaseTransaction;
 
 class Transaction extends BaseTransaction
@@ -10,6 +11,12 @@ class Transaction extends BaseTransaction
     const TYPE_CREDIT_PURCHASE = 'CREDIT_PURCHASE';
     const TYPE_CASH_PAYMENT = 'CASH_PAYMENT';
     const TYPE_CREDIT_PAYMENT = 'CREDIT_PAYMENT';
+
+    public function getProduct(PropelPDO $con = null, $doQuery = true) {
+        $product = parent::getProduct($con, $doQuery);
+        $product->setConventId($this->getConventId());
+        return $product;
+    }
 
     /**
      * @return string

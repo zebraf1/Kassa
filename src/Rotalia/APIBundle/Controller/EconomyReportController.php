@@ -195,7 +195,11 @@ class EconomyReportController extends DefaultController
             ];
         }
 
-        return JSendResponse::createSuccess(['LIMITED' => $limitedResults, 'UNLIMITED' => $unlimitedResults, 'cash' => $cash]);
+        return JSendResponse::createSuccess([
+            'LIMITED' => $limitedResults,
+            'UNLIMITED' => $unlimitedResults,
+            'cash' => $cash
+        ]);
     }
 
 }
