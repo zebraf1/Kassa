@@ -2,6 +2,7 @@
 
 namespace Rotalia\APIBundle\Controller;
 
+use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 use Criteria;
 use DateTime;
 use Rotalia\APIBundle\Classes\Updates;
