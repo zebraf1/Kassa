@@ -8,6 +8,7 @@ use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
 use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\InventoryBundle\Model\TransactionQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
@@ -211,7 +212,6 @@ class ProductsController extends DefaultController
         if ($product === null) {
             return JSendResponse::createFail('Toodet ei leitud', 404);
         }
-
         return $this->handleSubmit($product, $request);
     }
 
@@ -255,6 +255,8 @@ class ProductsController extends DefaultController
             $product = $form->getData();
 
             $product->ensureProductInfos();
+
+
 
             $product->save();
             $code = $request->getMethod() === 'POST' ? 201 : 200;

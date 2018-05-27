@@ -3,11 +3,11 @@
 namespace Rotalia\APIBundle\Controller;
 
 use Criteria;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use DateTime;
 use Rotalia\APIBundle\Classes\Updates;
 use Rotalia\InventoryBundle\Classes\XClassifier;
 use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\InventoryBundle\Model\Product;
 use Rotalia\InventoryBundle\Model\Report;
 use Rotalia\InventoryBundle\Model\ReportQuery;
 use Rotalia\InventoryBundle\Model\ReportRow;
@@ -66,26 +66,26 @@ class EconomyReportController extends DefaultController
 
         // LIMITED products
         $initialAmounts = [
-            'storage' => Updates::findAmountsAtDate('storage', $conventId, $dateFrom),
-            'warehouse' => Updates::findAmountsAtDate('warehouse', $conventId, $dateFrom),
+            Product::INVENTORY_TYPE_STORAGE => Updates::findAmountsAtDate(Product::INVENTORY_TYPE_STORAGE, $conventId, $dateFrom),
+            Product::INVENTORY_TYPE_WAREHOUSE => Updates::findAmountsAtDate(Product::INVENTORY_TYPE_WAREHOUSE, $conventId, $dateFrom),
         ];
 
         $finalAmounts = [
-            'storage' => Updates::findAmountsAtDate('storage', $conventId, $dateUntil),
-            'warehouse' => Updates::findAmountsAtDate('warehouse', $conventId, $dateUntil),
+            Product::INVENTORY_TYPE_STORAGE => Updates::findAmountsAtDate(Product::INVENTORY_TYPE_STORAGE, $conventId, $dateUntil),
+            Product::INVENTORY_TYPE_WAREHOUSE => Updates::findAmountsAtDate(Product::INVENTORY_TYPE_WAREHOUSE, $conventId, $dateUntil),
         ];
 
         $updates = [
-            'storage' => Updates::getUpdatesBetweenDates('storage', $conventId, XClassifier::RESOURCE_TYPE_LIMITED, $dateFrom, $dateUntil),
-            'warehouse' => Updates::getUpdatesBetweenDates('warehouse', $conventId, XClassifier::RESOURCE_TYPE_LIMITED, $dateFrom, $dateUntil)
+            Product::INVENTORY_TYPE_STORAGE => Updates::getUpdatesBetweenDates(Product::INVENTORY_TYPE_STORAGE, $conventId, XClassifier::RESOURCE_TYPE_LIMITED, $dateFrom, $dateUntil),
+            Product::INVENTORY_TYPE_WAREHOUSE => Updates::getUpdatesBetweenDates(Product::INVENTORY_TYPE_WAREHOUSE, $conventId, XClassifier::RESOURCE_TYPE_LIMITED, $dateFrom, $dateUntil)
         ];
 
         $limitedResults = [];
         $cash = [];
 
         // Merge
-        foreach (['storage', 'warehouse'] as $target) {
-            $cash[$target]['initial'] = round($initialAmounts[$target]['cash'],2);
+        foreach (Product::$types as $target) {
+            $cash[$target]['initial'] = round($initialAmounts[$target]['cash'], 2);
             $cash[$target]['in'] = round($updates[$target]['cash']['in'], 2);
             $cash[$target]['internal_in'] = round($updates[$target]['cash']['internal_in'], 2);
             $cash[$target]['out'] = round($updates[$target]['cash']['out'], 2);
@@ -110,7 +110,8 @@ class EconomyReportController extends DefaultController
                     $limitedResults[$id][$target]['internal_in'] = $counts['internal_in'];
                     $limitedResults[$id][$target]['out'] = $counts['out'];
                     $limitedResults[$id][$target]['internal_out'] = $counts['internal_out'];
-                    $limitedResults[$id][$target]['average_price_out'] = ($counts['out'] - $counts['internal_out']) == 0 ? 0 : round($counts['total_price_out']/($counts['out'] - $counts['internal_out']), 2);
+                    $limitedResults[$id][$target]['average_price_out'] = ($counts['out'] - $counts['internal_out']) ==
+                    0 ? 0 : round($counts['total_price_out'] / ($counts['out'] - $counts['internal_out']), 2);
                 } else {
                     $limitedResults[$id][$target] = [
                         'initial' => 0,
@@ -118,7 +119,8 @@ class EconomyReportController extends DefaultController
                         'internal_in' => $counts['internal_in'],
                         'out' => $counts['out'],
                         'internal_out' => $counts['internal_out'],
-                        'average_price_out' => ($counts['out'] - $counts['internal_out']) == 0 ? 0 : round($counts['total_price_out']/($counts['out'] - $counts['internal_out']), 2),
+                        'average_price_out' => ($counts['out'] - $counts['internal_out']) ==
+                        0 ? 0 : round($counts['total_price_out'] / ($counts['out'] - $counts['internal_out']), 2),
                         'final' => 0
                     ];
                 }
@@ -143,8 +145,10 @@ class EconomyReportController extends DefaultController
 
         // Incoming prices for these items
         foreach ($limitedResults as $id => $product) {
-            $storageCount = array_key_exists('storage', $product) ? $product['storage']['initial'] - $product['storage']['final'] - $product['storage']['internal_out'] : 0;
-            $warehouseCount = array_key_exists('warehouse', $product) ? $product['warehouse']['initial'] - $product['warehouse']['final'] - $product['warehouse']['internal_out'] : 0;
+            $storageCount = !array_key_exists(Product::INVENTORY_TYPE_STORAGE, $product) ? 0 :
+                $product[Product::INVENTORY_TYPE_STORAGE]['initial'] - $product[Product::INVENTORY_TYPE_STORAGE]['final'] - $product[Product::INVENTORY_TYPE_STORAGE]['internal_out'];
+            $warehouseCount = !array_key_exists(Product::INVENTORY_TYPE_WAREHOUSE, $product) ? 0 :
+                $product[Product::INVENTORY_TYPE_WAREHOUSE]['initial'] - $product[Product::INVENTORY_TYPE_WAREHOUSE]['final'] - $product[Product::INVENTORY_TYPE_WAREHOUSE]['internal_out'];
             $count = $storageCount + $warehouseCount;
 
             if ($count == 0) { //slight speedup for short queries
@@ -174,30 +178,30 @@ class EconomyReportController extends DefaultController
             $runningPrice = 0;
             foreach ($reportRows as $reportRow) {
                 $runningCount += $reportRow->getCount();
-                $runningPrice += $reportRow->getCurrentPrice()*$reportRow->getCount();
+                $runningPrice += $reportRow->getCurrentPrice() * $reportRow->getCount();
 
                 if ($runningCount >= $count) {
                     break;
                 }
             }
 
-            $limitedResults[$id]['average_price_in'] = $runningCount == 0 ? 0 : round($runningPrice/$runningCount, 2);
+            $limitedResults[$id]['average_price_in'] = $runningCount == 0 ? 0 : round($runningPrice / $runningCount, 2);
         }
 
         // Unlimited
-        $updates = Updates::getUpdatesBetweenDates('storage', $conventId, XClassifier::RESOURCE_TYPE_UNLIMITED, $dateFrom, $dateUntil);
+        $updates = Updates::getUpdatesBetweenDates(Product::INVENTORY_TYPE_STORAGE, $conventId, XClassifier::RESOURCE_TYPE_UNLIMITED, $dateFrom, $dateUntil);
 
         $unlimitedResults = [];
         foreach ($updates['products'] as $id => $counts) {
             $unlimitedResults[$id] = [
                 'out' => $counts['out'],
-                'average_price_out' => $counts['out'] == 0 ? 0 : round($counts['total_price_out']/$counts['out'], 2)
+                'average_price_out' => $counts['out'] == 0 ? 0 : round($counts['total_price_out'] / $counts['out'], 2)
             ];
         }
 
         return JSendResponse::createSuccess([
-            'LIMITED' => $limitedResults,
-            'UNLIMITED' => $unlimitedResults,
+            XClassifier::RESOURCE_TYPE_LIMITED => $limitedResults,
+            XClassifier::RESOURCE_TYPE_UNLIMITED => $unlimitedResults,
             'cash' => $cash
         ]);
     }

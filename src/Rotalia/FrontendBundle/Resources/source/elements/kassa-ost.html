@@ -141,7 +141,7 @@
                 }
             },
             cleanUp: function () {
-                this.$.memberPicker.value = '';
+                this.$.memberPicker.set('value', '');
                 this.set('ostFixed', false);
                 this.set('products', undefined);
                 this._set_chosenProducts([]);

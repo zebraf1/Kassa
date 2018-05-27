@@ -100,10 +100,14 @@ class Updates
                 continue;
             }
 
+            $isInternalUpdate = (
+                    $updateReport->getTarget() === Product::INVENTORY_TYPE_WAREHOUSE && $updateReport->getSource() === Product::INVENTORY_TYPE_STORAGE
+                ) || (
+                    $updateReport->getTarget() === Product::INVENTORY_TYPE_STORAGE && $updateReport->getSource() === Product::INVENTORY_TYPE_WAREHOUSE
+                );
+
             $updates['cash'][$direction] += $updateReport->getCash();
-            if (($updateReport->getTarget() === 'warehouse' && $updateReport->getSource() === 'storage') ||
-                ($updateReport->getTarget() === 'storage' && $updateReport->getSource() === 'warehouse')
-            ) {
+            if ($isInternalUpdate) {
                 $updates['cash']['internal_'.$direction] += $updateReport->getCash();
             }
 
@@ -119,9 +123,7 @@ class Updates
                 }
 
                 $updates['products'][$reportRow->getProductId()][$direction] += $reportRow->getCount();
-                if (($updateReport->getTarget() === 'warehouse' && $updateReport->getSource() === 'storage') ||
-                    ($updateReport->getTarget() === 'storage' && $updateReport->getSource() === 'warehouse')
-                ) {
+                if ($isInternalUpdate) {
                     $updates['products'][$reportRow->getProductId()]['internal_'.$direction] += $reportRow->getCount();
                 } else {
                     if ($direction === 'out') {
