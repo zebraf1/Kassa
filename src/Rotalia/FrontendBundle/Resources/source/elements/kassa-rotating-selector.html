@@ -49,8 +49,14 @@
                             this.set('_selectedConventNr', i);
                             this.set('_selectedName', els[i].name);
                             this.set('conventId', els[i].id);
-                            break;
+                            return;
                         }
+                    }
+
+                    if (els.length >= 1) {
+                        this.set('_selectedConventNr', 0);
+                        this.set('_selectedName', els[0].name);
+                        this.set('conventId', els[0].id);
                     }
                 }
             },
