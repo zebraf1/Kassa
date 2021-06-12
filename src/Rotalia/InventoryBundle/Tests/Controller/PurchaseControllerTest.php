@@ -37,4 +37,41 @@ class PurchaseControllerTest extends WebTestCase
        $this->assertArrayHasKey('message', $result, join(',', array_keys($result)));
        $this->assertEquals('See brauser on määratud müügipunktiks (Tallinn) ja ei luba valitud konvendist ostu', $result['message']);
     }
+
+    /**
+     * The user has -10€ in Tartu and 20€ in Tallinn.
+     * The credit limit for this user is -25€.
+     *
+     * The user should be able to make an 16€ purchase in Tartu, because the total credit is checked.
+     */
+    public function testPurchaseSuccessEvenIfCreditInWrongConvent()
+    {
+        $this->loginSimpleUser();
+
+        $product = ProductQuery::create()->findOneByName('A le Coq Premium');
+        $conventTartu = ConventQuery::create()->findOneByName('Tartu');
+
+        self::$client->request('POST', '/api/purchase/credit/', [
+            'conventId' => $conventTartu->getId(),
+            'basket' => [
+                'id' => $product->getId(),
+                'count' => 16,
+                'price' => $product->getPrice(),
+            ],
+        ]);
+
+        $response = self::$client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $content = $response->getContent();
+        $result = json_decode($content, true);
+        $this->assertArrayHasKey('status', $result, join(',', array_keys($result)));
+        $this->assertEquals([
+            'data' => [
+                'totalSumCents' => 1600,
+                'newCredit'     => -6
+            ],
+            'status' => 'success',
+        ], $result);
+
+    }
 }
