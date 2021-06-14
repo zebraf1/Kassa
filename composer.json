@@ -9,10 +9,13 @@
         },
         "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
     },
+    "repositories": [
+        {"type": "vcs", "url": "https://github.com/zebraf1/orm"}
+    ],
     "require": {
         "php": ">=5.5",
         "doctrine/doctrine-bundle": "~1.2",
-        "doctrine/orm": "~2.2,>=2.2.3",
+        "doctrine/orm": "2.5.x-dev",
         "friendsofsymfony/jsrouting-bundle": "~1.5",
         "friendsofsymfony/user-bundle": "^1.3",
         "incenteev/composer-parameter-handler": "~2.0",
@@ -28,7 +31,7 @@
         "symfony/symfony": "2.*",
         "twig/extensions": "~1.0",
         "willdurand/propel-typehintable-behavior": "dev-master",
-        "phing/phing": "<2.16.0"
+        "phing/phing": "^2.16"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
