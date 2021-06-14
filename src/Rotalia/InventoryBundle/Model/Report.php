@@ -681,5 +681,13 @@ class Report extends BaseReport
         return $cashDiff + $productDiff;
     }
 
+    public function preInsert(PropelPDO $con = null)
+    {
+        // Fix: Field 'cash' doesn't have a default value
+        if (!$this->cash) {
+            $this->cash = 0;
+        }
 
+        return parent::preInsert($con);
+    }
 }
