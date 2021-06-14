@@ -1,7 +1,7 @@
 language: php
 
 php:
-  - 7.1
+  - 7.3
 
 env:
   - SYMFONY_VERSION="2.8.2" DB=mysql DB_USER=root SYMFONY_ENV=test
