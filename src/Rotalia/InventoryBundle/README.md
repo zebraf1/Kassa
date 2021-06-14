@@ -20,4 +20,4 @@ app/config_env.yml failist propel sektsioon
 Käivita andmebaasi initsialiseerimine projekti kaustast käsurealt:
 $ php app/console propel:database:create
 $ php app/console propel:sql:insert --force
-$ php app/console propel:fixtures:load @RotaliaInventoryBundle
+$ php app/console propel:fixtures:load @RotaliaAPIBundle

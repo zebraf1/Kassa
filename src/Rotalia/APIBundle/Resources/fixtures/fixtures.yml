@@ -87,12 +87,16 @@ Rotalia\UserBundle\Model\Member:
         staatused_id: Status_5
         eesnimi: Super
         perenimi: Oluline
+        eemal: 0
+        tegevusala: '-'
     Member_2122:
         koondised_id: Convent_6
         koondised_alg: Convent_6
         staatused_id: Status_3
         eesnimi: Keegi
         perenimi: Oluline
+        eemal: 0
+        tegevusala: '-'
     Member_2123:
         koondised_id: Convent_6
         koondised_alg: Convent_6
@@ -100,6 +104,8 @@ Rotalia\UserBundle\Model\Member:
         eesnimi: Mitte
         perenimi: Keegi
         lahk_pohjused_id: 1
+        eemal: 0
+        tegevusala: '-'
 
 Rotalia\UserBundle\Model\MemberCredit:
     MemberCredit_1:
@@ -143,9 +149,11 @@ Rotalia\UserBundle\Model\UserRight:
     UserRight_300_SUPERADMIN:
         id: User_SUPER
         code: 'KASSASUPER'
+        selgitus: 'Super'
     UserRight_520_ADMIN:
         id: User_ADMIN
         code: 'KASSAADMIN'
+        selgitus: 'Admin'
 
 Rotalia\InventoryBundle\Model\PointOfSale:
     PointOfSale_7:
@@ -242,32 +250,32 @@ Rotalia\InventoryBundle\Model\Setting:
     Setting_CurrentCash_Tallinn:
         reference: 'currentCash'
         object: 'convent'
-        object_id: Convent_6
+        object_id: 6  # cannot use reference
         value: 122
     Setting_CurrentCash_Tartu:
         reference: 'currentCash'
         object: 'convent'
-        object_id: Convent_7
+        object_id: 6
         value: 0
     Setting_BankAccountIban_Tartu:
         reference: 'bankAccountIban'
         object: 'convent'
-        object_id: Convent_7
+        object_id: 7
         value: 'EE12334455666'
     Setting_BankAccountOwner_Tartu:
         reference: 'bankAccountOwner'
         object: 'convent'
-        object_id: Convent_7
+        object_id: 7
         value: 'Jaan Jopakolla'
     Setting_BankAccountIban_Tallinn:
         reference: 'bankAccountIban'
         object: 'convent'
-        object_id: Convent_6
+        object_id: 6
         value: 'EE12334455777'
     Setting_BankAccountOwner_Tallinn:
         reference: 'bankAccountOwner'
         object: 'convent'
-        object_id: Convent_6
+        object_id: 6
         value: 'Juhan Nikerdis'
 
 Rotalia\InventoryBundle\Model\Transfer:
@@ -275,14 +283,17 @@ Rotalia\InventoryBundle\Model\Transfer:
         member_id: Member_2123
         convent_id: Convent_6
         sum: 20
+        created_by: Member_2123
     Transfer_2:
         member_id: Member_2123
         convent_id: Convent_7
         sum: -10
+        created_by: Member_2123
     Transfer_3:
         member_id: Member_2122
         convent_id: Convent_6
         sum: 30
+        created_by: Member_2122
 
 Rotalia\InventoryBundle\Model\CreditNetting:
     CreditNetting_1:
@@ -329,6 +340,7 @@ Rotalia\InventoryBundle\Model\Transaction:
 
 Rotalia\InventoryBundle\Model\Report:
     Report_1:
+        name: 'Test Name'
         member_id: Member_2123
         cash: '5.12'
         convent_id: Convent_6
