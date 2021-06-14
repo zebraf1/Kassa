@@ -121,20 +121,20 @@ Rotalia\UserBundle\Model\MemberCredit:
 Rotalia\UserBundle\Model\User:
     User_SUPER:
         username: user1
-        password: 39817a786ddf7333 #test123
+        password: test123
         liikmed_id: Member_1886
         lastlogin: '2015-04-09 20:13:15'
         jutukas_lastaccess: '0'
         jutukas_firstmess: '8765'
     User_ADMIN:
         username: user2
-        password: 39817a786ddf7333 #test123
+        password: test123
         liikmed_id: Member_2122
         lastlogin: '2015-04-01 14:59:04'
         jutukas_lastaccess: '0'
     User_MEMBER:
         username: user3
-        password: 39817a786ddf7333 #test123
+        password: test123
         liikmed_id: Member_2123
         lastlogin: '2015-04-01 14:59:04'
         jutukas_lastaccess: '0'

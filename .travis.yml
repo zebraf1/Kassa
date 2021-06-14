@@ -19,4 +19,4 @@ install:
   - php app/console propel:sql:insert --force
 
 script:
-  - phpunit -c app/
+  - phpunit -c app/ src

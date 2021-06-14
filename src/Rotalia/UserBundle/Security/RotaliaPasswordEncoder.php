@@ -4,12 +4,16 @@ namespace Rotalia\UserBundle\Security;
 
 
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
-use Symfony\Component\Security\Core\Util\StringUtils;
 
 class RotaliaPasswordEncoder implements PasswordEncoderInterface
 {
-    public function __construct()
+    public const PLUGIN_PLAIN = 'plain';
+    public const PLUGIN_OLD_PASSWORD = 'plain';
+    protected $plugin;
+
+    public function __construct($plugin = self::PLUGIN_OLD_PASSWORD)
     {
+        $this->plugin = $plugin;
     }
 
     /**
@@ -17,13 +21,15 @@ class RotaliaPasswordEncoder implements PasswordEncoderInterface
      */
     public function encodePassword($raw, $salt)
     {
+        if ($this->plugin === self::PLUGIN_PLAIN) {
+            return $raw;
+        }
+
         $con = \Propel::getConnection();
         $sql = "SELECT OLD_PASSWORD(".\Propel::getConnection()->quote($raw).")";
         $stmt = $con->prepare($sql);
         $stmt->execute();
-        $encoded = $stmt->fetchColumn(0);
-
-        return $encoded;
+        return $stmt->fetchColumn();
     }
 
     /**
