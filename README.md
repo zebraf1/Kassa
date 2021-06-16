@@ -1,7 +1,7 @@
 Kassa
 =====
 
-[![Build Status](https://travis-ci.org/zebraf1/Kassa.svg?branch=master)](https://travis-ci.org/zebraf1/Kassa)
+[![Build Status](https://travis-ci.com/zebraf1/Kassa.svg?branch=master)](https://travis-ci.com/zebraf1/Kassa)
 
 Inventory system
 
