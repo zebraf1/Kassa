@@ -2,12 +2,9 @@
 
 namespace Rotalia\APIBundle\Tests\Controller;
 
-
-use Rotalia\APIBundle\Tests\Controller\WebTestCase;
 use Rotalia\APIBundle\Model\ProductQuery;
 use Rotalia\UserBundle\Model\ConventQuery;
 use Symfony\Component\BrowserKit\Cookie;
-use Symfony\Component\Serializer\Encoder\JsonDecode;
 
 class PurchaseControllerTest extends WebTestCase
 {

@@ -3,13 +3,14 @@
 namespace Rotalia\APIBundle\Model;
 
 use DateTime;
+use PropelObjectCollection;
 use Rotalia\APIBundle\Model\om\BaseTransactionQuery;
 
 class TransactionQuery extends BaseTransactionQuery
 {
 
-    public function filterByEitherMemberId($memberId) {
-
+    public function filterByEitherMemberId($memberId): self
+    {
         $this->filterByMemberId($memberId)
             ->_or()
             ->filterByCreatedBy($memberId)
@@ -24,11 +25,10 @@ class TransactionQuery extends BaseTransactionQuery
      * @param $conventId
      * @param DateTime|null $dateFrom
      * @param DateTime|null $dateUntil
-     * @return Transaction[]
+     * @return Transaction[]|PropelObjectCollection
      */
     public static function findTransactionsBetween($conventId, DateTime $dateFrom = null, DateTime $dateUntil = null)
     {
-
         $query = self::create()
             ->filterByType(Transaction::TYPE_CREDIT_PURCHASE)
             ->filterByConventId($conventId);

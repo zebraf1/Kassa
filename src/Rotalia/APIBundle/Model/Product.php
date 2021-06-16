@@ -158,13 +158,12 @@ class Product extends BaseProduct
     }
 
     /**
-     * @inheritdoc
+     * @return string|null
      */
     public function getResourceType()
     {
-        if ($info = $this->getProductInfo()) {
-            return $info->getResourceType();
-        }
+        $info = $this->getProductInfo();
+        return $info ? $info->getResourceType() : null;
     }
 
     /**
@@ -194,7 +193,7 @@ class Product extends BaseProduct
     {
         $conventId = $this->conventId;
 
-        if ($conventId == null) {
+        if ($conventId === null) {
             return null;
         }
 
