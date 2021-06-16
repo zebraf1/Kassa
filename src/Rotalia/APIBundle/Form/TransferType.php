@@ -37,7 +37,7 @@ class TransferType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rotalia\InventoryBundle\Model\Transfer',
+            'data_class' => 'Rotalia\APIBundle\Model\Transfer',
         ));
     }
 }

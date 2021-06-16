@@ -3,10 +3,10 @@
 namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\APIBundle\Form\PointOfSaleType;
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
-use Rotalia\InventoryBundle\Model\PointOfSale;
-use Rotalia\InventoryBundle\Model\PointOfSaleQuery;
+use Rotalia\APIBundle\Model\PointOfSale;
+use Rotalia\APIBundle\Model\PointOfSaleQuery;
 use Rotalia\UserBundle\Model\User;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\Cookie;

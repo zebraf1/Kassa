@@ -2,7 +2,7 @@
 
 namespace Rotalia\APIBundle\Form;
 
-use Rotalia\InventoryBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Classes\XClassifier;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -73,7 +73,7 @@ class ProductType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rotalia\InventoryBundle\Model\Product',
+            'data_class' => 'Rotalia\APIBundle\Model\Product',
         ));
     }
 }

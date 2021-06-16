@@ -3,7 +3,7 @@
 namespace Rotalia\APIBundle\Tests\Controller;
 
 
-use Rotalia\InventoryBundle\Model\ProductGroupQuery;
+use Rotalia\APIBundle\Model\ProductGroupQuery;
 
 class ProductGroupsControllerTest extends WebTestCase
 {

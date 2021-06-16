@@ -2,7 +2,7 @@
 
 namespace Rotalia\APIBundle\Form;
 
-use Rotalia\InventoryBundle\Model\ReportPeer;
+use Rotalia\APIBundle\Model\ReportPeer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -42,7 +42,7 @@ class ReportType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Rotalia\InventoryBundle\Model\Report',
+            'data_class' => 'Rotalia\APIBundle\Model\Report',
             'csrf_protection' => false,
             'cascade_validation' => true,
         ]);

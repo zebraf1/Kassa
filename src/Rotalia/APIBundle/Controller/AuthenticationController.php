@@ -3,7 +3,7 @@
 namespace Rotalia\APIBundle\Controller;
 
 
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\UserBundle\Model\User;
 use Rotalia\UserBundle\Model\UserQuery;
 use Symfony\Component\HttpFoundation\Cookie;

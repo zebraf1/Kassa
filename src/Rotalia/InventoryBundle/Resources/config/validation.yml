@@ -1,4 +1,4 @@
-Rotalia\InventoryBundle\Model\Product:
+Rotalia\APIBundle\Model\Product:
     properties:
         name:
             - NotBlank: ~
@@ -23,7 +23,7 @@ Rotalia\InventoryBundle\Model\Product:
             - 'IsTrue':
                 message: 'Tootegruppi pole olemas'
 
-Rotalia\InventoryBundle\Model\ProductGroup:
+Rotalia\APIBundle\Model\ProductGroup:
     properties:
         name:
             - NotBlank: ~

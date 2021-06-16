@@ -2,10 +2,10 @@
 
 namespace Rotalia\APIBundle\Tests\Controller;
 
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\ProductQuery;
-use Rotalia\InventoryBundle\Model\Report;
-use Rotalia\InventoryBundle\Model\ReportQuery;
+use Rotalia\APIBundle\Model\Product;
+use Rotalia\APIBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Model\Report;
+use Rotalia\APIBundle\Model\ReportQuery;
 use Rotalia\UserBundle\Model\ConventQuery;
 
 class ReportsControllerTest extends WebTestCase

@@ -4,9 +4,9 @@ namespace Rotalia\InventoryBundle\Controller;
 
 use Rotalia\InventoryBundle\Form\ProductListType;
 use Rotalia\InventoryBundle\Form\ProductType;
-use Rotalia\InventoryBundle\Model\Form\ProductList;
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Model\Form\ProductList;
+use Rotalia\APIBundle\Model\Product;
+use Rotalia\APIBundle\Model\ProductQuery;
 
 use Symfony\Component\HttpFoundation\Request;
 

@@ -3,10 +3,10 @@
 namespace Rotalia\InventoryBundle\Controller;
 
 
-use Rotalia\InventoryBundle\Classes\XClassifier;
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Model\Product;
+use Rotalia\APIBundle\Model\ProductQuery;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

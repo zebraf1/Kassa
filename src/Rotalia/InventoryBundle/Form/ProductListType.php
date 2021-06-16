@@ -40,7 +40,7 @@ class ProductListType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rotalia\InventoryBundle\Model\Form\ProductList',
+            'data_class' => 'Rotalia\APIBundle\Model\Form\ProductList',
             'csrf_protection' => false,
         ));
     }

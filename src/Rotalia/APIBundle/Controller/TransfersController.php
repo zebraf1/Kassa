@@ -4,11 +4,11 @@ namespace Rotalia\APIBundle\Controller;
 
 use Exception;
 use Rotalia\APIBundle\Form\TransferType;
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
-use Rotalia\InventoryBundle\Model\Transfer;
-use Rotalia\InventoryBundle\Model\TransferPeer;
-use Rotalia\InventoryBundle\Model\TransferQuery;
+use Rotalia\APIBundle\Model\Transfer;
+use Rotalia\APIBundle\Model\TransferPeer;
+use Rotalia\APIBundle\Model\TransferQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Rotalia\UserBundle\Model\MemberQuery;
 use Rotalia\UserBundle\Model\User;

@@ -3,9 +3,9 @@
 namespace Rotalia\InventoryBundle\Controller;
 
 use Rotalia\InventoryBundle\Form\ReportType;
-use Rotalia\InventoryBundle\Model\ProductQuery;
-use Rotalia\InventoryBundle\Model\Report;
-use Rotalia\InventoryBundle\Model\ReportQuery;
+use Rotalia\APIBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Model\Report;
+use Rotalia\APIBundle\Model\ReportQuery;
 use \DateTime;
 use Symfony\Component\HttpFoundation\Request;
 

@@ -2,8 +2,8 @@
 
 namespace Rotalia\InventoryBundle\Controller;
 
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Model\Transaction;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Model\Transaction;
 use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\MemberCreditQuery;
 use Rotalia\UserBundle\Model\MemberQuery;

@@ -4,7 +4,7 @@ namespace Rotalia\InventoryBundle\Controller;
 
 
 use Rotalia\InventoryBundle\Form\TransactionFilterForm;
-use Rotalia\InventoryBundle\Model\TransactionQuery;
+use Rotalia\APIBundle\Model\TransactionQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

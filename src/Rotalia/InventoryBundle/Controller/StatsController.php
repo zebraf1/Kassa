@@ -3,9 +3,9 @@
 namespace Rotalia\InventoryBundle\Controller;
 
 
-use Rotalia\InventoryBundle\Classes\XClassifier;
-use Rotalia\InventoryBundle\Model\Report;
-use Rotalia\InventoryBundle\Model\ReportQuery;
+use Rotalia\APIBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Model\Report;
+use Rotalia\APIBundle\Model\ReportQuery;
 use \DateTime;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 

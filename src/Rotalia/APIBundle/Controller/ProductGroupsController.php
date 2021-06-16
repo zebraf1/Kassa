@@ -2,11 +2,11 @@
 
 namespace Rotalia\APIBundle\Controller;
 
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
 use Rotalia\InventoryBundle\Form\ProductGroupType;
-use Rotalia\InventoryBundle\Model\ProductGroup;
-use Rotalia\InventoryBundle\Model\ProductGroupQuery;
+use Rotalia\APIBundle\Model\ProductGroup;
+use Rotalia\APIBundle\Model\ProductGroupQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;

@@ -3,7 +3,7 @@
 namespace Rotalia\InventoryBundle\Controller;
 
 
-use Rotalia\InventoryBundle\Model\PointOfSaleQuery;
+use Rotalia\APIBundle\Model\PointOfSaleQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;

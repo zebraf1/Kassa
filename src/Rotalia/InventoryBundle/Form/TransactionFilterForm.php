@@ -3,7 +3,7 @@
 namespace Rotalia\InventoryBundle\Form;
 
 
-use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Model\ProductQuery;
 use Rotalia\UserBundle\Model\MemberQuery;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

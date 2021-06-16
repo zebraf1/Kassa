@@ -3,12 +3,12 @@ namespace Rotalia\InventoryBundle\Controller;
 
 use Exception;
 use Rotalia\APIBundle\Classes\OutOfCreditException;
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\ProductFilterType;
-use Rotalia\InventoryBundle\Model\ProductQuery;
-use Rotalia\InventoryBundle\Model\SettingQuery;
-use Rotalia\InventoryBundle\Model\Transaction;
-use Rotalia\InventoryBundle\Model\TransactionPeer;
+use Rotalia\APIBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Model\SettingQuery;
+use Rotalia\APIBundle\Model\Transaction;
+use Rotalia\APIBundle\Model\TransactionPeer;
 use Rotalia\UserBundle\Model\MemberQuery;
 use Rotalia\UserBundle\Model\StatusCreditLimitQuery;
 use Rotalia\UserBundle\Model\User;

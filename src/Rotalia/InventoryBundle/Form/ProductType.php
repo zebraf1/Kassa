@@ -4,8 +4,8 @@ namespace Rotalia\InventoryBundle\Form;
 
 
 use Propel\Bundle\PropelBundle\Form\Type\ModelType;
-use Rotalia\InventoryBundle\Classes\XClassifier;
-use Rotalia\InventoryBundle\Model\ProductGroupQuery;
+use Rotalia\APIBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Model\ProductGroupQuery;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -51,7 +51,7 @@ class ProductType extends AbstractType
             ))
             ->add('productGroup', ModelType::class, [
                 'label' => 'Toote grupp',
-                'class' => 'Rotalia\InventoryBundle\Model\ProductGroup',
+                'class' => 'Rotalia\APIBundle\Model\ProductGroup',
                 'query' => ProductGroupQuery::create()->orderBySeq(),
                 'required' => false,
             ])
@@ -71,7 +71,7 @@ class ProductType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rotalia\InventoryBundle\Model\Product',
+            'data_class' => 'Rotalia\APIBundle\Model\Product',
         ));
     }
 } 

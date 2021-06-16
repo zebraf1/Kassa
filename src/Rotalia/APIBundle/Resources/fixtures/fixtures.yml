@@ -155,7 +155,7 @@ Rotalia\UserBundle\Model\UserRight:
         code: 'KASSAADMIN'
         selgitus: 'Admin'
 
-Rotalia\InventoryBundle\Model\PointOfSale:
+Rotalia\APIBundle\Model\PointOfSale:
     PointOfSale_7:
         name: Tallinn
         hash: abcdef1234567890abcdef1234567890
@@ -164,7 +164,7 @@ Rotalia\InventoryBundle\Model\PointOfSale:
         created_by: Member_1886
         convent_id: Convent_6
 
-Rotalia\InventoryBundle\Model\ProductGroup:
+Rotalia\APIBundle\Model\ProductGroup:
     ProductGroup_1:
         name: Õlu
         seq: '1'
@@ -172,7 +172,7 @@ Rotalia\InventoryBundle\Model\ProductGroup:
         name: Toit
         seq: '2'
 
-Rotalia\InventoryBundle\Model\Product:
+Rotalia\APIBundle\Model\Product:
     Product_1:
         name: 'A le Coq Premium'
         product_code: '12345678'
@@ -202,7 +202,7 @@ Rotalia\InventoryBundle\Model\Product:
         seq: '43'
         product_group_id: ProductGroup_2
 
-Rotalia\InventoryBundle\Model\ProductInfo:
+Rotalia\APIBundle\Model\ProductInfo:
     ProductInfo_1:
         product_id: Product_1
         convent_id: Convent_6
@@ -246,7 +246,7 @@ Rotalia\InventoryBundle\Model\ProductInfo:
         price: '1.00'
         status: ACTIVE
 
-Rotalia\InventoryBundle\Model\Setting:
+Rotalia\APIBundle\Model\Setting:
     Setting_CurrentCash_Tallinn:
         reference: 'currentCash'
         object: 'convent'
@@ -278,7 +278,7 @@ Rotalia\InventoryBundle\Model\Setting:
         object_id: 6
         value: 'Juhan Nikerdis'
 
-Rotalia\InventoryBundle\Model\Transfer:
+Rotalia\APIBundle\Model\Transfer:
     Transfer_1:
         member_id: Member_2123
         convent_id: Convent_6
@@ -295,11 +295,11 @@ Rotalia\InventoryBundle\Model\Transfer:
         sum: 30
         created_by: Member_2122
 
-Rotalia\InventoryBundle\Model\CreditNetting:
+Rotalia\APIBundle\Model\CreditNetting:
     CreditNetting_1:
         created_at: 2000-01-01
 
-Rotalia\InventoryBundle\Model\CreditNettingRow:
+Rotalia\APIBundle\Model\CreditNettingRow:
     CreditNettingRow_1_1:
         credit_netting_id: CreditNetting_1
         convent_id: Convent_6
@@ -309,7 +309,7 @@ Rotalia\InventoryBundle\Model\CreditNettingRow:
         convent_id: Convent_7
         sum: -10
 
-Rotalia\InventoryBundle\Model\Transaction:
+Rotalia\APIBundle\Model\Transaction:
     Purchase_1:
         type: 'CREDIT_PURCHASE'
         product_id: Product_1
@@ -338,7 +338,7 @@ Rotalia\InventoryBundle\Model\Transaction:
           current_price: 1
           sum: 1
 
-Rotalia\InventoryBundle\Model\Report:
+Rotalia\APIBundle\Model\Report:
     Report_1:
         name: 'Test Name'
         member_id: Member_2123
@@ -348,7 +348,7 @@ Rotalia\InventoryBundle\Model\Report:
         target: 0
 
 
-Rotalia\InventoryBundle\Model\ReportRow:
+Rotalia\APIBundle\Model\ReportRow:
     ReportRow_1_1:
         report_id: Report_1
         product_id: Product_1

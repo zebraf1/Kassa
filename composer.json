@@ -13,7 +13,7 @@
         {"type": "vcs", "url": "https://github.com/zebraf1/orm"}
     ],
     "require": {
-        "php": ">=5.5",
+        "php": ">=7.0",
         "doctrine/doctrine-bundle": "~1.2",
         "doctrine/orm": "2.5.x-dev",
         "friendsofsymfony/jsrouting-bundle": "~1.5",
@@ -31,7 +31,8 @@
         "symfony/symfony": "2.*",
         "twig/extensions": "~1.0",
         "willdurand/propel-typehintable-behavior": "dev-master",
-        "phing/phing": "^2.16"
+        "phing/phing": "^2.16",
+        "tedivm/fetch": "^0.7.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

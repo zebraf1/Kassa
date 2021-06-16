@@ -43,7 +43,7 @@ class PointOfSaleType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rotalia\InventoryBundle\Model\PointOfSale',
+            'data_class' => 'Rotalia\APIBundle\Model\PointOfSale',
         ));
     }
 }

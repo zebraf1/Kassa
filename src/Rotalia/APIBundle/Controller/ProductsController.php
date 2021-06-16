@@ -3,12 +3,12 @@
 namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\APIBundle\Form\ProductType;
-use Rotalia\InventoryBundle\Classes\XClassifier;
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\InventoryBundle\Form\FormErrorHelper;
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\ProductQuery;
-use Rotalia\InventoryBundle\Model\TransactionQuery;
+use Rotalia\APIBundle\Model\Product;
+use Rotalia\APIBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Model\TransactionQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation

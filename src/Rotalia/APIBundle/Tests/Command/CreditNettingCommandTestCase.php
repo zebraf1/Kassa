@@ -4,8 +4,8 @@ namespace Rotalia\APIBundle\Tests\Command;
 
 use Rotalia\APIBundle\Command\CreditNettingCommand;
 use Rotalia\APIBundle\Tests\Controller\WebTestCase;
-use Rotalia\InventoryBundle\Model\CreditNetting;
-use Rotalia\InventoryBundle\Model\CreditNettingQuery;
+use Rotalia\APIBundle\Model\CreditNetting;
+use Rotalia\APIBundle\Model\CreditNettingQuery;
 use Symfony\Component\Console\Tester\CommandTester;
 
 

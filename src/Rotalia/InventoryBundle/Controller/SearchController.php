@@ -1,10 +1,10 @@
 <?php
 
 namespace Rotalia\InventoryBundle\Controller;
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\ProductGroup;
-use Rotalia\InventoryBundle\Model\ProductGroupQuery;
-use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Model\Product;
+use Rotalia\APIBundle\Model\ProductGroup;
+use Rotalia\APIBundle\Model\ProductGroupQuery;
+use Rotalia\APIBundle\Model\ProductQuery;
 use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\MemberQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;

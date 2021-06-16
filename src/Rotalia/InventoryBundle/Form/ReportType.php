@@ -47,7 +47,7 @@ class ReportType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rotalia\InventoryBundle\Model\Report',
+            'data_class' => 'Rotalia\APIBundle\Model\Report',
         ));
     }
 } 

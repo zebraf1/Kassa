@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1e9c417536444020a4308fe6223205a",
+    "content-hash": "c6b4446127e941ab9028440f18900e20",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2900,6 +2900,59 @@
             "time": "2019-11-13T08:36:42+00:00"
         },
         {
+            "name": "tedivm/fetch",
+            "version": "v0.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tedious/Fetch.git",
+                "reference": "ea3f1bbde6bd6388488105240640642dc82c06a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tedious/Fetch/zipball/ea3f1bbde6bd6388488105240640642dc82c06a6",
+                "reference": "ea3f1bbde6bd6388488105240640642dc82c06a6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-imap": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "0.5.*",
+                "phpunit/phpunit": "4.2.*",
+                "satooshi/php-coveralls": "dev-master",
+                "tedivm/dovecottesting": "1.2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Fetch": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Robert Hafner",
+                    "email": "tedivm@tedivm.com"
+                }
+            ],
+            "description": "A PHP IMAP Library",
+            "homepage": "http://github.com/tedious/Fetch",
+            "keywords": [
+                "email",
+                "imap",
+                "pop3"
+            ],
+            "support": {
+                "issues": "https://github.com/tedious/Fetch/issues",
+                "source": "https://github.com/tedious/Fetch/tree/master"
+            },
+            "time": "2015-08-02T03:38:12+00:00"
+        },
+        {
             "name": "twig/extensions",
             "version": "v1.5.1",
             "source": {
@@ -4697,7 +4750,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.5"
+        "php": ">=7.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"
