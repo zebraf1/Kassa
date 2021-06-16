@@ -1,10 +1,10 @@
 <?php
 
-namespace Rotalia\InventoryBundle\Tests\Controller;
+namespace Rotalia\APIBundle\Tests\Controller;
 
 
 use Rotalia\APIBundle\Tests\Controller\WebTestCase;
-use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Model\ProductQuery;
 use Rotalia\UserBundle\Model\ConventQuery;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
@@ -30,19 +30,19 @@ class PurchaseControllerTest extends WebTestCase
             ],
         ]);
 
-       $response = self::$client->getResponse();
-       $this->assertEquals(400, $response->getStatusCode());
-       $content = $response->getContent();
-       $result = json_decode($content, true);
-       $this->assertArrayHasKey('message', $result, join(',', array_keys($result)));
-       $this->assertEquals('See brauser on määratud müügipunktiks (Tallinn) ja ei luba valitud konvendist ostu', $result['message']);
+        $response = self::$client->getResponse();
+        $this->assertEquals(400, $response->getStatusCode());
+        $content = $response->getContent();
+        $result = json_decode($content, true);
+        $this->assertArrayHasKey('message', $result, join(',', array_keys($result)));
+        $this->assertEquals('See brauser on määratud müügipunktiks (Tallinn) ja ei luba valitud konvendist ostu', $result['message']);
     }
 
     /**
      * The user has -10€ in Tartu and 20€ in Tallinn.
      * The credit limit for this user is -25€.
      *
-     * The user should be able to make an 16€ purchase in Tartu, because the total credit is checked.
+     * The user should be able to make an 17.6€ purchase in Tartu, because the total credit is checked.
      */
     public function testPurchaseSuccessEvenIfCreditInWrongConvent()
     {
@@ -53,11 +53,11 @@ class PurchaseControllerTest extends WebTestCase
 
         self::$client->request('POST', '/api/purchase/credit/', [
             'conventId' => $conventTartu->getId(),
-            'basket' => [
+            'basket' => [[
                 'id' => $product->getId(),
-                'count' => 16,
+                'count' => "16",
                 'price' => $product->getPrice(),
-            ],
+            ]],
         ]);
 
         $response = self::$client->getResponse();
@@ -67,8 +67,8 @@ class PurchaseControllerTest extends WebTestCase
         $this->assertArrayHasKey('status', $result, join(',', array_keys($result)));
         $this->assertEquals([
             'data' => [
-                'totalSumCents' => 1600,
-                'newCredit'     => -6
+                'totalSumCents' => 1760,
+                'newCredit'     => -7.6
             ],
             'status' => 'success',
         ], $result);
