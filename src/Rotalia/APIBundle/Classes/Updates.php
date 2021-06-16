@@ -3,10 +3,11 @@
 namespace Rotalia\APIBundle\Classes;
 
 use DateTime;
+use PropelException;
+use PropelObjectCollection;
 use Rotalia\APIBundle\Model\Product;
 use Rotalia\APIBundle\Model\Report;
 use Rotalia\APIBundle\Model\ReportQuery;
-use Rotalia\APIBundle\Model\Transaction;
 use Rotalia\APIBundle\Model\TransactionQuery;
 
 
@@ -26,13 +27,16 @@ class Updates
      * @param Report $report1
      * @param Report|null $report2
      * @return array - The values are positive, if moving from the store -> warehouse -> storage -> buyer
-     * @throws \PropelException
+     * @throws PropelException
      */
-    public static function getUpdatesBetweenReports($target, $conventId, $resourceType, Report $report1 = null, Report $report2 = null)
+    public static function getUpdatesBetweenReports(
+        string $target, int $conventId, $resourceType, Report $report1 = null, Report $report2 = null
+    ): array
     {
         return self::getUpdatesBetweenDates($target, $conventId, $resourceType,
-            $report1 == null ? null : $report1->getCreatedAt(),
-            $report2 == null ? null : $report2->getCreatedAt());
+            $report1 ? $report1->getCreatedAt() : null,
+            $report2 ? $report2->getCreatedAt() : null
+        );
     }
 
     /**
@@ -43,10 +47,13 @@ class Updates
      * @param $resourceType
      * @param DateTime $dateFrom
      * @param DateTime $dateUntil
-     * @return mixed
-     * @throws \PropelException
+     * @return array
+     * @throws PropelException
      */
-    public static function getUpdatesBetweenDates($target, $conventId, $resourceType, DateTime $dateFrom = null, DateTime $dateUntil = null) {
+    public static function getUpdatesBetweenDates(
+        $target, $conventId, $resourceType, DateTime $dateFrom = null, DateTime $dateUntil = null
+    ): array
+    {
 
         $updates = [
             'cash' => [
@@ -58,10 +65,9 @@ class Updates
             'products' => []
         ];
 
-        if ($target == Product::INVENTORY_TYPE_STORAGE) {
+        if ($target === Product::INVENTORY_TYPE_STORAGE) {
             $transactions = TransactionQuery::findTransactionsBetween($conventId, $dateFrom, $dateUntil);
 
-            /** @var Transaction $transaction */
             foreach ($transactions as $transaction) {
                 if ($transaction->getProduct()->getResourceType() === $resourceType) {
                     if (!array_key_exists($transaction->getProductId(), $updates['products'])) {
@@ -73,8 +79,8 @@ class Updates
                             'total_price_out' => 0
                         ];
                     }
-                    $updates['products'][$transaction->getProductId()]['out'] += intval($transaction->getCount());
-                    $updates['products'][$transaction->getProductId()]['total_price_out'] += floatval($transaction->getSum());
+                    $updates['products'][$transaction->getProductId()]['out'] += (int)$transaction->getCount();
+                    $updates['products'][$transaction->getProductId()]['total_price_out'] += (float)$transaction->getSum();
                 }
             }
 
@@ -83,17 +89,25 @@ class Updates
         if ($resourceType === XClassifier::RESOURCE_TYPE_LIMITED) {
             $updateReports = ReportQuery::findUpdateReportsBetween($conventId, $dateFrom, $dateUntil);
             return self::collectUpdates($updateReports, $updates, $target);
-        } else {
-            return $updates;
         }
+
+        return $updates;
     }
 
-    private static function collectUpdates($updateReports, $updates, $target) {
+    /**
+     * @param Report[]|PropelObjectCollection $updateReports
+     * @param array $updates
+     * @param string $target
+     * @return array
+     * @throws PropelException
+     */
+    private static function collectUpdates($updateReports, array $updates, string $target): array
+    {
         /** @var Report $updateReport */
         foreach ($updateReports as $updateReport) {
-            if ($updateReport->getTarget() == $target) {
+            if ($updateReport->getTarget() === $target) {
                 $direction = 'in';
-            } elseif ($updateReport->getSource() == $target) {
+            } elseif ($updateReport->getSource() === $target) {
                 $direction = 'out';
             } else {
                 continue;
@@ -124,14 +138,12 @@ class Updates
                 $updates['products'][$reportRow->getProductId()][$direction] += $reportRow->getCount();
                 if ($isInternalUpdate) {
                     $updates['products'][$reportRow->getProductId()]['internal_'.$direction] += $reportRow->getCount();
-                } else {
-                    if ($direction === 'out') {
-                        $updates['products'][$reportRow->getProductId()]['total_price_out'] += $reportRow->getCurrentPrice() * $reportRow->getCount();
-                    }
+                } elseif ($direction === 'out') {
+                    $updates['products'][$reportRow->getProductId()]['total_price_out'] += $reportRow->getCurrentPrice() * $reportRow->getCount();
                 }
-
             }
         }
+
         return $updates;
     }
 
@@ -140,7 +152,7 @@ class Updates
      * @param $conventId int
      * @param DateTime $date
      * @return array
-     * @throws \PropelException
+     * @throws PropelException
      */
     public static function findAmountsAtDate($target, $conventId, $date) {
 
