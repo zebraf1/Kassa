@@ -8,16 +8,9 @@ framework:
     profiler:
         collect: false
 
-web_profiler:
-    toolbar: false
-    intercept_redirects: false
-
 swiftmailer:
     disable_delivery: true
 
-propel:
-    dbal:
-        dsn: %database_driver%:host=%database_host%;dbname=%database_name%_test;charset=UTF8
-
 parameters:
+    database_name: kassa_test
     rotalia_password_encoder.plugin: 'plain'

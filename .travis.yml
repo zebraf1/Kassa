@@ -1,10 +1,13 @@
 language: php
 
+services:
+  - mysql
+
 php:
   - 7.1
 
 env:
-  - SYMFONY_VERSION="2.8.52" DB=mysql DB_USER=root SYMFONY_ENV=test
+  - DB=mysql SYMFONY_ENV=travis
 
 install:
   - composer install
