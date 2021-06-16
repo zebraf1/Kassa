@@ -1,9 +1,9 @@
 <?php
 
 namespace Rotalia\APIBundle\Tests\Controller;
-use Rotalia\InventoryBundle\Classes\XClassifier;
-use Rotalia\InventoryBundle\Model\ProductGroupQuery;
-use Rotalia\InventoryBundle\Model\ProductQuery;
+use Rotalia\APIBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Model\ProductGroupQuery;
+use Rotalia\APIBundle\Model\ProductQuery;
 
 /**
  * Class ProductsControllerTest

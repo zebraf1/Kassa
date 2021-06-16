@@ -2,11 +2,11 @@
 
 namespace Rotalia\APIBundle\Controller;
 
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Form\FormErrorHelper;
-use Rotalia\InventoryBundle\Form\ProductGroupType;
-use Rotalia\InventoryBundle\Model\ProductGroup;
-use Rotalia\InventoryBundle\Model\ProductGroupQuery;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Form\FormErrorHelper;
+use Rotalia\APIBundle\Form\ProductGroupType;
+use Rotalia\APIBundle\Model\ProductGroup;
+use Rotalia\APIBundle\Model\ProductGroupQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,7 +54,7 @@ class ProductGroupsController extends DefaultController
      *   resource = true,
      *   section="ProductGroups",
      *   description = "Creates a new product group from the submitted data.",
-     *   input = "Rotalia\InventoryBundle\Form\ProductGroupType",
+     *   input = "Rotalia\APIBundle\Form\ProductGroupType",
      *   statusCodes = {
      *     201 = "Returned when new product group is created. Includes created object",
      *     400 = "Returned when the form has errors",
@@ -76,7 +76,7 @@ class ProductGroupsController extends DefaultController
      *   resource = true,
      *   section="ProductGroups",
      *   description = "Applies given attributes to the ProductGroup with the selected ID",
-     *   input = "Rotalia\InventoryBundle\Form\ProductGroupType",
+     *   input = "Rotalia\APIBundle\Form\ProductGroupType",
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     400 = "Returned when the form has errors",

@@ -4,7 +4,6 @@ namespace Rotalia\APIBundle\Controller;
 
 
 use ModelCriteria;
-use Rotalia\InventoryBundle\Controller\BaseController;
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 
 /**

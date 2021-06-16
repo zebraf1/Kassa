@@ -6,13 +6,13 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 use Criteria;
 use DateTime;
 use Rotalia\APIBundle\Classes\Updates;
-use Rotalia\InventoryBundle\Classes\XClassifier;
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\Report;
-use Rotalia\InventoryBundle\Model\ReportQuery;
-use Rotalia\InventoryBundle\Model\ReportRow;
-use Rotalia\InventoryBundle\Model\ReportRowQuery;
+use Rotalia\APIBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Model\Product;
+use Rotalia\APIBundle\Model\Report;
+use Rotalia\APIBundle\Model\ReportQuery;
+use Rotalia\APIBundle\Model\ReportRow;
+use Rotalia\APIBundle\Model\ReportRowQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 

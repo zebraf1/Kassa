@@ -1,10 +1,13 @@
 language: php
 
+services:
+  - mysql
+
 php:
   - 7.1
 
 env:
-  - SYMFONY_VERSION="2.8.2" DB=mysql DB_USER=root SYMFONY_ENV=test
+  - DB=mysql SYMFONY_ENV=travis
 
 install:
   - composer install
@@ -19,4 +22,4 @@ install:
   - php app/console propel:sql:insert --force
 
 script:
-  - phpunit -c app/
+  - phpunit -c app/ src

@@ -10,10 +10,6 @@ _welcome:
     pattern:  /
     defaults: { _controller: RotaliaFrontendBundle:Home:index, fname:"index", extension:"html"}
 
-rotalia_inventory:
-    resource: "@RotaliaInventoryBundle/Resources/config/routing.yml"
-    prefix:   /vana/
-
 rotalia_api:
     resource: "@RotaliaAPIBundle/Resources/config/routing.yml"
     prefix:   /api/
@@ -27,11 +23,3 @@ fos_js_routing:
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
-
-#logout:
-#    path:   /logout
-#login:
-#    path:     /login
-#    defaults: { _controller: RotaliaInventoryBundle:Security:login }
-#login_check:
-#    path: /login_check

@@ -2,7 +2,7 @@
 
 namespace Rotalia\APIBundle\Tests\Controller;
 
-use Rotalia\InventoryBundle\Model\CreditNettingQuery;
+use Rotalia\APIBundle\Model\CreditNettingQuery;
 use Rotalia\UserBundle\Model\ConventQuery;
 
 /**

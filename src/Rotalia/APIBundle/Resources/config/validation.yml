@@ -1,0 +1,29 @@
+Rotalia\APIBundle\Model\Product:
+    properties:
+        name:
+            - NotBlank: ~
+        price:
+            - NotBlank: ~
+            - Type:
+                type: numeric
+                message: Väärtus peab olema number.
+            - GreaterThanOrEqual: 0
+        amount_type:
+            - NotBlank: ~
+        amount:
+            - NotBlank: ~
+            - Type:
+                type: numeric
+                message: Väärtus peab olema number.
+            - GreaterThanOrEqual: 0
+        status:
+            - NotBlank: ~
+    getters:
+        productGroupValid:
+            - 'IsTrue':
+                message: 'Tootegruppi pole olemas'
+
+Rotalia\APIBundle\Model\ProductGroup:
+    properties:
+        name:
+            - NotBlank: ~

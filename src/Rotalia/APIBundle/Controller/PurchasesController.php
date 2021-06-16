@@ -2,9 +2,9 @@
 
 namespace Rotalia\APIBundle\Controller;
 
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Model\Transaction;
-use Rotalia\InventoryBundle\Model\TransactionQuery;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Model\Transaction;
+use Rotalia\APIBundle\Model\TransactionQuery;
 use Rotalia\UserBundle\Model\MemberQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;

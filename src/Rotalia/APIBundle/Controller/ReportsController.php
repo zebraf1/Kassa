@@ -5,12 +5,12 @@ namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\APIBundle\Form\ReportType;
 use Rotalia\APIBundle\Classes\Updates;
-use Rotalia\InventoryBundle\Classes\XClassifier;
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Form\FormErrorHelper;
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\Report;
-use Rotalia\InventoryBundle\Model\ReportQuery;
+use Rotalia\APIBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Form\FormErrorHelper;
+use Rotalia\APIBundle\Model\Product;
+use Rotalia\APIBundle\Model\Report;
+use Rotalia\APIBundle\Model\ReportQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use DateTime;

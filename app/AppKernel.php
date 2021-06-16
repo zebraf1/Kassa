@@ -20,11 +20,10 @@ class AppKernel extends Kernel
             // Rotalia
             new Rotalia\APIBundle\RotaliaAPIBundle(),
             new Rotalia\FrontendBundle\RotaliaFrontendBundle(),
-            new Rotalia\InventoryBundle\RotaliaInventoryBundle(),
             new Rotalia\UserBundle\RotaliaUserBundle(),
 
             // Additional vendors
-            new Propel\PropelBundle\PropelBundle(),
+            new Propel\Bundle\PropelBundle\PropelBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),

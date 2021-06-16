@@ -3,12 +3,11 @@
 namespace Rotalia\APIBundle\Classes;
 
 use DateTime;
-use Rotalia\InventoryBundle\Classes\XClassifier;
-use Rotalia\InventoryBundle\Model\Product;
-use Rotalia\InventoryBundle\Model\Report;
-use Rotalia\InventoryBundle\Model\ReportQuery;
-use Rotalia\InventoryBundle\Model\Transaction;
-use Rotalia\InventoryBundle\Model\TransactionQuery;
+use Rotalia\APIBundle\Model\Product;
+use Rotalia\APIBundle\Model\Report;
+use Rotalia\APIBundle\Model\ReportQuery;
+use Rotalia\APIBundle\Model\Transaction;
+use Rotalia\APIBundle\Model\TransactionQuery;
 
 
 /**

@@ -3,9 +3,9 @@
 namespace Rotalia\APIBundle\Command;
 
 use Exception;
-use Rotalia\InventoryBundle\Model\CreditNetting;
-use Rotalia\InventoryBundle\Model\CreditNettingPeer;
-use Rotalia\InventoryBundle\Model\CreditNettingRow;
+use Rotalia\APIBundle\Model\CreditNetting;
+use Rotalia\APIBundle\Model\CreditNettingPeer;
+use Rotalia\APIBundle\Model\CreditNettingRow;
 use Rotalia\UserBundle\Model\Convent;
 use Rotalia\UserBundle\Model\ConventQuery;
 use Rotalia\UserBundle\Model\MemberCredit;

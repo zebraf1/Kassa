@@ -4,12 +4,12 @@ namespace Rotalia\APIBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Rotalia\APIBundle\Form\CreditNettingRowType;
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Form\FormErrorHelper;
-use Rotalia\InventoryBundle\Model\CreditNetting;
-use Rotalia\InventoryBundle\Model\CreditNettingQuery;
-use Rotalia\InventoryBundle\Model\CreditNettingRow;
-use Rotalia\InventoryBundle\Model\CreditNettingRowQuery;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Form\FormErrorHelper;
+use Rotalia\APIBundle\Model\CreditNetting;
+use Rotalia\APIBundle\Model\CreditNettingQuery;
+use Rotalia\APIBundle\Model\CreditNettingRow;
+use Rotalia\APIBundle\Model\CreditNettingRowQuery;
 use Rotalia\UserBundle\Model\User;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\Request;

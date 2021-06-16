@@ -2,9 +2,9 @@
 
 namespace Rotalia\APIBundle\Controller;
 
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Model\Setting;
-use Rotalia\InventoryBundle\Model\SettingQuery;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Model\Setting;
+use Rotalia\APIBundle\Model\SettingQuery;
 use Rotalia\UserBundle\Model\Convent;
 use Rotalia\UserBundle\Model\ConventQuery;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation

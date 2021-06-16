@@ -2,7 +2,7 @@
 
 namespace Rotalia\APIBundle\Tests\Controller;
 
-use Rotalia\InventoryBundle\Classes\XClassifier;
+use Rotalia\APIBundle\Classes\XClassifier;
 
 class EconomyReportControllerTest extends WebTestCase
 {

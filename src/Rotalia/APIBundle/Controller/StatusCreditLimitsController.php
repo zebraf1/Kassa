@@ -3,7 +3,7 @@
 namespace Rotalia\APIBundle\Controller;
 
 
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\UserBundle\Model\Status;
 use Rotalia\UserBundle\Model\StatusCreditLimit;
 use Rotalia\UserBundle\Model\StatusQuery;

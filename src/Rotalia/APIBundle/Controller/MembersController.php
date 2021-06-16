@@ -3,7 +3,7 @@
 namespace Rotalia\APIBundle\Controller;
 
 
-use Rotalia\InventoryBundle\Component\HttpFoundation\JSendResponse;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\UserBundle\Model\Member;
 use Rotalia\UserBundle\Model\MemberQuery;
 use Rotalia\UserBundle\Model\User;
