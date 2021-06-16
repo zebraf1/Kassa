@@ -2,6 +2,6 @@ imports:
   - { resource: config_test.yml }
 
 parameters:
-    database_name: kassa_travis
+    database_name: kassa_test
     database_user: root
     database_password: ''
