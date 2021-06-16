@@ -4,7 +4,7 @@ namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\APIBundle\Form\PointOfSaleType;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Form\FormErrorHelper;
+use Rotalia\APIBundle\Form\FormErrorHelper;
 use Rotalia\APIBundle\Model\PointOfSale;
 use Rotalia\APIBundle\Model\PointOfSaleQuery;
 use Rotalia\UserBundle\Model\User;

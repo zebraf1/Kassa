@@ -7,7 +7,7 @@ use Rotalia\APIBundle\Form\ReportType;
 use Rotalia\APIBundle\Classes\Updates;
 use Rotalia\APIBundle\Classes\XClassifier;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Form\FormErrorHelper;
+use Rotalia\APIBundle\Form\FormErrorHelper;
 use Rotalia\APIBundle\Model\Product;
 use Rotalia\APIBundle\Model\Report;
 use Rotalia\APIBundle\Model\ReportQuery;

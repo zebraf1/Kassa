@@ -1,11 +1,12 @@
 <?php
 
-namespace Rotalia\InventoryBundle\Form;
+namespace Rotalia\APIBundle\Form;
 
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Rotalia\APIBundle\Model\ProductGroup;
 
 class ProductGroupType extends AbstractType
 {
@@ -26,7 +27,7 @@ class ProductGroupType extends AbstractType
         ;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'ProductGroupType';
     }
@@ -34,10 +35,10 @@ class ProductGroupType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rotalia\APIBundle\Model\ProductGroup',
+            'data_class' => ProductGroup::class,
         ));
     }
 }

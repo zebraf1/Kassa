@@ -1,38 +1,24 @@
 <?php
-namespace Rotalia\InventoryBundle\Controller;
+namespace Rotalia\APIBundle\Controller;
 
 use Exception;
 use Rotalia\APIBundle\Classes\OutOfCreditException;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Form\ProductFilterType;
 use Rotalia\APIBundle\Model\ProductQuery;
 use Rotalia\APIBundle\Model\SettingQuery;
 use Rotalia\APIBundle\Model\Transaction;
 use Rotalia\APIBundle\Model\TransactionPeer;
 use Rotalia\UserBundle\Model\MemberQuery;
 use Rotalia\UserBundle\Model\StatusCreditLimitQuery;
-use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Class PurchaseController
- * @package Rotalia\InventoryBundle\Controller
+ * @package Rotalia\APIBundle\Controller
  */
 class PurchaseController extends DefaultController
 {
-    public function homeAction(Request $request)
-    {
-        if (!$this->isGranted(User::ROLE_USER) && $this->getPos($request) === null) {
-            throw new AccessDeniedException();
-        }
-        return $this->render('RotaliaInventoryBundle:Purchase:home.html.twig', [
-            'pos' => $this->getPos($request),
-            'form' => $this->createForm(new ProductFilterType(true))->createView(),
-            'member' => $this->getMember()
-        ]);
-    }
     /**
      * Purchase products with credit or cash, add credit by paying cash to point of sale
      *

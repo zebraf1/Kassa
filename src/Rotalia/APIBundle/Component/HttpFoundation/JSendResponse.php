@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *      JSendResponse::createFail($data, 500);
  *      JSendResponse::createError($message, 403);
  *
- * @package Rotalia\InventoryBundle\Component\HttpFoundation
+ * @package Rotalia\APIBundle\Component\HttpFoundation
  * @author Jaak Tamre
  * @see http://labs.omniti.com/labs/jsend
  */

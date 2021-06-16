@@ -36,7 +36,7 @@ economyReport:
 
 RotaliaAPI_purchasePayment:
     pattern:  /purchase/{payment}/
-    defaults: { _controller: RotaliaInventoryBundle:Purchase:Payment }
+    defaults: { _controller: RotaliaAPIBundle:Purchase:Payment }
     methods: [POST]
     options:
         expose: true

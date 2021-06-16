@@ -5,7 +5,7 @@ namespace Rotalia\APIBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Rotalia\APIBundle\Form\CreditNettingRowType;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Form\FormErrorHelper;
+use Rotalia\APIBundle\Form\FormErrorHelper;
 use Rotalia\APIBundle\Model\CreditNetting;
 use Rotalia\APIBundle\Model\CreditNettingQuery;
 use Rotalia\APIBundle\Model\CreditNettingRow;

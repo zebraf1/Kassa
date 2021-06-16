@@ -5,7 +5,7 @@ namespace Rotalia\APIBundle\Controller;
 use Exception;
 use Rotalia\APIBundle\Form\TransferType;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\InventoryBundle\Form\FormErrorHelper;
+use Rotalia\APIBundle\Form\FormErrorHelper;
 use Rotalia\APIBundle\Model\Transfer;
 use Rotalia\APIBundle\Model\TransferPeer;
 use Rotalia\APIBundle\Model\TransferQuery;

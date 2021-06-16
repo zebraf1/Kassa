@@ -1,6 +1,6 @@
 <?php
 
-namespace Rotalia\InventoryBundle\Form;
+namespace Rotalia\APIBundle\Form;
 
 
 use Symfony\Component\Form\FormInterface;
