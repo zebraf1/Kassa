@@ -28,9 +28,7 @@ class WebTestCase extends BaseWebTestCase
     public static function setUpBeforeClass()
     {
         \Propel::disableInstancePooling();
-
-//        self::runCommand('propel:build --insert-sql');
-        self::runCommand('propel:fixtures:load @RotaliaAPIBundle --env=test --quiet');
+        self::loadFixtures();
     }
 
     protected static function getApplication()
@@ -50,6 +48,12 @@ class WebTestCase extends BaseWebTestCase
         $command = sprintf('%s', $command);
 
         return self::getApplication()->run(new StringInput($command));
+    }
+
+
+    protected static function loadFixtures()
+    {
+        self::runCommand('propel:fixtures:load @RotaliaAPIBundle --env=test --quiet');
     }
 
     /**

@@ -36,8 +36,14 @@ class MemberCredit extends BaseMemberCredit
         $amount = doubleval($amount);
         $newCredit = round($currentCredit + $amount, 2);
 
-        if ($creditLimit !== null && $newCredit < $creditLimit) {
-            throw new OutOfCreditException($newCredit, $creditLimit);
+        if ($creditLimit !== null) {
+            // The MemberCredit is per convent. Compare total credit against the credit limit
+            $totalCredit = doubleval($this->getMember()->getTotalCredit());
+            $newTotalCredit = round($totalCredit + $amount, 2);
+
+            if ($newTotalCredit < $creditLimit) {
+                throw new OutOfCreditException($newTotalCredit, $creditLimit);
+            }
         }
 
         $this->setCredit($newCredit);
