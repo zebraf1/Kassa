@@ -46,32 +46,38 @@ class PurchaseControllerTest extends WebTestCase
      */
     public function testPurchaseSuccessEvenIfCreditInWrongConvent()
     {
-        $this->loginSimpleUser();
+        try {
+            $this->loginSimpleUser();
 
-        $product = ProductQuery::create()->findOneByName('A le Coq Premium');
-        $conventTartu = ConventQuery::create()->findOneByName('Tartu');
+            $product = ProductQuery::create()->findOneByName('A le Coq Premium');
+            $conventTartu = ConventQuery::create()->findOneByName('Tartu');
 
-        self::$client->request('POST', '/api/purchase/credit/', [
-            'conventId' => $conventTartu->getId(),
-            'basket' => [[
-                'id' => $product->getId(),
-                'count' => "16",
-                'price' => $product->getPrice(),
-            ]],
-        ]);
+            self::$client->request('POST', '/api/purchase/credit/', [
+                'conventId' => $conventTartu->getId(),
+                'basket' => [[
+                    'id' => $product->getId(),
+                    'count' => "16",
+                    'price' => $product->getPrice(),
+                ]],
+            ]);
 
-        $response = self::$client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $content = $response->getContent();
-        $result = json_decode($content, true);
-        $this->assertArrayHasKey('status', $result, join(',', array_keys($result)));
-        $this->assertEquals([
-            'data' => [
-                'totalSumCents' => 1760,
-                'newCredit'     => -7.6
-            ],
-            'status' => 'success',
-        ], $result);
+            $response = self::$client->getResponse();
+            $this->assertEquals(200, $response->getStatusCode());
+            $content = $response->getContent();
+            $result = json_decode($content, true);
+            $this->assertArrayHasKey('status', $result, join(',', array_keys($result)));
+            $this->assertEquals([
+                'data' => [
+                    'totalSumCents' => 1760,
+                    'newCredit' => -7.6
+                ],
+                'status' => 'success',
+            ], $result);
+
+        } finally {
+            // Reset the credit
+            self::loadFixtures();
+        }
     }
 
     /**

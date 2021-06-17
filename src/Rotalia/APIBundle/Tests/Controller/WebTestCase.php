@@ -18,8 +18,6 @@ class WebTestCase extends BaseWebTestCase
 
     public function setUp()
     {
-        self::runCommand('propel:fixtures:load @RotaliaAPIBundle --env=test --quiet');
-
         // this is the part that should make things work
         $options = array(
             'environment' => 'test'
@@ -30,6 +28,7 @@ class WebTestCase extends BaseWebTestCase
     public static function setUpBeforeClass()
     {
         \Propel::disableInstancePooling();
+        self::loadFixtures();
     }
 
     protected static function getApplication()
@@ -49,6 +48,12 @@ class WebTestCase extends BaseWebTestCase
         $command = sprintf('%s', $command);
 
         return self::getApplication()->run(new StringInput($command));
+    }
+
+
+    protected static function loadFixtures()
+    {
+        self::runCommand('propel:fixtures:load @RotaliaAPIBundle --env=test --quiet');
     }
 
     /**
