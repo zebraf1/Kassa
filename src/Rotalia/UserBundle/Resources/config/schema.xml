@@ -127,7 +127,8 @@
     <table name="users" phpName="User" idMethod="native">
         <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
         <column name="username" phpName="Username" type="VARCHAR" size="20" required="true" defaultValue=""/>
-        <column name="password" phpName="Password" type="VARCHAR" size="20" required="true" defaultValue=""/>
+        <column name="password" phpName="Password" type="VARCHAR" size="41" required="true" defaultValue=""/>
+        <column name="plugin" phpName="Plugin" type="CHAR" sqlType="enum('mysql_old_password','mysql_native_password', 'plain')" required="true" defaultValue="mysql_old_password"/>
         <column name="liikmed_id" phpName="LiikmedId" type="INTEGER" required="true" defaultValue="0"/>
         <column name="lastlogin" phpName="Lastlogin" type="TIMESTAMP" required="true"/>
         <column name="jutukas_lastaccess" phpName="JutukasLastaccess" type="INTEGER" required="true" defaultValue="0"/>

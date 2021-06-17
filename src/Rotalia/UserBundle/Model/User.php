@@ -37,7 +37,11 @@ class User extends BaseUser implements UserInterface
 
     public function getSalt()
     {
-        return null;
+        // Returns plugin enum value:
+        // mysql_old_password - password string was encoded using OLD_PASSWORD() method - 16 characters
+        // mysql_native_password - password string was encoded using PASSWORD() method - 41 characters
+        // plain - password is not encoded (used for tests)
+        return $this->getPlugin();
     }
 
     public function eraseCredentials()

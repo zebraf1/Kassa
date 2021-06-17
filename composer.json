@@ -13,7 +13,7 @@
         {"type": "vcs", "url": "https://github.com/zebraf1/orm"}
     ],
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "doctrine/doctrine-bundle": "~1.2",
         "doctrine/orm": "2.5.x-dev",
         "friendsofsymfony/jsrouting-bundle": "~1.5",

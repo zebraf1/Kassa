@@ -33,6 +33,3 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
-
-parameters:
-    rotalia_password_encoder.plugin: 'plain'
