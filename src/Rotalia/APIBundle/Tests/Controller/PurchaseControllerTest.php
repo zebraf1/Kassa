@@ -79,7 +79,7 @@ class PurchaseControllerTest extends WebTestCase
      * Current credit: -10€ + 20€ = 10€
      * Purchase: 32 * 1.1€ = 35.2€
      * Credit limit: -25€
-     * Final credit: 10€ - 35.2€ = -25.2€ > -25€
+     * Final credit: 10€ - 35.2€ = -25.2€ < -25€
      */
     public function testPurchaseFailIfNotEnoughCredit()
     {
