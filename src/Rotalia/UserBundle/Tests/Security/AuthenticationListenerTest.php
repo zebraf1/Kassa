@@ -33,7 +33,7 @@ class AuthenticationListenerTest extends WebTestCase
     /**
      * @throws PropelException
      */
-    public function testIsPasswordValidMigrate(): void
+    public function testOnAuthenticationSuccessMigrate(): void
     {
         try {
             $this->getListener(true)->onAuthenticationSuccess($this->getEvent());
@@ -51,7 +51,7 @@ class AuthenticationListenerTest extends WebTestCase
     /**
      * @throws PropelException
      */
-    public function testIsPasswordValidMigrationDisabled(): void
+    public function testOnAuthenticationSuccessMigrationDisabled(): void
     {
         try {
             $this->getListener(false)->onAuthenticationSuccess($this->getEvent());
