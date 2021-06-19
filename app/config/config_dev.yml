@@ -33,3 +33,7 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+
+parameters:
+    # Enable password migration for dev, test, travis
+    rotalia.security.authentication.listener.migrate_old_password: true

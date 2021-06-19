@@ -1,6 +1,8 @@
 <?php
 
 namespace Rotalia\APIBundle\Tests\Controller;
+use Rotalia\UserBundle\Model\UserQuery;
+use Rotalia\UserBundle\Security\RotaliaPasswordEncoder;
 use Symfony\Component\HttpFoundation\Cookie;
 
 /**
@@ -19,7 +21,7 @@ class AuthenticationControllerTest extends WebTestCase
      * @dataProvider providerSuccessfulLoginAndLogout
      * @param bool $rememberMe
      */
-    public function testSuccessfulLoginAndLogout($rememberMe = false)
+    public function testSuccessfulLoginAndLogout(bool $rememberMe = false): void
     {
         $client = static::$client;
 
@@ -76,6 +78,12 @@ class AuthenticationControllerTest extends WebTestCase
 
         $clientCookie = $client->getCookieJar()->get('MOCKSESSID');
         $this->assertEquals($sessionId, $clientCookie->getValue());
+
+        // Check that password was migrated
+        $user = UserQuery::create()->findOneByUsername('user1');
+        $this->assertNotEquals('2015-04-09 20:13:15', $user->getLastlogin('Y-m-d H:i:s'));
+        $this->assertEquals(RotaliaPasswordEncoder::PLUGIN_NATIVE_PASSWORD, $user->getPlugin());
+        $this->assertEquals('*676243218923905CF94CB52A3C9D3EB30CE8E20D', $user->getPassword());
 
         // GET - check login status
         $client->request(
