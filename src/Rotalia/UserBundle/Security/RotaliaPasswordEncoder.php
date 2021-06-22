@@ -23,10 +23,10 @@ class RotaliaPasswordEncoder implements PasswordEncoderInterface
 
     /**
      * RotaliaPasswordEncoder constructor.
-     * @param string|null $plugin
+     * @param string $plugin
      * @throws Exception
      */
-    public function __construct(string $plugin = null)
+    public function __construct(string $plugin)
     {
         if (!in_array($plugin, self::plugins, true)) {
             throw new Exception('Unsupported plugin: ' . $plugin);
