@@ -5,8 +5,15 @@ parameters:
     security.authentication.manager.erase_credentials: false
 
 services:
-    rotalia_password_encoder:
+    rotalia_password_encoder_plain:
         class: Rotalia\UserBundle\Security\RotaliaPasswordEncoder
+        arguments: ['plain']
+    rotalia_password_encoder_old:
+        class: Rotalia\UserBundle\Security\RotaliaPasswordEncoder
+        arguments: ['mysql_old_password']
+    rotalia_password_encoder_native:
+        class: Rotalia\UserBundle\Security\RotaliaPasswordEncoder
+        arguments: ['mysql_native_password']
     rotalia_security_authentication_listener:
         class: Rotalia\UserBundle\Security\AuthenticationListener
         arguments:

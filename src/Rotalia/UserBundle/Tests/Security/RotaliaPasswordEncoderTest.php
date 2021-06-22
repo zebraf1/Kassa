@@ -8,25 +8,28 @@ use Rotalia\UserBundle\Security\RotaliaPasswordEncoder;
 
 class RotaliaPasswordEncoderTest extends WebTestCase
 {
+    public function testInvalidPlugin(): void
+    {
+        $this->expectExceptionMessage('Unsupported plugin: test');
+        new RotaliaPasswordEncoder('test');
+    }
+
     /**
      * @param $raw
-     * @param $salt
+     * @param $plugin
      * @param $expected
      * @dataProvider providerEncodePassword
+     * @throws Exception
      */
-    public function testEncodePassword($raw, $salt, $expected): void
+    public function testEncodePassword($raw, $plugin, $expected): void
     {
-        $encoder = new RotaliaPasswordEncoder();
-        try {
-            $result = $encoder->encodePassword($raw, $salt);
-            if ($expected instanceof Exception) {
-                throw new Exception('Expected exception not thrown');
-            }
-            $this->assertSame($expected, $result);
-            $this->assertTrue($encoder->isPasswordValid($result, $raw, $salt));
-        } catch (Exception $e) {
-            $this->assertEquals($expected instanceof Exception ? $expected->getMessage() : $expected, $e->getMessage());
+        if ($expected instanceof Exception) {
+            $this->expectExceptionMessage($expected->getMessage());
         }
+        $encoder = new RotaliaPasswordEncoder($plugin);
+        $result = $encoder->encodePassword($raw, null);
+        $this->assertSame($expected, $result);
+        $this->assertTrue($encoder->isPasswordValid($result, $raw, null));
     }
 
     public function providerEncodePassword(): array

@@ -16,9 +16,18 @@ class AuthenticationListenerTest extends WebTestCase
 {
     private $providerKey = 'test';
 
+    /**
+     * @param bool $canMigrate
+     * @return AuthenticationListener
+     * @throws \Exception
+     */
     private function getListener(bool $canMigrate): AuthenticationListener
     {
-        $factory = new EncoderFactory([User::class => new RotaliaPasswordEncoder()]);
+        $encoders = [];
+        foreach (RotaliaPasswordEncoder::plugins as $plugin) {
+            $encoders[$plugin] = new RotaliaPasswordEncoder($plugin);
+        }
+        $factory = new EncoderFactory($encoders);
         return new AuthenticationListener($factory, $canMigrate);
     }
 
