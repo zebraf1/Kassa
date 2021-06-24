@@ -5,13 +5,14 @@ namespace Rotalia\UserBundle\Tests\Security;
 use Exception;
 use Rotalia\APIBundle\Tests\Controller\WebTestCase;
 use Rotalia\UserBundle\Security\RotaliaPasswordEncoder;
+use Rotalia\UserBundle\Security\RotaliaPasswordEncoderPropel;
 
-class RotaliaPasswordEncoderTest extends WebTestCase
+class RotaliaPasswordEncoderPropelTest extends WebTestCase
 {
     public function testInvalidPlugin(): void
     {
         $this->expectExceptionMessage('Unsupported plugin: test');
-        new RotaliaPasswordEncoder('test');
+        new RotaliaPasswordEncoderPropel('test');
     }
 
     /**
@@ -26,7 +27,7 @@ class RotaliaPasswordEncoderTest extends WebTestCase
         if ($expected instanceof Exception) {
             $this->expectExceptionMessage($expected->getMessage());
         }
-        $encoder = new RotaliaPasswordEncoder($plugin);
+        $encoder = new RotaliaPasswordEncoderPropel($plugin);
         $result = $encoder->encodePassword($raw, null);
         $this->assertSame($expected, $result);
         $this->assertTrue($encoder->isPasswordValid($result, $raw, null));

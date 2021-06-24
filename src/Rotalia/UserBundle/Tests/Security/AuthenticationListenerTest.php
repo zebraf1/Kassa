@@ -4,10 +4,10 @@ namespace Rotalia\UserBundle\Tests\Security;
 
 use PropelException;
 use Rotalia\APIBundle\Tests\Controller\WebTestCase;
-use Rotalia\UserBundle\Model\User;
 use Rotalia\UserBundle\Model\UserQuery;
 use Rotalia\UserBundle\Security\AuthenticationListener;
 use Rotalia\UserBundle\Security\RotaliaPasswordEncoder;
+use Rotalia\UserBundle\Security\RotaliaPasswordEncoderPropel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
@@ -25,7 +25,7 @@ class AuthenticationListenerTest extends WebTestCase
     {
         $encoders = [];
         foreach (RotaliaPasswordEncoder::plugins as $plugin) {
-            $encoders[$plugin] = new RotaliaPasswordEncoder($plugin);
+            $encoders[$plugin] = new RotaliaPasswordEncoderPropel($plugin);
         }
         $factory = new EncoderFactory($encoders);
         return new AuthenticationListener($factory, $canMigrate);

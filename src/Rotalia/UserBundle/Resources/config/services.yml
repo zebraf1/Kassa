@@ -6,13 +6,13 @@ parameters:
 
 services:
     rotalia_password_encoder_plain:
-        class: Rotalia\UserBundle\Security\RotaliaPasswordEncoder
+        class: Rotalia\UserBundle\Security\RotaliaPasswordEncoderPropel
         arguments: ['plain']
     rotalia_password_encoder_old:
-        class: Rotalia\UserBundle\Security\RotaliaPasswordEncoder
+        class: Rotalia\UserBundle\Security\RotaliaPasswordEncoderPropel
         arguments: ['mysql_old_password']
     rotalia_password_encoder_native:
-        class: Rotalia\UserBundle\Security\RotaliaPasswordEncoder
+        class: Rotalia\UserBundle\Security\RotaliaPasswordEncoderPropel
         arguments: ['mysql_native_password']
     rotalia_security_authentication_listener:
         class: Rotalia\UserBundle\Security\AuthenticationListener

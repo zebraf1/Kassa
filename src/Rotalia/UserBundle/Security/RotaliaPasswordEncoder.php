@@ -3,10 +3,9 @@
 namespace Rotalia\UserBundle\Security;
 
 use Exception;
-use Propel;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
-class RotaliaPasswordEncoder implements PasswordEncoderInterface
+abstract class RotaliaPasswordEncoder implements PasswordEncoderInterface
 {
     public const PLUGIN_PLAIN = 'plain';
     public const PLUGIN_OLD_PASSWORD = 'mysql_old_password';
@@ -35,23 +34,22 @@ class RotaliaPasswordEncoder implements PasswordEncoderInterface
         $this->plugin = $plugin;
     }
 
+    public function getPlugin(): string
+    {
+        return $this->plugin;
+    }
+
     /**
      * {@inheritdoc}
      * @throws Exception
      */
-    public function encodePassword($raw, $salt)
+    public function encodePassword($raw, $salt): string
     {
-        switch ($this->plugin) {
+        switch ($this->getPlugin()) {
             case self::PLUGIN_OLD_PASSWORD:
-                $con = Propel::getConnection();
-                $sql = "SELECT OLD_PASSWORD(". Propel::getConnection()->quote($raw).")";
-                $stmt = $con->query($sql);
-                return $stmt->fetchColumn();
+                return $this->runQuery(sprintf("SELECT OLD_PASSWORD(%s)", $this->escapeString($raw)));
             case self::PLUGIN_NATIVE_PASSWORD:
-                $con = Propel::getConnection();
-                $sql = "SELECT PASSWORD(". Propel::getConnection()->quote($raw).")";
-                $stmt = $con->query($sql);
-                return $stmt->fetchColumn();
+                return $this->runQuery(sprintf("SELECT PASSWORD(%s)", $this->escapeString($raw)));
             case self::PLUGIN_PLAIN:
             default: // Plugin value can only contain predefined values
                 return $raw;
@@ -66,4 +64,18 @@ class RotaliaPasswordEncoder implements PasswordEncoderInterface
     {
         return hash_equals($encoded, $this->encodePassword($raw, $salt));
     }
+
+    /**
+     * Escape string to be SQL-injection safe
+     * @param string $string
+     * @return string
+     */
+    abstract protected function escapeString(string $string): string;
+
+    /**
+     * Run SQL query and return encoded value
+     * @param string $sql
+     * @return string
+     */
+    abstract protected function runQuery(string $sql): string;
 }
