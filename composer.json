@@ -15,6 +15,7 @@
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
+        "ext-pdo": "*",
         "doctrine/doctrine-bundle": "~1.2",
         "doctrine/orm": "2.5.x-dev",
         "friendsofsymfony/jsrouting-bundle": "~1.5",

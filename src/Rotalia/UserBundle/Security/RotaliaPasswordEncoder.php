@@ -3,9 +3,10 @@
 namespace Rotalia\UserBundle\Security;
 
 use Exception;
+use PDO;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
-abstract class RotaliaPasswordEncoder implements PasswordEncoderInterface
+class RotaliaPasswordEncoder implements PasswordEncoderInterface
 {
     public const PLUGIN_PLAIN = 'plain';
     public const PLUGIN_OLD_PASSWORD = 'mysql_old_password';
@@ -19,19 +20,22 @@ abstract class RotaliaPasswordEncoder implements PasswordEncoderInterface
     ];
 
     private $plugin;
+    private $pdo;
 
     /**
      * RotaliaPasswordEncoder constructor.
      * @param string $plugin
+     * @param PDO $pdo
      * @throws Exception
      */
-    public function __construct(string $plugin)
+    public function __construct(string $plugin, PDO $pdo)
     {
         if (!in_array($plugin, self::plugins, true)) {
             throw new Exception('Unsupported plugin: ' . $plugin);
         }
 
         $this->plugin = $plugin;
+        $this->pdo = $pdo;
     }
 
     public function getPlugin(): string
@@ -47,9 +51,9 @@ abstract class RotaliaPasswordEncoder implements PasswordEncoderInterface
     {
         switch ($this->getPlugin()) {
             case self::PLUGIN_OLD_PASSWORD:
-                return $this->runQuery(sprintf("SELECT OLD_PASSWORD(%s)", $this->escapeString($raw)));
+                return $this->runQuery("SELECT OLD_PASSWORD(:password)", ['password' => $raw]);
             case self::PLUGIN_NATIVE_PASSWORD:
-                return $this->runQuery(sprintf("SELECT PASSWORD(%s)", $this->escapeString($raw)));
+                return $this->runQuery("SELECT PASSWORD(:password)", ['password' => $raw]);
             case self::PLUGIN_PLAIN:
             default: // Plugin value can only contain predefined values
                 return $raw;
@@ -66,16 +70,15 @@ abstract class RotaliaPasswordEncoder implements PasswordEncoderInterface
     }
 
     /**
-     * Escape string to be SQL-injection safe
-     * @param string $string
-     * @return string
-     */
-    abstract protected function escapeString(string $string): string;
-
-    /**
      * Run SQL query and return encoded value
      * @param string $sql
+     * @param array $params
      * @return string
      */
-    abstract protected function runQuery(string $sql): string;
+    protected function runQuery(string $sql, array $params = []): string
+    {
+        $sth = $this->pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchColumn();
+    }
 }
