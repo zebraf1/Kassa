@@ -128,6 +128,7 @@ Rotalia\UserBundle\Model\User:
     User_SUPER:
         username: user1
         password: test123
+        plugin: plain
         liikmed_id: Member_1886
         lastlogin: '2015-04-09 20:13:15'
         jutukas_lastaccess: '0'
@@ -135,12 +136,14 @@ Rotalia\UserBundle\Model\User:
     User_ADMIN:
         username: user2
         password: test123
+        plugin: plain
         liikmed_id: Member_2122
         lastlogin: '2015-04-01 14:59:04'
         jutukas_lastaccess: '0'
     User_MEMBER:
         username: user3
-        password: test123
+        password: '*676243218923905CF94CB52A3C9D3EB30CE8E20D' # test123
+        plugin: mysql_native_password
         liikmed_id: Member_2123
         lastlogin: '2015-04-01 14:59:04'
         jutukas_lastaccess: '0'

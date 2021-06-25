@@ -13,4 +13,3 @@ swiftmailer:
 
 parameters:
     database_name: kassa_test
-    rotalia_password_encoder.plugin: 'plain'

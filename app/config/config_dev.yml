@@ -35,4 +35,5 @@ assetic:
 #    delivery_address: me@example.com
 
 parameters:
-    rotalia_password_encoder.plugin: 'plain'
+    # Enable password migration for dev, test, travis
+    rotalia.security.authentication.listener.migrate_old_password: true

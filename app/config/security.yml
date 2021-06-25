@@ -40,5 +40,9 @@ security:
         ROLE_SUPER_ADMIN: ROLE_ADMIN
 
     encoders:
-        Rotalia\UserBundle\Model\User:
-            id: rotalia_password_encoder
+        plain:
+            id: rotalia_password_encoder_plain
+        mysql_old_password:
+            id: rotalia_password_encoder_old
+        mysql_native_password:
+            id: rotalia_password_encoder_native

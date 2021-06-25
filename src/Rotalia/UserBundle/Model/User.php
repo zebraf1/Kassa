@@ -3,9 +3,10 @@
 namespace Rotalia\UserBundle\Model;
 
 use Rotalia\UserBundle\Model\om\BaseUser;
+use Symfony\Component\Security\Core\Encoder\EncoderAwareInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User extends BaseUser implements UserInterface
+class User extends BaseUser implements UserInterface, EncoderAwareInterface
 {
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     const ROLE_ADMIN = 'ROLE_ADMIN';
@@ -38,6 +39,15 @@ class User extends BaseUser implements UserInterface
     public function getSalt()
     {
         return null;
+    }
+
+    /**
+     * Each plugin must be defined in the security.encoders configuration
+     * @return string
+     */
+    public function getEncoderName(): string
+    {
+        return $this->getPlugin();
     }
 
     public function eraseCredentials()

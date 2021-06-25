@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1418067716.
- * Generated on 2014-12-08 20:41:56 by zebra
+ * up to version 1623937603.
+ * Generated on 2021-06-17 13:46:43 by zebra
  */
-class PropelMigration_1418067716
+class PropelMigration_1623937603
 {
 
     public function preUp($manager)
@@ -42,7 +42,10 @@ class PropelMigration_1418067716
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `product` DROP `amount`;
+ALTER TABLE `users` CHANGE `password` `password` VARCHAR(41) DEFAULT \'\' NOT NULL;
+
+ALTER TABLE `users`
+    ADD `plugin` enum(\'mysql_old_password\',\'mysql_native_password\', \'plain\') DEFAULT \'mysql_old_password\' NOT NULL AFTER `password`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -64,8 +67,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `product`
-    ADD `amount` DECIMAL(10,0) DEFAULT 0 NOT NULL AFTER `price`;
+ALTER TABLE `users` CHANGE `password` `password` VARCHAR(20) DEFAULT \'\' NOT NULL;
+
+ALTER TABLE `users` DROP `plugin`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
