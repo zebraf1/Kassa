@@ -26,4 +26,4 @@ monolog:
 
 parameters:
     # Enable when Rotalia intranet also supports multiple plugins
-    rotalia.security.authentication.listener.migrate_old_password: false
+    rotalia.security.authentication.listener.migrate_old_password: true
