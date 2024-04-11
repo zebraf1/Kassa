@@ -9,7 +9,7 @@ Clone Repository
 ----------------
 
 ```bash
-> git clone https://github.com/zebraf1/Kassa.git
+git clone https://github.com/zebraf1/Kassa.git
 ```
 
 Installation
@@ -19,25 +19,25 @@ Vendors are installed via composer. See https://getcomposer.org/download/ for up
 
 Install vendors for project:
 ```bash
-> php composer.phar install
+php composer.phar install
 ```
 
 Note: if you install composer to a runnable directory (ie --install-dir=/usr/bin) and set --filename=composer:
 ```bash
-> composer install
+composer install
 ```
 
 At the end of the installation fill in parameters (saved to app/config/parameters.yml)
 
 Install nodejs packages
 ```bash
-> npm install -g bower polymer-cli
+npm install -g bower polymer-cli
 ```
 
 Create app.php from desired environment (dev, prod)
 ```bash
-> cd web
-> ln -s app_dev.php app.php
+cd web
+ln -s app_dev.php app.php
 ```
 
 Building
@@ -45,22 +45,22 @@ Building
 
 Build base model files
 ```bash
-> php app/console propel:model:build
+php app/console propel:model:build
 ```
 
 Install web assets
 ```bash
-> php app/console assets:install --relative --symlink
+php app/console assets:install --relative --symlink
 ```
 
 Build database if needed (use --force if needed) or run sql manually from app/propel/sql
 ```bash
-> php app/console propel:sql:insert
+php app/console propel:sql:insert
 ```
 
 Run migrations
 ```bash
-> php app/console propel:mig:mig
+php app/console propel:mig:mig
 ```
 
 Build frontend
@@ -74,7 +74,7 @@ polymer build
 
 Deploy new version: composer install, propel build, assets install, bower install, polymer build
 ```bash
-> sh build.sh
+sh build.sh
 ```
 
 Testing
@@ -83,5 +83,5 @@ Testing
 Run unit and functional tests with PHPUnit
 
 ```bash
-> bin/phpunit -c app/
+bin/phpunit -c app/
 ```

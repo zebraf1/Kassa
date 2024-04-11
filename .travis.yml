@@ -4,8 +4,8 @@ services:
   - mysql
 
 php:
-  - 7.1
-  - 7.3
+  - 7.4
+  - 8.3
 
 env:
   - DB=mysql SYMFONY_ENV=travis
