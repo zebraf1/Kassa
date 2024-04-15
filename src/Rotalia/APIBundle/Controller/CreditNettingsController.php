@@ -22,7 +22,7 @@ class CreditNettingsController extends DefaultController
      * Get list of CreditNettings. Only accessible by admins.
      *
      * @return JSendResponse
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -62,7 +62,7 @@ class CreditNettingsController extends DefaultController
     /**
      * Update the state of CreditNettings. Only accessible by admins.
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",

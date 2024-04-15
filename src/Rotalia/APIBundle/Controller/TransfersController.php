@@ -22,7 +22,7 @@ class TransfersController extends DefaultController
      * Fetch list of transfers
      *
      * @param Request $request
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -142,7 +142,7 @@ class TransfersController extends DefaultController
 
     /**
      * Create a new transfer.
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="Transfers",
      *   description = "Creates a new transfer with the given attributes",

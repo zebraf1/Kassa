@@ -16,7 +16,7 @@ class ProductGroupsController extends DefaultController
     /**
      * Fetch all ProductGroup objects (id, name, seq), ordered by seq.
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -50,7 +50,7 @@ class ProductGroupsController extends DefaultController
     /**
      * Creates a new ProductGroup
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="ProductGroups",
      *   description = "Creates a new product group from the submitted data.",
@@ -72,7 +72,7 @@ class ProductGroupsController extends DefaultController
     /**
      * Update product group data
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="ProductGroups",
      *   description = "Applies given attributes to the ProductGroup with the selected ID",

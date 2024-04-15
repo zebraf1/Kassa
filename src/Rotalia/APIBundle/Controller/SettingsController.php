@@ -18,7 +18,7 @@ class SettingsController extends DefaultController
     /**
      * Get all global and user settings
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     statusCodes = {
      *          200 = "Returned when successful",
      *          403 = "Returned when user is not authenticated",

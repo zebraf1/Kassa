@@ -30,7 +30,7 @@ class AuthenticationController extends DefaultController
      * Return current browser pointOfSale name or null.
      * Generate and return a CSRF token for the session when member is not logged in. This token is required upon login.
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     statusCodes = {
      *          200 = "Returned when successful",
      *     },
@@ -63,7 +63,7 @@ class AuthenticationController extends DefaultController
             'csrfToken' => $member ? null : $this->getCSRFProvider()->generateCsrfToken($this->getTokenId())
         ];
 
-        
+
         $response = JSendResponse::createSuccess($data);
 
         if ($pos === null && $hash = $request->cookies->get('pos_hash')) {
@@ -81,7 +81,7 @@ class AuthenticationController extends DefaultController
      * Validate login token and given credentials. Create a new session for the given user and set PHPSESSID cookie
      * for further communication between the server.
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     statusCodes = {
      *          200 = "Returned when successful",
      *          400 = "Returned when CSRF token is missing or it is invalid",
@@ -166,7 +166,7 @@ class AuthenticationController extends DefaultController
     /**
      * Invalidate the current session and destroy any authentication data
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     statusCodes = {
      *          200 = "Returned when successful",
      *          500 = "Returned when session invalidation fails",

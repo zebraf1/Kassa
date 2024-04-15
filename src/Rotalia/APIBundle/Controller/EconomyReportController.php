@@ -20,7 +20,7 @@ class EconomyReportController extends DefaultController
 {
     /**
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",

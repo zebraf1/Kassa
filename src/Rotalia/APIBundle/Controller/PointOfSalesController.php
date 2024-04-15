@@ -22,7 +22,7 @@ class PointOfSalesController extends DefaultController
      * Get list of PointOfSales. Super admin will get all, admin will get PointOfSales for his convent.
      *
      * @return JSendResponse
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -68,7 +68,7 @@ class PointOfSalesController extends DefaultController
      *
      * @param $id
      * @return JSendResponse
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="PointOfSales",
      *   description = "Find PointOfSale for the given ID",
@@ -97,7 +97,7 @@ class PointOfSalesController extends DefaultController
     /**
      * Creates a new PointOfSale
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="PointOfSales",
      *   description = "Creates a new PointOfSale from the submitted data.",
@@ -146,7 +146,7 @@ class PointOfSalesController extends DefaultController
     /**
      * Updates a PointOfSale
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="PointOfSales",
      *   description = "Update PointOfSale from the submitted data.",
@@ -183,7 +183,7 @@ class PointOfSalesController extends DefaultController
     /**
      * Deletes a PointOfSale
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="PointOfSales",
      *   description = "Deletes a PointOfSale with the given ID",

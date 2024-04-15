@@ -19,7 +19,7 @@ class PurchasesController extends DefaultController
      * Fetch list of purchases
      *
      * @param Request $request
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",

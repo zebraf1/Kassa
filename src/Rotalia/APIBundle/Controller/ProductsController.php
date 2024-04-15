@@ -23,7 +23,7 @@ class ProductsController extends DefaultController
      * Fetch list of product objects (id, name, price, unit). Supports pagination (page=1, limit=100).
      * Allows filtering active/inactive products, by name and productCode
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -116,7 +116,7 @@ class ProductsController extends DefaultController
     /**
      * Finds a Product for the given ID. Returns a product object (id, name, price) or error 404 when product is not found.
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -162,7 +162,7 @@ class ProductsController extends DefaultController
     /**
      * Creates a new Product
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="Products",
      *   description = "Creates a new product from the submitted data.",
@@ -187,7 +187,7 @@ class ProductsController extends DefaultController
     /**
      * Update product data
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="Products",
      *   description = "Applies given attributes to the Product with the selected ID",

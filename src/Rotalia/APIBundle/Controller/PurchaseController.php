@@ -22,7 +22,7 @@ class PurchaseController extends DefaultController
     /**
      * Purchase products with credit or cash, add credit by paying cash to point of sale
      *
-     * @ApiDoc (
+     * #ApiDoc (
      *   resource = false,
      *   section="Purchase",
      *   description = "Creates transactions, reduces member credit and product storage count",

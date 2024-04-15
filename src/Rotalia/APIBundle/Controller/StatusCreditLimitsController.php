@@ -13,7 +13,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 class StatusCreditLimitsController extends DefaultController
 {
     /**
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -49,7 +49,7 @@ class StatusCreditLimitsController extends DefaultController
     }
 
     /**
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *         200 = "Returned when successful",

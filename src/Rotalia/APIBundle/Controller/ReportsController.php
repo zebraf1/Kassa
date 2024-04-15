@@ -22,7 +22,7 @@ class ReportsController extends DefaultController
      * Fetch list of Reports
      *
      * @param Request $request
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -125,7 +125,7 @@ class ReportsController extends DefaultController
      * Finds the full ajax data for a particular report.
      * When $id == -1, then the last verification report is returned.
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
@@ -200,7 +200,7 @@ class ReportsController extends DefaultController
 
     /**
      * Create a new report. Use productId's as reportRows array keys to avoid unpredictable results when updating.
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="Reports",
      *   description = "Creates a new Report with the given attributes",
@@ -253,7 +253,7 @@ class ReportsController extends DefaultController
     /**
      * Update a report. Use productId's as reportRows array keys to avoid unpredictable results.
      *
-     * @ApiDoc(
+     * #ApiDoc(
      *   resource = true,
      *   section="Reports",
      *   description = "Updates a Report with the given attributes",

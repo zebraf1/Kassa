@@ -15,7 +15,7 @@ class MembersController extends DefaultController
     /**
      * @param Request $request
      * @return JSendResponse
-     * @ApiDoc(
+     * #ApiDoc(
      *     resource = true,
      *     statusCodes = {
      *          200 = "Returned when successful",
