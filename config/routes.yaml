@@ -1,0 +1,5 @@
+controllers:
+    resource:
+        path: ../src/Rotalia/APIBundle/Controller/
+        namespace: Rotalia\APIBundle\Controller
+    type: attribute

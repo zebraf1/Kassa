@@ -8,8 +8,6 @@
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 /build/
-/vendor/
-/bin/
 /intra/
 /src/Rotalia/*Bundle/Model/map/
 /src/Rotalia/*Bundle/Model/om/
@@ -23,3 +21,18 @@ app/propel/generated-schemas/
 
 node_modules/
 /components/
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

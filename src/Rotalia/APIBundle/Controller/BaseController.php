@@ -6,40 +6,39 @@ use Psr\Log\LoggerInterface;
 use Rotalia\UserBundle\Model\User;
 use Rotalia\APIBundle\Model\PointOfSaleQuery;
 use Rotalia\UserBundle\Model\Member;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-
-class BaseController extends Controller
+class BaseController extends AbstractController
 {
     /**
-     * @throws AccessDeniedException
+     * @throws AccessDeniedHttpException
      */
-    protected function requireSuperAdmin()
+    protected function requireSuperAdmin(): void
     {
         if (!$this->isGranted(User::ROLE_SUPER_ADMIN)) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
     }
 
     /**
-     * @throws AccessDeniedException
+     * @throws AccessDeniedHttpException
      */
-    protected function requireAdmin()
+    protected function requireAdmin(): void
     {
         if (!$this->isGranted(User::ROLE_ADMIN)) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
     }
 
     /**
-     * @throws AccessDeniedException
+     * @throws AccessDeniedHttpException
      */
-    protected function requireUser()
+    protected function requireUser(): void
     {
         if (!$this->isGranted(User::ROLE_USER)) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
     }
 

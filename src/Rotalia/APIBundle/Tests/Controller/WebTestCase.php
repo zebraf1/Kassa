@@ -2,8 +2,8 @@
 
 namespace Rotalia\APIBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\Console\Input\StringInput;
 
@@ -12,11 +12,11 @@ class WebTestCase extends BaseWebTestCase
     private static $application;
 
     /**
-     * @var Client
+     * @var KernelBrowser
      */
     protected static $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         // this is the part that should make things work
         $options = array(
@@ -25,9 +25,9 @@ class WebTestCase extends BaseWebTestCase
         self::$client = static::createClient($options);
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
-        \Propel::disableInstancePooling();
+//        \Propel::disableInstancePooling();
         self::loadFixtures();
     }
 
@@ -53,7 +53,7 @@ class WebTestCase extends BaseWebTestCase
 
     protected static function loadFixtures()
     {
-        self::runCommand('propel:fixtures:load @RotaliaAPIBundle --env=test --quiet');
+//        self::runCommand('propel:fixtures:load @RotaliaAPIBundle --env=test --quiet');
     }
 
     /**

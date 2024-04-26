@@ -3,8 +3,8 @@
 namespace Rotalia\APIBundle\Controller;
 
 
-use ModelCriteria;
-use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
+//use ModelCriteria;
+//use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 
 /**
  * Base controller for API bundle controllers
@@ -20,7 +20,7 @@ class DefaultController extends BaseController
      */
     protected function getCSRFProvider()
     {
-        return $this->get('form.csrf_provider'); // todo: use security.csrf.token_manager since symfony 3.0
+        return $this->get('security.csrf.token_manager'); // todo: use security.csrf.token_manager since symfony 3.0
     }
 
     /**

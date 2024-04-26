@@ -3,10 +3,9 @@
 namespace Rotalia\UserBundle\Model;
 
 use Rotalia\UserBundle\Model\om\BaseUser;
-use Symfony\Component\Security\Core\Encoder\EncoderAwareInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User extends BaseUser implements UserInterface, EncoderAwareInterface
+class User extends BaseUser implements UserInterface
 {
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     const ROLE_ADMIN = 'ROLE_ADMIN';
@@ -14,7 +13,7 @@ class User extends BaseUser implements UserInterface, EncoderAwareInterface
     const USER_RIGHT_KASSA_ADMIN = 'KASSAADMIN';
     const USER_RIGHT_KASSA_SUPER_ADMIN = 'KASSASUPER';
 
-    public function getRoles()
+    public function getRoles(): array
     {
         $roles = [self::ROLE_USER];
 
@@ -50,20 +49,24 @@ class User extends BaseUser implements UserInterface, EncoderAwareInterface
         return $this->getPlugin();
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
-        return;
     }
 
     /**
+     * TODO: not used?
      * @return array
      */
-    public function getAjaxData()
+//    public function getAjaxData()
+//    {
+//        return [
+//            'id' => $this->getId(),
+//            'username' => $this->getUsername(),
+//            'roles' => $this->getRoles(),
+//        ];
+//    }
+    public function getUserIdentifier(): string
     {
-        return [
-            'id' => $this->getId(),
-            'username' => $this->getUsername(),
-            'roles' => $this->getRoles(),
-        ];
+        return $this->getUsername();
     }
 }

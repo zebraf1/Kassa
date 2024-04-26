@@ -1,11 +1,11 @@
 <?php
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Debug\Debug;
-
-// If you don't want to setup permissions the proper way, just uncomment the following PHP line
-// read http://symfony.com/doc/current/book/installation.html#configuration-and-setup for more information
-//umask(0000);
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\HttpKernel\HttpKernel;
 
 // This check prevents access to debug front controllers that are deployed by accident to production servers.
 // Feel free to remove this, extend it, or make something more sophisticated.
@@ -17,13 +17,26 @@ if (isset($_SERVER['HTTP_CLIENT_IP'])
     exit('You are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
 }
 
-$loader = require __DIR__.'/../app/bootstrap.php.cache';
-Debug::enable();
-require_once __DIR__.'/../app/AppKernel.php';
-
-$kernel = new AppKernel('dev', true);
-//$kernel->loadClassCache();
+// TODO: Request class not found
 $request = Request::createFromGlobals();
+
+$dispatcher = new EventDispatcher();
+// ... add some event listeners
+//$dispatcher->addListener(\Symfony\Component\HttpKernel\KernelEvents::EXCEPTION, );
+
+// create your controller and argument resolvers
+$controllerResolver = new ControllerResolver();
+$argumentResolver = new ArgumentResolver();
+
+// instantiate the kernel
+$kernel = new HttpKernel($dispatcher, $controllerResolver, new RequestStack(), $argumentResolver);
+
+// actually execute the kernel, which turns the request into a response
+// by dispatching events, calling a controller, and returning the response
 $response = $kernel->handle($request);
+
+// send the headers and echo the content
 $response->send();
+
+// trigger the kernel.terminate event
 $kernel->terminate($request, $response);

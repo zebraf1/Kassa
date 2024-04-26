@@ -25,9 +25,8 @@ class CreditNettingCommand extends Command
             ->setHelp('Rebalances credits between convents and calculates nettings.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
         $connection = \Propel::getConnection(CreditNettingPeer::DATABASE_NAME, \Propel::CONNECTION_WRITE);
         $connection->beginTransaction();
 
@@ -163,5 +162,7 @@ class CreditNettingCommand extends Command
             throw $e;
         }
         $output->writeln("All done!");
+
+        return 0;
     }
 }

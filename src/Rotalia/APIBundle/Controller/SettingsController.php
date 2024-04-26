@@ -3,11 +3,13 @@
 namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
-use Rotalia\APIBundle\Model\Setting;
-use Rotalia\APIBundle\Model\SettingQuery;
-use Rotalia\UserBundle\Model\Convent;
-use Rotalia\UserBundle\Model\ConventQuery;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
+//use Rotalia\APIBundle\Model\Setting;
+//use Rotalia\APIBundle\Model\SettingQuery;
+//use Rotalia\UserBundle\Model\Convent;
+//use Rotalia\UserBundle\Model\ConventQuery;
+use Symfony\Component\Routing\Attribute\Route;
+
+//use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 
 /**
  * Class SettingsController
@@ -27,33 +29,35 @@ class SettingsController extends DefaultController
      *     section="Settings",
      * )
      * @return JSendResponse
+     * @throws \Exception
      */
-    public function listAction()
+    #[Route('/api/settings', name: 'settings_list', methods: ['GET'])]
+    public function listAction(): JSendResponse
     {
-        /** @var Convent[] $convents */
-        $convents = ConventQuery::create()
-            ->filterByIsActive(1)
-            ->find()
-        ;
-
-        /** @var Setting[] $conventSettings */
-        $conventSettings = SettingQuery::create()
-            ->filterByObject(Setting::OBJECT_CONVENT)
-            ->find();
-
-        foreach ($conventSettings as $setting) {
-            $settings[$setting->getObjectId()][$setting->getReference()] = $setting->getValue();
-        }
-
+//        /** @var Convent[] $convents */
+//        $convents = ConventQuery::create()
+//            ->filterByIsActive(1)
+//            ->find()
+//        ;
+//
+//        /** @var Setting[] $conventSettings */
+//        $conventSettings = SettingQuery::create()
+//            ->filterByObject(Setting::OBJECT_CONVENT)
+//            ->find();
+//
+//        foreach ($conventSettings as $setting) {
+//            $settings[$setting->getObjectId()][$setting->getReference()] = $setting->getValue();
+//        }
+//
         $conventData = [];
-
-        foreach ($convents as $convent) {
-            $conventData[] = [
-                'id' => $convent->getId(),
-                'name' => $convent->getName(),
-                'settings' => isset($settings[$convent->getId()]) ? $settings[$convent->getId()] : new \stdClass(),
-            ];
-        }
+//
+//        foreach ($convents as $convent) {
+//            $conventData[] = [
+//                'id' => $convent->getId(),
+//                'name' => $convent->getName(),
+//                'settings' => isset($settings[$convent->getId()]) ? $settings[$convent->getId()] : new \stdClass(),
+//            ];
+//        }
 
         $data = [
             'activeConvents' => $conventData,

@@ -6,8 +6,9 @@ else
     composer.phar install
 fi
 
-php app/console propel:build
+# php app/console propel:build
 
+# shellcheck disable=SC2164
 cd src/Rotalia/FrontendBundle/Resources/source/
 bower prune
 bower install

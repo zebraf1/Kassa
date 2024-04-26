@@ -5,9 +5,10 @@ namespace Rotalia\APIBundle\Security\Http;
 use Rotalia\APIBundle\Controller\DefaultController;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\EventListener\ErrorListener;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class ExceptionListener
@@ -15,16 +16,16 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  *
  * @package Rotalia\APIBundle\Controller
  */
-class ExceptionListener
+class ExceptionListener extends ErrorListener
 {
     /**
      * Catch any kernel exceptions and return a JSendResponse
      *
-     * @param GetResponseForExceptionEvent $event
+     * @param ExceptionEvent $event
      */
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
         $request = $event->getRequest();
         $controllerNamespace = $request->attributes->get('_controller');
         $controllerClass = substr($controllerNamespace, 0, strpos($controllerNamespace, '::'));
@@ -35,8 +36,6 @@ class ExceptionListener
 
             if ($exception instanceof HttpExceptionInterface) {
                 $statusCode = $exception->getStatusCode();
-            } elseif ($exception instanceof AccessDeniedException) {
-                $statusCode = Response::HTTP_FORBIDDEN;
             } else {
                 $message = 'Unhandled exception: '.$exception->getMessage();
                 $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;

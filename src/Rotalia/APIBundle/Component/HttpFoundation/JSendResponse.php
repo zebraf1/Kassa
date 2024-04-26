@@ -63,7 +63,7 @@ class JSendResponse extends JsonResponse
      * @return JSendResponse
      * @throws \Exception
      */
-    public static function createSuccess($jSendData, $httpHeaders = [], $httpStatus = 200)
+    public static function createSuccess($jSendData, $httpHeaders = [], $httpStatus = 200): self
     {
         if ($httpStatus >= 400) {
             throw new \Exception('Invalid httpStatus given:'.$httpStatus);

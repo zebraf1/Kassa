@@ -8,15 +8,19 @@ use Rotalia\UserBundle\Model\User;
 use Rotalia\UserBundle\Model\UserQuery;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\RememberMeToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+//use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+//use Symfony\Component\Security\Core\Authentication\Token\RememberMeToken;
+//use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Symfony\Component\Security\Http\RememberMe\RememberMeServicesInterface;
-use Symfony\Component\Security\Http\RememberMe\TokenBasedRememberMeServices; // Used for API documentation
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticatorManagerInterface;
+
+//use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+//use Symfony\Component\Security\Http\RememberMe\RememberMeServicesInterface;
+//use Symfony\Component\Security\Http\RememberMe\TokenBasedRememberMeServices; // Used for API documentation
 
 /**
  * Class AuthenticationController
@@ -40,11 +44,12 @@ class AuthenticationController extends DefaultController
      *
      * @param Request $request
      * @return JSendResponse
+     *
+     * #[Route('/authentication')]
      */
-    public function tokenAction(Request $request)
+    public function tokenAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager)
     {
         $member = $this->getMember();
-        /** @var User $user */
         $user = $this->getUser();
         $pos = $this->getPos($request);
 
@@ -57,10 +62,11 @@ class AuthenticationController extends DefaultController
             }
         }
 
+
         $data = [
             'member' =>  $memberData,
             'pointOfSaleId' =>  $pos ? $pos->getId() : null,
-            'csrfToken' => $member ? null : $this->getCSRFProvider()->generateCsrfToken($this->getTokenId())
+            'csrfToken' => $member ? null : $csrfTokenManager->getToken($this->getTokenId())
         ];
 
 
@@ -101,7 +107,12 @@ class AuthenticationController extends DefaultController
      * @param Request $request
      * @return JSendResponse
      */
-    public function loginAction(Request $request)
+    public function loginAction(
+        Request $request,
+        CsrfTokenManagerInterface $csrfTokenManager,
+        AuthenticatorManagerInterface $authenticatorManager,
+        TokenStorageInterface $tokenStorage,
+    )
     {
         // Validate CSRF token to avoid request forging
         $csrfToken = $request->request->get('csrfToken');
@@ -110,7 +121,8 @@ class AuthenticationController extends DefaultController
             return JSendResponse::createFail('Login token puudub', 400);
         }
 
-        if (!$this->getCSRFProvider()->isCsrfTokenValid($this->getTokenId(), $csrfToken)) {
+        $token = $csrfTokenManager->getToken($this->getTokenId());
+        if (!$csrfTokenManager->isTokenValid($token)) {
             return JSendResponse::createFail('Vigane login token, proovi uuesti', 400);
         }
 
@@ -124,12 +136,8 @@ class AuthenticationController extends DefaultController
 
         $token = new UsernamePasswordToken($username, $password, "main", $user->getRoles());
 
-        /** @var AuthenticationManagerInterface $authenticationManager */
-        $authenticationManager = $this->get('security.authentication.manager');
-        /** @var TokenStorageInterface $tokenStorage */
-        $tokenStorage = $this->get('security.token_storage');
         try {
-            $newToken = $authenticationManager->authenticate($token);
+            $newToken = $authenticatorManager->authenticateRequest($request);
             $tokenStorage->setToken($newToken);
         } catch (BadCredentialsException $e) {
             return JSendResponse::createFail('Vale kasutaja/parool', 401);

@@ -1,28 +1,31 @@
 <?php
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\HttpKernel\HttpKernel;
 
-$loader = require __DIR__.'/../app/bootstrap.php.cache';
-
-// Use APC for autoloading to improve performance.
-// Change 'sf2' to a unique prefix in order to prevent cache key conflicts
-// with other applications also using APC.
-/*
-$apcLoader = new ApcClassLoader('sf2', $loader);
-$loader->unregister();
-$apcLoader->register(true);
-*/
-
-require_once __DIR__.'/../app/AppKernel.php';
-//require_once __DIR__.'/../app/AppCache.php';
-
-$kernel = new AppKernel('prod', false);
-$kernel->loadClassCache();
-//$kernel = new AppCache($kernel);
-
-// When using the HttpCache, you need to call the method in your front controller instead of relying on the configuration parameter
-//Request::enableHttpMethodParameterOverride();
 $request = Request::createFromGlobals();
+
+$dispatcher = new EventDispatcher();
+// ... add some event listeners
+//$dispatcher->addListener(\Symfony\Component\HttpKernel\KernelEvents::EXCEPTION, );
+
+// create your controller and argument resolvers
+$controllerResolver = new ControllerResolver();
+$argumentResolver = new ArgumentResolver();
+
+// instantiate the kernel
+$kernel = new HttpKernel($dispatcher, $controllerResolver, new RequestStack(), $argumentResolver);
+
+// actually execute the kernel, which turns the request into a response
+// by dispatching events, calling a controller, and returning the response
 $response = $kernel->handle($request);
+
+// send the headers and echo the content
 $response->send();
+
+// trigger the kernel.terminate event
 $kernel->terminate($request, $response);
