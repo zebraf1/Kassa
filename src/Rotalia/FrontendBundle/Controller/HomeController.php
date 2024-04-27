@@ -2,11 +2,11 @@
 
 namespace Rotalia\FrontendBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class HomeController extends Controller
+class HomeController extends AbstractController
 {
     /**
      * Frontend bundle all files
@@ -14,10 +14,10 @@ class HomeController extends Controller
      * @param $fname
      * @param $extension
      * @return BinaryFileResponse
+     * @throws \Exception
      */
-    public function indexAction($fname, $extension)
+    public function indexAction($fname, $extension): BinaryFileResponse
     {
-
         // Create a response.
         $path = $this->getPath($fname, $extension);
 
@@ -52,14 +52,12 @@ class HomeController extends Controller
             return $response;
 
         } else {
-            throw new NotFoundHttpException("{$path}");
+            throw new NotFoundHttpException($path);
         }
     }
 
-    private function getPath($fname, $extension) {
-
-        $rootDir = $this->get('kernel')->getBundle('RotaliaFrontendBundle')->getPath();
-        return "{$rootDir}/Resources/source/build/default/{$fname}.$extension";
+    private function getPath($fname, $extension): string
+    {
+        return __DIR__."/../Resources/source/build/default/$fname.$extension";
     }
-
 }

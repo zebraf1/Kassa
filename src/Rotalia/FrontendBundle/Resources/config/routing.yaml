@@ -1,0 +1,13 @@
+rotalia_frontend_homepage:
+    path: /
+    controller: Rotalia\FrontendBundle\Controller\HomeController::indexAction
+    defaults: {
+        fname: "index",
+        extension: "html"
+    }
+
+rotalia_frontend_common:
+  path: /{fname}.{extension}
+  controller: Rotalia\FrontendBundle\Controller\HomeController::indexAction
+  requirements:
+    fname: .+

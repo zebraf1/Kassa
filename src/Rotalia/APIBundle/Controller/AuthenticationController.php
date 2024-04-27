@@ -138,7 +138,6 @@ class AuthenticationController extends DefaultController
 
         try {
             $newToken = $authenticatorManager->authenticateRequest($request);
-            $tokenStorage->setToken($newToken);
         } catch (BadCredentialsException $e) {
             return JSendResponse::createFail('Vale kasutaja/parool', 401);
         } catch (AuthenticationException $e) {

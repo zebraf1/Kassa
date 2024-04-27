@@ -1,15 +1,3 @@
-rotalia_frontend:
-    resource: "@RotaliaFrontendBundle/Resources/config/routing.yml"
-    prefix: /
-
-#rotalia_user:
-#    resource: "@RotaliaUserBundle/Resources/config/routing.yml"
-#    prefix:   /
-
-_welcome:
-    pattern:  /
-    defaults: { _controller: RotaliaFrontendBundle:Home:index, fname:"index", extension:"html"}
-
 rotalia_api:
     resource: "@RotaliaAPIBundle/Resources/config/routing.yml"
     prefix:   /api/
