@@ -14,6 +14,11 @@ namespace Rotalia\APIBundle\Controller;
  */
 class DefaultController extends BaseController
 {
+    protected function get(string $service)
+    {
+        return $this->container->get($service);
+    }
+
     /**
      * Note: CsrfProviderInterface is deprecated. Upgrade FosUserBundle to fix this and use CsrfTokenManagerInterface
      * @return CsrfProviderInterface

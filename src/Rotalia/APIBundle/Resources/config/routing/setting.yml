@@ -1,4 +1,4 @@
 RotaliaAPI_settings_list:
-    pattern:  /settings/
+    path:  /settings/
     methods: [GET]
-    defaults: { _controller: RotaliaAPIBundle:Settings:List }
+    defaults: { _controller: Rotalia\APIBundle\Controller\SettingsController::ListAction }

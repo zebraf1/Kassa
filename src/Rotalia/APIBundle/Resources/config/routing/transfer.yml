@@ -1,9 +1,9 @@
 RotaliaAPI_transfer_list:
-    pattern:  /transfers/
+    path:  /transfers/
     methods: [GET]
-    defaults: { _controller: RotaliaAPIBundle:Transfers:List }
+    defaults: { _controller: Rotalia\APIBundle\Controller\TransfersController::ListAction }
 
 RotaliaAPI_transfer_create:
-    pattern:  /transfers/
+    path:  /transfers/
     methods: [POST]
-    defaults: { _controller: RotaliaAPIBundle:Transfers:Post }
+    defaults: { _controller: Rotalia\APIBundle\Controller\TransfersController::PostAction }

@@ -1,9 +1,9 @@
 RotaliaAPI_statusCreditLimits_list:
-    pattern:  /statusCreditLimits/
+    path:  /statusCreditLimits/
     methods: [GET]
-    defaults: { _controller: RotaliaAPIBundle:StatusCreditLimits:List }
+    defaults: { _controller: Rotalia\APIBundle\Controller\StatusCreditLimitsController::ListAction }
 
 RotaliaAPI_statusCreditLimits_patch:
-    pattern:  /statusCreditLimits/{statusId}/
+    path:  /statusCreditLimits/{statusId}/
     methods: [PATCH]
-    defaults: { _controller: RotaliaAPIBundle:StatusCreditLimits:Patch }
+    defaults: { _controller: Rotalia\APIBundle\Controller\StatusCreditLimitsController::PatchAction }

@@ -45,9 +45,9 @@ class AuthenticationController extends DefaultController
      * @param Request $request
      * @return JSendResponse
      *
-     * #[Route('/authentication')]
+     * @throws \Exception
      */
-    public function tokenAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager)
+    public function tokenAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager): JSendResponse
     {
         $member = $this->getMember();
         $user = $this->getUser();

@@ -3,7 +3,7 @@
 /web/app.php
 /app/bootstrap.php.cache
 /app/cache/
-/app/config/parameters.yml
+/config/parameters.*.yaml
 /app/logs/
 !app/cache/.gitkeep
 !app/logs/.gitkeep
@@ -20,7 +20,6 @@ app/propel/generated-schemas/
 .DS_Store
 
 node_modules/
-/components/
 
 ###> symfony/framework-bundle ###
 /.env.local

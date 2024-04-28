@@ -1,14 +1,14 @@
 RotaliaAPI_productGroups_list:
-    pattern:  /productGroups/
+    path:  /productGroups/
     methods: [GET]
-    defaults: { _controller: RotaliaAPIBundle:ProductGroups:List }
+    defaults: { _controller: Rotalia\APIBundle\Controller\ProductGroupsController::ListAction }
 
 RotaliaAPI_productGroups_post:
-    pattern:  /productGroups/
+    path:  /productGroups/
     methods: [POST]
-    defaults: { _controller: RotaliaAPIBundle:ProductGroups:Post }
+    defaults: { _controller: Rotalia\APIBundle\Controller\ProductGroupsController::PostAction }
 
 RotaliaAPI_productGroups_patch:
-    pattern:  /productGroups/{id}/
+    path:  /productGroups/{id}/
     methods: [PATCH]
-    defaults: { _controller: RotaliaAPIBundle:ProductGroups:Patch }
+    defaults: { _controller: Rotalia\APIBundle\Controller\ProductGroupsController::PatchAction }
