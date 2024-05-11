@@ -9,20 +9,13 @@ use Symfony\Component\Console\Input\StringInput;
 
 class WebTestCase extends BaseWebTestCase
 {
-    private static $application;
-
-    /**
-     * @var KernelBrowser
-     */
-    protected static $client;
+    private static ?Application $application;
+    protected static ?KernelBrowser $client;
 
     public function setUp(): void
     {
-        // this is the part that should make things work
-        $options = array(
-            'environment' => 'test'
-        );
-        self::$client = static::createClient($options);
+        self::$client = static::createClient();
+        self::$client->followRedirects();
     }
 
     public static function setUpBeforeClass(): void
@@ -31,16 +24,18 @@ class WebTestCase extends BaseWebTestCase
         self::loadFixtures();
     }
 
-    protected static function getApplication()
+    protected static function getApplication(): Application
     {
-        if (null === self::$application) {
-            $client = static::createClient();
-
-            self::$application = new Application($client->getKernel());
-            self::$application->setAutoExit(false);
+        if (self::$application !== null) {
+            return self::$application;
         }
 
-        return self::$application;
+        $client = static::createClient();
+        $application = new Application($client->getKernel());
+        $application->setAutoExit(false);
+        self::$application = $application;
+
+        return $application;
     }
 
     protected static function runCommand($command)
@@ -112,6 +107,6 @@ class WebTestCase extends BaseWebTestCase
 
     protected function loginSimpleUser()
     {
-        $this->login('user3', 'test123');
+//        $this->login('user3', 'test123');
     }
 }

@@ -4,10 +4,10 @@ namespace Rotalia\APIBundle\Security\Http;
 
 use Rotalia\APIBundle\Controller\DefaultController;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Symfony\Component\ErrorHandler\ErrorHandler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\EventListener\ErrorListener;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
@@ -25,19 +25,32 @@ class ExceptionListener extends ErrorListener
      */
     public function onKernelException(ExceptionEvent $event): void
     {
-        $exception = $event->getThrowable();
-        $request = $event->getRequest();
+        if (null === $this->controller) {
+            return;
+        }
+
+        $throwable = $event->getThrowable();
+
+        if ($exceptionHandler = set_exception_handler(var_dump(...))) {
+            restore_exception_handler();
+            if (\is_array($exceptionHandler) && $exceptionHandler[0] instanceof ErrorHandler) {
+                $throwable = $exceptionHandler[0]->enhanceError($event->getThrowable());
+            }
+        }
+
+        $request = $this->duplicateRequest($throwable, $event->getRequest());
+
         $controllerNamespace = $request->attributes->get('_controller');
         $controllerClass = substr($controllerNamespace, 0, strpos($controllerNamespace, '::'));
 
         // Handle all APIBundle controller request errors
         if ($controllerClass && (new $controllerClass) instanceof DefaultController) {
-            $message = $exception->getMessage();
+            $message = $throwable->getMessage();
 
-            if ($exception instanceof HttpExceptionInterface) {
-                $statusCode = $exception->getStatusCode();
+            if ($throwable instanceof HttpExceptionInterface) {
+                $statusCode = $throwable->getStatusCode();
             } else {
-                $message = 'Unhandled exception: '.$exception->getMessage();
+                $message = 'Unhandled exception: '.$throwable->getMessage();
                 $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
             }
 

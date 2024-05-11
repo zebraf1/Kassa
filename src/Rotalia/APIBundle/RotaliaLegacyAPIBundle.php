@@ -6,7 +6,7 @@ use Rotalia\APIBundle\DependencyInjection\RotaliaAPIExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class RotaliaAPIBundle extends Bundle
+class RotaliaLegacyAPIBundle extends Bundle
 {
     public function getContainerExtension(): ?ExtensionInterface
     {
