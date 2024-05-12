@@ -4,6 +4,8 @@ namespace Rotalia\API\Controller;
 
 use App\Entity\Product;
 use App\Repository\OllekassaProductRepository;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,7 +19,11 @@ class ProductsController extends DefaultController
      * @param int|null $productGroupId
      * @param int $page
      * @param int $limit
+     * @param int|null $conventId
      * @return JsonResponse
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \Throwable
      */
     #[Route('/products')]
     public function list(
