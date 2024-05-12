@@ -28,6 +28,9 @@ doctrine:
                 alias: App
         controller_resolver:
             auto_mapping: true
+        dql:
+            string_functions:
+                find_in_set: DoctrineExtensions\Query\Mysql\FindInSet
 
 when@test:
     doctrine:

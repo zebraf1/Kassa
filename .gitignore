@@ -21,6 +21,10 @@ app/propel/generated-schemas/
 
 node_modules/
 
+###> Project PhpUnit ###
+tests/coverage/*
+###< Project PhpUnit ###
+
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php

@@ -47,7 +47,7 @@ class ProductsController extends DefaultController
 
         if ($productCode !== null) {
             $query
-                ->andWhere('FIND_IN_SET(:productCode, p.product_code)')
+                ->andWhere('FIND_IN_SET(:productCode, p.productCode) > 0')
                 ->setParameter('productCode', $productCode)
             ;
         }
