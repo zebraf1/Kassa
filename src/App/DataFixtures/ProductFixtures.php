@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Convent;
 use App\Entity\Product;
 use App\Entity\ProductGroup;
 use App\Entity\ProductInfo;
@@ -69,14 +70,17 @@ class ProductFixtures extends Fixture
             ->setProductGroup($foodGroup);
         $manager->persist($product4);
 
-        // TODO: get convent
-        $tallinn = 5982;
-        $tartu = 5983;
+        $tallinn = new Convent();
+        $tallinn->setName('Tallinn')->setKassaAktiivne(true);
+        $manager->persist($tallinn);
+        $tartu = new Convent();
+        $tartu->setName('Tartu')->setKassaAktiivne(true);
+        $manager->persist($tartu);
 
         $info = new ProductInfo();
         $info
             ->setProduct($product1)
-            ->setConventId($tallinn)
+            ->setConvent($tallinn)
             ->setPrice('1.00')
             ->setStatus(Product::STATUS_ACTIVE)
             ->setStorageCount(5)
@@ -87,7 +91,7 @@ class ProductFixtures extends Fixture
         $info = new ProductInfo();
         $info
             ->setProduct($product1)
-            ->setConventId($tartu)
+            ->setConvent($tartu)
             ->setPrice('1.10')
             ->setStatus(Product::STATUS_ACTIVE)
         ;
@@ -96,7 +100,7 @@ class ProductFixtures extends Fixture
         $info = new ProductInfo();
         $info
             ->setProduct($product2)
-            ->setConventId($tallinn)
+            ->setConvent($tallinn)
             ->setPrice('1.50')
             ->setStatus(Product::STATUS_ACTIVE)
         ;
@@ -105,7 +109,7 @@ class ProductFixtures extends Fixture
         $info = new ProductInfo();
         $info
             ->setProduct($product2)
-            ->setConventId($tartu)
+            ->setConvent($tartu)
             ->setPrice('1.50')
             ->setStatus(Product::STATUS_DISABLED)
         ;
@@ -114,7 +118,7 @@ class ProductFixtures extends Fixture
         $info = new ProductInfo();
         $info
             ->setProduct($product3)
-            ->setConventId($tallinn)
+            ->setConvent($tallinn)
             ->setPrice('1.00')
             ->setStatus(Product::STATUS_DISABLED)
         ;
@@ -123,7 +127,7 @@ class ProductFixtures extends Fixture
         $info = new ProductInfo();
         $info
             ->setProduct($product3)
-            ->setConventId($tartu)
+            ->setConvent($tartu)
             ->setPrice('1.00')
             ->setStatus(Product::STATUS_DISABLED)
         ;
@@ -132,7 +136,7 @@ class ProductFixtures extends Fixture
         $info = new ProductInfo();
         $info
             ->setProduct($product4)
-            ->setConventId($tallinn)
+            ->setConvent($tallinn)
             ->setPrice('1.00')
             ->setStatus(Product::STATUS_ACTIVE)
         ;
@@ -141,7 +145,7 @@ class ProductFixtures extends Fixture
         $info = new ProductInfo();
         $info
             ->setProduct($product4)
-            ->setConventId($tartu)
+            ->setConvent($tartu)
             ->setPrice('1.00')
             ->setStatus(Product::STATUS_ACTIVE)
         ;

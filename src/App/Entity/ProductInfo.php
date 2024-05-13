@@ -40,6 +40,10 @@ class ProductInfo
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $resourceType = self::RESOURCE_TYPE_LIMITED;
 
+    #[ORM\ManyToOne(inversedBy: 'productInfos')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Convent $convent = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -125,6 +129,18 @@ class ProductInfo
     public function setResourceType(?string $resourceType): static
     {
         $this->resourceType = $resourceType;
+
+        return $this;
+    }
+
+    public function getConvent(): ?Convent
+    {
+        return $this->convent;
+    }
+
+    public function setConvent(?Convent $convent): static
+    {
+        $this->convent = $convent;
 
         return $this;
     }
