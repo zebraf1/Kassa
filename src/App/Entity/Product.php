@@ -57,6 +57,9 @@ class Product implements \JsonSerializable
     private Collection $productInfos;
     public static ?int $activeConventId;
 
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    private ?ProductGroup $productGroup = null;
+
     public function __construct()
     {
         $this->productInfos = new ArrayCollection();
@@ -193,6 +196,17 @@ class Product implements \JsonSerializable
         return $this;
     }
 
+    public function getProductGroup(): ?ProductGroup
+    {
+        return $this->productGroup;
+    }
+
+    public function setProductGroup(?ProductGroup $productGroup): static
+    {
+        $this->productGroup = $productGroup;
+
+        return $this;
+    }
 
     public function jsonSerialize(): array
     {

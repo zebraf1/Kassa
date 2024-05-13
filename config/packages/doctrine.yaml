@@ -31,6 +31,8 @@ doctrine:
         dql:
             string_functions:
                 find_in_set: DoctrineExtensions\Query\Mysql\FindInSet
+                old_password: App\Extensions\Query\OldPassword
+                password: App\Extensions\Query\Password
 
 when@test:
     doctrine:

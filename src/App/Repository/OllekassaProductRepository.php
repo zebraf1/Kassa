@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Product>
+ * @method Product|null findOneBy(array $criteria, array|null $orderBy = null)
  */
 class OllekassaProductRepository extends ServiceEntityRepository
 {

@@ -40,10 +40,7 @@ security:
         ROLE_ADMIN: ROLE_USER
         ROLE_SUPER_ADMIN: ROLE_ADMIN
 
-#    encoders:
-#        plain:
-#            id: rotalia_password_encoder_plain
-#        mysql_old_password:
-#            id: rotalia_password_encoder_old
-#        mysql_native_password:
-#            id: rotalia_password_encoder_native
+    password_hashers:
+        plain: 'Rotalia/API/Services/Security/PlainTextPasswordHasher'
+        mysql_old_password: 'Rotalia/API/Services/Security/MySqlOldPasswordHasher'
+        mysql_native_password: 'Rotalia/API/Services/Security/MySqlPasswordHasher'
