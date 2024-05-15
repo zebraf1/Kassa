@@ -43,24 +43,19 @@ ln -s app_dev.php app.php
 Building
 --------
 
-Build base model files
-```bash
-php app/console propel:model:build
-```
-
 Install web assets
 ```bash
 php app/console assets:install --relative --symlink
 ```
 
-Build database if needed (use --force if needed) or run sql manually from app/propel/sql
+Build database if needed or run sql manually from app/propel/sql/default.sql
 ```bash
-php app/console propel:sql:insert
+TODO: run doctrine migrations
 ```
 
 Run migrations
 ```bash
-php app/console propel:mig:mig
+php bin/console TODO for doctrine
 ```
 
 Build frontend
@@ -74,7 +69,7 @@ polymer build
 
 Deploy new version: composer install, propel build, assets install, bower install, polymer build
 ```bash
-sh build.sh
+sh build.sh # TODO: Doctrine
 ```
 
 Testing
@@ -83,5 +78,11 @@ Testing
 Run unit and functional tests with PHPUnit
 
 ```bash
-bin/phpunit -c app/
+php bin/phpunit tests
+```
+
+See coverage:
+```bash
+cd tests/coverage/Rotalia/API
+open index.html
 ```

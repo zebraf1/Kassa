@@ -4,73 +4,73 @@
 <link rel="import" href="kassa-behavior.html">
 
 <dom-module id="kassa-backend">
-	<template>
-		<!-- Authentication -->
-		<iron-ajax id="authenticationDelete" handle-as="json" url='[[_computeURL("authentication")]]' method="DELETE"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="authenticationGet" handle-as="json" url='[[_computeURL("authentication")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Settings -->
-		<iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Members -->
-		<iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Products -->
-		<iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="productsPatch" handle-as="json" url='[[_computeURL("products", _id)]]' method="PATCH"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- ProductGroups -->
-		<iron-ajax id="productGroupsGet" handle-as="json" url='[[_computeURL("productGroups")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="productGroupsPost" handle-as="json" url='[[_computeURL("productGroups")]]' method="POST"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- PointOfSales -->
-		<iron-ajax id="pointOfSalesGet" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="pointOfSalesPost" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="POST"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="pointOfSalesPatch" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="PATCH"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Purchase -->
-		<iron-ajax id="purchasesGet" handle-as="json" url='[[_computeURL("purchase")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Report -->
-		<iron-ajax id="reportGet" handle-as="json" url='[[_computeURL("reports", _id)]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="reportsPost" handle-as="json" url='[[_computeURL("reports")]]' method="POST"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Transfers -->
-		<iron-ajax id="transfersGet" handle-as="json" url='[[_computeURL("transfers")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="transfersPost" handle-as="json" url='[[_computeURL("transfers")]]' method="POST"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Credit Nettings -->
-		<iron-ajax id="creditNettingsGet" handle-as="json" url='[[_computeURL("creditNettings")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="creditNettingsPatch" handle-as="json" url='[[_computeURL("creditNettings", _id)]]' method="PATCH"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Status credit limit -->
-		<iron-ajax id="statusCreditLimitsGet" handle-as="json" url='[[_computeURL("statusCreditLimits")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<iron-ajax id="statusCreditLimitsPatch" handle-as="json" url='[[_computeURL("statusCreditLimits", _id)]]' method="PATCH"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-		<!-- Economy report -->
-		<iron-ajax id="economyReportGet" handle-as="json" url='[[_computeURL("economyReport")]]' method="GET"
-		           content-type="application/x-www-form-urlencoded"></iron-ajax>
-	</template>
-	<script>
+    <template>
+        <!-- Authentication -->
+        <iron-ajax id="authenticationDelete" handle-as="json" url='[[_computeURL("authentication")]]' method="DELETE"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="authenticationGet" handle-as="json" url='[[_computeURL("authentication")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="authenticationPost" handle-as="json" url='[[_computeURL("authentication")]]' method="POST"
+                   content-type="application/json"></iron-ajax>
+        <!-- Settings -->
+        <iron-ajax id="settingsGet" handle-as="json" url='[[_computeURL("settings")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Members -->
+        <iron-ajax id="membersGet" handle-as="json" url='[[_computeURL("members")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Products -->
+        <iron-ajax id="productsGet" handle-as="json" url='[[_computeURL("products")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="productsPost" handle-as="json" url='[[_computeURL("products")]]' method="POST"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="productsPatch" handle-as="json" url='[[_computeURL("products", _id)]]' method="PATCH"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- ProductGroups -->
+        <iron-ajax id="productGroupsGet" handle-as="json" url='[[_computeURL("productGroups")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="productGroupsPost" handle-as="json" url='[[_computeURL("productGroups")]]' method="POST"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="productGroupsPatch" handle-as="json" url='[[_computeURL("productGroups", _id)]]' method="PATCH"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- PointOfSales -->
+        <iron-ajax id="pointOfSalesGet" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="pointOfSalesPost" handle-as="json" url='[[_computeURL("pointOfSales")]]' method="POST"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="pointOfSalesPatch" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="PATCH"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="pointOfSalesDelete" handle-as="json" url='[[_computeURL("pointOfSales", _id)]]' method="DELETE"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Purchase -->
+        <iron-ajax id="purchasesGet" handle-as="json" url='[[_computeURL("purchase")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="purchasePost" handle-as="json" url='[[_computeURL("purchase", "credit")]]' method="POST"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Report -->
+        <iron-ajax id="reportGet" handle-as="json" url='[[_computeURL("reports", _id)]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="reportsPost" handle-as="json" url='[[_computeURL("reports")]]' method="POST"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Transfers -->
+        <iron-ajax id="transfersGet" handle-as="json" url='[[_computeURL("transfers")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="transfersPost" handle-as="json" url='[[_computeURL("transfers")]]' method="POST"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Credit Nettings -->
+        <iron-ajax id="creditNettingsGet" handle-as="json" url='[[_computeURL("creditNettings")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="creditNettingsPatch" handle-as="json" url='[[_computeURL("creditNettings", _id)]]' method="PATCH"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Status credit limit -->
+        <iron-ajax id="statusCreditLimitsGet" handle-as="json" url='[[_computeURL("statusCreditLimits")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <iron-ajax id="statusCreditLimitsPatch" handle-as="json" url='[[_computeURL("statusCreditLimits", _id)]]' method="PATCH"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+        <!-- Economy report -->
+        <iron-ajax id="economyReportGet" handle-as="json" url='[[_computeURL("economyReport")]]' method="GET"
+                   content-type="application/x-www-form-urlencoded"></iron-ajax>
+    </template>
+    <script>
         Polymer({
             is: 'kassa-backend',
             properties: {
@@ -83,17 +83,12 @@
                     notify: true,
                     readOnly: true
                 },
-                csrfToken: {
+                pointOfSaleId: {
                     type: String,
                     notify: true,
                     readOnly: true
                 },
-                pointOfSaleId: {
-                    type: String,
-	                notify: true,
-	                readOnly: true
-                },
-	            /* Members */
+                /* Members */
                 members: {
                     type: Array,
                     notify: true,
@@ -129,36 +124,36 @@
                     notify: true,
                     readOnly: true
                 },
-	            updates: {
+                updates: {
                     type: Object,
                     notify: true,
                     readOnly: true
                 },
-	            reports: {
+                reports: {
                     type: Array,
-		            notify: true,
-		            readOnly: true
-	            },
-	            /* Transactions */
+                    notify: true,
+                    readOnly: true
+                },
+                /* Transactions */
                 transfers: {
                     type: Array,
                     notify: true,
                     readOnly: true
-	            },
-	            /* CreditNettings */
-	            creditNettings: {
+                },
+                /* CreditNettings */
+                creditNettings: {
                     type: Array,
                     notify: true,
                     readOnly: true
-	            },
-	            /* Purchases */
-	            purchases: {
-	                type: Array,
-		            notify: true,
-		            readOnly: true
-	            },
-	            /* Status credit limits */
-	            creditLimits: {
+                },
+                /* Purchases */
+                purchases: {
+                    type: Array,
+                    notify: true,
+                    readOnly: true
+                },
+                /* Status credit limits */
+                creditLimits: {
                     type: Array,
                     notify: true,
                     readOnly: true
@@ -180,7 +175,6 @@
                     username: username,
                     password: password,
                     rememberMe: rememberMe,
-                    csrfToken: this.csrfToken
                 }));
                 return this.$.authenticationPost.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this.fire('kassa-message-success', response.data);
@@ -190,19 +184,14 @@
             doLogout: function () {
                 return this.$.authenticationDelete.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this.fire('kassa-message-success', response.data);
-                    this._setCsrfToken(null);
                     this._setMember(null);
                     this._setSettings(null);
                 }.bind(this));
             },
             doAuthenticationGet: function () {
                 return this.$.authenticationGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
-                    if (response.data.csrfToken) {
-                        this._setCsrfToken(response.data.csrfToken);
-                        this._setMember(null);
-                    } else {
-                        this._setCsrfToken(null);
-                        this._setMember(response.data.member);
+                    this._setMember(response.data.member);
+                    if (response.data.member) {
                         this.doSettingsGet();
                     }
                     this._setPointOfSaleId(response.data.pointOfSaleId);
@@ -218,12 +207,12 @@
                     return response
                 }.bind(this));
             },
-	        /* Members */
-	        doMembersGet: function (conventId, isActive) {
+            /* Members */
+            doMembersGet: function (conventId, isActive) {
                 this.$.membersGet.set('params', this._formatBody({
-	                conventId: conventId,
-	                isActive: isActive,
-	                limit: 0
+                    conventId: conventId,
+                    isActive: isActive,
+                    limit: 0
                 }));
                 return this.$.membersGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setMembers(response.data.members);
@@ -234,8 +223,8 @@
             /* Products */
             doProductsGet: function (conventId, isActive, resourceType) {
                 this.$.productsGet.set('params', this._formatBody({
-	                conventId: conventId,
-	                active: isActive,
+                    conventId: conventId,
+                    active: isActive,
                     resourceType: resourceType
                 }));
                 return this.$.productsGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
@@ -246,8 +235,8 @@
             },
             doProductsPost: function (conventId, productType) {
                 this.$.productsPost.set('body', this._formatBody({
-		                conventId: conventId,
-	                    ProductType: productType
+                    conventId: conventId,
+                    ProductType: productType
                 }));
                 return this.$.productsPost.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this.push('products', response.data.product);
@@ -256,8 +245,8 @@
             },
             doProductsPatch: function (conventId, productId, productType) {
                 this.$.productsPatch.set('body', this._formatBody({
-	                conventId: conventId,
-	                ProductType: productType
+                    conventId: conventId,
+                    ProductType: productType
                 }));
                 this.set('_id', productId);
                 return this.$.productsPatch.generateRequest().completes.then(this._checkSuccess).then(function (response) {
@@ -276,7 +265,7 @@
             },
             doProductGroupsPost: function (ProductGroupType) {
                 this.$.productGroupsPost.set('body', this._formatBody({
-	                ProductGroupType: ProductGroupType
+                    ProductGroupType: ProductGroupType
                 }));
                 return this.$.productGroupsPost.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this.push('productGroups', response.data.productGroup);
@@ -285,7 +274,7 @@
             },
             doProductGroupsPatch: function (productGroupId, ProductGroupType) {
                 this.$.productGroupsPatch.set('body', this._formatBody({
-	                ProductGroupType: ProductGroupType
+                    ProductGroupType: ProductGroupType
                 }));
                 this.set('_id', productGroupId);
                 return this.$.productGroupsPatch.generateRequest().completes.then(this._checkSuccess).then(function (response) {
@@ -313,7 +302,7 @@
             },
             doPointOfSalesPatch: function (pointOfSaleId, PointOfSaleType) {
                 this.$.pointOfSalesPatch.set('body', this._formatBody({
-	                PointOfSaleType: PointOfSaleType
+                    PointOfSaleType: PointOfSaleType
                 }));
                 this.set('_id', pointOfSaleId);
                 return this.$.pointOfSalesPatch.generateRequest().completes.then(this._checkSuccess).then(function (response) {
@@ -338,7 +327,7 @@
                     dateFrom: dateFrom,
                     dateUntil: dateUntil,
                     limit: limit,
-	                offset: offset
+                    offset: offset
                 }));
                 return this.$.purchasesGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setPurchases(response.data.purchases);
@@ -359,7 +348,7 @@
                     }
                 }.bind(this));
             },
-	        /* Reports */
+            /* Reports */
             doSingleReportGet: function (conventId, reportId, target, reportType) {
                 this.set('_id', reportId);
                 this.$.reportGet.set('params', this._formatBody({
@@ -374,7 +363,7 @@
                     return response.headers;
                 }.bind(this));
             },
-	        doReportsGet: function (conventId, target, reportType, memberName,  dateFrom, dateUntil, limit, offset) {
+            doReportsGet: function (conventId, target, reportType, memberName,  dateFrom, dateUntil, limit, offset) {
                 this.set('_id', null);
                 this.$.reportGet.set('params', this._formatBody({
                     conventId: conventId,
@@ -383,8 +372,8 @@
                     memberName: memberName,
                     dateFrom: dateFrom,
                     dateUntil: dateUntil,
-	                limit: limit,
-	                offset: offset
+                    limit: limit,
+                    offset: offset
                 }));
                 return this.$.reportGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setReports(response.data.reports);
@@ -397,7 +386,7 @@
                     conventId: conventId,
                     type: 'VERIFICATION',
                     Report: Report,
-	                cashOut: cashOut
+                    cashOut: cashOut
                 }));
                 return this.$.reportsPost.generateRequest().completes.then(this._checkSuccess).then(function () {
                     this.fire('kassa-message-success', 'Aruanne edukalt lisatud');
@@ -414,16 +403,16 @@
                     this.fire('kassa-message-success', 'Tarne edukalt lisatud');
                 }.bind(this));
             },
-	        /* Transfers */
+            /* Transfers */
             doTransfersGet: function (conventId, memberId, memberName, dateFrom, dateUntil, limit, offset) {
                 this.$.transfersGet.set('params', this._formatBody({
                     conventId: conventId,
-	                memberId: memberId,
+                    memberId: memberId,
                     memberName: memberName,
-	                dateFrom: dateFrom,
-	                dateUntil: dateUntil,
+                    dateFrom: dateFrom,
+                    dateUntil: dateUntil,
                     limit: limit,
-	                offset: offset
+                    offset: offset
                 }));
                 return this.$.transfersGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setTransfers(response.data.transfers);
@@ -442,8 +431,8 @@
                     return this.doAuthenticationGet();
                 }.bind(this));
             },
-	        /* CreditNettings */
-	        doCreditNettingsGet: function () {
+            /* CreditNettings */
+            doCreditNettingsGet: function () {
                 return this.$.creditNettingsGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setCreditNettings(response.data.creditNettings);
 
@@ -452,8 +441,8 @@
             },
             doCreditNettingsPatch: function (conventId, creditNettingId, CreditNettingRowType) {
                 this.$.creditNettingsPatch.set('body', this._formatBody({
-		                CreditNettingRowType: CreditNettingRowType,
-	                    conventId: conventId
+                    CreditNettingRowType: CreditNettingRowType,
+                    conventId: conventId
                 }));
                 this.set('_id', creditNettingId);
                 return this.$.creditNettingsPatch.generateRequest().completes.then(this._checkSuccess).then(function (response) {
@@ -461,7 +450,7 @@
                     this.fire('kassa-message-success', 'Tasaarveldus edukalt muudetud');
                 }.bind(this));
             },
-	        /* Status credit limits */
+            /* Status credit limits */
             doCreditLimitsGet: function () {
                 return this.$.statusCreditLimitsGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setCreditLimits(response.data.creditLimits);
@@ -481,7 +470,7 @@
                 }.bind(this));
             },
             /* Economy report */
-	        doEconomyReportGet: function(conventId, dateFrom, dateUntil) {
+            doEconomyReportGet: function(conventId, dateFrom, dateUntil) {
                 this.$.economyReportGet.set('params', this._formatBody({
                     conventId: conventId,
                     dateFrom: dateFrom,
@@ -490,7 +479,7 @@
                 return this.$.economyReportGet.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this._setEconomyReport(response.data);
                 }.bind(this));
-	        },
+            },
             /* General */
             doAction: function (data) {
                 let promise;
@@ -505,10 +494,10 @@
                     case 'doAuthenticationGet':
                         promise = this.doAuthenticationGet();
                         break;
-	                /* Members */
-	                case 'doMembersGet':
-	                    promise = this.doMembersGet(data.conventId, data.isActive);
-	                    break;
+                    /* Members */
+                    case 'doMembersGet':
+                        promise = this.doMembersGet(data.conventId, data.isActive);
+                        break;
                     /* Products */
                     case 'doProductsGet':
                         promise = this.doProductsGet(data.conventId, data.isActive, data.resourceType);
@@ -545,7 +534,7 @@
                     /* Purchases */
                     case 'doPurchasesGet':
                         promise = this.doPurchasesGet(data.conventId, data.memberId, data.memberName, data.createdByName,
-	                        data.dateFrom, data.dateUntil, data.limit, data.offset);
+                            data.dateFrom, data.dateUntil, data.limit, data.offset);
                         break;
                     case 'doPurchasePost':
                         promise = this.doPurchasePost(data.conventId, data.memberId, data.basket);
@@ -554,31 +543,31 @@
                     case 'doSingleReportGet':
                         promise = this.doSingleReportGet(data.conventId, data.id, data.target, data.reportType);
                         break;
-	                case 'doReportsGet':
+                    case 'doReportsGet':
                         promise = this.doReportsGet(data.conventId, data.target, data.reportType, data.memberName,
                             data.dateFrom, data.dateUntil, data.limit, data.offset);
                         break;
-	                case 'doReportPost':
+                    case 'doReportPost':
                         promise = this.doReportPost(data.conventId, data.Report, data.cashOut);
                         break;
-	                case 'doDeliveryPost':
-	                    promise = this.doDeliveryPost(data.conventId, data.itemType);
-	                    break;
-	                /* Transfers */
-	                case 'doTransfersGet':
-                        promise = this.doTransfersGet(data.conventId, data.memberId, data.memberName,
-	                        data.dateFrom, data.dateUntil, data.limit, data.offset);
+                    case 'doDeliveryPost':
+                        promise = this.doDeliveryPost(data.conventId, data.itemType);
                         break;
-	                case 'doTransfersPost':
-	                    promise = this.doTransfersPost(data.conventId, data.itemType);
-	                    break;
-	                /* CreditNettings*/
-	                case 'doCreditNettingsGet':
+                    /* Transfers */
+                    case 'doTransfersGet':
+                        promise = this.doTransfersGet(data.conventId, data.memberId, data.memberName,
+                            data.dateFrom, data.dateUntil, data.limit, data.offset);
+                        break;
+                    case 'doTransfersPost':
+                        promise = this.doTransfersPost(data.conventId, data.itemType);
+                        break;
+                    /* CreditNettings*/
+                    case 'doCreditNettingsGet':
                         promise = this.doCreditNettingsGet();
                         break;
-	                case 'doCreditNettingsPatch':
-	                    promise = this.doCreditNettingsPatch(data.conventId, data.creditNettingId, data.creditNettingRowType);
-	                    break;
+                    case 'doCreditNettingsPatch':
+                        promise = this.doCreditNettingsPatch(data.conventId, data.creditNettingId, data.creditNettingRowType);
+                        break;
                     /* Status credit limits*/
                     case 'doCreditLimitsGet':
                         promise = this.doCreditLimitsGet();
@@ -587,9 +576,9 @@
                         promise = this.doCreditLimitsPatch(data.creditLimits);
                         break;
                     /* Economy report */
-	                case 'doEconomyReportGet':
-	                    promise = this.doEconomyReportGet(data.conventId, data.dateFrom, data.dateUntil);
-	                    break;
+                    case 'doEconomyReportGet':
+                        promise = this.doEconomyReportGet(data.conventId, data.dateFrom, data.dateUntil);
+                        break;
                     /* General */
                     default:
                         console.error('Vale action.', data);
@@ -616,19 +605,18 @@
             },
             _computeURL: function (endpoint, id) {
                 if (id === undefined || id === null) {
-                    return '/api/' + endpoint + '/'
+                    return '/api/' + endpoint;
                 } else {
-                    return '/api/' + endpoint + '/' + id + '/'
+                    return '/api/' + endpoint + '/' + id;
                 }
-
             },
             _checkSuccess: function (result) {
                 if (result.xhr.response && result.xhr.response.status === 'success') {
                     return {
                         data: result.xhr.response.data,
-	                    headers: {
+                        headers: {
                             'Content-Range': result.xhr.getResponseHeader('Content-Range')
-	                    }
+                        }
                     };
                 } else {
                     this.fire('kassa-message-error', {message: 'Vigane vastus serverilt'});
@@ -711,7 +699,7 @@
                 }
                 return false
             },
-	        _deleteItems: function (itemsPath, items, id) {
+            _deleteItems: function (itemsPath, items, id) {
                 for (let i = 0; i < items.length; i++) {
                     if (items[i]['id'] === id) {
                         this.splice(itemsPath, i, 1);
@@ -722,5 +710,5 @@
             }
         })
 
-	</script>
+    </script>
 </dom-module>

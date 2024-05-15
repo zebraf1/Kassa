@@ -3,24 +3,15 @@
 namespace Tests\Rotalia\API\Services\Security;
 
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Rotalia\API\Services\Security\MySqlPasswordHasher;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\Helpers\EntityManagerAwareTestCase;
 
 #[CoversClass(MySqlPasswordHasher::class)]
 class MySqlPasswordHasherTest extends KernelTestCase
 {
-    private ?EntityManagerInterface $entityManager;
-
-    protected function setUp(): void
-    {
-        $kernel = self::bootKernel();
-
-        $this->entityManager = $kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-    }
+    use EntityManagerAwareTestCase;
 
     /**
      * @throws Exception

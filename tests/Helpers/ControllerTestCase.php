@@ -2,6 +2,8 @@
 
 namespace Tests\Helpers;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -9,7 +11,7 @@ class ControllerTestCase extends WebTestCase
 {
     protected static ?KernelBrowser $client;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         self::$client = static::createClient();
         self::$client->followRedirects();
@@ -22,60 +24,34 @@ class ControllerTestCase extends WebTestCase
 
     /**
      * @param string $username
-     * @param string $password
+     * @return User
      */
-    protected function login(string $username, string $password): void
+    protected function login(string $username): User
     {
         $client = static::$client;
 
-        // GET - fetch CSRF Token
-        $client->request(
-            'GET',
-            '/api/authentication/'
-        );
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['username' => $username]);
+        $this->assertNotNull($testUser);
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
 
-        $response = $client->getResponse();
-
-        $this->assertEquals(200, $response->getStatusCode());
-
-        $getResult = json_decode($response->getContent());
-
-        $this->assertEquals('success', $getResult->status);
-
-        if (empty($getResult->data->member)) {
-            $this->assertNotEmpty($getResult->data->csrfToken);
-
-            // POST - login
-            $client->request(
-                'POST',
-                '/api/authentication/',
-                [
-                    'csrfToken' => $getResult->data->csrfToken,
-                    'username' => $username,
-                    'password' => $password,
-                ]
-            );
-
-            $response = $client->getResponse();
-            $postResult = json_decode($response->getContent());
-
-            $this->assertEquals(200, $response->getStatusCode(), 'Failed: '.json_encode($postResult));
-            $this->assertEquals('Autoriseerimine õnnestus', $postResult->data);
-        }
+        return $testUser;
     }
 
-    protected function loginSuperAdmin(): void
+    protected function loginSuperAdmin(): User
     {
-        $this->login('user1', 'test123');
+        return $this->login('user1');
     }
 
-    protected function loginAdmin(): void
+    protected function loginAdmin(): User
     {
-        $this->login('user2', 'test123');
+        return $this->login('user2');
     }
 
-    protected function loginSimpleUser(): void
+    protected function loginSimpleUser(): User
     {
-        $this->login('user3', 'test123');
+        return $this->login('user3');
     }
 }

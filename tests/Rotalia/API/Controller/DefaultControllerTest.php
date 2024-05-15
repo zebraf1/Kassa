@@ -46,6 +46,9 @@ class DefaultControllerTest extends ControllerTestCase
         return $controller;
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function testJsonSuccess(): void
     {
         $response = $this->getDummyController()->test(200);
@@ -54,7 +57,7 @@ class DefaultControllerTest extends ControllerTestCase
             'data' => [
                 'test',
             ],
-        ]), $response->getContent());
+        ], JSON_THROW_ON_ERROR), $response->getContent());
     }
 
     public function testJsonError(): void
@@ -62,7 +65,7 @@ class DefaultControllerTest extends ControllerTestCase
         $response = $this->getDummyController()->test(400);
         $this->assertJsonStringEqualsJsonString(json_encode([
             'test',
-        ]), $response->getContent());
+        ], JSON_THROW_ON_ERROR), $response->getContent());
     }
 
     /**
@@ -82,7 +85,7 @@ class DefaultControllerTest extends ControllerTestCase
         $this->assertJsonStringEqualsJsonString(json_encode([
             'status' => JSendResponse::JSEND_STATUS_SUCCESS,
             'data' => $jsonData,
-        ]), $response->getContent());
+        ], JSON_THROW_ON_ERROR), $response->getContent());
         $this->assertSame('value1', $response->headers->get('header1'));
     }
 
@@ -107,7 +110,7 @@ class DefaultControllerTest extends ControllerTestCase
                 'error' => 'Test',
                 'trace' => false,
             ],
-        ]), $response->getContent());
+        ], JSON_THROW_ON_ERROR), $response->getContent());
         $this->assertSame('v1', $response->headers->get('h1'));
     }
 }

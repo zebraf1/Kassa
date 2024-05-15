@@ -10,6 +10,7 @@ rotalia_api:
     prefix: /api/
     type: attribute
 
-
+# Only general routes for loading resource files
+# Frontend routes are defined under FrontendBundle/Resources/source/elements/kassa-backend.html
 rotalia_frontend:
     resource: "@RotaliaFrontendBundle/Resources/config/routing.yaml"

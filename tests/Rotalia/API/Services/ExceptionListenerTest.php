@@ -11,9 +11,13 @@ use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Throwable;
 
 #[CoversClass(ExceptionListener::class)]
@@ -34,7 +38,7 @@ class ExceptionListenerTest extends TestCase
         $response = $event->getResponse();
         $content = $response->getContent();
         $this->assertSame($expectedStatus, $response->getStatusCode());
-        $responseData = json_decode($content, true);
+        $responseData = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         $this->assertEquals(JSendResponse::JSEND_STATUS_ERROR, $responseData['status']);
         $this->assertEquals($expectedMessage, $responseData['message']);
         if ($isDebug) {
@@ -47,8 +51,12 @@ class ExceptionListenerTest extends TestCase
     public static function providerOnKernelEventDebug(): array
     {
         return [
-            [true, new Exception('test123'), 'Unhandled exception: test123', Response::HTTP_INTERNAL_SERVER_ERROR],
-            [false, new HttpException(Response::HTTP_UNAUTHORIZED, 'Unauthorized'), 'Unauthorized', Response::HTTP_UNAUTHORIZED],
+            [true, new Exception('test123'), 'Tekkis tehniline viga', Response::HTTP_INTERNAL_SERVER_ERROR],
+            [false, new UnauthorizedHttpException('test'), 'Logi sisse', Response::HTTP_UNAUTHORIZED],
+            [false, new BadRequestHttpException(), 'Kontrolli sisestatud andmeid', Response::HTTP_BAD_REQUEST],
+            [false, new AccessDeniedHttpException(), 'Ligipääs puudub', Response::HTTP_FORBIDDEN],
+            [false, new AccessDeniedException(), 'Ligipääs puudub', Response::HTTP_FORBIDDEN],
+            [false, new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR), 'Tekkis tehniline viga', Response::HTTP_INTERNAL_SERVER_ERROR],
         ];
     }
 }

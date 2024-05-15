@@ -5,42 +5,47 @@ security:
             security: false
         main:
             pattern: ^/
-            security: false
-#            form_login:
-#                provider: fos_userbundle
-#                csrf_provider: form.csrf_provider # todo: not available anymore
-#            user_checker: ~
-#            remember_me:
-#                secret:      "%secret%"
-#                user_providers: [fos_userbundle]
-#                remember_me_parameter: rememberMe
-#                always_remember_me: true
+            json_login:
+                check_path: json_login
+                username_path: username
+                password_path: password
+                # Return JSend response when authentication fails
+                failure_handler: 'Rotalia\API\Services\Security\AuthenticationFailureHandler'
+                remember_me: true
             logout:
                 invalidate_session: false
                 delete_cookies:     ~
-#            anonymous:    true
 
-#    access_control:
-#        - { path: ^/api/authentication, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/api/purchase, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/api, roles: ROLE_USER }
-#        - { path: ^/kassa, role: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    access_control:
+        - { path: ^/api/authentication, roles: PUBLIC_ACCESS }
+#        - { path: ^/api/purchase, roles: PUBLIC_ACCESS }
+#        - { path: ^/api/doc, roles: PUBLIC_ACCESS }
+        - { path: ^/api, roles: ROLE_USER }
+#        - { path: ^/kassa, role: PUBLIC_ACCESS }
+#        - { path: ^/login$, role: PUBLIC_ACCESS }
 #        - { path: ^/tooted, role: ROLE_ADMIN }
 #        - { path: ^/krediit, role: ROLE_ADMIN }
 #        - { path: ^/kassad, role: ROLE_ADMIN }
 #        - { path: ^/tehingud, role: ROLE_ADMIN }
 
-#    providers:
-#        fos_userbundle:
-#            id: rotalia_user_provider
+    # EntityUserProvider
+    providers:
+        users:
+            entity:
+                # the class of the entity that represents users
+                class: 'App\Entity\User'
+                # the property to query by - e.g. email, username, etc
+                property: 'username'
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
         ROLE_SUPER_ADMIN: ROLE_ADMIN
 
+    # User->getPlugin() determines which hasher is used
     password_hashers:
-        plain: 'Rotalia/API/Services/Security/PlainTextPasswordHasher'
-        mysql_old_password: 'Rotalia/API/Services/Security/MySqlOldPasswordHasher'
-        mysql_native_password: 'Rotalia/API/Services/Security/MySqlPasswordHasher'
+        plain:
+            id: 'Rotalia\API\Services\Security\PlainTextPasswordHasher'
+        mysql_old_password:
+            id: 'Rotalia\API\Services\Security\MySqlOldPasswordHasher'
+        mysql_native_password:
+            id: 'Rotalia\API\Services\Security\MySqlPasswordHasher'

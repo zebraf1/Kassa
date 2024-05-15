@@ -2,10 +2,24 @@
 
 namespace Rotalia\API\Services\Security;
 
+use App\Entity\User;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class MySqlOldPasswordHasher extends MySqlPasswordHasher
 {
+    private UserInterface $currentUser;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        #[CurrentUser] User $user)
+    {
+        parent::__construct($entityManager);
+        $this->currentUser = $user;
+    }
+
     /**
      * @throws Exception
      */
@@ -19,8 +33,24 @@ class MySqlOldPasswordHasher extends MySqlPasswordHasher
         return $result->fetchOne();
     }
 
-    public function needsRehash(string $hashedPassword): bool
+    /**
+     * @throws Exception
+     */
+    public function verify(
+        string $hashedPassword,
+        #[\SensitiveParameter] string $plainPassword,
+    ): bool
     {
-        return true;
+        $isVerified = parent::verify($hashedPassword, $plainPassword);
+
+        // Migrate old password to native password after successful login
+        if ($isVerified) {
+            $this->currentUser
+                ->setPlugin(User::PLUGIN_NATIVE_PASSWORD)
+                ->setPassword(parent::hash($plainPassword));
+            $this->entityManager->persist($this->currentUser);
+        }
+
+        return $isVerified;
     }
 }

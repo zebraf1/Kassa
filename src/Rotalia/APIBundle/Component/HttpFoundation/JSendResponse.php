@@ -116,14 +116,14 @@ class JSendResponse extends JsonResponse
     protected function setJSendContent($status, $data, $message, $code): void
     {
         $content = ['status' => $status];
-        if ($data) {
-            $content['data'] = $data;
-        }
         if ($message) {
             $content['message'] = $message;
         }
         if ($code) {
             $content['code'] = $code;
+        }
+        if ($data) {
+            $content['data'] = $data;
         }
 
         $this->setData($content);

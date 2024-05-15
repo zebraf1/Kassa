@@ -1,14 +1,13 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
-    #csrf_protection: true
 
     # Note that the session will be started ONLY if you read or write from it.
-    # Do not use session, we use session token from database
-    session: false
-
-    #esi: true
-    #fragments: true
+    session:
+        # handler_id set to null will use default session handler from php.ini
+        handler_id: null
+        # improves the security of the cookies used for sessions
+        cookie_secure: auto
 
 when@test:
     framework:

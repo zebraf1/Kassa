@@ -7,7 +7,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class ExceptionListener
@@ -37,16 +40,26 @@ class ExceptionListener
     public function onKernelException(ExceptionEvent $event): void
     {
         $throwable = $event->getThrowable();
-        $message = $throwable->getMessage();
 
-        if ($throwable instanceof HttpExceptionInterface) {
-            $statusCode = $throwable->getStatusCode();
+        if ($throwable instanceof BadRequestHttpException) {
+            $statusCode = Response::HTTP_BAD_REQUEST;
+            $message = 'Kontrolli sisestatud andmeid';
+        } else if ($throwable instanceof UnauthorizedHttpException) {
+            $statusCode = Response::HTTP_UNAUTHORIZED;
+            $message = 'Logi sisse';
+        } else if (
+            $throwable instanceof AccessDeniedHttpException ||
+            $throwable instanceof AccessDeniedException
+        ) {
+            $statusCode = Response::HTTP_FORBIDDEN;
+            $message = 'Ligipääs puudub';
         } else {
-            $message = 'Unhandled exception: '.$throwable->getMessage();
             $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $message = 'Tekkis tehniline viga';
         }
 
         $data = $this->isDebug ? [
+            'errorMessage' => $throwable->getMessage(),
             'trace' => $throwable->getTraceAsString(),
         ] : null;
         $response = JSendResponse::createError($message, $statusCode, $data);
