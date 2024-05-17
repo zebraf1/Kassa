@@ -1,0 +1,83 @@
+# ProductGroup, Product, ProductInfo
+
+App\Entity\ProductGroup:
+    ProductGroup_1:
+        name: 'Õlu'
+        seq: '1'
+    ProductGroup_2:
+        name: 'Toit'
+        seq: '2'
+
+App\Entity\Product:
+    Product_1:
+        name: 'A le Coq Premium'
+        product_code: '12345678'
+        price: '1.00'
+        amountType: 'PIECE'
+        status: 'ACTIVE'
+        seq: '1'
+        productGroup: '@ProductGroup_1'
+    Product_2:
+        name: 'A le Coq Aleksander'
+        price: '1.50'
+        amountType: 'PIECE'
+        status: 'ACTIVE'
+        seq: '2'
+        productGroup: '@ProductGroup_1'
+    Product_3:
+        name: 'A le Coq Pilsner'
+        price: '1.00'
+        amountType: 'PIECE'
+        status: 'DISABLED'
+        seq: '10'
+    Product_4:
+        name: 'Tuc Küpsis'
+        price: '1.00'
+        amountType: 'PIECE'
+        status: 'ACTIVE'
+        seq: '43'
+        productGroup: '@ProductGroup_2'
+
+App\Entity\ProductInfo:
+    ProductInfo_1:
+        product: '@Product_1'
+        convent: '@Convent_6'
+        price: '1.00'
+        status: 'ACTIVE'
+        storageCount: 5
+        warehouseCount: 15
+    ProductInfo_2:
+        product: '@Product_1'
+        convent: '@Convent_7'
+        price: '1.10'
+        status: 'ACTIVE'
+    ProductInfo_3:
+        product: '@Product_2'
+        convent: '@Convent_6'
+        price: '1.50'
+        status: 'ACTIVE'
+    ProductInfo_4:
+        product: '@Product_2'
+        convent: '@Convent_7'
+        price: '1.50'
+        status: 'DISABLED'
+    ProductInfo_5:
+        product: '@Product_3'
+        convent: '@Convent_6'
+        price: '1.00'
+        status: 'DISABLED'
+    ProductInfo_6:
+        product: '@Product_3'
+        convent: '@Convent_7'
+        price: '1.00'
+        status: 'DISABLED'
+    ProductInfo_7:
+        product: '@Product_4'
+        convent: '@Convent_6'
+        price: '1.00'
+        status: 'ACTIVE'
+    ProductInfo_8:
+        product: '@Product_4'
+        convent: '@Convent_7'
+        price: '1.00'
+        status: 'ACTIVE'

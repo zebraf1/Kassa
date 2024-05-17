@@ -1,0 +1,37 @@
+App\Entity\Convent:
+    Convent_1:
+        name: 'Los Angeles'
+        isActive: '0'
+    Convent_2:
+        name: 'New York'
+        isActive: '0'
+    Convent_3:
+        name: Ottawa
+        isActive: '0'
+    Convent_4:
+        name: Rootsi
+        isActive: '0'
+    Convent_5:
+        name: Seattle
+        isActive: '0'
+    Convent_6:
+        name: Tallinn
+        isActive: '1'
+    Convent_7:
+        name: Tartu
+        isActive: '1'
+    Convent_8:
+        name: Toronto
+        isActive: '0'
+    Convent_9:
+        name: Vancouver
+        isActive: '0'
+    Convent_10:
+        name: Washington
+        isActive: '0'
+    Convent_12:
+        name: mujal
+        isActive: '0'
+    Convent_11:
+        name: Brüssel
+        isActive: '0'

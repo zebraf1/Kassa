@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -56,6 +57,7 @@ class ExceptionListenerTest extends TestCase
             [false, new BadRequestHttpException(), 'Kontrolli sisestatud andmeid', Response::HTTP_BAD_REQUEST],
             [false, new AccessDeniedHttpException(), 'Ligipääs puudub', Response::HTTP_FORBIDDEN],
             [false, new AccessDeniedException(), 'Ligipääs puudub', Response::HTTP_FORBIDDEN],
+            [false, new NotFoundHttpException(), 'Lehekülge ei leitud', Response::HTTP_NOT_FOUND],
             [false, new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR), 'Tekkis tehniline viga', Response::HTTP_INTERNAL_SERVER_ERROR],
         ];
     }

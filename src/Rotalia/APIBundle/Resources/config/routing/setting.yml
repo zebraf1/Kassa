@@ -1,4 +1,0 @@
-RotaliaAPI_settings_list:
-    path:  /settings/
-    methods: [GET]
-    defaults: { _controller: Rotalia\APIBundle\Controller\SettingsController::ListAction }

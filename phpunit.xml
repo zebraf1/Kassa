@@ -35,9 +35,4 @@
             <directory>src</directory>
         </include>
     </source>
-
-    <!--  Rollback db changes after test  -->
-    <extensions>
-        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
-    </extensions>
 </phpunit>

@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 
 class ControllerTestCase extends WebTestCase
 {
@@ -53,5 +54,47 @@ class ControllerTestCase extends WebTestCase
     protected function loginSimpleUser(): User
     {
         return $this->login('user3');
+    }
+
+    /**
+     * @throws JsonException
+     * @return array
+     */
+    protected function getResponseBodyJson(): array
+    {
+        $response = self::$client->getResponse();
+        try {
+            return json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new JsonException('Failed to decode response content', 0, $e);
+        }
+    }
+
+    /**
+     * Checks that response data is correct at given array key.
+     *
+     * @param array|string|number|boolean|null $expected
+     * @param string $path  dot-separated array keys for nesting
+     */
+    protected function assertResponseEqualsJsonPath(mixed $expected, string $path = ''): void
+    {
+        $json = $this->getResponseBodyJson();
+
+        if (empty($path)) {
+            $this->assertEquals($expected, $json);
+            return;
+        }
+
+        $currentElement = $json;
+        $breadcrumbs = [];
+        $parts = explode('.', $path);
+
+        foreach ($parts as $part) {
+            $breadcrumbs[] = $part;
+            $this->assertArrayHasKey($part, $currentElement, 'Response does not contain data at path ' . implode('.', $breadcrumbs));
+            $currentElement = $currentElement[$part];
+        }
+
+        $this->assertEquals($expected, $currentElement, 'Failed asserting data at path ' . implode('.', $breadcrumbs));
     }
 }

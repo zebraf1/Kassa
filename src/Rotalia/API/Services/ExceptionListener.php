@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -53,6 +54,9 @@ class ExceptionListener
         ) {
             $statusCode = Response::HTTP_FORBIDDEN;
             $message = 'Ligipääs puudub';
+        } else if ($throwable instanceof NotFoundHttpException) {
+            $statusCode = Response::HTTP_NOT_FOUND;
+            $message = 'Lehekülge ei leitud';
         } else {
             $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
             $message = 'Tekkis tehniline viga';

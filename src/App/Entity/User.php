@@ -114,6 +114,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
         return $this;
     }
 
+    // Used by fixtures
+    public function setLastLoginString(string $login): static
+    {
+        return $this->setLastlogin(new \DateTime($login));
+    }
+
     public function getJutukasLastaccess(): ?int
     {
         return $this->jutukas_lastaccess;

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConventRepository::class)]
 #[ORM\Table(name: 'koondised')]
-class Convent
+class Convent implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,8 +20,8 @@ class Convent
     #[ORM\Column(name: 'nimi', length: 100)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::INTEGER, length: 1, nullable: true)]
-    private ?int $kassa_aktiivne = 0;
+    #[ORM\Column(name: 'kassa_aktiivne', type: Types::INTEGER, length: 1, nullable: true)]
+    private ?int $isActive = 0;
 
     /**
      * @var Collection<int, ProductInfo>
@@ -51,14 +51,14 @@ class Convent
         return $this;
     }
 
-    public function isKassaAktiivne(): bool
+    public function isActive(): bool
     {
-        return (bool)$this->kassa_aktiivne;
+        return (bool)$this->isActive;
     }
 
-    public function setKassaAktiivne(bool $kassa_aktiivne): static
+    public function setIsActive(bool $isActive): static
     {
-        $this->kassa_aktiivne = (int)$kassa_aktiivne;
+        $this->isActive = (int)$isActive;
 
         return $this;
     }
@@ -91,5 +91,36 @@ class Convent
         }
 
         return $this;
+    }
+
+    /**
+     * @var Setting[]
+     */
+    private array $settings = [];
+
+    /**
+     * @param Setting[] $settings
+     * @return $this
+     * @throws \RuntimeException
+     */
+    public function setSettings(array $settings): static
+    {
+        if (!empty($settings) && !(reset($settings) instanceof Setting)) {
+            throw new \RuntimeException('Invalid object given, Setting expected');
+        }
+        $this->settings = $settings;
+        return $this;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        /** @see Setting::$reference and value must have public access */
+        $settings = array_column($this->settings, 'value', 'reference');
+
+        return  [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'settings' => (object)$settings,
+        ];
     }
 }
