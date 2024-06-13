@@ -3,7 +3,7 @@
 namespace Rotalia\APIBundle\Tests\Controller;
 
 use App\Entity\Product;
-use App\Repository\OllekassaProductRepository;
+use App\Repository\ProductRepository;
 use PHPUnit\Framework\Attributes\UsesClass;
 use Rotalia\API\Controller\DefaultController;
 use Rotalia\API\Controller\ProductsController;
@@ -20,7 +20,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(ProductsController::class)]
 #[UsesClass(DefaultController::class)]
 #[UsesClass(Product::class)]
-#[UsesClass(OllekassaProductRepository::class)]
+#[UsesClass(ProductRepository::class)]
 #[UsesClass(JSendResponse::class)]
 class ProductsControllerTest extends WebTestCase
 {

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductGroupRepository::class)]
 #[ORM\Table(name: 'ollekassa_product_group')]
-class ProductGroup
+class ProductGroup implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -90,5 +90,14 @@ class ProductGroup
         }
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'seq' => $this->getSeq(),
+        ];
     }
 }
