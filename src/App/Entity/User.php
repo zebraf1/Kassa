@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
@@ -20,8 +22,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
     public const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     public const ROLE_USER = 'ROLE_USER';
-    public const USER_RIGHT_KASSA_ADMIN = 'KASSAADMIN';
-    public const USER_RIGHT_KASSA_SUPER_ADMIN = 'KASSASUPER';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -48,6 +48,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
 
     #[ORM\Column(nullable: true)]
     private ?int $jutukas_firstmess = null;
+
+    /**
+     * @var Collection<int, UserRight>
+     */
+    #[ORM\OneToMany(targetEntity: UserRight::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $userRights;
+
+    public function __construct()
+    {
+        $this->userRights = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -148,20 +159,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
     {
         $roles = [self::ROLE_USER];
 
-//        foreach ($this->getUserRights() as $userRight) {
-//            switch($userRight->getRoleName()) {
-//                case self::USER_RIGHT_KASSA_SUPER_ADMIN:
-//                    // Role hierarchy
-//                    $roles[] = self::ROLE_SUPER_ADMIN;
-//                    $roles[] = self::ROLE_ADMIN;
-//                    break;
-//                case self::USER_RIGHT_KASSA_ADMIN:
-//                    $roles[] = self::ROLE_ADMIN;
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
+        /** @var UserRight $userRight */
+        foreach ($this->userRights as $userRight) {
+            switch($userRight->getCode()) {
+                case UserRight::USER_RIGHT_KASSA_SUPER_ADMIN:
+                    // Role hierarchy
+                    $roles[] = self::ROLE_SUPER_ADMIN;
+                    $roles[] = self::ROLE_ADMIN;
+                    break;
+                case UserRight::USER_RIGHT_KASSA_ADMIN:
+                    $roles[] = self::ROLE_ADMIN;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         return array_unique($roles);
     }
@@ -179,5 +191,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
     {
         // plugin name is mapped to proper PasswordHasher class in config/security.yaml
         return $this->getPlugin();
+    }
+
+    /**
+     * @return Collection<int, UserRight>
+     */
+    public function getUserRights(): Collection
+    {
+        return $this->userRights;
+    }
+
+    public function addUserRight(UserRight $userRight): static
+    {
+        if (!$this->userRights->contains($userRight)) {
+            $this->userRights->add($userRight);
+            $userRight->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRight(UserRight $userRight): static
+    {
+        if ($this->userRights->removeElement($userRight)) {
+            // set the owning side to null (unless already changed)
+            if ($userRight->getUser() === $this) {
+                $userRight->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

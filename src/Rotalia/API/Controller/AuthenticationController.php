@@ -23,7 +23,7 @@ class AuthenticationController extends DefaultController
     {
         $memberData = null;
         if ($user !== null) {
-            $member = null;
+            $member = null; // TODO: get Member
             $memberData = [
                 'id' => $user->getLiikmedId(),
                 'name' => $user->getUsername(),
@@ -53,5 +53,15 @@ class AuthenticationController extends DefaultController
     public function jsonLogin(): JsonResponse
     {
         return JSendResponse::createSuccess('Autoriseerimine õnnestus');
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    #[Route('authentication', name: 'json_logout', methods: ['DELETE'])]
+    public function logout(): JsonResponse
+    {
+        $this->get('security.token_storage')->setToken(null);
+        return JSendResponse::createSuccess('Väljalogimine õnnestus');
     }
 }

@@ -2,20 +2,32 @@
 
 namespace Tests\Rotalia\API\Controller;
 
+use App\Entity\User;
+use AssertionError;
 use Exception;
 use JsonSerializable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Rotalia\API\Controller\DefaultController;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Tests\Helpers\ControllerTestCase;
 use Throwable;
 
+/**
+ * Provide public interface for protected methods
+ */
 interface DummyController
 {
-    public function test(int $status): JsonResponse;
+    public function testJson(int $status): JsonResponse;
+    public function testRequireAdmin(): void;
+    public function testRequireSuperAdmin(): void;
+    public function testRequireUser(): void;
 }
 
 #[CoversClass(DefaultController::class)]
@@ -35,9 +47,29 @@ class DefaultControllerTest extends ControllerTestCase
                 return false; // debug
             }
 
-            public function test(int $status): JsonResponse
+            public function testJson(int $status): JsonResponse
             {
                 return $this->json(['test'], $status);
+            }
+
+            public function testRequireAdmin(): void
+            {
+                $this->requireAdmin();
+            }
+
+            public function testRequireSuperAdmin(): void
+            {
+                $this->requireSuperAdmin();
+            }
+
+            public function testRequireUser(): void
+            {
+                $this->requireUser();
+            }
+
+            protected function isGranted(mixed $attribute, mixed $subject = null): bool
+            {
+                return false;
             }
         };
 
@@ -51,7 +83,7 @@ class DefaultControllerTest extends ControllerTestCase
      */
     public function testJsonSuccess(): void
     {
-        $response = $this->getDummyController()->test(200);
+        $response = $this->getDummyController()->testJson(200);
         $this->assertJsonStringEqualsJsonString(json_encode([
             'status' => JSendResponse::JSEND_STATUS_SUCCESS,
             'data' => [
@@ -60,9 +92,12 @@ class DefaultControllerTest extends ControllerTestCase
         ], JSON_THROW_ON_ERROR), $response->getContent());
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function testJsonError(): void
     {
-        $response = $this->getDummyController()->test(400);
+        $response = $this->getDummyController()->testJson(400);
         $this->assertJsonStringEqualsJsonString(json_encode([
             'test',
         ], JSON_THROW_ON_ERROR), $response->getContent());
@@ -112,5 +147,57 @@ class DefaultControllerTest extends ControllerTestCase
             ],
         ], JSON_THROW_ON_ERROR), $response->getContent());
         $this->assertSame('v1', $response->headers->get('h1'));
+    }
+
+    public function testRequireAdmin(): void
+    {
+        $controller = $this->getDummyController();
+        try {
+            $controller->testRequireAdmin();
+            throw new AssertionError('Not thrown');
+        } catch (Throwable $e) {
+            $this->assertInstanceOf(AccessDeniedHttpException::class, $e, $e->getMessage());
+        }
+    }
+
+    public function testRequireSuperAdmin(): void
+    {
+        $controller = $this->getDummyController();
+        try {
+            $controller->testRequireSuperAdmin();
+            throw new AssertionError('Not thrown');
+        } catch (Throwable $e) {
+            $this->assertInstanceOf(AccessDeniedHttpException::class, $e, $e->getMessage());
+        }
+    }
+
+    public function testRequireUser(): void
+    {
+        $controller = $this->getDummyController();
+        try {
+            $controller->testRequireUser();
+            throw new AssertionError('Not thrown');
+        } catch (Throwable $e) {
+            $this->assertInstanceOf(AccessDeniedHttpException::class, $e, $e->getMessage());
+        }
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function testGet(): void
+    {
+        $controller = new DefaultController();
+        $mockContainer = $this->getMockBuilder(Container::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['get'])
+            ->getMock()
+        ;
+        $user = new User();
+        $mockContainer->method('get')->willReturn($user);
+        $controller->setContainer($mockContainer);
+        $value = $controller->get('user');
+        $this->assertSame($user, $value);
     }
 }

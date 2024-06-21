@@ -20,3 +20,13 @@ App\Entity\User:
         plugin: mysql_native_password
         liikmed_id: 2123 #2123
         lastLoginString: '2015-04-01 14:59:04'
+
+App\Entity\UserRight:
+    UserRight_SUPERADMIN:
+        user: '@User_SUPER'
+        code: 'KASSASUPER'
+        selgitus: 'Super'
+    UserRight_ADMIN:
+        user: '@User_ADMIN'
+        code: 'KASSAADMIN'
+        selgitus: 'Admin'

@@ -2,11 +2,13 @@
 
 namespace Rotalia\API\Controller;
 
+use App\Entity\User;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Throwable;
 
 class DefaultController extends AbstractController
@@ -43,6 +45,45 @@ class DefaultController extends AbstractController
                 'error' => $e->getMessage(),
                 'trace' => $isDebug ? $e->getTraceAsString() : false,
             ], null, $headers);
+        }
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function get(string $service)
+    {
+        return $this->container->get($service);
+    }
+
+    /**
+     * @throws AccessDeniedHttpException
+     */
+    protected function requireSuperAdmin(): void
+    {
+        if (!$this->isGranted(User::ROLE_SUPER_ADMIN)) {
+            throw new AccessDeniedHttpException();
+        }
+    }
+
+    /**
+     * @throws AccessDeniedHttpException
+     */
+    protected function requireAdmin(): void
+    {
+        if (!$this->isGranted(User::ROLE_ADMIN)) {
+            throw new AccessDeniedHttpException();
+        }
+    }
+
+    /**
+     * @throws AccessDeniedHttpException
+     */
+    protected function requireUser(): void
+    {
+        if (!$this->isGranted(User::ROLE_USER)) {
+            throw new AccessDeniedHttpException();
         }
     }
 }

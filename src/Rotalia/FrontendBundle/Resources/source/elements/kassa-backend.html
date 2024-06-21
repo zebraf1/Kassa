@@ -263,9 +263,9 @@
                     return response.headers;
                 }.bind(this));
             },
-            doProductGroupsPost: function (ProductGroupType) {
+            doProductGroupsPost: function (ProductGroup) {
                 this.$.productGroupsPost.set('body', this._formatBody({
-                    ProductGroupType: ProductGroupType
+                    ProductGroup
                 }));
                 return this.$.productGroupsPost.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this.push('productGroups', response.data.productGroup);

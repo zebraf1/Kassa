@@ -77,4 +77,17 @@ class AuthenticationControllerTest extends ControllerTestCase
             'status' => JSendResponse::JSEND_STATUS_FAIL,
         ]);
     }
+
+    public function testLogoutSuccess(): void
+    {
+        $this->loginSimpleUser();
+
+        $client = self::$client;
+        $client->jsonRequest('DELETE', '/api/authentication');
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseEqualsJsonPath([
+            'status' => JSendResponse::JSEND_STATUS_SUCCESS,
+            'data' => 'Väljalogimine õnnestus',
+        ]);
+    }
 }

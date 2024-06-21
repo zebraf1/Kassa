@@ -91,7 +91,7 @@ class ControllerTestCase extends WebTestCase
 
         foreach ($parts as $part) {
             $breadcrumbs[] = $part;
-            $this->assertArrayHasKey($part, $currentElement, 'Response does not contain data at path ' . implode('.', $breadcrumbs));
+            $this->assertArrayHasKey($part, $currentElement, 'Response does not contain data at path ' . implode('.', $breadcrumbs) . '. Got: ' . json_encode($json));
             $currentElement = $currentElement[$part];
         }
 
