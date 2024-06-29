@@ -4,3 +4,11 @@ App\Entity\Setting:
         convent: '@Convent_6'
         reference: 'currentCash'
         value: '4.33'
+    Setting_Tallinn_BankAccountOwner:
+        convent: '@Convent_6'
+        reference: 'bankAccountOwner'
+        value: 'Õlle Kassa'
+    Setting_Tallinn_BankAccountIban:
+        convent: '@Convent_6'
+        reference: 'bankAccountIban'
+        value: 'EE177700771008000000'

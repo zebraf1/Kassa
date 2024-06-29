@@ -31,8 +31,12 @@ class SettingsControllerTest extends ControllerTestCase
 
         /** @var Convent $tallinn */
         $tallinn = FixtureStore::getFixtures()['Convent_6'];
-        /** @var Setting $setting */
-        $setting = FixtureStore::getFixtures()['Setting_Tallinn_Cash'];
+        /** @var Setting $setting1 */
+        $setting1 = FixtureStore::getFixtures()['Setting_Tallinn_Cash'];
+        /** @var Setting $setting2 */
+        $setting2 = FixtureStore::getFixtures()['Setting_Tallinn_BankAccountOwner'];
+        /** @var Setting $setting3 */
+        $setting3 = FixtureStore::getFixtures()['Setting_Tallinn_BankAccountIban'];
 
         $client = self::$client;
         $client->request('GET', '/api/settings');
@@ -41,7 +45,9 @@ class SettingsControllerTest extends ControllerTestCase
             'id' => $tallinn->getId(),
             'name' => $tallinn->getName(),
             'settings' => [
-                Setting::REFERENCE_CURRENT_CASH => $setting->value,
+                Setting::REFERENCE_CURRENT_CASH => $setting1->value,
+                Setting::REFERENCE_BANK_ACCOUNT_OWNER => $setting2->value,
+                Setting::REFERENCE_BANK_ACCOUNT_IBAN => $setting3->value,
             ],
         ], 'data.activeConvents.0');
     }

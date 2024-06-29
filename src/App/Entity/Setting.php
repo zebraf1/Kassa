@@ -11,6 +11,8 @@ class Setting
 {
     public const OBJECT_CONVENT = 'convent';
     public const REFERENCE_CURRENT_CASH = 'currentCash';
+    public const REFERENCE_BANK_ACCOUNT_OWNER = 'bankAccountOwner';
+    public const REFERENCE_BANK_ACCOUNT_IBAN = 'bankAccountIban';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
