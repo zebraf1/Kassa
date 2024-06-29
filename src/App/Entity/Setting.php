@@ -82,6 +82,12 @@ class Setting
         return $this;
     }
 
+    /**
+     * Required by fixtures
+     *
+     * @param Convent $convent
+     * @return $this
+     */
     public function setConvent(Convent $convent): static
     {
         return $this

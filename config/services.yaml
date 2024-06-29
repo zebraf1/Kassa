@@ -9,6 +9,8 @@ services:
 
     App\:
         resource: '../src/App/'
+        exclude:
+            - '../src/App/Extensions' # skip autowiring for extensions
     Rotalia\FrontendBundle\:
         resource: '../src/Rotalia/FrontendBundle'
 
@@ -22,6 +24,18 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Add customer loader to persist entities after each file
+    rotalia.DoctrineOrmLoader:
+        class: 'App\Extensions\Hautelook\AliceBundle\Loader\DoctrineOrmLoader'
+        arguments:
+            $bundleResolver: '@hautelook_alice.resolver.bundle'
+            $fixtureLocator: '@hautelook_alice.locator'
+            $purgeLoader: '@hautelook_alice.data_fixtures.purge_loader'
+            $appendLoader: '@hautelook_alice.data_fixtures.append_loader'
+            $logger: '@logger'
+
+    hautelook_alice.loader.doctrine_orm_loader: '@rotalia.DoctrineOrmLoader'
 
 imports:
     - { resource: 'parameters.yaml' }

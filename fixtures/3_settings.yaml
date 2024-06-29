@@ -1,0 +1,6 @@
+# Requires convents to be persisted previously
+App\Entity\Setting:
+    Setting_Tallinn_Cash:
+        convent: '@Convent_6'
+        reference: 'currentCash'
+        value: '4.33'
