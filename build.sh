@@ -10,7 +10,7 @@ fi
 
 # shellcheck disable=SC2164
 cd src/Rotalia/FrontendBundle/Resources/source/
-bower prune
-bower install
-bower update
-polymer build
+../../../../../node_modules/bower/bin/bower prune
+../../../../../node_modules/bower/bin/bower install
+../../../../../node_modules/bower/bin/bower update
+../../../../../node_modules/polymer-cli/bin/polymer.js build

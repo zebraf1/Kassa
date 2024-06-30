@@ -34,21 +34,12 @@ Install nodejs packages
 npm install -g bower polymer-cli
 ```
 
-Create app.php from desired environment (dev, prod)
-```bash
-cd web
-ln -s app_dev.php app.php
-```
+App is started from public/index.php. Ensure this is the entry point configured by web server.
 
 Building
 --------
 
-Install web assets
-```bash
-php app/console assets:install --relative --symlink
-```
-
-Build database if needed or run sql manually from app/propel/sql/default.sql
+Build database if needed or run sql manually
 ```bash
 TODO: run doctrine migrations
 ```
