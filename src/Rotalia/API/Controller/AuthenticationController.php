@@ -23,10 +23,10 @@ class AuthenticationController extends DefaultController
     {
         $memberData = null;
         if ($user !== null) {
-            $member = null; // TODO: get Member
+            $member = $user->getMember();
             $memberData = [
                 'id' => $user->getLiikmedId(),
-                'name' => $user->getUsername(),
+                'name' => $member->getFullName(),
                 'conventId' => $member?->getConventId(),
                 'creditBalance' => $member?->getTotalCredit(),
                 'roles' => $user->getRoles(),

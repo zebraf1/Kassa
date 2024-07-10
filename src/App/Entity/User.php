@@ -55,6 +55,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
     #[ORM\OneToMany(targetEntity: UserRight::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $userRights;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'liikmed_id', nullable: false)]
+    private ?Member $member = null;
+
     public function __construct()
     {
         $this->userRights = new ArrayCollection();
@@ -219,6 +223,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
                 $userRight->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMember(): Member
+    {
+        return $this->member;
+    }
+
+    public function setMember(Member $member): static
+    {
+        $this->member = $member;
 
         return $this;
     }

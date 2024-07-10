@@ -33,6 +33,7 @@ class AuthenticationControllerTest extends ControllerTestCase
     public function testCheckSuccess(): void
     {
         $user = $this->loginSimpleUser();
+        $member = $user->getMember();
 
         $client = self::$client;
         $client->request('GET', '/api/authentication');
@@ -40,9 +41,9 @@ class AuthenticationControllerTest extends ControllerTestCase
         $this->assertResponseEqualsJsonPath([
             'member' => [
                 'id' => $user->getLiikmedId(),
-                'name' => $user->getUsername(),
-                'conventId' => null,
-                'creditBalance' => null,
+                'name' => $member->getFullName(),
+                'conventId' => $member->getConventId(),
+                'creditBalance' => $member->getTotalCredit(),
                 'roles' => $user->getRoles(),
             ],
             'pointOfSaleId' => null,

@@ -1,24 +1,77 @@
 # User, UserRight
 # (Member, MemberStatus, MemberStatusCreditLimit -> member.yaml)
 
+App\Entity\MemberStatus:
+    Status_1:
+        name: Rebane
+        prefix: Reb!
+        suffix: reb!
+    Status_2:
+        name: Lihtliige
+        prefix: L!l!
+        suffix: l!l!
+    Status_3:
+        name: Tegevliige
+        prefix: Confr!
+        suffix: Rot!
+    Status_4:
+        name: Buršvilistlane
+        prefix: B!vil!
+        suffix: Rot!
+    Status_5:
+        name: Vilistlane
+        prefix: Vil!
+        suffix: vil!
+    Status_6:
+        name: Emeriitvilistlane
+        prefix: Emer!
+        suffix: 'vil! emer!'
+
+App\Entity\Member:
+    Member_1886:
+        convent: '@Convent_6'
+        conventOrig: '@Convent_6'
+        status: '@Status_5'
+        firstName: Super
+        lastName: Oluline
+        eemal: 0
+        tegevusala: '-'
+    Member_2122:
+        convent: '@Convent_6'
+        conventOrig: '@Convent_6'
+        status: '@Status_3'
+        firstName: Keegi
+        lastName: Oluline
+        eemal: 0
+        tegevusala: '-'
+    Member_2123:
+        convent: '@Convent_6'
+        conventOrig: '@Convent_6'
+        status: '@Status_3'
+        firstName: Mitte
+        lastName: Keegi
+        lahk_pohjused_id: 1
+        eemal: 0
+        tegevusala: '-'
+
 App\Entity\User:
     User_SUPER:
         username: user1
         password: test123
         plugin: plain
-        liikmed_id: 1886 # Member_1886
+        member: '@Member_1886'
         lastLoginString: '2015-04-09 20:13:15'
     User_ADMIN:
         username: user2
         password: test123
         plugin: plain
-        liikmed_id: 1222 #Member_2122
+        member: '@Member_2122'
         lastLoginString: '2015-04-01 14:59:04'
     User_MEMBER:
         username: user3
         password: '*676243218923905CF94CB52A3C9D3EB30CE8E20D' # test123
         plugin: mysql_native_password
-        liikmed_id: 2123 #2123
+        member: '@Member_2123'
         lastLoginString: '2015-04-01 14:59:04'
 
 App\Entity\UserRight:
