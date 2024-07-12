@@ -32,6 +32,7 @@ class Convent implements \JsonSerializable
     public function __construct()
     {
         $this->productInfos = new ArrayCollection();
+        $this->memberCredits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,6 +100,12 @@ class Convent implements \JsonSerializable
     private array $settings = [];
 
     /**
+     * @var Collection<int, MemberCredit>
+     */
+    #[ORM\OneToMany(targetEntity: MemberCredit::class, mappedBy: 'convent')]
+    private Collection $memberCredits;
+
+    /**
      * @param Setting[] $settings
      * @return $this
      * @throws \RuntimeException
@@ -122,5 +129,35 @@ class Convent implements \JsonSerializable
             'name' => $this->getName(),
             'settings' => (object)$settings,
         ];
+    }
+
+    /**
+     * @return Collection<int, MemberCredit>
+     */
+    public function getMemberCredits(): Collection
+    {
+        return $this->memberCredits;
+    }
+
+    public function addMemberCredit(MemberCredit $memberCredit): static
+    {
+        if (!$this->memberCredits->contains($memberCredit)) {
+            $this->memberCredits->add($memberCredit);
+            $memberCredit->setConvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMemberCredit(MemberCredit $memberCredit): static
+    {
+        if ($this->memberCredits->removeElement($memberCredit)) {
+            // set the owning side to null (unless already changed)
+            if ($memberCredit->getConvent() === $this) {
+                $memberCredit->setConvent(null);
+            }
+        }
+
+        return $this;
     }
 }

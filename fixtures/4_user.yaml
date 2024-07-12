@@ -1,5 +1,5 @@
 # User, UserRight
-# (Member, MemberStatus, MemberStatusCreditLimit -> member.yaml)
+# Member, MemberStatus, MemberStatusCreditLimit, MemberCredit
 
 App\Entity\MemberStatus:
     Status_1:
@@ -27,6 +27,23 @@ App\Entity\MemberStatus:
         prefix: Emer!
         suffix: 'vil! emer!'
 
+App\Entity\MemberStatusCreditLimit:
+    StatusCreditLimit_1:
+        status: '@Status_1'
+        credit_limit: 0
+    StatusCreditLimit_2:
+        status: '@Status_2'
+        credit_limit: 0
+    StatusCreditLimit_3:
+        status: '@Status_3'
+        credit_limit: -25
+    StatusCreditLimit_4:
+        status: '@Status_4'
+        credit_limit: -25
+    StatusCreditLimit_5:
+        status: '@Status_5'
+        credit_limit: -50
+
 App\Entity\Member:
     Member_1886:
         convent: '@Convent_6'
@@ -53,6 +70,23 @@ App\Entity\Member:
         lahk_pohjused_id: 1
         eemal: 0
         tegevusala: '-'
+
+App\Entity\MemberCredit:
+    MemberCredit_1:
+        member: '@Member_2123'
+        convent: '@Convent_6'
+        credit: 20.0
+        comment: Test
+    MemberCredit_2:
+        member: '@Member_2123'
+        convent: '@Convent_7'
+        credit: -10
+        comment: Test
+    MemberCredit_3:
+        member: '@Member_2122'
+        convent: '@Convent_6'
+        credit: 30
+        comment: Test
 
 App\Entity\User:
     User_SUPER:

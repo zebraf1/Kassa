@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MemberRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MemberRepository::class)]
@@ -43,6 +45,17 @@ class Member
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'staatused_id', nullable: false)]
     private ?MemberStatus $status = null;
+
+    /**
+     * @var Collection<int, MemberCredit>
+     */
+    #[ORM\OneToMany(targetEntity: MemberCredit::class, mappedBy: 'member', orphanRemoval: true)]
+    private Collection $memberCredits;
+
+    public function __construct()
+    {
+        $this->memberCredits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -164,6 +177,36 @@ class Member
     public function setStatus(?MemberStatus $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MemberCredit>
+     */
+    public function getMemberCredits(): Collection
+    {
+        return $this->memberCredits;
+    }
+
+    public function addMemberCredit(MemberCredit $memberCredit): static
+    {
+        if (!$this->memberCredits->contains($memberCredit)) {
+            $this->memberCredits->add($memberCredit);
+            $memberCredit->setMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMemberCredit(MemberCredit $memberCredit): static
+    {
+        if ($this->memberCredits->removeElement($memberCredit)) {
+            // set the owning side to null (unless already changed)
+            if ($memberCredit->getMember() === $this) {
+                $memberCredit->setMember(null);
+            }
+        }
 
         return $this;
     }
