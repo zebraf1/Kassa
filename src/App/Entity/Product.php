@@ -218,6 +218,7 @@ class Product implements \JsonSerializable
         foreach ($this->getProductInfos() as $productInfo) {
             if ($productInfo->getConventId() === $conventId) {
                 $activeProductInfo = $productInfo;
+                break;
             }
         }
 

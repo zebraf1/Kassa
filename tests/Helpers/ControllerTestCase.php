@@ -97,4 +97,32 @@ class ControllerTestCase extends WebTestCase
 
         $this->assertEquals($expected, $currentElement, 'Failed asserting data at path ' . implode('.', $breadcrumbs));
     }
+
+    /**
+     * Assert array has expected number of items at given JSON path
+     * @param int $expected
+     * @param string $path
+     * @return void
+     */
+    protected function assertResponseCountJsonPath(int $expected, string $path = ''): void
+    {
+        $json = $this->getResponseBodyJson();
+
+        if (empty($path)) {
+            $this->assertCount($expected, $json);
+            return;
+        }
+
+        $currentElement = $json;
+        $breadcrumbs = [];
+        $parts = explode('.', $path);
+
+        foreach ($parts as $part) {
+            $breadcrumbs[] = $part;
+            $this->assertArrayHasKey($part, $currentElement, 'Response does not contain data at path ' . implode('.', $breadcrumbs) . '. Got: ' . json_encode($json));
+            $currentElement = $currentElement[$part];
+        }
+
+        $this->assertCount($expected, $currentElement, 'Failed asserting count at path ' . implode('.', $breadcrumbs));
+    }
 }

@@ -3,7 +3,9 @@
 namespace Rotalia\API\Controller;
 
 use App\Entity\Product;
+use App\Entity\User;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +19,7 @@ class ProductsController extends DefaultController
      * @param string|null $name
      * @param string|null $productCode
      * @param int|null $productGroupId
+     * @param int|null $active
      * @param int $page
      * @param int $limit
      * @param int|null $conventId
@@ -31,11 +34,20 @@ class ProductsController extends DefaultController
         #[MapQueryParameter] ?string $name = null,
         #[MapQueryParameter] ?string $productCode = null,
         #[MapQueryParameter] ?int $productGroupId = null,
+        #[MapQueryParameter] ?int $active = null,
         #[MapQueryParameter] int $page = 1,
         #[MapQueryParameter] int $limit = 10,
         #[MapQueryParameter] int $conventId = null,
     ): JsonResponse
     {
+        $activeConventId = $conventId;
+        if ($conventId === null) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $activeConventId = $user->getMember()->getConventId();
+        }
+        Product::$activeConventId = $activeConventId;
+
         $offset = ($page - 1) * $limit;
         $query = $productQuery->createQueryBuilder('p');
         $query
@@ -43,6 +55,14 @@ class ProductsController extends DefaultController
             ->setFirstResult($offset)
             ->setMaxResults($limit)
         ;
+
+        if ($active !== null) {
+            $query
+                ->innerJoin('p.productInfos', 'pi', Join::WITH, 'pi.status = :status AND pi.conventId = :conventId')
+                ->setParameter('status', $active ? Product::STATUS_ACTIVE : Product::STATUS_DISABLED)
+                ->setParameter('conventId', $activeConventId)
+            ;
+        }
 
         if ($name !== null) {
             $query
@@ -72,9 +92,6 @@ class ProductsController extends DefaultController
         $products = $query->getQuery()->getResult();
 
         $count = $query->select('count(distinct p.id)')->getQuery()->getSingleScalarResult();
-
-        // TODO: fallback to current user convent ID
-        Product::$activeConventId = $conventId;
 
         return $this->json([
             'products' => $products,

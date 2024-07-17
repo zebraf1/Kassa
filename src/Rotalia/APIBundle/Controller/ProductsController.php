@@ -3,15 +3,12 @@
 namespace Rotalia\APIBundle\Controller;
 
 use Rotalia\APIBundle\Form\ProductType;
-use Rotalia\APIBundle\Classes\XClassifier;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Rotalia\APIBundle\Form\FormErrorHelper;
 use Rotalia\APIBundle\Model\Product;
 use Rotalia\APIBundle\Model\ProductQuery;
-use Rotalia\APIBundle\Model\TransactionQuery;
 use Rotalia\UserBundle\Model\User;
 use Symfony\Component\HttpFoundation\Request;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
 
 /**
  * Class ProductsController
@@ -19,100 +16,6 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc; // Used for API documentation
  */
 class ProductsController extends DefaultController
 {
-    /**
-     * Fetch list of product objects (id, name, price, unit). Supports pagination (page=1, limit=100).
-     * Allows filtering active/inactive products, by name and productCode
-     *
-     * #ApiDoc(
-     *     resource = true,
-     *     statusCodes = {
-     *          200 = "Returned when successful",
-     *          403 = "Returned when user is not authenticated",
-     *     },
-     *     description="Fetch Product list",
-     *     section="Products",
-     *     filters={
-     *          {"name"="name","type"="string"},
-     *          {"name"="productCode","type"="string"},
-     *          {"name"="productGroupId","type"="int"},
-     *          {"name"="page","type"="int","default"="1"},
-     *          {"name"="limit","type"="int","default"="0"},
-     *          {"name"="active","type"="boolean"},
-     *          {"name"="resourceType","type"="string","description"="Either LIMITED or UNLIMITED"},
-     *          {"name"="conventId","type"="int","description"="Fetch price and status for another convent than member home convent"},
-     *     }
-     * )
-     *
-     * @param Request $request
-     * @return JSendResponse
-     */
-    public function listAction(Request $request)
-    {
-        $name = $request->get('name', null);
-        $productCode = $request->get('productCode', null);
-        $active = $request->get('active', null);
-        $resourceType = $request->get('resourceType', array_keys(XClassifier::$RESOURCE_TYPES));
-        $productGroupId = $request->get('productGroupId', null);
-        $page = (int)$request->get('page', 1);
-        $limit = (int)$request->get('limit', 0);
-
-        $conventId = $request->get('conventId', null);
-
-        if ($conventId === null) {
-            $conventId = $this->getMember()->getKoondisedId();
-        }
-
-        if ($active !== null) {
-            $active = filter_var($active, FILTER_VALIDATE_BOOLEAN);
-        }
-
-        /** @var Product[]|\PropelModelPager $products */
-        $productQuery = ProductQuery::create()
-            ->orderByName()
-        ;
-
-        $productQuery
-            ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
-                ->filterByActiveStatus($active)
-                ->filterByResourceType($resourceType)
-            ->endUse()
-            ->useProductInfoQuery('info', \Criteria::LEFT_JOIN)
-                ->filterByConventId($conventId)
-                ->_or()
-                ->filterByConventId(null, \Criteria::ISNULL)
-            ->endUse()
-        ;
-
-        if ($name !== null) {
-            $productQuery->filterByName('%'.$name.'%', \Criteria::LIKE);
-        }
-
-        if ($productCode !== null) {
-            $productQuery->filterByProductCode($productCode);
-        }
-
-        if ($productGroupId !== null) {
-            $productQuery->filterByProductGroupId($productGroupId);
-        }
-
-        $products = $productQuery
-            ->paginate($page, $limit)
-        ;
-
-        $resultArray = [
-            'products' => [],
-            'page' => $page,
-            'pages' => $products->getLastPage()
-        ];
-
-        foreach ($products as $product) {
-            $product->setConventId($conventId);
-            $resultArray['products'][] = $product->getAjaxData();
-        }
-
-        return JSendResponse::createSuccess($resultArray);
-    }
-
     /**
      * Finds a Product for the given ID. Returns a product object (id, name, price) or error 404 when product is not found.
      *

@@ -1,8 +1,3 @@
-RotaliaAPI_products_list:
-    path:  /products/
-    methods: [GET]
-    defaults: { _controller: Rotalia\APIBundle\Controller\ProductsController::ListAction }
-
 RotaliaAPI_products_get:
     path:  /products/{id}/
     methods: [GET]
