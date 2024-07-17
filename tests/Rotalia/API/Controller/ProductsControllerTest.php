@@ -75,7 +75,7 @@ class ProductsControllerTest extends ControllerTestCase
         $this->loginSimpleUser();
         $tartu = FixtureStore::getFixtures()['Convent_7'];
 
-        static::$client->request('GET', '/api/products', ['active' => 0, 'conventId' => $tartu->getId()]);
+        static::$client->request('GET', '/api/products', ['active' => 'false', 'conventId' => $tartu->getId()]);
         $response = static::$client->getResponse();
 
         // Premium and Tuc not returned for Tartu

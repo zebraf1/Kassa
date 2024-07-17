@@ -19,7 +19,7 @@ class ProductsController extends DefaultController
      * @param string|null $name
      * @param string|null $productCode
      * @param int|null $productGroupId
-     * @param int|null $active
+     * @param string|null $active
      * @param int $page
      * @param int $limit
      * @param int|null $conventId
@@ -34,7 +34,7 @@ class ProductsController extends DefaultController
         #[MapQueryParameter] ?string $name = null,
         #[MapQueryParameter] ?string $productCode = null,
         #[MapQueryParameter] ?int $productGroupId = null,
-        #[MapQueryParameter] ?int $active = null,
+        #[MapQueryParameter] ?string $active = null,
         #[MapQueryParameter] int $page = 1,
         #[MapQueryParameter] int $limit = 10,
         #[MapQueryParameter] int $conventId = null,
@@ -59,7 +59,7 @@ class ProductsController extends DefaultController
         if ($active !== null) {
             $query
                 ->innerJoin('p.productInfos', 'pi', Join::WITH, 'pi.status = :status AND pi.conventId = :conventId')
-                ->setParameter('status', $active ? Product::STATUS_ACTIVE : Product::STATUS_DISABLED)
+                ->setParameter('status', filter_var($active, FILTER_VALIDATE_BOOLEAN) ? Product::STATUS_ACTIVE : Product::STATUS_DISABLED)
                 ->setParameter('conventId', $activeConventId)
             ;
         }
