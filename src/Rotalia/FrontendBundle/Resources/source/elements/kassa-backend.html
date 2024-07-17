@@ -263,18 +263,18 @@
                     return response.headers;
                 }.bind(this));
             },
-            doProductGroupsPost: function (ProductGroup) {
+            doProductGroupsPost: function (productGroup) {
                 this.$.productGroupsPost.set('body', this._formatBody({
-                    ProductGroup
+                    productGroup: productGroup
                 }));
                 return this.$.productGroupsPost.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this.push('productGroups', response.data.productGroup);
                     this.fire('kassa-message-success', 'Tootegrupp edukalt lisatud');
                 }.bind(this));
             },
-            doProductGroupsPatch: function (productGroupId, ProductGroupType) {
+            doProductGroupsPatch: function (productGroupId, productGroup) {
                 this.$.productGroupsPatch.set('body', this._formatBody({
-                    ProductGroupType: ProductGroupType
+                    productGroup: productGroup
                 }));
                 this.set('_id', productGroupId);
                 return this.$.productGroupsPatch.generateRequest().completes.then(this._checkSuccess).then(function (response) {

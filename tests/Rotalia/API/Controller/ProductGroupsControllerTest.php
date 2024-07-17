@@ -2,13 +2,20 @@
 
 namespace Tests\Rotalia\API\Controller;
 
+use App\Entity\ProductGroup;
+use Hautelook\AliceBundle\PhpUnit\FixtureStore;
+use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Rotalia\API\Controller\ProductGroupsController;
 use Tests\Helpers\ControllerTestCase;
+use Tests\Helpers\EntityManagerAwareTestCase;
 
 #[CoversClass(ProductGroupsController::class)]
 class ProductGroupsControllerTest extends ControllerTestCase
 {
+    use EntityManagerAwareTestCase;
+    use RefreshDatabaseTrait;
+
     /**
      * Test list without login
      */
@@ -46,8 +53,10 @@ class ProductGroupsControllerTest extends ControllerTestCase
         $this->loginAdmin();
 
         static::$client->request('POST', '/api/productGroups', [
-            'name' => 'Uus Grupp',
-            'seq' => '33',
+            'productGroup' => [
+                'name' => 'Uus Grupp',
+                'seq' => '33',
+            ],
         ]);
 
         $response = static::$client->getResponse();
@@ -57,33 +66,107 @@ class ProductGroupsControllerTest extends ControllerTestCase
         $this->assertEquals(201, $response->getStatusCode());
     }
 
-    public function testBadRequest(): void
+    public function testCreateBadRequest1(): void
     {
-        $this->loginAdmin();
+        $this->loginSuperAdmin();
 
         static::$client->request('POST', '/api/productGroups', [
-            'name' => ''
+            'productGroup' => [
+                'name' => ' ',
+            ],
         ]);
 
         $response = static::$client->getResponse();
 
-        $this->assertResponseEqualsJsonPath('Nimi peab olema vähemalt 1 tähemärk', 'message');
+        $this->assertResponseEqualsJsonPath('Sisesta nimi', 'message');
+        $this->assertResponseEqualsJsonPath('Sisesta nimi', 'data.name');
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function testPostAccessDenied(): void
+    public function testCreateBadRequest2(): void
+    {
+        $this->loginSuperAdmin();
+
+        static::$client->request('POST', '/api/productGroups', [
+            'productGroup' => [
+                'name' => str_pad('', 101, 'a'),
+            ],
+        ]);
+
+        $response = static::$client->getResponse();
+
+        $this->assertResponseEqualsJsonPath('Nimi peab olema kuni 100 tähemärki', 'message');
+        $this->assertEquals(400, $response->getStatusCode());
+    }
+
+    public function testCreateBadRequest3(): void
+    {
+        $this->loginSuperAdmin();
+
+        static::$client->request('POST', '/api/productGroups');
+
+        $response = static::$client->getResponse();
+
+        $this->assertResponseEqualsJsonPath('Andmete salvestamine ebaõnnestus', 'message');
+        $this->assertEquals(400, $response->getStatusCode());
+    }
+
+    public function testCreateAccessDenied(): void
     {
         $this->loginSimpleUser();
 
         // Update group name and seq
         static::$client->request('POST', '/api/productGroups', [
-            'name' => 'Test',
-            'seq' => 3,
+            'productGroup' => [
+                'name' => 'Test',
+                'seq' => 3,
+            ],
         ]);
 
         $response = static::$client->getResponse();
         $this->assertEquals(403, $response->getStatusCode());
 
         $this->assertResponseEqualsJsonPath('Ligipääs puudub', 'message');
+    }
+
+    public function testUpdateSuccess(): void
+    {
+        $this->loginAdmin();
+
+        /** @var ProductGroup $group */
+        $group = FixtureStore::getFixtures()['ProductGroup_1'];
+
+        // Update group name and seq
+        static::$client->request('PATCH', '/api/productGroups/'.$group->getId(), [
+            'productGroup' => [
+                'name' => 'Test',
+                'seq' => 3,
+            ]
+        ]);
+
+        $response = static::$client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertResponseEqualsJsonPath($group->getId(), 'data.productGroup.id');
+        $this->assertResponseEqualsJsonPath('Test', 'data.productGroup.name');
+        $this->assertResponseEqualsJsonPath(3, 'data.productGroup.seq');
+    }
+
+    public function testUpdateNotFound(): void
+    {
+        $this->loginAdmin();
+
+        // Update group name and seq
+        static::$client->request('PATCH', '/api/productGroups/8888888', [
+            'productGroup' => [
+                'name' => 'Test',
+                'seq' => 3,
+            ]
+        ]);
+
+        $response = static::$client->getResponse();
+        $this->assertEquals(404, $response->getStatusCode());
+
+        $this->assertResponseEqualsJsonPath('Tootegruppi ei leitud', 'message');
     }
 }

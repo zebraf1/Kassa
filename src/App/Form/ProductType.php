@@ -1,7 +1,8 @@
 <?php
 
-namespace Rotalia\APIBundle\Form;
+namespace App\Form;
 
+use App\Entity\Product;
 use Rotalia\APIBundle\Classes\XClassifier;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,12 +10,35 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductType extends AbstractType
 {
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        // TODO: fix types and validation
+        /**
+         * App\Entity\Product:
+         * properties:
+         * name:
+         * - NotBlank: ~
+         * price:
+         * - NotBlank: ~
+         * - Type:
+         * type: numeric
+         * message: Väärtus peab olema number.
+         * - GreaterThanOrEqual: 0
+         * amount_type:
+         * - NotBlank: ~
+         * amount:
+         * - NotBlank: ~
+         * - Type:
+         * type: numeric
+         * message: Väärtus peab olema number.
+         * - GreaterThanOrEqual: 0
+         * status:
+         * - NotBlank: ~
+         * getters:
+         * productGroupValid:
+         * - 'IsTrue':
+         * message: 'Tootegruppi pole olemas'
+         */
         $builder
             ->add('name', 'text', array(
                 'label' => 'Nimi',
@@ -60,20 +84,15 @@ class ProductType extends AbstractType
         ;
     }
 
-    public function getName()
+    public function getBlockPrefix(): string
     {
         return 'ProductType';
     }
 
-    /**
-     * Configures the options for this type.
-     *
-     * @param OptionsResolver $resolver The resolver for the options
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rotalia\APIBundle\Model\Product',
+            'data_class' => Product::class,
         ));
     }
 }

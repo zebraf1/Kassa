@@ -1,18 +1,14 @@
 <?php
 
-namespace Rotalia\APIBundle\Form;
+namespace App\Form;
 
-use Rotalia\APIBundle\Model\ReportPeer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ReportType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('cash', 'number')
@@ -31,15 +27,12 @@ class ReportType extends AbstractType
         ;
     }
 
-    public function getName()
+    public function getBlockPrefix(): string
     {
         return 'Report';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => 'Rotalia\APIBundle\Model\Report',

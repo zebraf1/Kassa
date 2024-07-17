@@ -2,16 +2,17 @@
 
 namespace Rotalia\API\Controller;
 
-use App\Dto\ProductGroupDto;
 use App\Entity\ProductGroup;
 use App\Repository\ProductGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use App\Form\FormHelper;
+use App\Form\ProductGroupType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 class ProductGroupsController extends DefaultController
@@ -48,32 +49,45 @@ class ProductGroupsController extends DefaultController
     public function create(
         EntityManagerInterface $em,
         Request $request,
-        ValidatorInterface $validator,
     ): JsonResponse
     {
-        $this->requireAdmin();
-        $data = $request->getPayload()->all();
+        return $this->handleSubmit(new ProductGroup(), $request, $em);
+    }
 
-        $dto = new ProductGroupDto(
-            $data['name'] ?? '',
-            $data['seq'] ?? null,
-        );
-        $violationList = $validator->validate($dto);
-        if ($violationList->has(0)) {
-            return $this->json([
-                'message' => $violationList->get(0)->getMessage(),
-            ], 400);
+    /**
+     * @throws Throwable
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
+    #[Route('/productGroups/{id}', methods: ['PATCH'])]
+    public function update(
+        EntityManagerInterface $em,
+        ProductGroupRepository $groupQuery,
+        Request $request,
+        int $id,
+    ): JsonResponse
+    {
+        $group = $groupQuery->findOneBy(['id' => $id]);
+
+        if (!$group) {
+            return JSendResponse::createFail('Tootegruppi ei leitud', 404);
         }
-        $group = new ProductGroup();
-        $group
-            ->setName($dto->name)
-            ->setSeq($dto->seq)
-        ;
 
-        $em->persist($group);
+        return $this->handleSubmit($group, $request, $em);
+    }
 
-        return $this->json([
-            'productGroup' => $group,
-        ], 201);
+    /**
+     * @throws Throwable
+     */
+    private function handleSubmit(ProductGroup $productGroup, Request $request, EntityManagerInterface $em): JSendResponse
+    {
+        $this->requireAdmin();
+
+        $form = $this->createForm(ProductGroupType::class, $productGroup, [
+            'csrf_protection' => false, // Disable for REST api
+            'method' => $request->getMethod(),
+        ]);
+
+        return FormHelper::handleFormSubmit($form, $request, $em);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rotalia\APIBundle\Form;
+namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,7 +9,7 @@ use Rotalia\APIBundle\Model\ReportRow;
 
 class ReportRowType extends AbstractType
 {
-    public function getName(): string
+    public function getBlockPrefix(): string
     {
         return 'ReportRow';
     }
@@ -17,14 +17,14 @@ class ReportRowType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'data_class' => ReportRow::class,
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('count', 'number')

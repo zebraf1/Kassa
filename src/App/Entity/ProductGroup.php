@@ -6,6 +6,7 @@ use App\Repository\ProductGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductGroupRepository::class)]
 #[ORM\Table(name: 'ollekassa_product_group')]
@@ -17,6 +18,8 @@ class ProductGroup implements \JsonSerializable
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Sisesta nimi')]
+    #[Assert\Length(min: 1, max: 100, minMessage: 'Nimi peab olema vähemalt 1 tähemärk', maxMessage: 'Nimi peab olema kuni 100 tähemärki')]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
@@ -43,9 +46,9 @@ class ProductGroup implements \JsonSerializable
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
-        $this->name = $name;
+        $this->name = trim($name);
 
         return $this;
     }

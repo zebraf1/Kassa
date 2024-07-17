@@ -1,8 +1,6 @@
 Kassa
 =====
 
-[![Build Status](https://travis-ci.com/zebraf1/Kassa.svg?branch=master)](https://travis-ci.com/zebraf1/Kassa)
-
 Inventory system
 
 Clone Repository
@@ -27,11 +25,11 @@ Note: if you install composer to a runnable directory (ie --install-dir=/usr/bin
 composer install
 ```
 
-At the end of the installation fill in parameters (saved to app/config/parameters.yml)
+At the end of the installation fill in parameters (saved to .env.local)
 
 Install nodejs packages
 ```bash
-npm install -g bower polymer-cli
+npm install bower polymer-cli
 ```
 
 App is started from public/index.php. Ensure this is the entry point configured by web server.
@@ -49,7 +47,7 @@ Run migrations
 php bin/console TODO for doctrine
 ```
 
-Build frontend
+Build frontend - bower installs packages, polymer builds code
 ```bash
 cd src/Rotalia/FrontendBundle/Resources/source/
 bower prune
@@ -76,4 +74,14 @@ See coverage:
 ```bash
 cd tests/coverage/Rotalia/API
 open index.html
+```
+
+Add fields to a model:
+```bash
+php bin/console make:entity
+```
+
+Import fixtures to local database (add --env=test if needed):
+```
+php bin/console hautelook:fixtures:load
 ```

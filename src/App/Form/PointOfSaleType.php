@@ -1,17 +1,17 @@
 <?php
 
-namespace Rotalia\APIBundle\Form;
+namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PointOfSaleType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', 'text', [
@@ -21,15 +21,12 @@ class PointOfSaleType extends AbstractType
         ;
     }
 
-    public function getName()
+    public function getBlockPrefix(): string
     {
         return 'PointOfSaleType';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'data_class' => 'Rotalia\APIBundle\Model\PointOfSale',

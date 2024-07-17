@@ -11,6 +11,7 @@ services:
         resource: '../src/App/'
         exclude:
             - '../src/App/Extensions' # skip autowiring for extensions
+            - '../src/App/Form' # skip autowiring for forms
     Rotalia\FrontendBundle\:
         resource: '../src/Rotalia/FrontendBundle'
 

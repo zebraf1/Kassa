@@ -1,17 +1,14 @@
 <?php
 
-namespace Rotalia\APIBundle\Form;
+namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TransferType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('memberId', 'integer', [
@@ -26,15 +23,12 @@ class TransferType extends AbstractType
         ;
     }
 
-    public function getName()
+    public function getBlockPrefix(): string
     {
         return 'TransferType';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'data_class' => 'Rotalia\APIBundle\Model\Transfer',
