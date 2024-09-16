@@ -74,8 +74,10 @@
                     if (item.hasOwnProperty(key)) {
                         newItem[key] = item[key];
                         if (mapping.hasOwnProperty(key)) {
-                            // Assume there is "Id" in the end of key
-                            newItem[key.slice(0, -2)] = this.mapIdToValue(item[key], mapping[key][0], mapping[key][1])
+                            // Strip Id from or add Name to end of key
+                            // This ensures Id and name are both available on the object
+                            const newKey = key.endsWith('Id') ? key.slice(0, -2) : `${key}Name`;
+                            newItem[newKey] = this.mapIdToValue(item[key], mapping[key][0], mapping[key][1]);
                         }
                     }
                 }
@@ -83,7 +85,7 @@
                 newItems.push(newItem)
             }
 
-            return newItems
+            return newItems;
         },
         mapIdToValue: function (id, items, key) {
             for (let i = 0; i < items.length; i++) {

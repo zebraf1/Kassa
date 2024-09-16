@@ -3,6 +3,9 @@
 namespace App\Form;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,4 +69,25 @@ class FormHelper
 
         return JSendResponse::createFail(reset($errors), 400, $errors);
     }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \Throwable
+     */
+    public static function submitForm(
+        ContainerInterface $container,
+        Request $request,
+        EntityManagerInterface $em,
+        string $type,
+        object $data,
+    ): JSendResponse
+    {
+        $form = $container->get('form.factory')->create($type, $data, [
+            'method' => $request->getMethod(),
+        ]);
+
+        return self::handleFormSubmit($form, $request, $em);
+    }
+
 }

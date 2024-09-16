@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ConventRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,18 +20,6 @@ class Convent implements \JsonSerializable
 
     #[ORM\Column(name: 'kassa_aktiivne', type: Types::INTEGER, length: 1, nullable: true)]
     private ?int $isActive = 0;
-
-    /**
-     * @var Collection<int, ProductInfo>
-     */
-    #[ORM\OneToMany(targetEntity: ProductInfo::class, mappedBy: 'convent', orphanRemoval: true)]
-    private Collection $productInfos;
-
-    public function __construct()
-    {
-        $this->productInfos = new ArrayCollection();
-        $this->memberCredits = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -65,45 +51,9 @@ class Convent implements \JsonSerializable
     }
 
     /**
-     * @return Collection<int, ProductInfo>
-     */
-    public function getProductInfos(): Collection
-    {
-        return $this->productInfos;
-    }
-
-    public function addProductInfo(ProductInfo $productInfo): static
-    {
-        if (!$this->productInfos->contains($productInfo)) {
-            $this->productInfos->add($productInfo);
-            $productInfo->setConvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProductInfo(ProductInfo $productInfo): static
-    {
-        if ($this->productInfos->removeElement($productInfo)) {
-            // set the owning side to null (unless already changed)
-            if ($productInfo->getConvent() === $this) {
-                $productInfo->setConvent(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @var Setting[]
      */
     private array $settings = [];
-
-    /**
-     * @var Collection<int, MemberCredit>
-     */
-    #[ORM\OneToMany(targetEntity: MemberCredit::class, mappedBy: 'convent')]
-    private Collection $memberCredits;
 
     /**
      * @param Setting[] $settings
@@ -129,35 +79,5 @@ class Convent implements \JsonSerializable
             'name' => $this->getName(),
             'settings' => (object)$settings,
         ];
-    }
-
-    /**
-     * @return Collection<int, MemberCredit>
-     */
-    public function getMemberCredits(): Collection
-    {
-        return $this->memberCredits;
-    }
-
-    public function addMemberCredit(MemberCredit $memberCredit): static
-    {
-        if (!$this->memberCredits->contains($memberCredit)) {
-            $this->memberCredits->add($memberCredit);
-            $memberCredit->setConvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMemberCredit(MemberCredit $memberCredit): static
-    {
-        if ($this->memberCredits->removeElement($memberCredit)) {
-            // set the owning side to null (unless already changed)
-            if ($memberCredit->getConvent() === $this) {
-                $memberCredit->setConvent(null);
-            }
-        }
-
-        return $this;
     }
 }

@@ -17,52 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 class ProductsController extends DefaultController
 {
     /**
-     * Finds a Product for the given ID. Returns a product object (id, name, price) or error 404 when product is not found.
-     *
-     * #ApiDoc(
-     *     resource = true,
-     *     statusCodes = {
-     *          200 = "Returned when successful",
-     *          400 = "Returned when ID is not valid",
-     *          404 = "Returned when Product for ID is not found",
-     *     },
-     *     description="Fetch Product for ID",
-     *     section="Products",
-     *     filters={
-     *          {"name"="conventId","type"="int","description"="Fetch price and status for another convent than member home convent"},
-     *     }
-     * )
-     *
-     * @param Request $request
-     * @param $id
-     * @return JSendResponse
-     */
-    public function getAction(Request $request, $id)
-    {
-        if (empty($id)) {
-            return JSendResponse::createFail('ID puudub', 400);
-        }
-
-        $conventId = $request->get('conventId', null);
-
-        if ($conventId === null) {
-            $conventId = $this->getMember()->getKoondisedId();
-        }
-
-        $product = ProductQuery::create()->findPk($id);
-
-        if ($product === null) {
-            return JSendResponse::createFail('Toodet ei leitud', 404);
-        }
-
-        $product->setConventId($conventId);
-
-        return JSendResponse::createSuccess([
-            'product' => $product->getAjaxData(),
-        ]);
-    }
-
-    /**
      * Creates a new Product
      *
      * #ApiDoc(

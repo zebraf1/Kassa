@@ -55,17 +55,6 @@ class BaseController extends AbstractController
     }
 
     /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
-    {
-        /** @var LoggerInterface $logger */
-        $logger = $this->get('logger');
-
-        return $logger;
-    }
-
-    /**
      * @param Request $request
      * @return null|\Rotalia\APIBundle\Model\PointOfSale
      */

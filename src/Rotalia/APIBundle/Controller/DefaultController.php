@@ -14,20 +14,6 @@ namespace Rotalia\APIBundle\Controller;
  */
 class DefaultController extends BaseController
 {
-    protected function get(string $service)
-    {
-        return $this->container->get($service);
-    }
-
-    /**
-     * Note: CsrfProviderInterface is deprecated. Upgrade FosUserBundle to fix this and use CsrfTokenManagerInterface
-     * @return CsrfProviderInterface
-     */
-    protected function getCSRFProvider()
-    {
-        return $this->get('security.csrf.token_manager'); // todo: use security.csrf.token_manager since symfony 3.0
-    }
-
     /**
      * @param $query ModelCriteria
      * @param $limit integer

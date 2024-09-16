@@ -53,18 +53,6 @@ class User extends BaseUser implements UserInterface
     {
     }
 
-    /**
-     * TODO: not used?
-     * @return array
-     */
-//    public function getAjaxData()
-//    {
-//        return [
-//            'id' => $this->getId(),
-//            'username' => $this->getUsername(),
-//            'roles' => $this->getRoles(),
-//        ];
-//    }
     public function getUserIdentifier(): string
     {
         return $this->getUsername();

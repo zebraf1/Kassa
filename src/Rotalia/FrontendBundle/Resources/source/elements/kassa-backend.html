@@ -236,7 +236,7 @@
             doProductsPost: function (conventId, productType) {
                 this.$.productsPost.set('body', this._formatBody({
                     conventId: conventId,
-                    ProductType: productType
+                    product: productType,
                 }));
                 return this.$.productsPost.generateRequest().completes.then(this._checkSuccess).then(function (response) {
                     this.push('products', response.data.product);
@@ -246,7 +246,7 @@
             doProductsPatch: function (conventId, productId, productType) {
                 this.$.productsPatch.set('body', this._formatBody({
                     conventId: conventId,
-                    ProductType: productType
+                    product: productType
                 }));
                 this.set('_id', productId);
                 return this.$.productsPatch.generateRequest().completes.then(this._checkSuccess).then(function (response) {

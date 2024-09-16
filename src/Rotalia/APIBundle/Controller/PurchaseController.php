@@ -221,15 +221,12 @@ class PurchaseController extends DefaultController
     private function validateBasketItem($item)
     {
         if (!isset($item['id'])) {
-            $this->getLogger()->warning('Invalid id for basket item: '.json_encode($item));
             throw new Exception('ID puudub');
         }
         if (!isset($item['count']) || !ctype_digit($item['count']) || $item['count'] <= 0) {
-            $this->getLogger()->warning('Invalid count for basket item: '.json_encode($item));
             throw new Exception('Vigane kogus '.$item['count']);
         }
         if (!isset($item['price'])) {
-            $this->getLogger()->warning('Invalid price for basket item: '.json_encode($item));
             throw new Exception('Hind puudub');
         }
     }

@@ -7,20 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'ollekassa_product')]
-class Product implements \JsonSerializable
+class Product implements JsonSerializable
 {
-    public const STATUS_ACTIVE = 'ACTIVE';
-    public const STATUS_DISABLED = 'DISABLED';
-
-    public const AMOUNT_TYPE_PIECE = 'PIECE';
-    public const AMOUNT_TYPE_LITRE = 'LITRE';
-    public const AMOUNT_TYPE_CENTI_LITRE = 'CENTI_LITRE';
-    public const AMOUNT_TYPE_KG = 'KG';
-    public const AMOUNT_TYPE_G = 'G';
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -32,20 +24,17 @@ class Product implements \JsonSerializable
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $productCode = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $productGroupId = null;
-
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $price = null;
+    private ?string $price = '0'; // TODO: remove from database
 
     #[ORM\Column(length: 50)]
-    private ?string $amountType = self::AMOUNT_TYPE_PIECE;
+    private ?string $amountType = Enum\ProductAmountType::PIECE->value;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?float $amount = 1.00;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $status = self::STATUS_DISABLED; // TODO: is it used?
+    private string $status; // TODO: remove from database
 
     #[ORM\Column(nullable: true)]
     private ?int $seq = null;
@@ -53,8 +42,9 @@ class Product implements \JsonSerializable
     /**
      * @var Collection<int, ProductInfo>
      */
-    #[ORM\OneToMany(targetEntity: ProductInfo::class, mappedBy: 'product', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ProductInfo::class, mappedBy: 'product', cascade: ['persist'], orphanRemoval: true)]
     private Collection $productInfos;
+
     public static ?int $activeConventId;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
@@ -94,26 +84,19 @@ class Product implements \JsonSerializable
         return $this;
     }
 
-    public function getProductGroupId(): ?int
-    {
-        return $this->productGroupId;
-    }
-
-    public function setProductGroupId(?int $productGroupId): static
-    {
-        $this->productGroupId = $productGroupId;
-
-        return $this;
-    }
-
     public function getPrice(): ?string
     {
-        return $this->price;
+        return $this->getActiveProductInfo()->getPrice();
     }
 
+    /**
+     * @see \App\Form\ProductType
+     * @param string $price
+     * @return $this
+     */
     public function setPrice(string $price): static
     {
-        $this->price = $price;
+        $this->getActiveProductInfo()->setPrice($price);
 
         return $this;
     }
@@ -142,14 +125,14 @@ class Product implements \JsonSerializable
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
-        return $this->status;
+        return $this->getActiveProductInfo()->getStatus();
     }
 
-    public function setStatus(?string $status): static
+    public function setStatus($status): static
     {
-        $this->status = $status;
+        $this->getActiveProductInfo()->setStatus($status);
 
         return $this;
     }
@@ -208,35 +191,71 @@ class Product implements \JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function getActiveProductInfo(): ProductInfo
     {
-        /** @var ProductInfo $activeProductInfo */
-        $activeProductInfo = null;
-        $conventId = self::$activeConventId;
-
-        /** @var ProductInfo $productInfo */
         foreach ($this->getProductInfos() as $productInfo) {
-            if ($productInfo->getConventId() === $conventId) {
-                $activeProductInfo = $productInfo;
-                break;
+            if ($productInfo->getConventId() === self::$activeConventId) {
+                return $productInfo;
             }
         }
 
+        $productInfo = new ProductInfo();
+        $productInfo->setConventId(self::$activeConventId);
+        $this->addProductInfo($productInfo);
+
+        return $productInfo;
+    }
+
+    public function getResourceType(): string
+    {
+        return $this->getActiveProductInfo()->getResourceType();
+    }
+
+    public function setResourceType(string $resourceType): self
+    {
+        $this->getActiveProductInfo()->setResourceType($resourceType);
+
+        return $this;
+    }
+
+    public function getWarehouseCount(): ?float
+    {
+        return $this->getActiveProductInfo()->getWarehouseCount();
+    }
+
+    public function setWarehouseCount(?float $count): self
+    {
+        $this->getActiveProductInfo()->setWarehouseCount($count);
+
+        return $this;
+    }
+
+    public function getStorageCount(): ?float
+    {
+        return $this->getActiveProductInfo()->getStorageCount();
+    }
+
+    public function setStorageCount(?float $count): self
+    {
+        $this->getActiveProductInfo()->setStorageCount($count);
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
             'productCodes' => !empty($this->getProductCode()) ? explode(',', $this->getProductCode()) : [],
-            'price' => $activeProductInfo ? round($activeProductInfo->getPrice(), 2) : null,
+            'price' => round((float)$this->getPrice(), 2),
             'amount' => round($this->getAmount(), 2),
             'amountType' => $this->getAmountType(),
-            'status' => $activeProductInfo ? $activeProductInfo->getStatus() : null,
-            'productGroupId' => $this->getProductGroupId(),
-            'inventoryCounts' => $activeProductInfo ?
-                [
-                    'warehouse' => $activeProductInfo->getWarehouseCount(),
-                    'storage' => $activeProductInfo->getStorageCount(),
-                ] : null,
-            'resourceType' => $activeProductInfo ? $activeProductInfo->getResourceType() : null,
+            'status' => $this->getStatus(),
+            'productGroup' => $this->getProductGroup()?->getId(),
+            'warehouseCount' => $this->getWarehouseCount(),
+            'storageCount' => $this->getStorageCount(),
+            'resourceType' => $this->getResourceType(),
         ];
     }
 }

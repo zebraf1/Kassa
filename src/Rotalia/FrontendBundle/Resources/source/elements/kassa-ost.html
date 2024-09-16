@@ -167,11 +167,11 @@
 
                     for (i = 0; i < products.length; i++) {
                         const product = products[i];
-                        if (!groups[product.productGroupId]) {
-                            groups[product.productGroupId] = [];
+                        if (!groups[product.productGroup]) {
+                            groups[product.productGroup] = [];
                         }
 
-                        groups[product.productGroupId].push(product);
+                        groups[product.productGroup].push(product);
                     }
 
                     const result = [];

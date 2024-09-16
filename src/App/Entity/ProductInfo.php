@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ProductResourceType;
+use App\Entity\Enum\ProductStatus;
 use App\Repository\ProductInfoRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,9 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'ollekassa_product_info')]
 class ProductInfo
 {
-    public const RESOURCE_TYPE_LIMITED = 'LIMITED';
-    public const RESOURCE_TYPE_UNLIMITED = 'UNLIMITED';
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -35,13 +34,11 @@ class ProductInfo
     private ?float $storageCount = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $status = Product::STATUS_DISABLED;
+    private string $status = ProductStatus::DISABLED->value;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $resourceType = self::RESOURCE_TYPE_LIMITED;
+    private ?string $resourceType = ProductResourceType::LIMITED->value;
 
-    #[ORM\ManyToOne(inversedBy: 'productInfos')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?Convent $convent = null;
 
     public function getId(): ?int
@@ -80,7 +77,7 @@ class ProductInfo
 
     public function setPrice(string $price): static
     {
-        $this->price = $price;
+        $this->price = (string)(float)$price;
 
         return $this;
     }
@@ -141,6 +138,7 @@ class ProductInfo
     public function setConvent(?Convent $convent): static
     {
         $this->convent = $convent;
+        $this->setConventId($convent?->getId());
 
         return $this;
     }

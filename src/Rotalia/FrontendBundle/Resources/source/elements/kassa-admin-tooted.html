@@ -13,83 +13,83 @@
 <link rel="import" href="kassa-material.html">
 
 <dom-module id="kassa-admin-tooted">
-	<template>
-		<style>
-			kassa-material {
-				margin-bottom: 1em;
-			}
-		</style>
+    <template>
+        <style>
+            kassa-material {
+                margin-bottom: 1em;
+            }
+        </style>
 
-		<kassa-material direction="horizontal">
-			<paper-toggle-button checked="{{isActive}}">Aktiivsed tooted</paper-toggle-button>
-		</kassa-material>
+        <kassa-material direction="horizontal">
+            <paper-toggle-button checked="{{isActive}}">Aktiivsed tooted</paper-toggle-button>
+        </kassa-material>
 
-		<kassa-table items="[[_mapIdsToValues(products.*, productGroups)]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
-		             convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details-name="kassa-admin-tooted">
-			<vaadin-grid-column flex-grow="0" width="3em">
-				<template class="header"><span style="text-align: right;">Id</span></template>
-				<template>
-					<span style="text-align: right;">[[item.id]]</span>
-				</template>
-			</vaadin-grid-column>
-			<vaadin-grid-column flex-grow="10">
-				<template class="header">
-					<vaadin-grid-filter path="name" value="{{_nameFilter}}">
-						<paper-input label="Toode" value="{{_nameFilter}}" slot="filter" no-label-float></paper-input>
-					</vaadin-grid-filter>
-				</template>
-				<template>
-					<span>[[item.name]]</span>
-				</template>
-			</vaadin-grid-column>
-			<vaadin-grid-column flex-grow="0">
-				<template class="header"><span style="text-align: right;">Suurus</span></template>
-				<template>
-					<span style="text-align: right;">[[formatAmount(item.amount, item.amountType)]]</span>
-				</template>
-			</vaadin-grid-column>
-			<vaadin-grid-column flex-grow="0">
-				<template class="header">Grupp</template>
-				<template>
-					<span>[[item.productGroup]]</span>
-				</template>
-			</vaadin-grid-column>
-			<vaadin-grid-column flex-grow="0">
-				<template class="header"><span style="text-align: right;">Hind</span></template>
-				<template>
-					<span style="text-align: right;">[[eur2str(item.price)]]</span>
-				</template>
-			</vaadin-grid-column>
-		</kassa-table>
+        <kassa-table items="[[_mapIdsToValues(products.*, productGroups)]]" edit-func="doProductsPatch" add-func="doProductsPost" dialog="[[dialog]]"
+                     convent-id="[[conventId]]" scroll-target="[[scrollTarget]]" row-details-name="kassa-admin-tooted">
+            <vaadin-grid-column flex-grow="0" width="3em">
+                <template class="header"><span style="text-align: right;">Id</span></template>
+                <template>
+                    <span style="text-align: right;">[[item.id]]</span>
+                </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="10">
+                <template class="header">
+                    <vaadin-grid-filter path="name" value="{{_nameFilter}}">
+                        <paper-input label="Toode" value="{{_nameFilter}}" slot="filter" no-label-float></paper-input>
+                    </vaadin-grid-filter>
+                </template>
+                <template>
+                    <span>[[item.name]]</span>
+                </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="0">
+                <template class="header"><span style="text-align: right;">Suurus</span></template>
+                <template>
+                    <span style="text-align: right;">[[formatAmount(item.amount, item.amountType)]]</span>
+                </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="0">
+                <template class="header">Grupp</template>
+                <template>
+                    <span>[[item.productGroupName]]</span>
+                </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="0">
+                <template class="header"><span style="text-align: right;">Hind</span></template>
+                <template>
+                    <span style="text-align: right;">[[eur2str(item.price)]]</span>
+                </template>
+            </vaadin-grid-column>
+        </kassa-table>
 
-		<paper-dialog id="dialog" modal style="max-width: 350px">
-			<kassa-material direction="vertical">
-				<paper-input data-field="name" label="Nimi" type="text"></paper-input>
-				<div style="display: flex; flex-flow: row nowrap; align-items: flex-end">
-					<paper-input data-field="amount" label="Suurus" type="number" min="0"
-					             style="flex: 1 1 50%"></paper-input>
-					<vaadin-combo-box data-field="amountType" label="Ühik" item-label-path="label"
-					                  item-value-path="value" items="[[productAmountTypeNames]]"
-					                  style="flex: 1 1 40%; margin-left: 0.8em"></vaadin-combo-box>
-				</div>
-				<vaadin-combo-box data-field="productGroupId" label="Grupp" item-label-path="name" item-value-path="id"
-				                  items="[[productGroups]]"></vaadin-combo-box>
-				<paper-input data-field="price" label="Hind (€)" type="number" min="0" step="0.1"></paper-input>
-				<div style="display: flex; flex-flow: row nowrap; align-items: flex-end">
-					<paper-toggle-button data-field="resourceType" data-true-value="UNLIMITED"
-					                     data-false-value="LIMITED">Lõputu?</paper-toggle-button>
-					<paper-toggle-button data-field="status" data-true-value="ACTIVE" data-false-value="DISABLED"
-					                     style="margin-left: 1.8em">Käibel?</paper-toggle-button>
-				</div>
-			</kassa-material>
-			<div class="buttons">
-				<paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]">Sulge</paper-button>
-				<kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}">Salvesta</kassa-confirm-button>
-			</div>
-		</paper-dialog>
+        <paper-dialog id="dialog" modal style="max-width: 350px">
+            <kassa-material direction="vertical">
+                <paper-input data-field="name" label="Nimi" type="text"></paper-input>
+                <div style="display: flex; flex-flow: row nowrap; align-items: flex-end">
+                    <paper-input data-field="amount" label="Suurus" type="number" min="0"
+                                 style="flex: 1 1 50%"></paper-input>
+                    <vaadin-combo-box data-field="amountType" label="Ühik" item-label-path="label"
+                                      item-value-path="value" items="[[productAmountTypeNames]]"
+                                      style="flex: 1 1 40%; margin-left: 0.8em"></vaadin-combo-box>
+                </div>
+                <vaadin-combo-box data-field="productGroup" label="Grupp" item-label-path="name" item-value-path="id"
+                                  items="[[productGroups]]"></vaadin-combo-box>
+                <paper-input data-field="price" label="Hind (€)" type="number" min="0" step="0.1"></paper-input>
+                <div style="display: flex; flex-flow: row nowrap; align-items: flex-end">
+                    <paper-toggle-button data-field="resourceType" data-true-value="UNLIMITED"
+                                         data-false-value="LIMITED">Lõputu?</paper-toggle-button>
+                    <paper-toggle-button data-field="status" data-true-value="ACTIVE" data-false-value="DISABLED"
+                                         style="margin-left: 1.8em">Käibel?</paper-toggle-button>
+                </div>
+            </kassa-material>
+            <div class="buttons">
+                <paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]">Sulge</paper-button>
+                <kassa-confirm-button style="margin-right: 16px" confirmed="{{_isRequestLoading}}">Salvesta</kassa-confirm-button>
+            </div>
+        </paper-dialog>
 
-	</template>
-	<script>
+    </template>
+    <script>
         Polymer({
             is: "kassa-admin-tooted",
             properties: {
@@ -115,21 +115,21 @@
             ready: function () {
                 this.set('dialog', this.$.dialog);
             },
-	        setUp: function () {
+            setUp: function () {
                 this.fire('kassa-backend-action', {action: 'doProductGroupsGet'});
             },
-	        cleanUp: function() {
+            cleanUp: function() {
                 this.set('products', []);
-	        },
+            },
             _loadProducts: function (pageActive, isActive, conventId) {
                 if (pageActive) {
                     this.fire('kassa-page-loading');
                     this.cleanUp();
                     this.fire('kassa-backend-action', {
                         action: 'doProductsGet',
-	                    conventId: conventId,
-	                    isActive: isActive,
-	                    onSuccess: function () {
+                        conventId: conventId,
+                        isActive: isActive,
+                        onSuccess: function () {
                             this.fire('kassa-page-ready', {page: this})
                         }.bind(this)
                     });
@@ -139,14 +139,14 @@
                 products = products.base;
                 if ((products !== undefined) && (productGroups !== undefined)) {
                     return this.mapIdsToValues(products, {
-                        'productGroupId': [productGroups, 'name']
-                    })
+                        'productGroup': [productGroups, 'name'],
+                    });
                 }
 
-                return []
+                return [];
             }
         })
-	</script>
+    </script>
 </dom-module>
 
 
