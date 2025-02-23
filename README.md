@@ -33,13 +33,23 @@ npm install bower polymer-cli
 ```
 
 App is started from public/index.php. Ensure this is the entry point configured by web server.
+For Apache there is a public/.htaccess file which configures all traffic to index.php.
+ModRewrite must be enabled. Find your Apache config file (httpd.conf) and make sure to have these enabled:
+```
+LoadModule alias_module modules/mod_alias.so
+LoadModule rewrite_module modules/mod_rewrite.so
+```
 
-Building
+Database
 --------
 
 Build database if needed or run sql manually
+```
+mysql> create database kassa
+```
+Create database tables by running all statements in default.sql:
 ```bash
-TODO: run doctrine migrations
+mysql < app/propel/sql/default.sql
 ```
 
 Run migrations
@@ -82,6 +92,6 @@ php bin/console make:entity
 ```
 
 Import fixtures to local database (add --env=test if needed):
-```
+```bash
 php bin/console hautelook:fixtures:load
 ```

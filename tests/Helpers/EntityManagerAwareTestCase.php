@@ -7,10 +7,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Class should extend KernelTestCase or provide Kernel
+ * @property ?KernelInterface $kernel
  */
 trait EntityManagerAwareTestCase
 {
-    protected static ?KernelInterface $kernel = null;
     protected ?EntityManagerInterface $entityManager;
 
     /**

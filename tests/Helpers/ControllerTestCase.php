@@ -18,11 +18,6 @@ class ControllerTestCase extends WebTestCase
         self::$client->followRedirects();
     }
 
-    public static function setUpBeforeClass(): void
-    {
-        // TODO: load fixtures
-    }
-
     /**
      * @param string $username
      * @return User

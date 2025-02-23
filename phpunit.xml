@@ -24,11 +24,11 @@
         <server name="SYMFONY_PHPUNIT_VERSION" value="9.6" />
     </php>
 
-    <coverage>
-        <report>
-            <html outputDirectory="tests/coverage" />
-        </report>
-    </coverage>
+<!--    <coverage>-->
+<!--        <report>-->
+<!--            <html outputDirectory="tests/coverage" />-->
+<!--        </report>-->
+<!--    </coverage>-->
 
     <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
         <include>
