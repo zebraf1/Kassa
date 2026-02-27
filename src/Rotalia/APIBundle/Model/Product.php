@@ -244,6 +244,7 @@ class Product extends BaseProduct
                     'storage' => $productInfo->getStorageCount(),
                 ] : null,
             'resourceType' => $productInfo ? $productInfo->getResourceType() : null,
+            'seq' => $this->getSeq(),
         ];
     }
 

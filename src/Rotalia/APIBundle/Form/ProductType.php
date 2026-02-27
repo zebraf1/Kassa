@@ -57,6 +57,10 @@ class ProductType extends AbstractType
                 'label' => 'Toote grupp',
                 'required' => false,
             ])
+            ->add('seq', 'text', array(
+                'label' => 'Järjekord',
+                'required' => false,
+            ))
         ;
     }
 

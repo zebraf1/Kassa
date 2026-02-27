@@ -60,6 +60,12 @@
 					<span style="text-align: right;">[[eur2str(item.price)]]</span>
 				</template>
 			</vaadin-grid-column>
+			<vaadin-grid-column  flex-grow="0">
+				<template class="header"><span style="text-align: right;">Järjekord</span></template>
+				<template>
+					<span style="text-align: right;">[[item.seq]]</span>
+				</template>
+			</vaadin-grid-column>
 		</kassa-table>
 
 		<paper-dialog id="dialog" modal style="max-width: 350px">
@@ -81,6 +87,7 @@
 					<paper-toggle-button data-field="status" data-true-value="ACTIVE" data-false-value="DISABLED"
 					                     style="margin-left: 1.8em">Käibel?</paper-toggle-button>
 				</div>
+				<paper-input data-field="seq" label="Järjekord" type="number" min="0"></paper-input>
 			</kassa-material>
 			<div class="buttons">
 				<paper-button dialog-dismiss raised disabled="[[_isRequestLoading]]">Sulge</paper-button>
