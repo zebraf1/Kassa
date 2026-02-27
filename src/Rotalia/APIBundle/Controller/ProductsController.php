@@ -68,7 +68,7 @@ class ProductsController extends DefaultController
 
         /** @var Product[]|\PropelModelPager $products */
         $productQuery = ProductQuery::create()
-            ->orderByName()
+            ->orderBySeq()
         ;
 
         $productQuery
