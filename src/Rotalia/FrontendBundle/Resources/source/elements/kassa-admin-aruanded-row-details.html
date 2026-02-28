@@ -64,6 +64,7 @@
 			<table hidden$="[[loading]]">
 				<thead>
 					<tr>
+						<th>#</th>
 						<th>Toode</th>
 						<th>Suurus</th>
 						<th>Hind</th>
@@ -77,6 +78,7 @@
 				<tbody>
 					<template is="dom-repeat" items="[[rows]]" as="row">
 						<tr class$="[[row.style]]">
+							<td>[[row.seq]]</td>
 							<td>[[row.name]]</td>
 							<td>[[row.amount]]</td>
 							<td>[[eur2str(row.currentPrice)]]</td>
@@ -140,6 +142,7 @@
                     const row = {};
 
                     row.name = report.reportRows[i].product.name;
+                    row.seq = report.reportRows[i].product.seq;
                     row.amount = this.formatAmount(report.reportRows[i].product.amount, report.reportRows[i].product.amountType);
                     row.startCount = 0;
                     if (this.isTrue(report.previousReport)) {
