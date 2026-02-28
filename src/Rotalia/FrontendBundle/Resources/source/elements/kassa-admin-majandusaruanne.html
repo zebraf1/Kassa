@@ -64,6 +64,7 @@
 			<table class="products">
 				<thead>
 					<tr>
+						<th rowspan="2">#</th>
 						<th rowspan="2">Toode</th>
 						<th rowspan="2">Suurus</th>
 						<th colspan="4" style="text-align: center">Ladu</th>
@@ -87,6 +88,7 @@
 				<tbody>
 					<template is="dom-repeat" items="[[limitedProducts]]">
 						<tr>
+							<td>[[item.seq]]</td>
 							<td>[[item.name]]</td>
 							<td class="spacing">[[item.amount]]</td>
 							<td>[[item.economyReport.warehouse.initial]]</td>
@@ -298,7 +300,8 @@
                                 totalProfit += profit;
 
                                 newProducts.push({
-                                    name: products[i]['name'],
+									seq: products[i]['seq'],
+									name: products[i]['name'],
                                     amount: this.formatAmount(products[i]['amount'], products[i]['amountType']),
                                     economyReport: economyReportInfo,
                                     averagePriceIn: economyReportInfo['average_price_in'],
@@ -339,6 +342,9 @@
                 }
             },
             computeCash: function() {
+				if (!this.economyReport) {
+					return;
+				}
                 let initialCash = this.economyReport['cash']['storage']['initial'] + this.economyReport['cash']['warehouse']['initial'];
                 let finalCash = this.economyReport['cash']['storage']['final'] + this.economyReport['cash']['warehouse']['final'];
                 let cashChange = (this.economyReport['cash']['storage']['out'] - this.economyReport['cash']['storage']['internal_out']) -
