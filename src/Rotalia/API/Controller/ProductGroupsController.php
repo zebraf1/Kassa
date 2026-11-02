@@ -7,7 +7,7 @@ use App\Repository\ProductGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use App\Component\HttpFoundation\JSendResponse;
 use App\Form\FormHelper;
 use App\Form\ProductGroupType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -74,6 +74,19 @@ class ProductGroupsController extends DefaultController
         }
 
         return $this->handleSubmit($group, $request, $em);
+    }
+
+    #[Route('/productGroups/resetSeq', methods: ['POST'])]
+    public function resetSeq(
+        EntityManagerInterface $em,
+    ): JsonResponse
+    {
+        $this->requireAdmin();
+
+        $table = $em->getClassMetadata(ProductGroup::class)->getTableName();
+        $em->getConnection()->executeStatement("UPDATE $table SET seq = 99");
+
+        return $this->json(['message' => 'Tootegruppide järjekord lähtestatud']);
     }
 
     /**

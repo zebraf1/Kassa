@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Rotalia\API\Controller\DefaultController;
-use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use App\Component\HttpFoundation\JSendResponse;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -197,7 +197,7 @@ class DefaultControllerTest extends ControllerTestCase
         $user = new User();
         $mockContainer->method('get')->willReturn($user);
         $controller->setContainer($mockContainer);
-        $value = $controller->get('user');
+        $value = $controller->getService('user');
         $this->assertSame($user, $value);
     }
 }

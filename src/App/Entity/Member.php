@@ -16,7 +16,6 @@ class Member
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(name: 'koondised_id')]
     private int $conventId = -1;
 
     #[ORM\Column(name: 'eesnimi', length: 50, nullable: true)]
@@ -64,7 +63,7 @@ class Member
 
     public function getConventId(): ?int
     {
-        return $this->conventId;
+        return $this->convent?->getId() ?? ($this->conventId >= 0 ? $this->conventId : null);
     }
 
     public function setConventId(int $conventId): static
@@ -105,8 +104,13 @@ class Member
 
     public function getTotalCredit(): float
     {
-        // TODO: get from MemberCredit
-        return 0;
+        $total = 0.0;
+
+        foreach ($this->getMemberCredits() as $memberCredit) {
+            $total += (float)$memberCredit->getCredit();
+        }
+
+        return $total;
     }
 
     public function getConvent(): ?Convent
@@ -209,5 +213,19 @@ class Member
         }
 
         return $this;
+    }
+
+    /**
+     * @param bool $includeCredit Whether to include the (potentially sensitive) credit balance -
+     * the caller decides based on the requesting user's permissions.
+     */
+    public function getAjaxData(bool $includeCredit = false): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getFullName(),
+            'conventId' => $this->getConventId(),
+            'creditBalance' => $includeCredit ? $this->getTotalCredit() : null,
+        ];
     }
 }

@@ -2,12 +2,15 @@
 
 namespace Tests\Rotalia\API\Controller;
 
+use App\Entity\PointOfSale;
 use App\Entity\User;
+use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Rotalia\API\Controller\AuthenticationController;
 use Rotalia\API\Services\Security\AuthenticationFailureHandler;
 use Rotalia\API\Services\Security\UserLastLoginUpdater;
-use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use App\Component\HttpFoundation\JSendResponse;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Helpers\ControllerTestCase;
 use Tests\Helpers\EntityManagerAwareTestCase;
@@ -18,6 +21,7 @@ use Tests\Helpers\EntityManagerAwareTestCase;
 class AuthenticationControllerTest extends ControllerTestCase
 {
     use EntityManagerAwareTestCase;
+    use RefreshDatabaseTrait;
 
     public function testCheckUnauthorized(): void
     {
@@ -48,6 +52,29 @@ class AuthenticationControllerTest extends ControllerTestCase
             ],
             'pointOfSaleId' => null,
         ], 'data');
+    }
+
+    public function testCheckIncludesPointOfSaleId(): void
+    {
+        /** @var User $user */
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => 'user1']);
+
+        $pos = (new PointOfSale())
+            ->setName('Test kassa')
+            ->setHash('test-pos-hash-1234567890abcdef')
+            ->setCreatedBy($user->getMember())
+            ->setCreatedAt(new \DateTime())
+            ->setConvent($user->getMember()->getConvent())
+        ;
+        $this->entityManager->persist($pos);
+        $this->entityManager->flush();
+
+        $client = self::$client;
+        $client->getCookieJar()->set(new Cookie('pos_hash', $pos->getHash()));
+        $client->request('GET', '/api/authentication');
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseEqualsJsonPath($pos->getId(), 'data.pointOfSaleId');
     }
 
     public function testJsonSuccess(): void

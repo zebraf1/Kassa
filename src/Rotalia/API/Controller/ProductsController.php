@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Rotalia\APIBundle\Component\HttpFoundation\JSendResponse;
+use App\Component\HttpFoundation\JSendResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -53,8 +53,8 @@ class ProductsController extends DefaultController
 
         $offset = ($page - 1) * $limit;
         $query = $productQuery->createQueryBuilder('p');
+        $productQuery->orderBySeqForConvent($query, $activeConventId);
         $query
-            ->orderBy('p.name')
             ->setFirstResult($offset)
             ->setMaxResults($limit)
         ;
@@ -94,7 +94,13 @@ class ProductsController extends DefaultController
         /** @var Product[] $products */
         $products = $query->getQuery()->getResult();
 
-        $count = $query->select('count(distinct p.id)')->getQuery()->getSingleScalarResult();
+        $countQuery = clone $query;
+        $count = $countQuery->select('count(distinct p.id)')
+            ->resetDQLPart('orderBy')
+            ->setFirstResult(null)
+            ->setMaxResults(null)
+            ->getQuery()
+            ->getSingleScalarResult();
 
         return $this->json([
             'products' => $products,
@@ -141,6 +147,7 @@ class ProductsController extends DefaultController
                     ->setProduct($product)
                     ->setConvent($convent)
                     ->setPrice($product->getPrice()) // use the same price
+                    ->setSeq($product->getSeq()) // use the same sequence number
                     ->setStatus(ProductStatus::DISABLED->value) // but set disabled
                 ;
                 $em->persist($productInfo);
@@ -191,6 +198,27 @@ class ProductsController extends DefaultController
         $this->requireAdmin();
 
         return FormHelper::submitForm($this->container, $request, $em, ProductType::class, $product);
+    }
+
+    #[Route('/products/resetSeq', methods: ['POST'])]
+    public function resetSeq(
+        EntityManagerInterface $em,
+        ProductRepository $productQuery,
+        Request $request,
+    ): JsonResponse
+    {
+        $this->requireAdmin();
+
+        $conventId = $request->request->get('conventId');
+        $activeConventId = $this->setActiveConventId($conventId);
+
+        $productInfoTable = $em->getClassMetadata(ProductInfo::class)->getTableName();
+        $em->getConnection()->executeStatement(
+            "UPDATE $productInfoTable SET seq = 99 WHERE convent_id = :conventId",
+            ['conventId' => $activeConventId]
+        );
+
+        return $this->json(['message' => 'Toodete järjekord lähtestatud']);
     }
 
     private function setActiveConventId(?int $conventId): ?int

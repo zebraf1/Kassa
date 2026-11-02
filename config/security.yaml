@@ -11,14 +11,13 @@ security:
                 password_path: password
                 # Return JSend response when authentication fails
                 failure_handler: 'Rotalia\API\Services\Security\AuthenticationFailureHandler'
-                remember_me: true
             logout:
                 invalidate_session: false
                 delete_cookies:     ~
 
     access_control:
         - { path: ^/api/authentication, roles: PUBLIC_ACCESS }
-#        - { path: ^/api/purchase, roles: PUBLIC_ACCESS }
+        - { path: ^/api/purchase, roles: PUBLIC_ACCESS }
 #        - { path: ^/api/doc, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER }
 #        - { path: ^/kassa, role: PUBLIC_ACCESS }

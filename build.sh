@@ -7,7 +7,11 @@ else
     php83-cli ../composer.phar install
 fi
 
-# php app/console propel:build
+php bin/console cache:clear --env=prod
+
+# Bring the production schema up to date. Production carries the legacy schema, so migrations/
+# holds incremental changes only - there is no baseline migration that creates the tables.
+php bin/console doctrine:migrations:migrate --no-interaction
 
 # shellcheck disable=SC2164
 cd src/Rotalia/FrontendBundle/Resources/source/

@@ -13,6 +13,14 @@ use JsonSerializable;
 #[ORM\Table(name: 'ollekassa_product')]
 class Product implements JsonSerializable
 {
+    public const INVENTORY_TYPE_WAREHOUSE = 'warehouse';
+    public const INVENTORY_TYPE_STORAGE = 'storage';
+
+    public static array $inventoryTypes = [
+        self::INVENTORY_TYPE_WAREHOUSE,
+        self::INVENTORY_TYPE_STORAGE,
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -31,13 +39,13 @@ class Product implements JsonSerializable
     private ?string $amountType = Enum\ProductAmountType::PIECE->value;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
-    private ?float $amount = 1.00;
+    private ?string $amount = '1.00';
 
     #[ORM\Column(length: 50, nullable: true)]
-    private string $status; // TODO: remove from database
+    private ?string $status = null; // TODO: remove from database
 
     #[ORM\Column(nullable: true)]
-    private ?int $seq = null;
+    private ?int $seq = null; // TODO: remove from database
 
     /**
      * @var Collection<int, ProductInfo>
@@ -45,7 +53,7 @@ class Product implements JsonSerializable
     #[ORM\OneToMany(targetEntity: ProductInfo::class, mappedBy: 'product', cascade: ['persist'], orphanRemoval: true)]
     private Collection $productInfos;
 
-    public static ?int $activeConventId;
+    public static ?int $activeConventId = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?ProductGroup $productGroup = null;
@@ -115,12 +123,12 @@ class Product implements JsonSerializable
 
     public function getAmount(): ?float
     {
-        return $this->amount;
+        return $this->amount === null ? null : (float)$this->amount;
     }
 
-    public function setAmount(?float $amount): static
+    public function setAmount(null|float|string $amount): static
     {
-        $this->amount = $amount;
+        $this->amount = $amount === null ? null : (string)(float)$amount;
 
         return $this;
     }
@@ -139,12 +147,16 @@ class Product implements JsonSerializable
 
     public function getSeq(): ?int
     {
-        return $this->seq;
+        return $this->getActiveProductInfo()->getSeq();
     }
 
     public function setSeq(?int $seq): static
     {
-        $this->seq = $seq;
+        // Skip nulls so a form that doesn't submit `seq` (e.g. product create) doesn't overwrite
+        // the ProductInfo default of 1. Explicit reordering always passes an int.
+        if ($seq !== null) {
+            $this->getActiveProductInfo()->setSeq($seq);
+        }
 
         return $this;
     }
@@ -201,7 +213,14 @@ class Product implements JsonSerializable
 
         $productInfo = new ProductInfo();
         $productInfo->setConventId(self::$activeConventId);
-        $this->addProductInfo($productInfo);
+
+        // Only attach when a convent context is set. Otherwise (e.g. during
+        // fixture load, where setters like setSeq()/setStatus() may be called
+        // before ProductInfo rows are created) the phantom would cascade-persist
+        // with convent_id = NULL and fail the NOT NULL constraint.
+        if (self::$activeConventId !== null) {
+            $this->addProductInfo($productInfo);
+        }
 
         return $productInfo;
     }
@@ -256,6 +275,7 @@ class Product implements JsonSerializable
             'warehouseCount' => $this->getWarehouseCount(),
             'storageCount' => $this->getStorageCount(),
             'resourceType' => $this->getResourceType(),
+            'seq' => $this->getSeq(),
         ];
     }
 }
