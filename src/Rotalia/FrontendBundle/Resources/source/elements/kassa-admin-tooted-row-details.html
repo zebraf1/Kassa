@@ -28,8 +28,8 @@
 
 		<main hidden$='[[isHidden]]'>
 			<template is="dom-if" if="[[_isFinite(item.resourceType)]]">
-				<div><span>Kogus kapis:</span><span>[[item.inventoryCounts.storage]]</span></div>
-				<div><span>Kogus laos:</span><span>[[item.inventoryCounts.warehouse]]</span></div>
+				<div><span>Kogus kapis:</span><span>[[item.storageCount]]</span></div>
+				<div><span>Kogus laos:</span><span>[[item.warehouseCount]]</span></div>
 			</template>
 		</main>
 
