@@ -24,7 +24,6 @@
         "symfony/yaml": "7.0.*",
         "ext-json": "*",
         "ext-pdo": "*",
-        "tedivm/fetch": "^0.7.2",
         "symfony/security-bundle": "7.0.*",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.12",
